@@ -14,7 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      bookings: {
+        Row: {
+          amount: number
+          booking_details: Json
+          booking_type: Database["public"]["Enums"]["booking_type"]
+          confirmed_at: string | null
+          contact_email: string
+          contact_name: string | null
+          contact_phone: string | null
+          created_at: string
+          currency: string
+          id: string
+          status: Database["public"]["Enums"]["booking_status"]
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          booking_details: Json
+          booking_type: Database["public"]["Enums"]["booking_type"]
+          confirmed_at?: string | null
+          contact_email: string
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          status?: Database["public"]["Enums"]["booking_status"]
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          booking_details?: Json
+          booking_type?: Database["public"]["Enums"]["booking_type"]
+          confirmed_at?: string | null
+          contact_email?: string
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          status?: Database["public"]["Enums"]["booking_status"]
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +76,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      booking_status: "pending_payment" | "confirmed" | "cancelled" | "refunded"
+      booking_type: "flight" | "hotel" | "car"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +204,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      booking_status: ["pending_payment", "confirmed", "cancelled", "refunded"],
+      booking_type: ["flight", "hotel", "car"],
+    },
   },
 } as const
