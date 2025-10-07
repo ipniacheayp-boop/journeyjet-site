@@ -16,10 +16,6 @@ const Header = () => {
   }, []);
 
   const navLinks = [
-    { label: "Flights", href: "/search-results?type=flights" },
-    { label: "Hotels", href: "/search-results?type=hotels" },
-    { label: "Cars", href: "/search-results?type=cars" },
-    { label: "Cruise", href: "/search-results?type=cruise" },
     { label: "Deals", href: "/deals" },
     { label: "Support", href: "/support" },
     { label: "Admin", href: "/admin" },
