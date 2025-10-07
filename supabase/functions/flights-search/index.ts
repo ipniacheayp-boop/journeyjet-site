@@ -52,35 +52,52 @@ serve(async (req) => {
   }
 
   try {
-    const { originLocationCode, destinationLocationCode, departureDate, returnDate, adults, cabinClass } = await req.json();
+    const { originLocationCode, destinationLocationCode, departureDate, returnDate, adults, travelClass } = await req.json();
+
+    console.log('📥 Flight search request:', { originLocationCode, destinationLocationCode, departureDate, returnDate, adults, travelClass });
 
     if (!originLocationCode || !destinationLocationCode || !departureDate || !adults) {
+      console.error('❌ Missing required parameters');
       return new Response(
-        JSON.stringify({ error: 'Missing required parameters' }),
+        JSON.stringify({ error: 'Missing required parameters: originLocationCode (3-letter code), destinationLocationCode (3-letter code), departureDate, adults' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Validate IATA codes are 3 letters
+    if (originLocationCode.length !== 3 || destinationLocationCode.length !== 3) {
+      console.error('❌ Invalid IATA codes - must be 3 letters:', { originLocationCode, destinationLocationCode });
+      return new Response(
+        JSON.stringify({ 
+          error: 'Airport codes must be 3-letter IATA codes (e.g., JFK, LAX, LHR)', 
+          hint: `Origin: ${originLocationCode} (${originLocationCode.length} chars), Destination: ${destinationLocationCode} (${destinationLocationCode.length} chars)` 
+        }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     const token = await getAmadeusToken();
+    console.log('✅ Amadeus token obtained');
 
     // Build query parameters
     const params = new URLSearchParams({
-      originLocationCode,
-      destinationLocationCode,
+      originLocationCode: originLocationCode.toUpperCase(),
+      destinationLocationCode: destinationLocationCode.toUpperCase(),
       departureDate,
       adults: adults.toString(),
       max: '50',
+      currencyCode: 'USD',
     });
 
     if (returnDate) {
       params.append('returnDate', returnDate);
     }
 
-    if (cabinClass) {
-      params.append('travelClass', cabinClass);
+    if (travelClass) {
+      params.append('travelClass', travelClass);
     }
 
-    console.log('Searching flights with params:', params.toString());
+    console.log('🔍 Searching flights with params:', params.toString());
 
     const flightResponse = await fetch(
       `https://test.api.amadeus.com/v2/shopping/flight-offers?${params.toString()}`,
@@ -91,9 +108,11 @@ serve(async (req) => {
       }
     );
 
+    console.log('📡 Amadeus API response status:', flightResponse.status);
+
     if (!flightResponse.ok) {
       const error = await flightResponse.text();
-      console.error('Amadeus flight search error:', error);
+      console.error('❌ Amadeus flight search error (status:', flightResponse.status, '):', error);
       return new Response(
         JSON.stringify({ error: 'Failed to search flights', details: error }),
         { status: flightResponse.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -101,15 +120,16 @@ serve(async (req) => {
     }
 
     const flightData = await flightResponse.json();
+    console.log('✅ Flight search response:', flightData.data?.length || 0, 'offers found');
 
     return new Response(
       JSON.stringify(flightData),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
-    console.error('Error in flights-search:', error);
+    console.error('❌ Error in flights-search:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error occurred' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

@@ -23,7 +23,7 @@ serve(async (req) => {
       try {
         event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
       } catch (err) {
-        console.error('Webhook signature verification failed:', err.message);
+        console.error('Webhook signature verification failed:', err instanceof Error ? err.message : 'Unknown error');
         return new Response('Invalid signature', { status: 400 });
       }
     } else {
@@ -78,7 +78,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Webhook error:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error occurred' }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }

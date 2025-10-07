@@ -106,7 +106,9 @@ const SearchResults = () => {
         setResults(data?.data || []);
       }
     } catch (error: any) {
-      toast.error(error.message || `Failed to search ${type}`);
+      const errorMessage = error.message || `Failed to search ${type}`;
+      console.error('❌ Search failed:', errorMessage);
+      toast.error(errorMessage, { duration: 5000 });
       setResults([]);
     } finally {
       setLoading(false);
@@ -303,12 +305,19 @@ const SearchResults = () => {
           ) : results.length === 0 ? (
             <Card>
               <CardContent className="py-12 text-center">
-                <p className="text-lg text-muted-foreground mb-4">
-                  No results found for your search criteria.
-                </p>
-                <Button onClick={() => window.location.href = "/"}>
-                  Start a New Search
-                </Button>
+                <div className="max-w-md mx-auto">
+                  <p className="text-lg font-semibold mb-2">No results found</p>
+                  <p className="text-muted-foreground mb-6">
+                    {type === 'flights' 
+                      ? 'Use 3-letter airport codes (e.g., JFK, LAX, LHR) for origin and destination.'
+                      : type === 'hotels'
+                      ? 'Try searching with a valid city code (e.g., NYC, LON, PAR).'
+                      : 'Try searching with a valid airport code (e.g., JFK, LAX, LHR).'}
+                  </p>
+                  <Button onClick={() => window.location.href = "/"} size="lg">
+                    Start a New Search
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ) : (

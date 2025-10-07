@@ -45,7 +45,7 @@ serve(async (req) => {
     } catch (stripeError) {
       health.checks.stripe = {
         status: 'unhealthy',
-        error: stripeError.message,
+        error: stripeError instanceof Error ? stripeError.message : 'Unknown error',
       };
     }
 
@@ -72,7 +72,7 @@ serve(async (req) => {
     } catch (amadeusError) {
       health.checks.amadeus = {
         status: 'unhealthy',
-        error: amadeusError.message,
+        error: amadeusError instanceof Error ? amadeusError.message : 'Unknown error',
       };
     }
 
@@ -93,7 +93,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         status: 'unhealthy',
-        error: error.message,
+        error: error instanceof Error ? error.message : 'Unknown error',
         timestamp: new Date().toISOString(),
       }),
       { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

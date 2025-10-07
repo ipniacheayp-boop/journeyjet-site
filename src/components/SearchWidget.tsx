@@ -1,11 +1,11 @@
 import { useState } from "react";
+import { toast } from "sonner";
 import { Calendar, MapPin, Users, ChevronDown, Search, Plane, Hotel, Car, Ship } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
 const SearchWidget = () => {

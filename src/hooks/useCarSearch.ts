@@ -16,16 +16,31 @@ export const useCarSearch = () => {
     setLoading(true);
     setError(null);
 
+    console.log('🚗 Frontend: Searching cars with params:', params);
+
     try {
       const { data, error: functionError } = await supabase.functions.invoke('cars-search', {
         body: params,
       });
 
-      if (functionError) throw functionError;
+      console.log('📡 Backend response:', { data, error: functionError });
+
+      if (functionError) {
+        console.error('❌ Function error:', functionError);
+        throw functionError;
+      }
+
+      if (data?.error) {
+        console.error('❌ API error:', data.error, data.details);
+        throw new Error(data.error + (data.details ? ': ' + data.details : ''));
+      }
       
+      console.log('✅ Car search successful:', data.data?.length || 0, 'results');
       return data;
     } catch (err: any) {
-      setError(err.message || 'Failed to search cars');
+      const errorMessage = err.message || 'Failed to search cars';
+      console.error('❌ Search error:', errorMessage);
+      setError(errorMessage);
       throw err;
     } finally {
       setLoading(false);

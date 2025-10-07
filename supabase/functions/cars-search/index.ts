@@ -48,17 +48,21 @@ serve(async (req) => {
   try {
     const { pickUpLocationCode, pickUpDate, dropOffDate, driverAge } = await req.json();
 
+    console.log('📥 Car search request:', { pickUpLocationCode, pickUpDate, dropOffDate, driverAge });
+
     if (!pickUpLocationCode || !pickUpDate || !dropOffDate) {
+      console.error('❌ Missing required parameters');
       return new Response(
-        JSON.stringify({ error: 'Missing required parameters' }),
+        JSON.stringify({ error: 'Missing required parameters: pickUpLocationCode (3-letter IATA code), pickUpDate, dropOffDate' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     const token = await getAmadeusToken();
+    console.log('✅ Amadeus token obtained');
 
     const params = new URLSearchParams({
-      pickUpLocationCode,
+      pickUpLocationCode: pickUpLocationCode.toUpperCase(),
       pickUpDate,
       dropOffDate,
     });
@@ -67,10 +71,10 @@ serve(async (req) => {
       params.append('driverAge', driverAge.toString());
     }
 
-    console.log('Searching cars with params:', params.toString());
+    console.log('🔍 Searching cars with params:', params.toString());
 
     const carResponse = await fetch(
-      `https://test.api.amadeus.com/v1/shopping/vehicle-offers?${params.toString()}`,
+      `https://test.api.amadeus.com/v1/shopping/availability/car-rental?${params.toString()}`,
       {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -78,9 +82,11 @@ serve(async (req) => {
       }
     );
 
+    console.log('📡 Amadeus API response status:', carResponse.status);
+
     if (!carResponse.ok) {
       const error = await carResponse.text();
-      console.error('Amadeus car search error:', error);
+      console.error('❌ Amadeus car search error (status:', carResponse.status, '):', error);
       return new Response(
         JSON.stringify({ error: 'Failed to search cars', details: error }),
         { status: carResponse.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -88,15 +94,16 @@ serve(async (req) => {
     }
 
     const carData = await carResponse.json();
+    console.log('✅ Car search response:', carData.data?.length || 0, 'offers found');
 
     return new Response(
       JSON.stringify(carData),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
-    console.error('Error in cars-search:', error);
+    console.error('❌ Error in cars-search:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error occurred' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
