@@ -38,6 +38,14 @@ const SearchResults = () => {
         const adults = parseInt(searchParams.get("adults") || "1");
         const travelClass = searchParams.get("travelClass") || "ECONOMY";
 
+        // Validate required parameters
+        if (!originLocationCode || !destinationLocationCode || !departureDate) {
+          toast.error("Missing required search parameters. Please start a new search.");
+          setResults([]);
+          setLoading(false);
+          return;
+        }
+
         const data = await searchFlights({
           originLocationCode,
           destinationLocationCode,
@@ -56,6 +64,14 @@ const SearchResults = () => {
         const adults = parseInt(searchParams.get("adults") || "2");
         const roomQuantity = parseInt(searchParams.get("roomQuantity") || "1");
 
+        // Validate required parameters
+        if (!cityCode || !checkInDate || !checkOutDate) {
+          toast.error("Missing required search parameters. Please start a new search.");
+          setResults([]);
+          setLoading(false);
+          return;
+        }
+
         const data = await searchHotels({
           cityCode,
           checkInDate,
@@ -71,6 +87,14 @@ const SearchResults = () => {
         const pickUpDate = searchParams.get("pickUpDate") || "";
         const dropOffDate = searchParams.get("dropOffDate") || "";
         const driverAge = parseInt(searchParams.get("driverAge") || "30");
+
+        // Validate required parameters
+        if (!pickUpLocationCode || !pickUpDate || !dropOffDate) {
+          toast.error("Missing required search parameters. Please start a new search.");
+          setResults([]);
+          setLoading(false);
+          return;
+        }
 
         const data = await searchCars({
           pickUpLocationCode,
@@ -282,8 +306,8 @@ const SearchResults = () => {
                 <p className="text-lg text-muted-foreground mb-4">
                   No results found for your search criteria.
                 </p>
-                <Button onClick={() => window.history.back()}>
-                  Try a Different Search
+                <Button onClick={() => window.location.href = "/"}>
+                  Start a New Search
                 </Button>
               </CardContent>
             </Card>
