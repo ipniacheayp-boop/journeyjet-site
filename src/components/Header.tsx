@@ -16,10 +16,6 @@ const Header = () => {
   }, []);
 
   const navLinks = [
-    { label: "Flights", href: "/search-results?type=flights" },
-    { label: "Hotels", href: "/search-results?type=hotels" },
-    { label: "Cars", href: "/search-results?type=cars" },
-    { label: "Cruise", href: "/search-results?type=cruise" },
     { label: "Deals", href: "/deals" },
     { label: "Support", href: "/support" },
     { label: "Admin", href: "/admin" },
@@ -38,9 +34,7 @@ const Header = () => {
             <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center transition-transform group-hover:scale-105">
               <Plane className="w-6 h-6 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold text-foreground hidden sm:block">
-              TravelBooking
-            </span>
+            <span className="text-xl font-bold text-foreground hidden sm:block">TravelBooking</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -71,7 +65,7 @@ const Header = () => {
                 <span className="hidden sm:inline">My Booking</span>
               </Button>
             </Link>
-            
+
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
