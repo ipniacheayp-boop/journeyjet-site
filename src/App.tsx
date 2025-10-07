@@ -12,6 +12,7 @@ import Account from "./pages/Account";
 import Support from "./pages/Support";
 import Terms from "./pages/Terms";
 import Admin from "./pages/Admin";
+import AdminLogin from "./pages/AdminLogin";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCancel from "./pages/PaymentCancel";
 import NotFound from "./pages/NotFound";
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/account" element={<Account />} />
           <Route path="/support" element={<Support />} />
           <Route path="/terms" element={<Terms />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/payment-cancel" element={<PaymentCancel />} />

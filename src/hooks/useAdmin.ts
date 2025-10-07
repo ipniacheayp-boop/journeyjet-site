@@ -19,12 +19,7 @@ export const useAdmin = () => {
       if (!user) {
         setIsAdmin(false);
         setLoading(false);
-        navigate('/');
-        toast({
-          title: "Access Denied",
-          description: "Please sign in to continue",
-          variant: "destructive",
-        });
+        navigate('/admin/login');
         return;
       }
 
@@ -34,7 +29,7 @@ export const useAdmin = () => {
         console.error('Error checking admin status:', error);
         setIsAdmin(false);
         setLoading(false);
-        navigate('/');
+        navigate('/admin/login');
         toast({
           title: "Access Denied",
           description: "You don't have permission to access this page",
@@ -46,7 +41,7 @@ export const useAdmin = () => {
       if (!data) {
         setIsAdmin(false);
         setLoading(false);
-        navigate('/');
+        navigate('/admin/login');
         toast({
           title: "Access Denied",
           description: "Admin access required",
@@ -61,7 +56,7 @@ export const useAdmin = () => {
       console.error('Error in checkAdminStatus:', error);
       setIsAdmin(false);
       setLoading(false);
-      navigate('/');
+      navigate('/admin/login');
     }
   };
 
