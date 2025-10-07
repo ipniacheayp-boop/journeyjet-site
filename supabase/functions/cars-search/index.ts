@@ -53,7 +53,7 @@ serve(async (req) => {
     if (!pickUpLocationCode || !pickUpDate || !dropOffDate) {
       console.error('❌ Missing required parameters');
       return new Response(
-        JSON.stringify({ error: 'Missing required parameters: pickUpLocationCode (3-letter IATA code), pickUpDate, dropOffDate' }),
+        JSON.stringify({ error: 'Missing required parameters: pickUpLocationCode, pickUpDate, dropOffDate' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -61,20 +61,16 @@ serve(async (req) => {
     const token = await getAmadeusToken();
     console.log('✅ Amadeus token obtained');
 
-    const params = new URLSearchParams({
-      pickUpLocationCode: pickUpLocationCode.toUpperCase(),
-      pickUpDate,
-      dropOffDate,
+    // Step 1: Resolve location using Amadeus Locations API
+    console.log('🔍 Step 1: Resolving location for:', pickUpLocationCode);
+    
+    const locationParams = new URLSearchParams({
+      keyword: pickUpLocationCode.toUpperCase(),
+      subType: 'CITY,AIRPORT',
     });
 
-    if (driverAge) {
-      params.append('driverAge', driverAge.toString());
-    }
-
-    console.log('🔍 Searching cars with params:', params.toString());
-
-    const carResponse = await fetch(
-      `https://test.api.amadeus.com/v1/shopping/availability/car-rental?${params.toString()}`,
+    const locationResponse = await fetch(
+      `https://test.api.amadeus.com/v1/reference-data/locations?${locationParams.toString()}`,
       {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -82,13 +78,70 @@ serve(async (req) => {
       }
     );
 
-    console.log('📡 Amadeus API response status:', carResponse.status);
+    console.log('📡 Location API response status:', locationResponse.status);
+
+    if (!locationResponse.ok) {
+      const error = await locationResponse.text();
+      console.error('❌ Location resolution error:', error);
+      return new Response(
+        JSON.stringify({ 
+          error: 'Unable to find location. Please enter a valid city or airport code (e.g., DEL, BOM, NYC)', 
+          details: error 
+        }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const locationData = await locationResponse.json();
+    
+    if (!locationData.data || locationData.data.length === 0) {
+      console.error('❌ No locations found for:', pickUpLocationCode);
+      return new Response(
+        JSON.stringify({ 
+          error: 'No car rental available for this location. Try an airport or nearby city code.' 
+        }),
+        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const resolvedLocation = locationData.data[0];
+    const resolvedCode = resolvedLocation.iataCode || resolvedLocation.id;
+    console.log('✅ Location resolved:', resolvedCode, '-', resolvedLocation.name);
+
+    // Step 2: Search for car rental offers
+    console.log('🔍 Step 2: Searching for car offers at location:', resolvedCode);
+
+    const carParams = new URLSearchParams({
+      pickUpLocationCode: resolvedCode,
+      pickUpDate,
+      dropOffDate,
+    });
+
+    if (driverAge) {
+      carParams.append('driverAge', driverAge.toString());
+    }
+
+    console.log('🚗 Fetching car offers with params:', carParams.toString());
+
+    const carResponse = await fetch(
+      `https://test.api.amadeus.com/v1/shopping/vehicle-offers?${carParams.toString()}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log('📡 Car offers API response status:', carResponse.status);
 
     if (!carResponse.ok) {
       const error = await carResponse.text();
-      console.error('❌ Amadeus car search error (status:', carResponse.status, '):', error);
+      console.error('❌ Amadeus car offers error (status:', carResponse.status, '):', error);
       return new Response(
-        JSON.stringify({ error: 'Failed to search cars', details: error }),
+        JSON.stringify({ 
+          error: 'No car rental available for this location. Try another date or location.', 
+          details: error 
+        }),
         { status: carResponse.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
