@@ -1,1 +1,43 @@
 project_id = "qgmhqhejoilexhgwdujl"
+
+[functions.admin-bookings]
+verify_jwt = true
+
+[functions.admin-users]
+verify_jwt = true
+
+[functions.admin-payments]
+verify_jwt = true
+
+[functions.admin-refund]
+verify_jwt = true
+
+[functions.admin-stats]
+verify_jwt = true
+
+[functions.cars-book]
+verify_jwt = true
+
+[functions.cars-search]
+verify_jwt = true
+
+[functions.flights-book]
+verify_jwt = true
+
+[functions.flights-price]
+verify_jwt = true
+
+[functions.flights-search]
+verify_jwt = true
+
+[functions.health]
+verify_jwt = false
+
+[functions.hotels-book]
+verify_jwt = true
+
+[functions.hotels-search]
+verify_jwt = true
+
+[functions.stripe-webhook]
+verify_jwt = false
