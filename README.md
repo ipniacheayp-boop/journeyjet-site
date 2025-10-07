@@ -1,8 +1,39 @@
-# Welcome to your Lovable project
+# TravelBooking - Online Travel Agency Platform
+
+Complete OTA with Amadeus API (Flights, Hotels, Cars) + Stripe payments.
 
 ## Project info
 
 **URL**: https://lovable.dev/projects/90c45cf3-b510-44bd-8288-5493fd44a82e
+
+## 🚀 Features
+
+- **Real-time search**: Flights, Hotels, Cars via Amadeus API
+- **Stripe payments**: Secure checkout with webhooks
+- **Admin dashboard**: Manage bookings, view analytics at `/admin`
+- **Responsive design**: Mobile-first, accessible UI
+
+## 🧪 Testing (Sandbox Mode)
+
+**Amadeus Test Data:**
+- Flights: BOM → DEL, 2025-10-25
+- Hotels: DEL, 2025-10-20 to 2025-10-22
+- Cars: DEL airport, 2025-10-20 to 2025-10-22
+
+**Stripe Test Card:** 4242 4242 4242 4242
+
+## 📁 Structure
+
+- `/` - Homepage with search widget
+- `/search-results` - Live API results
+- `/booking/:type` - Checkout with Stripe
+- `/admin` - Admin dashboard
+- `/payment-success` - Post-payment confirmation
+
+## 🔐 Production Setup
+
+1. **Amadeus**: Replace test credentials, change URL to `api.amadeus.com`
+2. **Stripe**: Update to live keys, configure webhook endpoint
 
 ## How can I edit this code?
 
