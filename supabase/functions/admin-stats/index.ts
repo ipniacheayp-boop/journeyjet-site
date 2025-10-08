@@ -12,9 +12,10 @@ serve(async (req) => {
   }
 
   try {
-    const supabaseClient = createClient(
+    // Use anon key for auth validation
+    const authClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
       { auth: { persistSession: false } }
     );
 
@@ -28,7 +29,7 @@ serve(async (req) => {
     }
 
     const token = authHeader.replace("Bearer ", "");
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
+    const { data: { user }, error: userError } = await authClient.auth.getUser(token);
     
     if (userError || !user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -38,13 +39,20 @@ serve(async (req) => {
     }
 
     // Check if user is admin
-    const { data: isAdmin } = await supabaseClient.rpc('is_admin');
+    const { data: isAdmin } = await authClient.rpc('is_admin');
     if (!isAdmin) {
       return new Response(JSON.stringify({ error: "Admin access required" }), {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    // Use service role key for data queries
+    const supabaseClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+      { auth: { persistSession: false } }
+    );
 
     // Get all bookings
     const { data: bookings, error: bookingsError } = await supabaseClient
