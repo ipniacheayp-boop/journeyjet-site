@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Plane, Phone, User, Menu, X, LogOut, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -12,7 +12,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const Header = () => {
-  const { user, signOut } = useAuth();
+  const { user, signOut, isAdmin } = useAuth();
+  const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -23,6 +24,11 @@ const Header = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   const navLinks = [
     { label: "Deals", href: "/deals" },
@@ -78,21 +84,25 @@ const Header = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem asChild>
-                    <Link to="/my-bookings" className="flex items-center gap-2 w-full cursor-pointer">
-                      <BookOpen className="w-4 h-4" />
-                      My Bookings
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={signOut} className="flex items-center gap-2 cursor-pointer">
+                  {!isAdmin && (
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link to="/my-bookings" className="flex items-center gap-2 w-full cursor-pointer">
+                          <BookOpen className="w-4 h-4" />
+                          My Bookings
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
+                  <DropdownMenuItem onClick={handleSignOut} className="flex items-center gap-2 cursor-pointer">
                     <LogOut className="w-4 h-4" />
                     Sign Out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Link to="/admin/login">
+              <Link to="/login">
                 <Button variant="outline" size="sm" className="gap-2">
                   <User className="w-4 h-4" />
                   <span className="hidden sm:inline">Sign In</span>

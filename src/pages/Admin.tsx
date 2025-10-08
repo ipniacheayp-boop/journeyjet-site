@@ -51,12 +51,12 @@ interface Booking {
 }
 
 interface Payment {
-  id: string;
+  payment_id: string;
+  booking_reference: string;
   amount: number;
   currency: string;
   status: string;
-  created: string;
-  booking_id?: string;
+  created_at: string;
   booking_type?: string;
   contact_email?: string;
 }
@@ -513,8 +513,8 @@ const Admin = () => {
                   </TableHeader>
                   <TableBody>
                     {payments.map((payment) => (
-                      <TableRow key={payment.id}>
-                        <TableCell className="font-mono text-xs">{payment.id}</TableCell>
+                      <TableRow key={payment.payment_id}>
+                        <TableCell className="font-mono text-xs">{payment.payment_id?.substring(0, 20)}...</TableCell>
                         <TableCell className="font-semibold">
                           {payment.currency} {payment.amount.toFixed(2)}
                         </TableCell>
@@ -534,7 +534,7 @@ const Admin = () => {
                         </TableCell>
                         <TableCell className="text-sm">{payment.contact_email || 'N/A'}</TableCell>
                         <TableCell className="text-sm">
-                          {new Date(payment.created).toLocaleDateString()}
+                          {new Date(payment.created_at).toLocaleDateString()}
                         </TableCell>
                       </TableRow>
                     ))}

@@ -14,6 +14,7 @@ import Support from "./pages/Support";
 import Terms from "./pages/Terms";
 import Admin from "./pages/Admin";
 import AdminLogin from "./pages/AdminLogin";
+import UserLogin from "./pages/UserLogin";
 import MyBookings from "./pages/MyBookings";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCancel from "./pages/PaymentCancel";
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/my-bookings" element={<MyBookings />} />
             <Route path="/support" element={<Support />} />
             <Route path="/terms" element={<Terms />} />
+            <Route path="/login" element={<UserLogin />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />

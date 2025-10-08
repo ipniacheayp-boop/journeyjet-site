@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
-import { Shield } from "lucide-react";
+import { Shield, Loader2 } from "lucide-react";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
@@ -19,68 +19,42 @@ const AdminLogin = () => {
     setLoading(true);
 
     try {
-      // Step 1: Sign in the user
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (authError) {
-        toast({
-          title: "Login Failed",
-          description: authError.message,
-          variant: "destructive",
-        });
-        setLoading(false);
-        return;
+      if (error) throw error;
+
+      // Check if user is admin
+      const { data: isAdmin, error: adminError } = await supabase.rpc('is_admin');
+
+      if (adminError) {
+        console.error('Error checking admin status:', adminError);
+        throw new Error('Failed to verify admin status');
       }
 
-      if (!authData.user) {
-        toast({
-          title: "Login Failed",
-          description: "Invalid credentials",
-          variant: "destructive",
-        });
-        setLoading(false);
-        return;
-      }
-
-      // Step 2: Check if user has admin role
-      const { data: isAdmin, error: roleError } = await supabase.rpc('is_admin');
-
-      if (roleError) {
-        console.error('Error checking admin status:', roleError);
+      if (!isAdmin) {
+        // Not an admin, sign out and show error
         await supabase.auth.signOut();
-        toast({
-          title: "Login Failed",
-          description: "Unable to verify user privileges",
-          variant: "destructive",
-        });
-        setLoading(false);
-        return;
+        throw new Error('Admin access required. Please use the regular login.');
       }
 
-      // Step 3: Redirect based on role
-      if (isAdmin) {
-        toast({
-          title: "Login Successful",
-          description: "Welcome to the admin dashboard",
-        });
-        navigate('/admin');
-      } else {
-        toast({
-          title: "Sign in successful!",
-          description: "Welcome back!",
-        });
-        navigate('/search-results');
-      }
-    } catch (error) {
-      console.error('Login error:', error);
+      toast({
+        title: "Admin login successful!",
+        description: "Redirecting to dashboard...",
+      });
+
+      setTimeout(() => {
+        navigate("/admin");
+      }, 500);
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "An unexpected error occurred",
+        description: error.message,
         variant: "destructive",
       });
+    } finally {
       setLoading(false);
     }
   };
@@ -92,9 +66,9 @@ const AdminLogin = () => {
           <div className="mx-auto w-12 h-12 bg-primary rounded-full flex items-center justify-center mb-2">
             <Shield className="w-6 h-6 text-primary-foreground" />
           </div>
-          <CardTitle className="text-2xl">Login</CardTitle>
+          <CardTitle className="text-2xl">Admin Login</CardTitle>
           <CardDescription>
-            Enter your credentials to continue
+            Enter your admin credentials
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -126,10 +100,16 @@ const AdminLogin = () => {
             </div>
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Signing in..." : "Sign In"}
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Sign In as Admin
             </Button>
           </form>
 
+          <div className="mt-4 text-center text-sm text-muted-foreground">
+            <a href="/login" className="hover:text-primary hover:underline">
+              Regular User Login
+            </a>
+          </div>
         </CardContent>
       </Card>
     </div>

@@ -7,10 +7,17 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const logStep = (step: string, details?: any) => {
+  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
+  console.log(`[ADMIN-PAYMENTS] ${step}${detailsStr}`);
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+
+  logStep("Request received", { method: req.method, headers: Object.fromEntries(req.headers.entries()) });
 
   try {
     const supabaseClient = createClient(
@@ -22,6 +29,7 @@ serve(async (req) => {
     // Verify admin role
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
+      logStep("ERROR: No authorization header");
       return new Response(JSON.stringify({ error: "No authorization header" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -29,62 +37,105 @@ serve(async (req) => {
     }
 
     const token = authHeader.replace("Bearer ", "");
+    logStep("Authenticating user");
+    
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
     
     if (userError || !user) {
+      logStep("ERROR: User authentication failed", { error: userError });
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Check if user is admin
-    const { data: isAdmin } = await supabaseClient.rpc('is_admin');
-    if (!isAdmin) {
+    logStep("User authenticated", { userId: user.id, email: user.email });
+
+    // Check if user is admin - CRITICAL: Pass user ID to RPC
+    const { data: isAdmin, error: adminError } = await supabaseClient.rpc('is_admin', {});
+    
+    logStep("Admin check result", { isAdmin, adminError });
+    
+    if (adminError || !isAdmin) {
+      logStep("ERROR: Admin access denied", { isAdmin, error: adminError });
       return new Response(JSON.stringify({ error: "Admin access required" }), {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
+    logStep("Admin verified, fetching Stripe data");
+
+    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+    if (!stripeKey) {
+      logStep("ERROR: Stripe key not configured");
+      throw new Error("STRIPE_SECRET_KEY not configured");
+    }
+
+    const stripe = new Stripe(stripeKey, {
       apiVersion: "2025-08-27.basil",
     });
 
-    // Fetch recent payment intents
-    const paymentIntents = await stripe.paymentIntents.list({
-      limit: 100,
+    logStep("Fetching Stripe checkout sessions");
+
+    // Fetch recent checkout sessions (more relevant than payment intents)
+    const sessions = await stripe.checkout.sessions.list({
+      limit: 50,
     });
 
-    // Get bookings with payment info
-    const { data: bookings } = await supabaseClient
+    logStep("Stripe sessions fetched", { count: sessions.data.length });
+
+    // Get all bookings
+    const { data: bookings, error: bookingsError } = await supabaseClient
       .from('bookings')
       .select('*')
-      .not('stripe_payment_intent_id', 'is', null)
       .order('created_at', { ascending: false });
 
-    const paymentsWithBookings = paymentIntents.data.map((pi: any) => {
-      const booking = bookings?.find(b => b.stripe_payment_intent_id === pi.id);
+    if (bookingsError) {
+      logStep("ERROR: Failed to fetch bookings", { error: bookingsError });
+      throw new Error(`Failed to fetch bookings: ${bookingsError.message}`);
+    }
+
+    logStep("Bookings fetched", { count: bookings?.length || 0 });
+
+    // Map sessions to bookings
+    const paymentsWithBookings = sessions.data.map((session: any) => {
+      const bookingId = session.metadata?.booking_id;
+      const booking = bookings?.find(b => b.id === bookingId || b.stripe_session_id === session.id);
+      
       return {
-        id: pi.id,
-        amount: pi.amount / 100,
-        currency: pi.currency.toUpperCase(),
-        status: pi.status,
-        created: new Date(pi.created * 1000).toISOString(),
-        booking_id: booking?.id,
-        booking_type: booking?.booking_type,
-        contact_email: booking?.contact_email,
+        payment_id: session.id,
+        booking_reference: booking?.id || bookingId || 'unlinked',
+        amount: (session.amount_total || 0) / 100,
+        currency: (session.currency || 'usd').toUpperCase(),
+        status: session.payment_status || session.status,
+        created_at: new Date((session.created || 0) * 1000).toISOString(),
+        booking_type: booking?.booking_type || session.metadata?.booking_type || null,
+        contact_email: booking?.contact_email || session.customer_email || session.customer_details?.email,
       };
     });
 
-    return new Response(JSON.stringify({ payments: paymentsWithBookings }), {
+    logStep("Payments mapped to bookings", { total: paymentsWithBookings.length });
+
+    return new Response(JSON.stringify({ 
+      payments: paymentsWithBookings,
+      total_count: paymentsWithBookings.length 
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
   } catch (error) {
-    console.error("Admin payments error:", error);
+    logStep("ERROR: Exception in admin-payments", { 
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined 
+    });
+    
     const errorMessage = error instanceof Error ? error.message : String(error);
-    return new Response(JSON.stringify({ error: errorMessage }), {
+    const isStripeError = errorMessage.includes('Stripe') || errorMessage.includes('API key');
+    
+    return new Response(JSON.stringify({ 
+      error: isStripeError ? `Stripe: ${errorMessage}` : errorMessage 
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
