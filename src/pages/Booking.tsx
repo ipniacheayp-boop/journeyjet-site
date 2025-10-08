@@ -51,8 +51,18 @@ const Booking = () => {
       }
 
       if (response?.checkoutUrl) {
-        // Redirect to Stripe Checkout
-        window.location.href = response.checkoutUrl;
+        // Store booking details for payment options page
+        const bookingData = {
+          checkoutUrl: response.checkoutUrl,
+          bookingId: response.bookingId,
+          amount: total.toFixed(2),
+          currency: currency,
+          bookingType: bookingType
+        };
+        sessionStorage.setItem('pendingBooking', JSON.stringify(bookingData));
+        
+        // Navigate to payment options page
+        window.location.href = '/payment-options';
       } else {
         toast.error("Failed to create checkout session");
       }
