@@ -69,10 +69,10 @@ const AdminLogin = () => {
         navigate('/admin');
       } else {
         toast({
-          title: "Login Successful",
+          title: "Sign in successful!",
           description: "Welcome back!",
         });
-        navigate('/');
+        navigate('/search-results');
       }
     } catch (error) {
       console.error('Login error:', error);

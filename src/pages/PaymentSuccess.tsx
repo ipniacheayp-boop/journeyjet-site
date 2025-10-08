@@ -1,14 +1,30 @@
 import { useEffect } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, BookOpen } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const sessionId = searchParams.get("session_id");
+
+  useEffect(() => {
+    toast({
+      title: "Payment Successful!",
+      description: "Your booking has been confirmed.",
+    });
+
+    // Redirect to My Bookings after 3 seconds
+    const timer = setTimeout(() => {
+      navigate('/my-bookings');
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [navigate]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -31,13 +47,19 @@ const PaymentSuccess = () => {
                 Session ID: {sessionId.substring(0, 20)}...
               </p>
             )}
-            <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
-              <Link to="/account">
-                <Button variant="outline">View My Bookings</Button>
+            <div className="flex flex-col gap-3 justify-center pt-4">
+              <Link to="/my-bookings" className="w-full">
+                <Button className="w-full">
+                  <BookOpen className="mr-2 h-4 w-4" />
+                  View My Bookings
+                </Button>
               </Link>
-              <Link to="/">
-                <Button>Back to Home</Button>
+              <Link to="/" className="w-full">
+                <Button variant="outline" className="w-full">Back to Home</Button>
               </Link>
+              <p className="text-xs text-muted-foreground mt-2">
+                Redirecting to My Bookings in 3 seconds...
+              </p>
             </div>
           </CardContent>
         </Card>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAdmin } from '@/hooks/useAdmin';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,7 +17,9 @@ import {
   Shield,
   DollarSign,
   ShoppingCart,
-  Activity
+  Activity,
+  LogOut,
+  Radio
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -77,6 +80,7 @@ interface Stats {
 
 const Admin = () => {
   const { isAdmin, loading } = useAdmin();
+  const { signOut } = useAuth();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
   const [users, setUsers] = useState<User[]>([]);
@@ -88,6 +92,33 @@ const Admin = () => {
   useEffect(() => {
     if (isAdmin) {
       fetchAllData();
+      
+      // Set up real-time updates for bookings
+      const channel = supabase
+        .channel('admin-bookings-changes')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'bookings'
+          },
+          (payload) => {
+            console.log('Booking change detected:', payload);
+            fetchAllData();
+          }
+        )
+        .subscribe();
+
+      // Auto-refresh every 5 seconds
+      const interval = setInterval(() => {
+        fetchStats();
+      }, 5000);
+
+      return () => {
+        supabase.removeChannel(channel);
+        clearInterval(interval);
+      };
     }
   }, [isAdmin]);
 
@@ -228,16 +259,28 @@ const Admin = () => {
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold mb-2 flex items-center gap-2">
-              <Shield className="h-8 w-8 text-primary" />
-              Admin Dashboard
-            </h1>
-            <p className="text-muted-foreground">Manage bookings, payments, and users</p>
+            <div className="flex items-center gap-3 mb-2">
+              <h1 className="text-4xl font-bold flex items-center gap-2">
+                <Shield className="h-8 w-8 text-primary" />
+                Admin Dashboard
+              </h1>
+              <Badge variant="outline" className="flex items-center gap-1">
+                <Radio className="h-3 w-3 text-green-500 animate-pulse" />
+                Live
+              </Badge>
+            </div>
+            <p className="text-muted-foreground">Manage bookings, payments, and users • Updates automatically</p>
           </div>
-          <Button onClick={fetchAllData} disabled={loadingData}>
-            <RefreshCw className={`h-4 w-4 mr-2 ${loadingData ? 'animate-spin' : ''}`} />
-            Refresh Data
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={fetchAllData} disabled={loadingData} variant="outline">
+              <RefreshCw className={`h-4 w-4 mr-2 ${loadingData ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+            <Button onClick={signOut} variant="destructive">
+              <LogOut className="h-4 w-4 mr-2" />
+              Sign Out
+            </Button>
+          </div>
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
