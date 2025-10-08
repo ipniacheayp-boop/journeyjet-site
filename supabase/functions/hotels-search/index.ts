@@ -130,6 +130,15 @@ serve(async (req) => {
     const offersData = await offersResponse.json();
     console.log('✅ Hotel offers response:', offersData.data?.length || 0, 'offers found');
 
+    // Sort hotels by price (ascending) to show cheapest first
+    if (offersData.data && Array.isArray(offersData.data)) {
+      offersData.data.sort((a: any, b: any) => {
+        const priceA = parseFloat(a.offers?.[0]?.price?.total || '999999');
+        const priceB = parseFloat(b.offers?.[0]?.price?.total || '999999');
+        return priceA - priceB;
+      });
+    }
+
     return new Response(
       JSON.stringify(offersData),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

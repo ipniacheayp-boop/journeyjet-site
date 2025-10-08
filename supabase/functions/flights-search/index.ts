@@ -122,6 +122,15 @@ serve(async (req) => {
     const flightData = await flightResponse.json();
     console.log('✅ Flight search response:', flightData.data?.length || 0, 'offers found');
 
+    // Sort flights by price (ascending) to show cheapest first
+    if (flightData.data && Array.isArray(flightData.data)) {
+      flightData.data.sort((a: any, b: any) => {
+        const priceA = parseFloat(a.price?.total || a.price?.grandTotal || '999999');
+        const priceB = parseFloat(b.price?.total || b.price?.grandTotal || '999999');
+        return priceA - priceB;
+      });
+    }
+
     return new Response(
       JSON.stringify(flightData),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

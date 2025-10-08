@@ -149,6 +149,15 @@ serve(async (req) => {
     const carData = await carResponse.json();
     console.log('✅ Car search response:', carData.data?.length || 0, 'offers found');
 
+    // Sort cars by price (ascending) to show cheapest first
+    if (carData.data && Array.isArray(carData.data)) {
+      carData.data.sort((a: any, b: any) => {
+        const priceA = parseFloat(a.price?.total || '999999');
+        const priceB = parseFloat(b.price?.total || '999999');
+        return priceA - priceB;
+      });
+    }
+
     return new Response(
       JSON.stringify(carData),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

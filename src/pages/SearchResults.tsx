@@ -146,6 +146,11 @@ const SearchResults = () => {
               </div>
             </div>
             <div className="text-right">
+              <div className="flex items-center gap-2 justify-end mb-1">
+                <Badge variant="default" className="bg-green-600 hover:bg-green-700 text-white">
+                  🟢 Lowest Price Guaranteed
+                </Badge>
+              </div>
               <div className="text-2xl font-bold text-primary">${price}</div>
               <p className="text-sm text-muted-foreground">{currency}</p>
             </div>
@@ -200,6 +205,11 @@ const SearchResults = () => {
               </div>
             </div>
             <div className="text-right">
+              <div className="flex items-center gap-2 justify-end mb-1">
+                <Badge variant="default" className="bg-green-600 hover:bg-green-700 text-white">
+                  🟢 Lowest Price Guaranteed
+                </Badge>
+              </div>
               <div className="text-2xl font-bold text-primary">${price}</div>
               <p className="text-sm text-muted-foreground">{currency}</p>
             </div>
@@ -248,6 +258,11 @@ const SearchResults = () => {
               </div>
             </div>
             <div className="text-right">
+              <div className="flex items-center gap-2 justify-end mb-1">
+                <Badge variant="default" className="bg-green-600 hover:bg-green-700 text-white">
+                  🟢 Lowest Price Guaranteed
+                </Badge>
+              </div>
               <div className="text-2xl font-bold text-primary">${price}</div>
               <p className="text-sm text-muted-foreground">{currency}</p>
             </div>
@@ -285,7 +300,7 @@ const SearchResults = () => {
           <div className="mb-8">
             <h1 className="text-4xl font-bold mb-2 capitalize">{type} Search Results</h1>
             <p className="text-muted-foreground">
-              {loading ? "Searching..." : `Found ${results.length} result(s)`}
+              {loading ? "Finding the best available price for you..." : `Found ${results.length} result(s)`}
             </p>
           </div>
 

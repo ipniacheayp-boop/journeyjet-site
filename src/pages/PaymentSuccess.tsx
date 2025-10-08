@@ -18,10 +18,10 @@ const PaymentSuccess = () => {
       description: "Your booking has been confirmed.",
     });
 
-    // Redirect to My Bookings after 3 seconds
+    // Redirect to Agent Connect page after 2 seconds
     const timer = setTimeout(() => {
-      navigate('/my-bookings');
-    }, 3000);
+      navigate('/agent-connect');
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, [navigate]);
@@ -58,7 +58,7 @@ const PaymentSuccess = () => {
                 <Button variant="outline" className="w-full">Back to Home</Button>
               </Link>
               <p className="text-xs text-muted-foreground mt-2">
-                Redirecting to My Bookings in 3 seconds...
+                Our agent will connect with you shortly...
               </p>
             </div>
           </CardContent>
