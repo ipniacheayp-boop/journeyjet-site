@@ -52,31 +52,28 @@ const AdminLogin = () => {
         console.error('Error checking admin status:', roleError);
         await supabase.auth.signOut();
         toast({
-          title: "Access Denied",
-          description: "Unable to verify admin privileges",
+          title: "Login Failed",
+          description: "Unable to verify user privileges",
           variant: "destructive",
         });
         setLoading(false);
         return;
       }
 
-      if (!isAdmin) {
-        await supabase.auth.signOut();
+      // Step 3: Redirect based on role
+      if (isAdmin) {
         toast({
-          title: "Access Denied",
-          description: "Admin privileges required",
-          variant: "destructive",
+          title: "Login Successful",
+          description: "Welcome to the admin dashboard",
         });
-        setLoading(false);
-        return;
+        navigate('/admin');
+      } else {
+        toast({
+          title: "Login Successful",
+          description: "Welcome back!",
+        });
+        navigate('/');
       }
-
-      // Step 3: Redirect to admin dashboard
-      toast({
-        title: "Login Successful",
-        description: "Welcome to the admin dashboard",
-      });
-      navigate('/admin');
     } catch (error) {
       console.error('Login error:', error);
       toast({
@@ -95,9 +92,9 @@ const AdminLogin = () => {
           <div className="mx-auto w-12 h-12 bg-primary rounded-full flex items-center justify-center mb-2">
             <Shield className="w-6 h-6 text-primary-foreground" />
           </div>
-          <CardTitle className="text-2xl">Admin Login</CardTitle>
+          <CardTitle className="text-2xl">Login</CardTitle>
           <CardDescription>
-            Enter your credentials to access the admin dashboard
+            Enter your credentials to continue
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -133,11 +130,6 @@ const AdminLogin = () => {
             </Button>
           </form>
 
-          <div className="mt-6 p-4 bg-secondary rounded-lg">
-            <p className="text-sm text-center text-muted-foreground">
-              This area is restricted to authorized administrators only
-            </p>
-          </div>
         </CardContent>
       </Card>
     </div>
