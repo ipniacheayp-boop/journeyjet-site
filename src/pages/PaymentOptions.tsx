@@ -24,15 +24,25 @@ const PaymentOptions = () => {
   }, [navigate]);
 
   const handlePaymentMethod = async (method: string) => {
-    if (!bookingDetails?.checkoutUrl) {
-      toast.error("No payment URL available");
-      return;
-    }
-
     setLoading(true);
     
-    // Redirect to Stripe checkout
-    window.location.href = bookingDetails.checkoutUrl;
+    try {
+      if (method === 'card') {
+        if (!bookingDetails?.checkoutUrl) {
+          toast.error("No payment URL available");
+          return;
+        }
+        // Redirect to Stripe checkout
+        window.location.href = bookingDetails.checkoutUrl;
+      } else if (method === 'upi') {
+        navigate('/payment/upi');
+      } else if (method === 'scanner') {
+        navigate('/payment/qr');
+      }
+    } catch (error) {
+      toast.error("Failed to process payment method");
+      setLoading(false);
+    }
   };
 
   if (!bookingDetails) {

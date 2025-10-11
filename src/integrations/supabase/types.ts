@@ -165,6 +165,9 @@ export type Database = {
           fare_validated_at: string | null
           hold_expiry: string | null
           id: string
+          payment_method: string | null
+          payment_reference: string | null
+          payment_status: string | null
           refund_amount: number | null
           refund_reason: string | null
           refund_status: string | null
@@ -172,6 +175,7 @@ export type Database = {
           stripe_payment_intent_id: string | null
           stripe_session_id: string | null
           ticket_issued_at: string | null
+          transaction_id: string | null
           updated_at: string
           user_id: string | null
         }
@@ -191,6 +195,9 @@ export type Database = {
           fare_validated_at?: string | null
           hold_expiry?: string | null
           id?: string
+          payment_method?: string | null
+          payment_reference?: string | null
+          payment_status?: string | null
           refund_amount?: number | null
           refund_reason?: string | null
           refund_status?: string | null
@@ -198,6 +205,7 @@ export type Database = {
           stripe_payment_intent_id?: string | null
           stripe_session_id?: string | null
           ticket_issued_at?: string | null
+          transaction_id?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -217,6 +225,9 @@ export type Database = {
           fare_validated_at?: string | null
           hold_expiry?: string | null
           id?: string
+          payment_method?: string | null
+          payment_reference?: string | null
+          payment_status?: string | null
           refund_amount?: number | null
           refund_reason?: string | null
           refund_status?: string | null
@@ -224,6 +235,7 @@ export type Database = {
           stripe_payment_intent_id?: string | null
           stripe_session_id?: string | null
           ticket_issued_at?: string | null
+          transaction_id?: string | null
           updated_at?: string
           user_id?: string | null
         }

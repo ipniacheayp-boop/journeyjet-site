@@ -18,10 +18,13 @@ const PaymentSuccess = () => {
       description: "Your booking has been confirmed.",
     });
 
-    // Redirect to Agent Connect page after 2 seconds
+    // Clear pending booking from session storage
+    sessionStorage.removeItem('pendingBooking');
+
+    // Redirect to Agent Connect page after 3 seconds
     const timer = setTimeout(() => {
       navigate('/agent-connect');
-    }, 2000);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, [navigate]);
