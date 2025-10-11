@@ -74,3 +74,9 @@ verify_jwt = true
 
 [functions.stripe-webhook]
 verify_jwt = false
+
+[functions.payments-upi-initiate]
+verify_jwt = false
+
+[functions.payments-stripe-publishable-key]
+verify_jwt = false

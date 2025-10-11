@@ -197,6 +197,62 @@ serve(async (req) => {
       }
     }
 
+    // Handle direct PaymentIntent success/failure (Elements flow)
+    if (event.type === 'payment_intent.succeeded') {
+      const pi = event.data.object as Stripe.PaymentIntent;
+      logStep('Processing payment_intent.succeeded', { id: pi.id, metadata: pi.metadata });
+
+      const bookingId = (pi.metadata as any)?.bookingId;
+
+      if (bookingId) {
+        await supabaseClient
+          .from('bookings')
+          .update({
+            status: 'confirmed',
+            payment_status: 'succeeded',
+            payment_method: 'stripe',
+            stripe_payment_intent_id: pi.id,
+            confirmed_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', bookingId);
+
+        logStep('Booking updated from PI metadata', { bookingId });
+      } else {
+        // Fallback: find by stored payment_intent_id
+        const { data: found } = await supabaseClient
+          .from('bookings')
+          .select('id')
+          .eq('stripe_payment_intent_id', pi.id)
+          .maybeSingle();
+        if (found?.id) {
+          await supabaseClient
+            .from('bookings')
+            .update({
+              status: 'confirmed',
+              payment_status: 'succeeded',
+              payment_method: 'stripe',
+              confirmed_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', found.id);
+          logStep('Booking updated by PI id', { bookingId: found.id });
+        }
+      }
+    }
+
+    if (event.type === 'payment_intent.payment_failed') {
+      const pi = event.data.object as Stripe.PaymentIntent;
+      const bookingId = (pi.metadata as any)?.bookingId;
+      if (bookingId) {
+        await supabaseClient
+          .from('bookings')
+          .update({ payment_status: 'failed', updated_at: new Date().toISOString() })
+          .eq('id', bookingId);
+        logStep('Marked booking as failed', { bookingId });
+      }
+    }
+
     // Mark webhook event as processed
     await supabaseClient
       .from('webhook_events')
@@ -204,7 +260,7 @@ serve(async (req) => {
       .eq('event_id', event.id);
 
     logStep('Webhook processed successfully');
-    
+
     return new Response(JSON.stringify({ received: true }), {
       headers: { 'Content-Type': 'application/json' },
       status: 200,

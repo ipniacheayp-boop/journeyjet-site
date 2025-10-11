@@ -12,7 +12,8 @@ import { CreditCard, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
-const stripePromise = loadStripe(import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || "");
+// Stripe publishable key is loaded at runtime from backend
+// const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "");
 
 const CheckoutForm = ({ bookingDetails, onSuccess }: any) => {
   const stripe = useStripe();
@@ -168,8 +169,23 @@ const CheckoutForm = ({ bookingDetails, onSuccess }: any) => {
 
 const PaymentCard = () => {
   const [bookingDetails, setBookingDetails] = useState<any>(null);
+  const [stripePromise, setStripePromise] = useState<Promise<any> | null>(null);
 
   useEffect(() => {
+    // Load Stripe publishable key dynamically
+    (async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke('payments-stripe-publishable-key');
+        if (error || !data?.publishableKey) {
+          toast.error('Stripe is not configured');
+          return;
+        }
+        setStripePromise(loadStripe(data.publishableKey));
+      } catch (e) {
+        console.error('Failed to load Stripe key', e);
+      }
+    })();
+
     const storedBooking = sessionStorage.getItem('pendingBooking');
     if (storedBooking) {
       setBookingDetails(JSON.parse(storedBooking));
@@ -212,9 +228,15 @@ const PaymentCard = () => {
               <CardTitle>Payment Information</CardTitle>
             </CardHeader>
             <CardContent>
-              <Elements stripe={stripePromise}>
-                <CheckoutForm bookingDetails={bookingDetails} />
-              </Elements>
+              {stripePromise ? (
+                <Elements stripe={stripePromise}>
+                  <CheckoutForm bookingDetails={bookingDetails} />
+                </Elements>
+              ) : (
+                <div className="flex items-center justify-center py-8 text-muted-foreground">
+                  <Loader2 className="h-5 w-5 animate-spin mr-2" /> Loading payment form...
+                </div>
+              )}
             </CardContent>
           </Card>
 

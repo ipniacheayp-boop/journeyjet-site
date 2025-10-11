@@ -43,13 +43,14 @@ serve(async (req) => {
 
     // Store QR transaction in booking
     await supabaseClient
-      .from("bookings")
+      .from('bookings')
       .update({
-        payment_method: "qr",
+        payment_method: 'qr',
+        payment_status: 'pending',
         transaction_id: transactionId,
         updated_at: new Date().toISOString(),
       })
-      .eq("id", bookingId);
+      .eq('id', bookingId);
 
     console.log(`QR code generated for booking ${bookingId}`);
 

@@ -69,8 +69,8 @@ const PaymentUPI = () => {
     setLoading(true);
     setPolling(true);
 
-    try {
-      const { data, error } = await supabase.functions.invoke('payments-upi-confirm', {
+  try {
+      const { data, error } = await supabase.functions.invoke('payments-upi-initiate', {
         body: {
           bookingId: bookingDetails.bookingId,
           upiId,
@@ -92,19 +92,19 @@ const PaymentUPI = () => {
             clearInterval(pollInterval);
             setPolling(false);
             sessionStorage.removeItem('pendingBooking');
-            toast.success("Payment confirmed!");
+            toast.success('Payment confirmed!');
             navigate(`/payment-success?transaction_id=${statusData.transaction_id}`);
           }
         } catch (error) {
-          console.error("Polling error:", error);
+          console.error('Polling error:', error);
         }
       }, 5000);
 
-      // Stop polling after 2 minutes
+      // Stop polling after 3 minutes
       setTimeout(() => {
         clearInterval(pollInterval);
         setPolling(false);
-      }, 120000);
+      }, 180000);
 
     } catch (error: any) {
       console.error("UPI payment error:", error);
