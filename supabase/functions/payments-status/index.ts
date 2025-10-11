@@ -35,8 +35,27 @@ serve(async (req) => {
       throw new Error("Booking not found");
     }
 
+    // Add currency conversion if needed
+    let amountInr = null;
+    if (booking.currency === 'USD') {
+      try {
+        const convertResponse = await fetch(
+          `https://api.exchangerate-api.com/v4/latest/USD`
+        );
+        const convertData = await convertResponse.json();
+        amountInr = parseFloat((booking.amount * convertData.rates.INR).toFixed(2));
+      } catch (error) {
+        console.error("Currency conversion error:", error);
+        amountInr = parseFloat((booking.amount * 83).toFixed(2)); // Fallback
+      }
+    }
+
     return new Response(
-      JSON.stringify(booking),
+      JSON.stringify({
+        ...booking,
+        amount_usd: booking.currency === 'USD' ? booking.amount : null,
+        amount_inr: booking.currency === 'INR' ? booking.amount : amountInr,
+      }),
       { 
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200 

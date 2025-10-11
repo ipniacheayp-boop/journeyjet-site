@@ -14,16 +14,39 @@ const PaymentQR = () => {
   const [bookingDetails, setBookingDetails] = useState<any>(null);
   const [qrData, setQrData] = useState<any>(null);
   const [polling, setPolling] = useState(false);
+  const [convertedAmount, setConvertedAmount] = useState<number | null>(null);
 
   useEffect(() => {
     const storedBooking = sessionStorage.getItem('pendingBooking');
     if (storedBooking) {
-      setBookingDetails(JSON.parse(storedBooking));
+      const booking = JSON.parse(storedBooking);
+      setBookingDetails(booking);
+      
+      // Convert currency if needed
+      if (booking.currency === 'USD') {
+        convertCurrency(booking.amount);
+      } else {
+        setConvertedAmount(parseFloat(booking.amount));
+      }
     } else {
       toast.error("No booking found");
       navigate('/');
     }
   }, [navigate]);
+
+  const convertCurrency = async (usdAmount: number) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('payments-convert', {
+        body: { from: 'USD', to: 'INR', amount: usdAmount },
+      });
+
+      if (error) throw error;
+      setConvertedAmount(data.convertedAmount);
+    } catch (error) {
+      console.error("Currency conversion error:", error);
+      setConvertedAmount(usdAmount * 83); // Fallback rate
+    }
+  };
 
   useEffect(() => {
     if (bookingDetails) {
@@ -144,8 +167,13 @@ const PaymentQR = () => {
 
               <div className="text-center space-y-2">
                 <p className="text-2xl font-bold text-primary">
-                  ₹{parseFloat(amount).toFixed(2)}
+                  ₹{convertedAmount ? convertedAmount.toFixed(2) : '...'}
                 </p>
+                {bookingDetails.currency === 'USD' && convertedAmount && (
+                  <p className="text-xs text-muted-foreground">
+                    (Original: ${parseFloat(bookingDetails.amount).toFixed(2)} USD)
+                  </p>
+                )}
                 <p className="text-sm text-muted-foreground">
                   Transaction ID: {qrData?.transactionId?.slice(0, 12)}...
                 </p>

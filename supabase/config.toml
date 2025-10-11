@@ -54,6 +54,15 @@ verify_jwt = false
 [functions.payments-status]
 verify_jwt = false
 
+[functions.payments-convert]
+verify_jwt = false
+
+[functions.payments-stripe-create-intent]
+verify_jwt = false
+
+[functions.payments-confirm]
+verify_jwt = false
+
 [functions.payments-refund]
 verify_jwt = true
 

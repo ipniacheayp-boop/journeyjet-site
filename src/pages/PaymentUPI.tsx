@@ -16,18 +16,42 @@ const PaymentUPI = () => {
   const [bookingDetails, setBookingDetails] = useState<any>(null);
   const [upiId, setUpiId] = useState("");
   const [copied, setCopied] = useState(false);
+  const [convertedAmount, setConvertedAmount] = useState<number | null>(null);
+  const [polling, setPolling] = useState(false);
   
   const merchantVPA = "pay@flynow";
 
   useEffect(() => {
     const storedBooking = sessionStorage.getItem('pendingBooking');
     if (storedBooking) {
-      setBookingDetails(JSON.parse(storedBooking));
+      const booking = JSON.parse(storedBooking);
+      setBookingDetails(booking);
+      
+      // Convert currency if needed
+      if (booking.currency === 'USD') {
+        convertCurrency(booking.amount);
+      } else {
+        setConvertedAmount(parseFloat(booking.amount));
+      }
     } else {
       toast.error("No booking found");
       navigate('/');
     }
   }, [navigate]);
+
+  const convertCurrency = async (usdAmount: number) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('payments-convert', {
+        body: { from: 'USD', to: 'INR', amount: usdAmount },
+      });
+
+      if (error) throw error;
+      setConvertedAmount(data.convertedAmount);
+    } catch (error) {
+      console.error("Currency conversion error:", error);
+      setConvertedAmount(usdAmount * 83); // Fallback rate
+    }
+  };
 
   const copyVPA = () => {
     navigator.clipboard.writeText(merchantVPA);
@@ -43,31 +67,49 @@ const PaymentUPI = () => {
     }
 
     setLoading(true);
+    setPolling(true);
 
     try {
       const { data, error } = await supabase.functions.invoke('payments-upi-confirm', {
         body: {
           bookingId: bookingDetails.bookingId,
           upiId,
-          amount: bookingDetails.amount,
-          currency: bookingDetails.currency || 'INR',
+          amount: convertedAmount || bookingDetails.amount,
+          currency: 'INR',
         },
       });
 
       if (error) throw error;
 
-      if (data.success) {
-        sessionStorage.removeItem('pendingBooking');
-        toast.success("Payment successful!");
-        navigate(`/payment-success?transaction_id=${data.transactionId}`);
-      } else {
-        throw new Error(data.message || "Payment failed");
-      }
+      // Start polling for payment confirmation
+      const pollInterval = setInterval(async () => {
+        try {
+          const { data: statusData } = await supabase.functions.invoke('payments-status', {
+            body: { bookingId: bookingDetails.bookingId },
+          });
+
+          if (statusData?.payment_status === 'succeeded') {
+            clearInterval(pollInterval);
+            setPolling(false);
+            sessionStorage.removeItem('pendingBooking');
+            toast.success("Payment confirmed!");
+            navigate(`/payment-success?transaction_id=${statusData.transaction_id}`);
+          }
+        } catch (error) {
+          console.error("Polling error:", error);
+        }
+      }, 5000);
+
+      // Stop polling after 2 minutes
+      setTimeout(() => {
+        clearInterval(pollInterval);
+        setPolling(false);
+      }, 120000);
+
     } catch (error: any) {
       console.error("UPI payment error:", error);
       toast.error(error.message || "Payment failed. Please try again.");
-      navigate('/payment-cancel');
-    } finally {
+      setPolling(false);
       setLoading(false);
     }
   };
@@ -124,9 +166,25 @@ const PaymentUPI = () => {
               <div className="flex justify-between p-4 bg-primary/5 rounded-lg border border-primary/20">
                 <span className="font-medium">Amount to Pay</span>
                 <span className="text-2xl font-bold text-primary">
-                  ₹{parseFloat(amount).toFixed(2)}
+                  ₹{convertedAmount ? convertedAmount.toFixed(2) : '...'}
                 </span>
               </div>
+              
+              {bookingDetails.currency === 'USD' && convertedAmount && (
+                <p className="text-sm text-muted-foreground text-center">
+                  (Original: ${parseFloat(bookingDetails.amount).toFixed(2)} USD)
+                </p>
+              )}
+
+              {polling && (
+                <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 text-center">
+                  <Loader2 className="h-5 w-5 animate-spin text-primary mx-auto mb-2" />
+                  <p className="font-medium">Waiting for payment confirmation...</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    This usually takes 10-30 seconds
+                  </p>
+                </div>
+              )}
 
               <div className="space-y-2">
                 <Label htmlFor="upiId">Your UPI ID</Label>
@@ -145,17 +203,17 @@ const PaymentUPI = () => {
 
               <Button 
                 onClick={handlePayment} 
-                disabled={loading || !upiId}
+                disabled={loading || !upiId || !convertedAmount || polling}
                 className="w-full"
                 size="lg"
               >
-                {loading ? (
+                {loading || polling ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processing Payment...
+                    {polling ? 'Waiting for Confirmation...' : 'Processing Payment...'}
                   </>
                 ) : (
-                  `Pay ₹${parseFloat(amount).toFixed(2)}`
+                  `Pay ₹${convertedAmount ? convertedAmount.toFixed(2) : '...'}`
                 )}
               </Button>
 

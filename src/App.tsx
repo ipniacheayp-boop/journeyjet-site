@@ -22,6 +22,7 @@ import AgentConnect from "./pages/AgentConnect";
 import AgentWallet from "./pages/AgentWallet";
 import PaymentCancel from "./pages/PaymentCancel";
 import PaymentOptions from "./pages/PaymentOptions";
+import PaymentCard from "./pages/PaymentCard";
 import PaymentUPI from "./pages/PaymentUPI";
 import PaymentQR from "./pages/PaymentQR";
 import ErrorPage from "./pages/ErrorPage";
@@ -51,6 +52,7 @@ const App = () => (
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/payment-options" element={<PaymentOptions />} />
+              <Route path="/payment/card" element={<PaymentCard />} />
               <Route path="/payment/upi" element={<PaymentUPI />} />
               <Route path="/payment/qr" element={<PaymentQR />} />
               <Route path="/payment-success" element={<PaymentSuccess />} />
