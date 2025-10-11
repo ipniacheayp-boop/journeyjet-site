@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
 export const useBooking = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,6 +21,7 @@ export const useBooking = () => {
       return data;
     } catch (err: any) {
       setError(err.message || 'Failed to create booking');
+      navigate('/error');
       throw err;
     } finally {
       setLoading(false);
@@ -39,6 +42,7 @@ export const useBooking = () => {
       return data;
     } catch (err: any) {
       setError(err.message || 'Failed to create hotel booking');
+      navigate('/error');
       throw err;
     } finally {
       setLoading(false);
@@ -59,6 +63,7 @@ export const useBooking = () => {
       return data;
     } catch (err: any) {
       setError(err.message || 'Failed to create car booking');
+      navigate('/error');
       throw err;
     } finally {
       setLoading(false);

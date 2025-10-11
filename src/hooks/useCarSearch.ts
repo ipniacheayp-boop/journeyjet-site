@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface CarSearchParams {
@@ -9,6 +10,7 @@ export interface CarSearchParams {
 }
 
 export const useCarSearch = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,6 +43,7 @@ export const useCarSearch = () => {
       const errorMessage = err.message || 'Failed to search cars';
       console.error('❌ Search error:', errorMessage);
       setError(errorMessage);
+      navigate('/error');
       throw err;
     } finally {
       setLoading(false);

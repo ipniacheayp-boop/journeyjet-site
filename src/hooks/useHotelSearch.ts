@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface HotelSearchParams {
@@ -11,6 +12,7 @@ export interface HotelSearchParams {
 }
 
 export const useHotelSearch = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,6 +45,7 @@ export const useHotelSearch = () => {
       const errorMessage = err.message || 'Failed to search hotels';
       console.error('❌ Search error:', errorMessage);
       setError(errorMessage);
+      navigate('/error');
       throw err;
     } finally {
       setLoading(false);
