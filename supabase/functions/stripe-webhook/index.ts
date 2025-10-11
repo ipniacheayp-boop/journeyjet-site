@@ -43,22 +43,48 @@ serve(async (req) => {
     
     const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET');
 
+    if (!webhookSecret) {
+      logStep("ERROR: STRIPE_WEBHOOK_SECRET not configured");
+      return new Response('Webhook secret not configured', { status: 500 });
+    }
+
     let event: Stripe.Event;
     
-    if (webhookSecret) {
-      try {
-        event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
-        logStep("Signature verified successfully");
-      } catch (err) {
-        logStep("ERROR: Signature verification failed", { error: err instanceof Error ? err.message : 'Unknown error' });
-        return new Response('Invalid signature', { status: 400 });
-      }
-    } else {
-      logStep("WARNING: No webhook secret, parsing without verification");
-      event = JSON.parse(body);
+    try {
+      event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+      logStep("Signature verified successfully");
+    } catch (err) {
+      logStep("ERROR: Signature verification failed", { error: err instanceof Error ? err.message : 'Unknown error' });
+      return new Response('Invalid signature', { status: 400 });
     }
 
     logStep('Event received', { type: event.type, id: event.id });
+
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    // Check for duplicate event (idempotency)
+    const { data: existingEvent } = await supabaseClient
+      .from('webhook_events')
+      .select('id')
+      .eq('event_id', event.id)
+      .single();
+
+    if (existingEvent) {
+      logStep("Duplicate event detected, skipping");
+      return new Response(JSON.stringify({ received: true, duplicate: true }), { status: 200 });
+    }
+
+    // Store webhook event for idempotency
+    await supabaseClient.from('webhook_events').insert({
+      event_id: event.id,
+      event_type: event.type,
+      provider: 'stripe',
+      payload: event,
+      processed: false,
+    });
 
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object as Stripe.Checkout.Session;
@@ -71,6 +97,51 @@ serve(async (req) => {
       
       const bookingId = session.metadata?.booking_id;
       const bookingType = session.metadata?.booking_type;
+      const walletTopup = session.metadata?.type === 'wallet_topup';
+
+      // Handle wallet top-up
+      if (walletTopup) {
+        const agentId = session.metadata?.agent_id;
+        const topupAmount = parseFloat(session.metadata?.topup_amount || '0');
+        const currency = session.metadata?.currency || 'USD';
+
+        if (agentId && topupAmount > 0) {
+          const { data: wallet } = await supabaseClient
+            .from('agent_wallet')
+            .select('balance')
+            .eq('agent_id', agentId)
+            .single();
+
+          const currentBalance = wallet?.balance || 0;
+          const newBalance = currentBalance + topupAmount;
+
+          await supabaseClient.from('agent_wallet').upsert({
+            agent_id: agentId,
+            balance: newBalance,
+            currency,
+            last_topup_at: new Date().toISOString(),
+          });
+
+          await supabaseClient.from('wallet_transactions').insert({
+            agent_id: agentId,
+            type: 'topup',
+            amount: topupAmount,
+            currency,
+            stripe_payment_intent_id: session.payment_intent as string,
+            description: 'Wallet top-up via Stripe',
+            balance_after: newBalance,
+          });
+
+          logStep("Wallet topped up", { agentId, amount: topupAmount });
+        }
+
+        await supabaseClient
+          .from('webhook_events')
+          .update({ processed: true, processed_at: new Date().toISOString() })
+          .eq('event_id', event.id);
+
+        return new Response(JSON.stringify({ received: true }), { status: 200 });
+      }
 
       if (!bookingId) {
         logStep('ERROR: No booking ID in session metadata', { metadata: session.metadata });
@@ -79,20 +150,17 @@ serve(async (req) => {
 
       logStep('Processing completed checkout for booking', { bookingId, bookingType });
 
-      const supabaseClient = createClient(
-        Deno.env.get('SUPABASE_URL') ?? '',
-        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-      );
-
       // Update booking status to confirmed
-      const { error: updateError } = await supabaseClient
+      const { data: booking, error: updateError } = await supabaseClient
         .from('bookings')
         .update({
           status: 'confirmed',
           stripe_payment_intent_id: session.payment_intent as string,
           confirmed_at: new Date().toISOString(),
         })
-        .eq('id', bookingId);
+        .eq('id', bookingId)
+        .select()
+        .single();
 
       if (updateError) {
         logStep('ERROR: Failed to update booking', { bookingId, error: updateError });
@@ -100,7 +168,40 @@ serve(async (req) => {
       }
 
       logStep('Booking confirmed successfully', { bookingId });
+
+      // Calculate and record commission if booking has an agent
+      if (booking?.agent_id) {
+        const { data: agentProfile } = await supabaseClient
+          .from('agent_profiles')
+          .select('commission_rate, stripe_connect_account_id')
+          .eq('id', booking.agent_id)
+          .single();
+
+        if (agentProfile) {
+          const baseFare = parseFloat(booking.amount || '0');
+          const commissionRate = agentProfile.commission_rate || 10;
+          const commissionAmount = (baseFare * commissionRate) / 100;
+
+          await supabaseClient.from('agent_commissions').insert({
+            agent_id: booking.agent_id,
+            booking_id: booking.id,
+            base_fare: baseFare,
+            commission_rate: commissionRate,
+            commission_amount: commissionAmount,
+            currency: booking.currency || 'USD',
+            payout_status: 'pending',
+          });
+
+          logStep("Commission recorded", { agentId: booking.agent_id, amount: commissionAmount });
+        }
+      }
     }
+
+    // Mark webhook event as processed
+    await supabaseClient
+      .from('webhook_events')
+      .update({ processed: true, processed_at: new Date().toISOString() })
+      .eq('event_id', event.id);
 
     logStep('Webhook processed successfully');
     

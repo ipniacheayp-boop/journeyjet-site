@@ -9,52 +9,79 @@ const AgentConnect = () => {
   const contactNumber = "+919876543210";
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-secondary/20">
       <Header />
       
-      <main className="flex-1 pt-24 pb-16 flex items-center justify-center animate-fade-in">
-        <Card className="w-full max-w-lg mx-4">
-          <CardHeader className="text-center">
-            <div className="mx-auto w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-              <Headset className="w-12 h-12 text-primary" />
-            </div>
-            <CardTitle className="text-3xl mb-2">Our Travel Agent Will Connect With You Shortly</CardTitle>
-            <p className="text-muted-foreground text-lg">
-              We've received your request. One of our representatives will contact you soon.
-            </p>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="bg-secondary/50 p-6 rounded-lg text-center">
-              <p className="text-sm text-muted-foreground mb-2">Official Contact Number</p>
-              <a 
-                href={`tel:${contactNumber}`}
-                className="text-3xl font-bold text-primary hover:underline flex items-center justify-center gap-2"
-              >
-                <Phone className="w-6 h-6" />
-                +91 98765 43210
-              </a>
-            </div>
-            
-            <div className="flex flex-col gap-3">
-              <a href={`tel:${contactNumber}`} className="w-full">
-                <Button className="w-full" size="lg">
-                  <Phone className="mr-2 h-5 w-5" />
-                  Call Now
-                </Button>
-              </a>
-              <Link to="/" className="w-full">
-                <Button variant="outline" className="w-full" size="lg">
-                  <Home className="mr-2 h-5 w-5" />
-                  Back to Home
-                </Button>
-              </Link>
-            </div>
+      <main className="flex-1 pt-24 pb-16 flex items-center justify-center">
+        <div className="w-full max-w-2xl mx-4 space-y-6 animate-fade-in">
+          <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+            <CardHeader className="text-center pb-8">
+              <div className="mx-auto w-24 h-24 bg-gradient-to-br from-primary to-primary/60 rounded-full flex items-center justify-center mb-6 shadow-lg animate-pulse">
+                <Headset className="w-14 h-14 text-primary-foreground" />
+              </div>
+              <CardTitle className="text-4xl mb-3 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                Our Travel Agent Will Contact You Shortly
+              </CardTitle>
+              <p className="text-muted-foreground text-lg max-w-md mx-auto">
+                Thank you for choosing our services! One of our expert travel agents will reach out to you within the next few minutes.
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="bg-gradient-to-br from-primary/10 to-primary/5 p-8 rounded-xl border border-primary/20 text-center">
+                <p className="text-sm text-muted-foreground mb-3 uppercase tracking-wide">24/7 Support Hotline</p>
+                <a 
+                  href={`tel:${contactNumber}`}
+                  className="text-4xl font-bold text-primary hover:text-primary/80 transition-colors flex items-center justify-center gap-3 group"
+                >
+                  <Phone className="w-8 h-8 group-hover:scale-110 transition-transform" />
+                  +91 98765 43210
+                </a>
+                <p className="text-xs text-muted-foreground mt-3">Tap to call instantly</p>
+              </div>
+              
+              <div className="grid sm:grid-cols-2 gap-3">
+                <a href={`tel:${contactNumber}`} className="w-full">
+                  <Button className="w-full h-14 text-lg hover-scale" size="lg">
+                    <Phone className="mr-2 h-6 w-6" />
+                    Call Now
+                  </Button>
+                </a>
+                <Link to="/" className="w-full">
+                  <Button variant="outline" className="w-full h-14 text-lg hover-scale" size="lg">
+                    <Home className="mr-2 h-6 w-6" />
+                    Back to Home
+                  </Button>
+                </Link>
+              </div>
 
-            <div className="text-center text-sm text-muted-foreground pt-4 border-t">
-              <p>Our agents are available 24/7 to assist you with your travel needs.</p>
-            </div>
-          </CardContent>
-        </Card>
+              <div className="bg-secondary/30 p-6 rounded-lg">
+                <h3 className="font-semibold mb-3 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                  What happens next?
+                </h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li className="flex gap-2">
+                    <span className="text-primary font-bold">1.</span>
+                    <span>Our agent will call you within 5-10 minutes</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-primary font-bold">2.</span>
+                    <span>They'll confirm your booking details and preferences</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-primary font-bold">3.</span>
+                    <span>You'll receive ticket confirmation via email & SMS</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="text-center text-sm text-muted-foreground pt-4 border-t">
+                <p className="font-medium">Need immediate assistance?</p>
+                <p>Our agents are available <span className="text-primary font-semibold">24/7</span> to assist you with your travel needs.</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </main>
 
       <Footer />

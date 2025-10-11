@@ -18,6 +18,7 @@ import UserLogin from "./pages/UserLogin";
 import MyBookings from "./pages/MyBookings";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import AgentConnect from "./pages/AgentConnect";
+import AgentWallet from "./pages/AgentWallet";
 import PaymentCancel from "./pages/PaymentCancel";
 import PaymentOptions from "./pages/PaymentOptions";
 import NotFound from "./pages/NotFound";
@@ -48,6 +49,7 @@ const App = () => (
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/payment-cancel" element={<PaymentCancel />} />
           <Route path="/agent-connect" element={<AgentConnect />} />
+          <Route path="/agent/wallet" element={<AgentWallet />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
