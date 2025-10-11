@@ -7,8 +7,19 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const sanitizeForLog = (obj: any) => {
+  if (!obj || typeof obj !== 'object') return obj;
+  const sanitized = { ...obj };
+  delete sanitized.email;
+  delete sanitized.token;
+  delete sanitized.authorization;
+  delete sanitized.Authorization;
+  return sanitized;
+};
+
 const logStep = (step: string, details?: any) => {
-  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
+  const safeDetails = details ? sanitizeForLog(details) : undefined;
+  const detailsStr = safeDetails ? ` - ${JSON.stringify(safeDetails)}` : '';
   console.log(`[ADMIN-PAYMENTS] ${step}${detailsStr}`);
 };
 
@@ -49,7 +60,7 @@ serve(async (req) => {
       });
     }
 
-    logStep("User authenticated", { userId: user.id, email: user.email });
+    logStep("User authenticated", { userId: user.id });
 
     // Check if user is admin - CRITICAL: Pass user ID to RPC
     const { data: isAdmin, error: adminError } = await supabaseClient.rpc('is_admin', {});
@@ -134,7 +145,8 @@ serve(async (req) => {
     const isStripeError = errorMessage.includes('Stripe') || errorMessage.includes('API key');
     
     return new Response(JSON.stringify({ 
-      error: isStripeError ? `Stripe: ${errorMessage}` : errorMessage 
+      error: 'An error occurred processing your request',
+      code: 'INTERNAL_ERROR'
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,

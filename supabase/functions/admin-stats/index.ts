@@ -101,9 +101,11 @@ serve(async (req) => {
       status: 200,
     });
   } catch (error) {
-    console.error("Admin stats error:", error);
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    return new Response(JSON.stringify({ error: errorMessage }), {
+    console.error("[Internal Error]", error instanceof Error ? error.message : String(error));
+    return new Response(JSON.stringify({ 
+      error: 'An error occurred processing your request',
+      code: 'INTERNAL_ERROR'
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });

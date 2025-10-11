@@ -2,8 +2,24 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 
+const sanitizeForLog = (obj: any) => {
+  if (!obj || typeof obj !== 'object') return obj;
+  const sanitized = { ...obj };
+  delete sanitized.authorization;
+  delete sanitized.Authorization;
+  delete sanitized['stripe-signature'];
+  if (sanitized.metadata) {
+    const meta = { ...sanitized.metadata };
+    delete meta.email;
+    delete meta.phone;
+    sanitized.metadata = meta;
+  }
+  return sanitized;
+};
+
 const logStep = (step: string, details?: any) => {
-  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
+  const safeDetails = details ? sanitizeForLog(details) : undefined;
+  const detailsStr = safeDetails ? ` - ${JSON.stringify(safeDetails)}` : '';
   console.log(`[STRIPE-WEBHOOK] ${step}${detailsStr}`);
 };
 
@@ -99,7 +115,10 @@ serve(async (req) => {
     });
     
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error occurred' }),
+      JSON.stringify({ 
+        error: 'An error occurred processing the webhook',
+        code: 'WEBHOOK_ERROR'
+      }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }

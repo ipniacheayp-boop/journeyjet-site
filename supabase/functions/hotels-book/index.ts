@@ -55,11 +55,11 @@ serve(async (req) => {
       .single();
 
     if (bookingError) {
-      console.error('Error creating booking:', bookingError);
+      console.error('[Internal Error] Hotel booking creation failed');
       throw new Error('Failed to create booking');
     }
 
-    console.log('Created hotel booking:', booking.id);
+    console.log('Hotel booking created:', booking.id);
 
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
       apiVersion: '2025-08-27.basil',
@@ -103,9 +103,12 @@ serve(async (req) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
-    console.error('Error in hotels-book:', error);
+    console.error('[Internal Error]', error instanceof Error ? error.message : 'Unknown error');
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error occurred' }),
+      JSON.stringify({ 
+        error: 'An error occurred processing your booking',
+        code: 'BOOKING_ERROR'
+      }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
