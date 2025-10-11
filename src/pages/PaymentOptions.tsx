@@ -31,6 +31,8 @@ const PaymentOptions = () => {
         navigate('/payment/card');
       } else if (method === 'upi') {
         navigate('/payment/upi');
+      } else if (method === 'stripe-upi') {
+        navigate('/payment/stripe-upi');
       } else if (method === 'scanner') {
         navigate('/payment/qr');
       }
@@ -68,7 +70,7 @@ const PaymentOptions = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <Card 
               className="cursor-pointer hover:shadow-lg transition-all hover:border-primary group"
               onClick={() => handlePaymentMethod('card')}
@@ -105,6 +107,26 @@ const PaymentOptions = () => {
                 </p>
                 <p className="text-xs text-muted-foreground mt-2">
                   Google Pay, PhonePe, Paytm
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card 
+              className="cursor-pointer hover:shadow-lg transition-all hover:border-primary group"
+              onClick={() => handlePaymentMethod('stripe-upi')}
+            >
+              <CardHeader className="text-center">
+                <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                  <Smartphone className="w-8 h-8 text-primary" />
+                </div>
+                <CardTitle className="text-xl">UPI (Stripe)</CardTitle>
+              </CardHeader>
+              <CardContent className="text-center">
+                <p className="text-sm text-muted-foreground">
+                  Pay via UPI using Stripe
+                </p>
+                <p className="text-xs text-muted-foreground mt-2">
+                  Supported in INR
                 </p>
               </CardContent>
             </Card>

@@ -24,6 +24,7 @@ import PaymentCancel from "./pages/PaymentCancel";
 import PaymentOptions from "./pages/PaymentOptions";
 import PaymentCard from "./pages/PaymentCard";
 import PaymentUPI from "./pages/PaymentUPI";
+import PaymentStripeUPI from "./pages/PaymentStripeUPI";
 import PaymentQR from "./pages/PaymentQR";
 import ErrorPage from "./pages/ErrorPage";
 import NotFound from "./pages/NotFound";
@@ -54,6 +55,7 @@ const App = () => (
               <Route path="/payment-options" element={<PaymentOptions />} />
               <Route path="/payment/card" element={<PaymentCard />} />
               <Route path="/payment/upi" element={<PaymentUPI />} />
+              <Route path="/payment/stripe-upi" element={<PaymentStripeUPI />} />
               <Route path="/payment/qr" element={<PaymentQR />} />
               <Route path="/payment-success" element={<PaymentSuccess />} />
               <Route path="/payment-cancel" element={<PaymentCancel />} />

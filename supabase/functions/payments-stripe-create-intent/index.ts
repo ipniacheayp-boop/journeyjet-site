@@ -27,7 +27,7 @@ serve(async (req) => {
     // Verify booking exists
     const { data: booking, error: bookingError } = await supabaseClient
       .from("bookings")
-      .select("id, amount, currency")
+      .select("id, amount, currency, contact_email")
       .eq("id", bookingId)
       .single();
 
@@ -41,8 +41,10 @@ serve(async (req) => {
 
     // Create payment intent
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(parseFloat(amount) * 100), // Convert to cents
+      amount: Math.round(parseFloat(amount) * 100), // Convert to smallest currency unit
       currency: currency.toLowerCase(),
+      automatic_payment_methods: { enabled: true },
+      receipt_email: booking.contact_email || undefined,
       metadata: {
         bookingId,
       },
