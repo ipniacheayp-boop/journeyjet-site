@@ -14,8 +14,145 @@ export type Database = {
   }
   public: {
     Tables: {
+      agent_commissions: {
+        Row: {
+          agent_id: string
+          base_fare: number
+          booking_id: string
+          commission_amount: number
+          commission_rate: number
+          created_at: string | null
+          currency: string | null
+          id: string
+          paid_at: string | null
+          payout_status: string | null
+          stripe_transfer_id: string | null
+        }
+        Insert: {
+          agent_id: string
+          base_fare: number
+          booking_id: string
+          commission_amount: number
+          commission_rate: number
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          paid_at?: string | null
+          payout_status?: string | null
+          stripe_transfer_id?: string | null
+        }
+        Update: {
+          agent_id?: string
+          base_fare?: number
+          booking_id?: string
+          commission_amount?: number
+          commission_rate?: number
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          paid_at?: string | null
+          payout_status?: string | null
+          stripe_transfer_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_commissions_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agent_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_commissions_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_profiles: {
+        Row: {
+          agent_code: string
+          commission_rate: number | null
+          company_name: string | null
+          created_at: string | null
+          id: string
+          is_verified: boolean | null
+          phone: string | null
+          stripe_connect_account_id: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          agent_code: string
+          commission_rate?: number | null
+          company_name?: string | null
+          created_at?: string | null
+          id?: string
+          is_verified?: boolean | null
+          phone?: string | null
+          stripe_connect_account_id?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          agent_code?: string
+          commission_rate?: number | null
+          company_name?: string | null
+          created_at?: string | null
+          id?: string
+          is_verified?: boolean | null
+          phone?: string | null
+          stripe_connect_account_id?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      agent_wallet: {
+        Row: {
+          agent_id: string
+          balance: number | null
+          created_at: string | null
+          currency: string | null
+          id: string
+          last_topup_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          agent_id: string
+          balance?: number | null
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          last_topup_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          agent_id?: string
+          balance?: number | null
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          last_topup_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_wallet_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: true
+            referencedRelation: "agent_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookings: {
         Row: {
+          agent_id: string | null
+          amadeus_order_id: string | null
+          amadeus_pnr: string | null
           amount: number
           booking_details: Json
           booking_type: Database["public"]["Enums"]["booking_type"]
@@ -25,14 +162,23 @@ export type Database = {
           contact_phone: string | null
           created_at: string
           currency: string
+          fare_validated_at: string | null
+          hold_expiry: string | null
           id: string
+          refund_amount: number | null
+          refund_reason: string | null
+          refund_status: string | null
           status: Database["public"]["Enums"]["booking_status"]
           stripe_payment_intent_id: string | null
           stripe_session_id: string | null
+          ticket_issued_at: string | null
           updated_at: string
           user_id: string | null
         }
         Insert: {
+          agent_id?: string | null
+          amadeus_order_id?: string | null
+          amadeus_pnr?: string | null
           amount: number
           booking_details: Json
           booking_type: Database["public"]["Enums"]["booking_type"]
@@ -42,14 +188,23 @@ export type Database = {
           contact_phone?: string | null
           created_at?: string
           currency?: string
+          fare_validated_at?: string | null
+          hold_expiry?: string | null
           id?: string
+          refund_amount?: number | null
+          refund_reason?: string | null
+          refund_status?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
           stripe_payment_intent_id?: string | null
           stripe_session_id?: string | null
+          ticket_issued_at?: string | null
           updated_at?: string
           user_id?: string | null
         }
         Update: {
+          agent_id?: string | null
+          amadeus_order_id?: string | null
+          amadeus_pnr?: string | null
           amount?: number
           booking_details?: Json
           booking_type?: Database["public"]["Enums"]["booking_type"]
@@ -59,14 +214,28 @@ export type Database = {
           contact_phone?: string | null
           created_at?: string
           currency?: string
+          fare_validated_at?: string | null
+          hold_expiry?: string | null
           id?: string
+          refund_amount?: number | null
+          refund_reason?: string | null
+          refund_status?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
           stripe_payment_intent_id?: string | null
           stripe_session_id?: string | null
+          ticket_issued_at?: string | null
           updated_at?: string
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "bookings_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agent_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -89,6 +258,93 @@ export type Database = {
         }
         Relationships: []
       }
+      wallet_transactions: {
+        Row: {
+          agent_id: string
+          amount: number
+          balance_after: number | null
+          booking_id: string | null
+          created_at: string | null
+          currency: string | null
+          description: string | null
+          id: string
+          stripe_payment_intent_id: string | null
+          type: string
+        }
+        Insert: {
+          agent_id: string
+          amount: number
+          balance_after?: number | null
+          booking_id?: string | null
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          id?: string
+          stripe_payment_intent_id?: string | null
+          type: string
+        }
+        Update: {
+          agent_id?: string
+          amount?: number
+          balance_after?: number | null
+          booking_id?: string | null
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          id?: string
+          stripe_payment_intent_id?: string | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wallet_transactions_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agent_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wallet_transactions_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      webhook_events: {
+        Row: {
+          created_at: string | null
+          event_id: string
+          event_type: string
+          id: string
+          payload: Json
+          processed: boolean | null
+          processed_at: string | null
+          provider: string
+        }
+        Insert: {
+          created_at?: string | null
+          event_id: string
+          event_type: string
+          id?: string
+          payload: Json
+          processed?: boolean | null
+          processed_at?: string | null
+          provider: string
+        }
+        Update: {
+          created_at?: string | null
+          event_id?: string
+          event_type?: string
+          id?: string
+          payload?: Json
+          processed?: boolean | null
+          processed_at?: string | null
+          provider?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -107,7 +363,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "user"
+      app_role: "admin" | "user" | "agent"
       booking_status: "pending_payment" | "confirmed" | "cancelled" | "refunded"
       booking_type: "flight" | "hotel" | "car"
     }
@@ -237,7 +493,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "user"],
+      app_role: ["admin", "user", "agent"],
       booking_status: ["pending_payment", "confirmed", "cancelled", "refunded"],
       booking_type: ["flight", "hotel", "car"],
     },
