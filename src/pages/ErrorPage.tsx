@@ -4,7 +4,7 @@ const ErrorPage = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center text-center bg-gradient-to-b from-blue-50 to-white px-4">
       <h1 className="text-5xl font-bold text-primary mb-4">Our Agent Will Contact You Soon</h1>
-      <p className="text-lg text-gray-600 mb-6">We’re sorry, but there was an unexpected error. Our team is on it.</p>
+      <p className="text-lg text-gray-600 mb-6">Breathe in… and hold on.</p>
 
       <div className="flex flex-col items-center gap-2 text-gray-700">
         <div className="flex items-center gap-2">
