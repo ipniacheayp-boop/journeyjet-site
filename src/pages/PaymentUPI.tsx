@@ -4,39 +4,49 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Smartphone, Loader2, Copy, CheckCircle2 } from "lucide-react";
+import { Smartphone, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
 
 const PaymentUPI = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [bookingDetails, setBookingDetails] = useState<any>(null);
-  const [upiId, setUpiId] = useState("");
-  const [copied, setCopied] = useState(false);
   const [convertedAmount, setConvertedAmount] = useState<number | null>(null);
-  const [polling, setPolling] = useState(false);
-  
-  const merchantVPA = "pay@flynow";
+  const [razorpayLoaded, setRazorpayLoaded] = useState(false);
 
   useEffect(() => {
+    // Load Razorpay script
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    script.onload = () => setRazorpayLoaded(true);
+    document.body.appendChild(script);
+
     const storedBooking = sessionStorage.getItem('pendingBooking');
     if (storedBooking) {
       const booking = JSON.parse(storedBooking);
       setBookingDetails(booking);
       
       // Convert currency if needed
-      if (booking.currency === 'USD') {
-        convertCurrency(booking.amount);
-      } else {
-        setConvertedAmount(parseFloat(booking.amount));
-      }
+      convertCurrency(booking.amount);
     } else {
       toast.error("No booking found");
       navigate('/');
     }
+
+    return () => {
+      const existingScript = document.querySelector('script[src="https://checkout.razorpay.com/v1/checkout.js"]');
+      if (existingScript) {
+        document.body.removeChild(existingScript);
+      }
+    };
   }, [navigate]);
 
   const convertCurrency = async (usdAmount: number) => {
@@ -53,63 +63,92 @@ const PaymentUPI = () => {
     }
   };
 
-  const copyVPA = () => {
-    navigator.clipboard.writeText(merchantVPA);
-    setCopied(true);
-    toast.success("VPA ID copied to clipboard");
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   const handlePayment = async () => {
-    if (!upiId || !upiId.includes('@')) {
-      toast.error("Please enter a valid UPI ID");
+    if (!razorpayLoaded) {
+      toast.error("Payment system is loading. Please wait...");
+      return;
+    }
+
+    if (!convertedAmount) {
+      toast.error("Amount conversion failed. Please try again.");
       return;
     }
 
     setLoading(true);
-    setPolling(true);
 
-  try {
-      const { data, error } = await supabase.functions.invoke('payments-upi-initiate', {
+    try {
+      // Create Razorpay order
+      const { data, error } = await supabase.functions.invoke('payments-razorpay-create-order', {
         body: {
           bookingId: bookingDetails.bookingId,
-          upiId,
-          amount: convertedAmount || bookingDetails.amount,
+          amount: convertedAmount,
           currency: 'INR',
         },
       });
 
       if (error) throw error;
 
-      // Start polling for payment confirmation
-      const pollInterval = setInterval(async () => {
-        try {
-          const { data: statusData } = await supabase.functions.invoke('payments-status', {
-            body: { bookingId: bookingDetails.bookingId },
-          });
+      // Open Razorpay checkout
+      const options = {
+        key: data.keyId,
+        amount: data.amount,
+        currency: data.currency,
+        name: 'GoCheapFlights',
+        description: `Booking #${bookingDetails.bookingId.slice(0, 8)}`,
+        order_id: data.orderId,
+        prefill: {
+          email: bookingDetails.contact_email,
+          contact: bookingDetails.contact_phone,
+        },
+        theme: {
+          color: '#0EA5E9',
+        },
+        method: {
+          upi: true,
+          card: false,
+          netbanking: false,
+          wallet: false,
+        },
+        handler: async function (response: any) {
+          try {
+            // Verify payment
+            const { data: verifyData, error: verifyError } = await supabase.functions.invoke(
+              'payments-razorpay-verify',
+              {
+                body: {
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                  bookingId: bookingDetails.bookingId,
+                },
+              }
+            );
 
-          if (statusData?.payment_status === 'succeeded') {
-            clearInterval(pollInterval);
-            setPolling(false);
+            if (verifyError) throw verifyError;
+
             sessionStorage.removeItem('pendingBooking');
-            toast.success('Payment confirmed!');
-            navigate(`/payment-success?transaction_id=${statusData.transaction_id}`);
+            toast.success("Payment successful!");
+            navigate(`/payment-success?transaction_id=${response.razorpay_payment_id}`);
+          } catch (error: any) {
+            console.error("Payment verification error:", error);
+            toast.error("Payment verification failed");
+            navigate('/payment-cancel');
           }
-        } catch (error) {
-          console.error('Polling error:', error);
-        }
-      }, 5000);
+        },
+        modal: {
+          ondismiss: function () {
+            setLoading(false);
+            toast.error("Payment cancelled");
+          },
+        },
+      };
 
-      // Stop polling after 3 minutes
-      setTimeout(() => {
-        clearInterval(pollInterval);
-        setPolling(false);
-      }, 180000);
-
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+      setLoading(false);
     } catch (error: any) {
-      console.error("UPI payment error:", error);
+      console.error("Payment error:", error);
       toast.error(error.message || "Payment failed. Please try again.");
-      setPolling(false);
       setLoading(false);
     }
   };
@@ -149,20 +188,6 @@ const PaymentUPI = () => {
               <CardTitle>Payment Details</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex justify-between items-center p-4 bg-secondary rounded-lg">
-                <div>
-                  <p className="text-sm text-muted-foreground">Pay to VPA</p>
-                  <p className="text-lg font-bold font-mono">{merchantVPA}</p>
-                </div>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={copyVPA}
-                >
-                  {copied ? <CheckCircle2 className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                </Button>
-              </div>
-
               <div className="flex justify-between p-4 bg-primary/5 rounded-lg border border-primary/20">
                 <span className="font-medium">Amount to Pay</span>
                 <span className="text-2xl font-bold text-primary">
@@ -170,50 +195,40 @@ const PaymentUPI = () => {
                 </span>
               </div>
               
-              {bookingDetails.currency === 'USD' && convertedAmount && (
+              {bookingDetails && convertedAmount && (
                 <p className="text-sm text-muted-foreground text-center">
                   (Original: ${parseFloat(bookingDetails.amount).toFixed(2)} USD)
                 </p>
               )}
 
-              {polling && (
-                <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 text-center">
-                  <Loader2 className="h-5 w-5 animate-spin text-primary mx-auto mb-2" />
-                  <p className="font-medium">Waiting for payment confirmation...</p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    This usually takes 10-30 seconds
-                  </p>
-                </div>
-              )}
-
-              <div className="space-y-2">
-                <Label htmlFor="upiId">Your UPI ID</Label>
-                <Input
-                  id="upiId"
-                  type="text"
-                  placeholder="yourname@upi"
-                  value={upiId}
-                  onChange={(e) => setUpiId(e.target.value)}
-                  disabled={loading}
-                />
-                <p className="text-xs text-muted-foreground">
-                  Enter your UPI ID (e.g., yourname@paytm, yourname@googlepay)
-                </p>
+              <div className="bg-secondary/50 border rounded-lg p-4 text-sm">
+                <p className="font-medium mb-2">How it works:</p>
+                <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
+                  <li>Click "Pay with UPI" button</li>
+                  <li>Choose your UPI app (GPay, PhonePe, Paytm, etc.)</li>
+                  <li>Complete payment securely in your UPI app</li>
+                  <li>Get instant confirmation</li>
+                </ol>
               </div>
 
               <Button 
                 onClick={handlePayment} 
-                disabled={loading || !upiId || !convertedAmount || polling}
+                disabled={loading || !convertedAmount || !razorpayLoaded}
                 className="w-full"
                 size="lg"
               >
-                {loading || polling ? (
+                {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {polling ? 'Waiting for Confirmation...' : 'Processing Payment...'}
+                    Processing...
+                  </>
+                ) : !razorpayLoaded ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Loading Payment System...
                   </>
                 ) : (
-                  `Pay ₹${convertedAmount ? convertedAmount.toFixed(2) : '...'}`
+                  `Pay ₹${convertedAmount ? convertedAmount.toFixed(2) : '...'} with UPI`
                 )}
               </Button>
 
@@ -230,9 +245,9 @@ const PaymentUPI = () => {
 
           <div className="text-center text-sm text-muted-foreground space-y-2">
             <p className="flex items-center justify-center gap-2">
-              <span className="text-green-600">✓</span> Secure UPI Payment
+              <span className="text-green-600">✓</span> Secure Payment via Razorpay
             </p>
-            <p className="text-xs">Powered by NPCI • Instant confirmation</p>
+            <p className="text-xs">UPI • Instant confirmation • 100% Secure</p>
           </div>
         </div>
       </main>

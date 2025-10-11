@@ -32,20 +32,20 @@ serve(async (req) => {
       throw new Error('Invalid amount');
     }
 
-    // Use exchangerate.host for live conversion (no API key required)
-    const apiUrl = `https://api.exchangerate.host/convert?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&amount=${amount}`;
+    // Use exchangerate-api.com for reliable conversion (no API key required)
+    const apiUrl = `https://api.exchangerate-api.com/v4/latest/${encodeURIComponent(from)}`;
     const response = await fetch(apiUrl);
     if (!response.ok) {
       throw new Error('Failed to fetch exchange rates');
     }
 
     const data = await response.json();
-    const rate = data?.info?.rate ?? (data?.result ? data.result / amount : null);
+    const rate = data?.rates?.[to];
     if (!rate) {
       throw new Error(`Exchange rate not found for ${to}`);
     }
 
-    const convertedAmount = data?.result ?? amount * rate;
+    const convertedAmount = parseFloat((amount * rate).toFixed(2));
 
     return new Response(
       JSON.stringify({

@@ -78,5 +78,11 @@ verify_jwt = false
 [functions.payments-upi-initiate]
 verify_jwt = false
 
+[functions.payments-razorpay-create-order]
+verify_jwt = false
+
+[functions.payments-razorpay-verify]
+verify_jwt = false
+
 [functions.payments-stripe-publishable-key]
 verify_jwt = false
