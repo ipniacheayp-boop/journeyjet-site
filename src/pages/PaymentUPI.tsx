@@ -88,6 +88,8 @@ const PaymentUPI = () => {
 
       if (error) throw error;
 
+      console.log('Opening Razorpay checkout with order ID:', data.orderId);
+
       // Open Razorpay checkout
       const options = {
         key: data.keyId,
@@ -98,7 +100,7 @@ const PaymentUPI = () => {
         order_id: data.orderId,
         prefill: {
           email: bookingDetails.contact_email,
-          contact: bookingDetails.contact_phone,
+          contact: bookingDetails.contact_phone || '',
         },
         theme: {
           color: '#0EA5E9',
@@ -111,6 +113,8 @@ const PaymentUPI = () => {
         },
         handler: async function (response: any) {
           try {
+            console.log('Payment completed, verifying:', response.razorpay_payment_id);
+            
             // Verify payment
             const { data: verifyData, error: verifyError } = await supabase.functions.invoke(
               'payments-razorpay-verify',
@@ -124,28 +128,45 @@ const PaymentUPI = () => {
               }
             );
 
-            if (verifyError) throw verifyError;
+            if (verifyError) {
+              console.error('Verification failed:', verifyError);
+              throw verifyError;
+            }
 
-            sessionStorage.removeItem('pendingBooking');
-            toast.success("Payment successful!");
-            navigate(`/payment-success?transaction_id=${response.razorpay_payment_id}`);
+            if (verifyData.success) {
+              console.log('Payment verified successfully');
+              sessionStorage.removeItem('pendingBooking');
+              toast.success("Payment successful!");
+              navigate(`/payment-success?transaction_id=${response.razorpay_payment_id}`);
+            } else {
+              throw new Error('Payment verification failed');
+            }
           } catch (error: any) {
             console.error("Payment verification error:", error);
             toast.error("Payment verification failed");
             navigate('/payment-cancel');
+          } finally {
+            setLoading(false);
           }
         },
         modal: {
           ondismiss: function () {
+            console.log('Payment modal dismissed');
             setLoading(false);
-            toast.error("Payment cancelled");
+            toast.info("Payment cancelled");
           },
         },
       };
 
       const razorpay = new window.Razorpay(options);
+      razorpay.on('payment.failed', function (response: any) {
+        console.error('Payment failed:', response.error);
+        toast.error(`Payment failed: ${response.error.description}`);
+        setLoading(false);
+        navigate('/payment-cancel');
+      });
+      
       razorpay.open();
-      setLoading(false);
     } catch (error: any) {
       console.error("Payment error:", error);
       toast.error(error.message || "Payment failed. Please try again.");

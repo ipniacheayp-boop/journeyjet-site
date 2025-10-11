@@ -86,3 +86,6 @@ verify_jwt = false
 
 [functions.payments-stripe-publishable-key]
 verify_jwt = false
+
+[functions.payments-check-status]
+verify_jwt = false

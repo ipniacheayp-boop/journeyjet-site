@@ -12,18 +12,24 @@ serve(async (req) => {
 
   try {
     const publishableKey = Deno.env.get('STRIPE_PUBLISHABLE_KEY') || '';
+    
     if (!publishableKey) {
+      console.error('STRIPE_PUBLISHABLE_KEY not found in environment');
       return new Response(JSON.stringify({ error: 'Stripe publishable key not configured' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400,
       });
     }
+
+    console.log('Stripe publishable key retrieved successfully');
+    
     return new Response(JSON.stringify({ publishableKey }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     });
-  } catch (error) {
-    return new Response(JSON.stringify({ error: 'Failed to load key' }), {
+  } catch (error: any) {
+    console.error('Error in payments-stripe-publishable-key:', error);
+    return new Response(JSON.stringify({ error: error.message || 'Failed to load key' }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,
     });

@@ -38,46 +38,22 @@ serve(async (req) => {
       throw new Error("Booking is not in pending payment status");
     }
 
-    // Simulate UPI payment processing (in production, integrate with UPI gateway)
-    const transactionId = `UPI${Date.now()}${Math.random().toString(36).substring(7)}`;
+    // Generate transaction ID
+    const transactionId = `UPI${Date.now()}${Math.random().toString(36).substring(7).toUpperCase()}`;
     
-    // Simulate random success/failure (90% success rate for demo)
-    const paymentSuccess = Math.random() > 0.1;
+    console.log(`UPI payment initiated for booking ${bookingId}, Transaction ID: ${transactionId}`);
+    
+    // Set to pending - will be confirmed by polling or webhook
+    const paymentSuccess = true; // For demo, we'll confirm via polling
 
-    if (!paymentSuccess) {
-      // Update booking with failed status
-      await supabaseClient
-        .from("bookings")
-        .update({
-          payment_status: "failed",
-          payment_method: "upi",
-          transaction_id: transactionId,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", bookingId);
-
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          message: "Payment failed. Please try again." 
-        }),
-        { 
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 400 
-        }
-      );
-    }
-
-    // Update booking to confirmed
+    // Update booking to pending status
     const { error: updateError } = await supabaseClient
       .from("bookings")
       .update({
-        status: "confirmed",
-        payment_status: "succeeded",
+        payment_status: "pending",
         payment_method: "upi",
         transaction_id: transactionId,
         payment_reference: upiId,
-        confirmed_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
       .eq("id", bookingId);
@@ -86,13 +62,14 @@ serve(async (req) => {
       throw updateError;
     }
 
-    console.log(`UPI payment confirmed for booking ${bookingId}`);
+    console.log(`UPI payment initiated for booking ${bookingId}, waiting for confirmation`);
 
     return new Response(
       JSON.stringify({ 
         success: true, 
         transactionId,
-        message: "Payment successful" 
+        status: "pending",
+        message: "UPI payment initiated. Please complete payment in your UPI app." 
       }),
       { 
         headers: { ...corsHeaders, "Content-Type": "application/json" },

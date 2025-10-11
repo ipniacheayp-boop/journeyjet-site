@@ -172,27 +172,44 @@ const PaymentCard = () => {
   const [stripePromise, setStripePromise] = useState<Promise<any> | null>(null);
 
   useEffect(() => {
-    // Load Stripe publishable key dynamically
-    (async () => {
+    const initializePayment = async () => {
       try {
-        const { data, error } = await supabase.functions.invoke('payments-stripe-publishable-key');
-        if (error || !data?.publishableKey) {
-          toast.error('Stripe is not configured');
+        // Check for booking first
+        const storedBooking = sessionStorage.getItem('pendingBooking');
+        if (!storedBooking) {
+          toast.error("No booking found");
+          window.location.href = '/';
           return;
         }
-        setStripePromise(loadStripe(data.publishableKey));
-      } catch (e) {
-        console.error('Failed to load Stripe key', e);
-      }
-    })();
+        setBookingDetails(JSON.parse(storedBooking));
 
-    const storedBooking = sessionStorage.getItem('pendingBooking');
-    if (storedBooking) {
-      setBookingDetails(JSON.parse(storedBooking));
-    } else {
-      toast.error("No booking found");
-      window.location.href = '/';
-    }
+        // Load Stripe publishable key
+        console.log('Loading Stripe publishable key...');
+        const { data, error } = await supabase.functions.invoke('payments-stripe-publishable-key');
+        
+        if (error) {
+          console.error('Error loading Stripe key:', error);
+          toast.error('Failed to load payment system. Please try again.');
+          return;
+        }
+        
+        if (!data?.publishableKey) {
+          console.error('No publishable key returned');
+          toast.error('Stripe is not configured properly');
+          return;
+        }
+
+        console.log('Stripe key loaded, initializing Stripe...');
+        const stripe = await loadStripe(data.publishableKey);
+        setStripePromise(Promise.resolve(stripe));
+        console.log('Stripe initialized successfully');
+      } catch (e: any) {
+        console.error('Failed to initialize payment:', e);
+        toast.error(e.message || 'Failed to load payment form');
+      }
+    };
+
+    initializePayment();
   }, []);
 
   if (!bookingDetails) {

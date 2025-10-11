@@ -49,33 +49,57 @@ serve(async (req) => {
       );
     }
 
-    // Simulate payment confirmation after 30 seconds (demo mode)
+    // Simulate payment confirmation after 20 seconds (demo mode)
     const createdAt = new Date(booking.created_at).getTime();
     const now = Date.now();
     const elapsedSeconds = (now - createdAt) / 1000;
 
-    if (elapsedSeconds > 30 && booking.payment_status === "pending") {
-      // Auto-confirm for demo
-      await supabaseClient
-        .from("bookings")
-        .update({
-          status: "confirmed",
-          payment_status: "succeeded",
-          confirmed_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", booking.id);
+    // Auto-confirm after 20 seconds for demo
+    if (elapsedSeconds > 20 && booking.payment_status === "pending") {
+      // Simulate 95% success rate
+      const paymentSucceeds = Math.random() > 0.05;
+      
+      if (paymentSucceeds) {
+        await supabaseClient
+          .from("bookings")
+          .update({
+            status: "confirmed",
+            payment_status: "succeeded",
+            confirmed_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", booking.id);
 
-      console.log(`QR payment auto-confirmed for booking ${booking.id}`);
+        console.log(`QR payment auto-confirmed for booking ${booking.id}`);
 
-      return new Response(
-        JSON.stringify({ 
-          status: "succeeded", 
-          bookingId: booking.id,
-          message: "Payment confirmed" 
-        }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+        return new Response(
+          JSON.stringify({ 
+            status: "succeeded", 
+            bookingId: booking.id,
+            message: "Payment confirmed successfully" 
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      } else {
+        await supabaseClient
+          .from("bookings")
+          .update({
+            payment_status: "failed",
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", booking.id);
+
+        console.log(`QR payment failed for booking ${booking.id}`);
+
+        return new Response(
+          JSON.stringify({ 
+            status: "failed", 
+            bookingId: booking.id,
+            message: "Payment failed. Please try again." 
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
     }
 
     return new Response(
