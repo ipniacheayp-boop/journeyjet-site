@@ -1,66 +1,69 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 218 15% 25%;
+    /* === Base Background & Text === */
+    --background: 45 33% 96%; /* sand (#F5F3E7) */
+    --foreground: 220 15% 15%; /* deep neutral text (#333333) */
 
+    /* === Cards & Popovers === */
     --card: 0 0% 100%;
-    --card-foreground: 218 15% 25%;
-
+    --card-foreground: 220 15% 15%;
     --popover: 0 0% 100%;
-    --popover-foreground: 218 15% 25%;
+    --popover-foreground: 220 15% 15%;
 
-    /* Travel blue - vibrant and trustworthy */
-    --primary: 214 100% 52%;
+    /* === Primary: Sky Blue (trust & calm) === */
+    --primary: 201 100% 36%; /* blue (#0077B6) */
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 214 100% 45%;
+    --primary-hover: 201 100% 30%; /* darker blue hover */
 
-    /* Neutral gray for secondary actions */
-    --secondary: 220 13% 95%;
-    --secondary-foreground: 218 15% 25%;
+    /* === Secondary: Aqua (fresh highlight) === */
+    --secondary: 189 77% 59%; /* aqua (#48CAE4) */
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 220 13% 95%;
-    --muted-foreground: 218 10% 50%;
+    /* === Muted: Neutral gray for subtle surfaces === */
+    --muted: 220 13% 94%;
+    --muted-foreground: 220 10% 40%;
 
-    /* Orange accent for deals and highlights */
-    --accent: 25 95% 53%;
+    /* === Accent: Coral (energy & offers) === */
+    --accent: 358 100% 70%; /* coral (#FF6B6B) */
     --accent-foreground: 0 0% 100%;
 
-    /* Success green */
+    /* === Success / Destructive (default shades) === */
     --success: 142 76% 36%;
     --success-foreground: 0 0% 100%;
-
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 214 100% 52%;
+    /* === Border & Input === */
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 201 100% 36%; /* matches primary */
 
+    /* === Effects === */
     --radius: 0.5rem;
-
-    /* Shadows and effects */
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
     --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
     --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
     --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   }
-}
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground;
+  .dark {
+    --background: 220 15% 10%;
+    --foreground: 0 0% 98%;
+    --card: 220 15% 13%;
+    --card-foreground: 0 0% 98%;
+    --popover: 220 15% 13%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 189 77% 59%;
+    --primary-foreground: 220 15% 13%;
+    --secondary: 201 100% 36%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 220 15% 20%;
+    --muted-foreground: 220 15% 70%;
+    --accent: 358 100% 70%;
+    --accent-foreground: 220 15% 13%;
+    --border: 220 15% 20%;
+    --input: 220 15% 20%;
+    --ring: 189 77% 59%;
   }
 }
