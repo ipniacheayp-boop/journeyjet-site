@@ -11,6 +11,7 @@ import { useHotelSearch } from "@/hooks/useHotelSearch";
 import { useCarSearch } from "@/hooks/useCarSearch";
 import { toast } from "sonner";
 import { Plane, Hotel as HotelIcon, Car, MapPin, Calendar, Users, Clock } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
@@ -151,7 +152,7 @@ const SearchResults = () => {
                   🟢 Lowest Price Guaranteed
                 </Badge>
               </div>
-              <div className="text-2xl font-bold text-primary">${price}</div>
+              <div className="text-2xl font-bold text-primary">{formatCurrency(price, currency)}</div>
               <p className="text-sm text-muted-foreground">{currency}</p>
             </div>
           </div>
@@ -210,7 +211,7 @@ const SearchResults = () => {
                   🟢 Lowest Price Guaranteed
                 </Badge>
               </div>
-              <div className="text-2xl font-bold text-primary">${price}</div>
+              <div className="text-2xl font-bold text-primary">{formatCurrency(price, currency)}</div>
               <p className="text-sm text-muted-foreground">{currency}</p>
             </div>
           </div>
@@ -263,7 +264,7 @@ const SearchResults = () => {
                   🟢 Lowest Price Guaranteed
                 </Badge>
               </div>
-              <div className="text-2xl font-bold text-primary">${price}</div>
+              <div className="text-2xl font-bold text-primary">{formatCurrency(price, currency)}</div>
               <p className="text-sm text-muted-foreground">{currency}</p>
             </div>
           </div>
