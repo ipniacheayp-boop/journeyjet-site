@@ -110,9 +110,9 @@ const Index = () => {
       {/* Tailored Travel Deals */}
       <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
+          <div className="mb-12">
             <h2 className="text-3xl font-bold mb-2">Tailored Travel Deals</h2>
-            <p className="text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-muted-foreground max-w-3xl">
               From weekend escapes to last-minute flights, travel with the best and the cheapest travel deals handpicked by our team.
             </p>
           </div>
