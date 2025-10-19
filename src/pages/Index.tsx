@@ -2,14 +2,66 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SearchWidget from "@/components/SearchWidget";
 import DealCard from "@/components/DealCard";
+import TailoredDealCard from "@/components/TailoredDealCard";
 import TrustBadges from "@/components/TrustBadges";
 import { mockDeals } from "@/data/mockDeals";
 import heroFlight from "@/assets/hero-flight.jpg";
+import dealLastMinute from "@/assets/deal-last-minute.jpg";
+import dealBudget from "@/assets/deal-budget.jpg";
+import dealSeniors from "@/assets/deal-seniors.jpg";
+import dealBusiness from "@/assets/deal-business.jpg";
+import dealStudents from "@/assets/deal-students.jpg";
+import dealAirlines from "@/assets/deal-airlines.jpg";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
 const Index = () => {
+  const tailoredDeals = [
+    {
+      id: "1",
+      title: "Last Minute Flight Deals",
+      description: "Up to $50* Off Instantly, Just Like That.",
+      image: dealLastMinute,
+      tag: "HOT DEAL"
+    },
+    {
+      id: "2",
+      title: "Deals Under $199",
+      description: "Fly With Up To 25% Off* On Flights.",
+      image: dealBudget,
+      tag: "BUDGET"
+    },
+    {
+      id: "3",
+      title: "Deals for Seniors",
+      description: "Save Up To $60* On Flights For Seniors.",
+      image: dealSeniors,
+      tag: "SENIOR"
+    },
+    {
+      id: "4",
+      title: "Business Class Flights",
+      description: "Up To 45% Off* Business Class Bliss.",
+      image: dealBusiness,
+      tag: "PREMIUM"
+    },
+    {
+      id: "5",
+      title: "Student Travel Deals",
+      description: "Unlock Savings Up To $40* For Students.",
+      image: dealStudents,
+      tag: "STUDENT"
+    },
+    {
+      id: "6",
+      title: "Top Airline Deals",
+      description: "Up To 20% Off* On Your Favorite Airlines.",
+      image: dealAirlines,
+      tag: "POPULAR"
+    }
+  ];
+
   return (
     <div className="min-h-screen">
       <Header />
@@ -50,6 +102,23 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {mockDeals.slice(0, 6).map((deal) => (
               <DealCard key={deal.id} deal={deal} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Tailored Travel Deals */}
+      <section className="py-16 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-2">Tailored Travel Deals</h2>
+            <p className="text-muted-foreground max-w-3xl mx-auto">
+              From weekend escapes to last-minute flights, travel with the best and the cheapest travel deals handpicked by our team.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {tailoredDeals.map((deal) => (
+              <TailoredDealCard key={deal.id} deal={deal} />
             ))}
           </div>
         </div>
