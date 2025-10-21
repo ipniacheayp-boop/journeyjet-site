@@ -24,6 +24,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('Auth event:', event, 'Session:', !!session);
         setSession(session);
         setUser(session?.user ?? null);
         
@@ -33,9 +34,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             try {
               const { data: adminStatus } = await supabase.rpc('is_admin');
               setIsAdmin(adminStatus || false);
+              
+              // Handle OAuth redirect after successful sign in
+              if (event === 'SIGNED_IN' && window.location.pathname === '/login') {
+                if (adminStatus) {
+                  navigate('/admin');
+                } else {
+                  navigate('/search-results');
+                }
+              }
             } catch (error) {
               console.error('Error checking admin status:', error);
               setIsAdmin(false);
+              
+              // If not admin, redirect regular users
+              if (event === 'SIGNED_IN' && window.location.pathname === '/login') {
+                navigate('/search-results');
+              }
             }
           }, 0);
         } else {
@@ -62,7 +77,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [navigate]);
 
   const signOut = async () => {
     try {

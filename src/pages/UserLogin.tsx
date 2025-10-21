@@ -72,11 +72,25 @@ const UserLogin = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/search-results`,
+          redirectTo: `${window.location.origin}/login`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        if (error.message.includes('provider is not enabled')) {
+          toast({
+            title: "Google Sign-In Not Enabled",
+            description: "Please enable Google OAuth in your backend authentication settings.",
+            variant: "destructive",
+          });
+        } else {
+          throw error;
+        }
+      }
     } catch (error: any) {
       toast({
         title: "Error",
@@ -93,11 +107,21 @@ const UserLogin = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'apple',
         options: {
-          redirectTo: `${window.location.origin}/search-results`,
+          redirectTo: `${window.location.origin}/login`,
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        if (error.message.includes('provider is not enabled')) {
+          toast({
+            title: "Apple Sign-In Not Enabled",
+            description: "Please enable Apple OAuth in your backend authentication settings.",
+            variant: "destructive",
+          });
+        } else {
+          throw error;
+        }
+      }
     } catch (error: any) {
       toast({
         title: "Error",
