@@ -249,39 +249,6 @@ export type Database = {
           },
         ]
       }
-      profiles: {
-        Row: {
-          created_at: string | null
-          email: string | null
-          id: string
-          last_login: string | null
-          login_method: string | null
-          name: string | null
-          profile_image: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          email?: string | null
-          id: string
-          last_login?: string | null
-          login_method?: string | null
-          name?: string | null
-          profile_image?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          email?: string | null
-          id?: string
-          last_login?: string | null
-          login_method?: string | null
-          name?: string | null
-          profile_image?: string | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
       user_roles: {
         Row: {
           created_at: string | null
