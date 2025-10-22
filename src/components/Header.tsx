@@ -33,6 +33,8 @@ const Header = () => {
   const navLinks = [
     { label: "Deals", href: "/deals" },
     { label: "Support", href: "/support" },
+    { label: "Reviews", href: "/reviews" },
+    { label: "Contact Us", href: "/contact" },
     { label: "Admin", href: "/admin" },
   ];
 
@@ -74,7 +76,7 @@ const Header = () => {
               <Phone className="w-4 h-4" />
               <span>1-800-123-4567</span>
             </a>
-            
+
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
