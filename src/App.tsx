@@ -30,6 +30,7 @@ import ErrorPage from "./pages/ErrorPage";
 import NotFound from "./pages/NotFound";
 import SiteReviews from "./pages/SiteReviews";
 import About from "./pages/About"; // adjust path if different
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 const queryClient = new QueryClient();
 
@@ -66,6 +67,7 @@ const App = () => (
               <Route path="/reviews/site" element={<SiteReviews />} />
               <Route path="/error" element={<ErrorPage />} />
               <Route path="/about" element={<About />} />
+              <Route path="//privacy" element={<PrivacyPolicy />} />
 
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
