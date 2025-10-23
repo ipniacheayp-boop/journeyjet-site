@@ -26,7 +26,7 @@ const Footer = () => {
     {
       title: "Legal",
       links: [
-        { label: "Terms of Service", href: "/terms" },
+        { label: "Terms and Conditions", href: "/terms" },
         { label: "Privacy Policy", href: "/privacy" },
         { label: "Cookie Policy", href: "/cookies" },
         { label: "Accessibility", href: "/accessibility" },
