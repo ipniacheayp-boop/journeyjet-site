@@ -15,8 +15,8 @@ const ErrorPage = () => {
         </div>
         <div className="flex items-center gap-2">
           <Mail className="w-5 h-5 text-primary" />
-          <a href="mailto:support@travelbooking.com" className="hover:underline">
-            support@travelbooking.com
+          <a href="mailto:help@chyeap.com" className="hover:underline">
+            help@chyeap.com
           </a>
         </div>
       </div>
