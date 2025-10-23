@@ -29,6 +29,7 @@ import PaymentQR from "./pages/PaymentQR";
 import ErrorPage from "./pages/ErrorPage";
 import NotFound from "./pages/NotFound";
 import SiteReviews from "./pages/SiteReviews";
+import About from "./pages/About"; // adjust path if different
 
 const queryClient = new QueryClient();
 
@@ -64,6 +65,8 @@ const App = () => (
               <Route path="/agent/wallet" element={<AgentWallet />} />
               <Route path="/reviews/site" element={<SiteReviews />} />
               <Route path="/error" element={<ErrorPage />} />
+              <Route path="/about" element={<About />} />
+
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
