@@ -81,8 +81,8 @@ const Support = () => {
                 <CardDescription>Response within 24h</CardDescription>
               </CardHeader>
               <CardContent className="text-center">
-                <a href="mailto:support@travelbooking.com" className="text-primary font-semibold hover:underline">
-                  support@travelbooking.com
+                <a href="mailto:help@chyeap.com" className="text-primary font-semibold hover:underline">
+                  help@chyeap.com
                 </a>
               </CardContent>
             </Card>
