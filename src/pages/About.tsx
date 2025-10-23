@@ -65,7 +65,7 @@ const About = () => {
               >
                 help@chyeap.com
               </a>{" "}
-              — we’ll do our best to beat it!
+               we’ll do our best to beat it!
             </p>
             <p>
               At Cheap Flights, great journeys start with great fares. Let’s make
