@@ -14,7 +14,7 @@ const About = () => {
             <h1 className="text-4xl font-bold mb-4 text-blue-700">About Us</h1>
             <p className="text-muted-foreground max-w-3xl mx-auto">
               At Cheap Flights, we’re passionate about making travel dreams come
-              true. We believe every journey can be life-changing — a chance to
+              true. We believe every journey can be life changing a chance to
               explore, unwind, and discover the beauty of the world. Whether
               you’re planning a relaxing beach escape, a cultural adventure, or a
               quick weekend getaway, we’re here to help you find the best deals
@@ -49,7 +49,7 @@ const About = () => {
                 With a deep understanding of what travelers need, Cheap Flights
                 offers a smooth, hassle-free booking experience designed to save
                 you time and money. From comparing prices to securing
-                last-minute deals, we handle the hard part — so you can focus on
+                last-minute deals, we handle the hard part so you can focus on
                 your next adventure.
               </p>
             </div>
