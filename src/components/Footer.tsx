@@ -66,7 +66,7 @@ const Footer = () => {
               <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center transition-transform group-hover:scale-105">
                 <Plane className="w-6 h-6 text-primary-foreground" />
               </div>
-              <span className="text-xl font-bold">TravelBooking</span>
+              <span className="text-xl font-bold">Cheap Flights</span>
             </Link>
             <p className="text-white/70 mb-4 max-w-sm">
               Your trusted partner for finding the best deals on flights, hotels, and travel experiences worldwide.
@@ -135,9 +135,9 @@ const Footer = () => {
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/70">
           <p>&copy; 2025 TravelBooking. All rights reserved.</p>
           <div className="flex items-center gap-4">
-            <a href="mailto:support@travelbooking.com" className="hover:text-white transition-colors flex items-center gap-2">
+            <a href="mailto:help@chyeap.com" className="hover:text-white transition-colors flex items-center gap-2">
               <Mail className="w-4 h-4" />
-              support@travelbooking.com
+              help@chyeap.com
             </a>
           </div>
         </div>
