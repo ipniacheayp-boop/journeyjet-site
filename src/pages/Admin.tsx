@@ -40,6 +40,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ReviewsSection } from '@/components/ReviewsSection';
+import { SiteReviewsAdmin } from '@/components/SiteReviewsAdmin';
+import { StripeHealthCheck } from '@/components/StripeHealthCheck';
 
 interface Booking {
   id: string;
@@ -286,7 +288,7 @@ const Admin = () => {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <LayoutDashboard className="h-4 w-4" />
               Overview
@@ -306,6 +308,10 @@ const Admin = () => {
             <TabsTrigger value="reviews" className="flex items-center gap-2">
               <Star className="h-4 w-4" />
               Reviews
+            </TabsTrigger>
+            <TabsTrigger value="site-reviews" className="flex items-center gap-2">
+              <Star className="h-4 w-4 fill-primary" />
+              Site Reviews
             </TabsTrigger>
             <TabsTrigger value="reports" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
@@ -604,8 +610,8 @@ const Admin = () => {
           <TabsContent value="reviews" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>Customer Reviews</CardTitle>
-                <CardDescription>View and manage all customer reviews</CardDescription>
+                <CardTitle>Booking Reviews</CardTitle>
+                <CardDescription>View and manage booking-specific reviews</CardDescription>
               </CardHeader>
               <CardContent>
                 <ReviewsSection />
@@ -613,37 +619,45 @@ const Admin = () => {
             </Card>
           </TabsContent>
 
+          <TabsContent value="site-reviews" className="space-y-4">
+            <SiteReviewsAdmin />
+          </TabsContent>
+
           <TabsContent value="reports" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Analytics & Reports</CardTitle>
-                <CardDescription>View booking trends and statistics</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-lg font-semibold mb-4">Recent Activity (Last 30 Days)</h3>
-                    {stats?.bookingsByDay && Object.keys(stats.bookingsByDay).length > 0 ? (
-                      <div className="space-y-2">
-                        {Object.entries(stats.bookingsByDay)
-                          .sort(([a], [b]) => b.localeCompare(a))
-                          .slice(0, 10)
-                          .map(([date, count]) => (
-                            <div key={date} className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                              <span className="text-sm font-medium">{new Date(date).toLocaleDateString()}</span>
-                              <Badge>{count} bookings</Badge>
-                            </div>
-                          ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-8 text-muted-foreground">
-                        No recent activity
-                      </div>
-                    )}
+            <div className="grid gap-4">
+              <StripeHealthCheck />
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle>Analytics & Reports</CardTitle>
+                  <CardDescription>View booking trends and statistics</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-lg font-semibold mb-4">Recent Activity (Last 30 Days)</h3>
+                      {stats?.bookingsByDay && Object.keys(stats.bookingsByDay).length > 0 ? (
+                        <div className="space-y-2">
+                          {Object.entries(stats.bookingsByDay)
+                            .sort(([a], [b]) => b.localeCompare(a))
+                            .slice(0, 10)
+                            .map(([date, count]) => (
+                              <div key={date} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                                <span className="text-sm font-medium">{new Date(date).toLocaleDateString()}</span>
+                                <Badge>{count} bookings</Badge>
+                              </div>
+                            ))}
+                        </div>
+                      ) : (
+                        <div className="text-center py-8 text-muted-foreground">
+                          No recent activity
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </main>
