@@ -1,4 +1,6 @@
 import React from 'react';
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 // Helper component for headings, styled in blue per your request.
 const SectionHeading = ({ children }) => (
