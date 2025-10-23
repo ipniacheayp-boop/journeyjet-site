@@ -38,7 +38,7 @@ const PrivacyPolicy = () => {
   return (
     <div className="p-6 md:p-12">
       <h1 className="text-4xl font-bold text-center text-blue-800 mb-8">
-        Privacy Notice and Policy
+        Privacy Policy
       </h1>
       
       <SectionHeading>INTRODUCTION</SectionHeading>
