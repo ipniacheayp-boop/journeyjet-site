@@ -3,29 +3,29 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 // Helper component for headings, styled in blue per your request.
-const SectionHeading = ({ children }) => (
-  <h2 className="text-2xl font-semibold text-blue-700 mt-8 mb-4">
+const SectionHeading: React.FC<React.HTMLAttributes<HTMLHeadingElement>> = ({ children, className = "", ...props }) => (
+  <h2 className={`text-2xl font-semibold text-blue-700 mt-8 mb-4 ${className}`} {...props}>
     {children}
   </h2>
 );
 
 // Helper component for sub-headings
-const SubHeading = ({ children }) => (
-  <h3 className="text-xl font-semibold text-blue-600 mt-6 mb-3">
+const SubHeading: React.FC<React.HTMLAttributes<HTMLHeadingElement>> = ({ children, className = "", ...props }) => (
+  <h3 className={`text-xl font-semibold text-blue-600 mt-6 mb-3 ${className}`} {...props}>
     {children}
   </h3>
 );
 
 // Helper component for paragraphs
-const P = ({ children }) => (
-  <p className="mb-4 leading-relaxed">
+const P: React.FC<React.HTMLAttributes<HTMLParagraphElement>> = ({ children, className = "", ...props }) => (
+  <p className={`mb-4 leading-relaxed ${className}`} {...props}>
     {children}
   </p>
 );
 
 // Helper component for list items
-const Li = ({ children }) => (
-  <li className="mb-2 ml-6 list-disc">
+const Li: React.FC<React.HTMLAttributes<HTMLLIElement>> = ({ children, className = "", ...props }) => (
+  <li className={`mb-2 ml-6 list-disc ${className}`} {...props}>
     {children}
   </li>
 );

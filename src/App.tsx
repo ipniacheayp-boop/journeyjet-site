@@ -29,8 +29,8 @@ import PaymentQR from "./pages/PaymentQR";
 import ErrorPage from "./pages/ErrorPage";
 import NotFound from "./pages/NotFound";
 import SiteReviews from "./pages/SiteReviews";
-import About from "./pages/About"; // adjust path if different
-import PrivacyPolicy from "./pages/PrivacyPoli
+import About from "./pages/About";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 const queryClient = new QueryClient();
 
