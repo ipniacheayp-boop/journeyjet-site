@@ -12,7 +12,8 @@ import dealSeniors from "@/assets/deal-seniors.jpg";
 import dealBusiness from "@/assets/deal-business.jpg";
 import dealStudents from "@/assets/deal-students.jpg";
 import dealAirlines from "@/assets/deal-airlines.jpg";
-import { ArrowRight } from "lucide-react";
+import rewardsIllustration from "@/assets/rewards-illustration.png";
+import { ArrowRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -126,6 +127,58 @@ const Index = () => {
 
       {/* Trust Section */}
       <TrustBadges />
+
+      {/* Rewards Section */}
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12 max-w-5xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-foreground">
+              SIGN UP & UNLOCK REWARDS
+            </h2>
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              {/* Left side - Illustration */}
+              <div className="flex justify-center">
+                <img 
+                  src={rewardsIllustration} 
+                  alt="Rewards and benefits illustration" 
+                  className="w-full max-w-md"
+                />
+              </div>
+              
+              {/* Right side - Benefits and CTA */}
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex items-start gap-2">
+                    <Check className="w-5 h-5 text-success mt-0.5 flex-shrink-0" />
+                    <span className="text-foreground font-medium">Members only Deals</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="w-5 h-5 text-success mt-0.5 flex-shrink-0" />
+                    <span className="text-foreground font-medium">Lounge access</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="w-5 h-5 text-success mt-0.5 flex-shrink-0" />
+                    <span className="text-foreground font-medium">Reward points</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="w-5 h-5 text-success mt-0.5 flex-shrink-0" />
+                    <span className="text-foreground font-medium">Alerts & notifications</span>
+                  </div>
+                </div>
+                
+                <Link to="/account" className="block">
+                  <Button 
+                    size="lg" 
+                    className="w-full text-lg font-bold bg-gradient-to-r from-[#007BFF] to-[#00B4FF] hover:brightness-110 transition-all duration-300 hover:shadow-lg hover:scale-[1.02]"
+                  >
+                    Join Now For Free
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* CTA Section */}
       <section className="py-16 bg-primary text-primary-foreground">
