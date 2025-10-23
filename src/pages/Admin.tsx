@@ -19,7 +19,8 @@ import {
   ShoppingCart,
   Activity,
   LogOut,
-  Radio
+  Radio,
+  Star
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -38,6 +39,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { ReviewsSection } from '@/components/ReviewsSection';
 
 interface Booking {
   id: string;
@@ -284,7 +286,7 @@ const Admin = () => {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <LayoutDashboard className="h-4 w-4" />
               Overview
@@ -300,6 +302,10 @@ const Admin = () => {
             <TabsTrigger value="users" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               Users
+            </TabsTrigger>
+            <TabsTrigger value="reviews" className="flex items-center gap-2">
+              <Star className="h-4 w-4" />
+              Reviews
             </TabsTrigger>
             <TabsTrigger value="reports" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
@@ -591,6 +597,18 @@ const Admin = () => {
                     No users found
                   </div>
                 )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="reviews" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Customer Reviews</CardTitle>
+                <CardDescription>View and manage all customer reviews</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ReviewsSection />
               </CardContent>
             </Card>
           </TabsContent>

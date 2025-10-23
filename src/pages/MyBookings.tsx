@@ -7,8 +7,10 @@ import Footer from '@/components/Footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Plane, Hotel, Car, Calendar, DollarSign, Mail, User as UserIcon, RefreshCw } from 'lucide-react';
+import { Plane, Hotel, Car, Calendar, DollarSign, Mail, User as UserIcon, RefreshCw, Star, MessageSquare } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { ReviewsSection } from '@/components/ReviewsSection';
 
 interface Booking {
   id: string;
@@ -217,9 +219,20 @@ const MyBookings = () => {
                           </span>
                         </div>
                         {booking.status === 'confirmed' && (
-                          <Button variant="outline" size="sm" className="w-full">
-                            View Details
-                          </Button>
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button variant="outline" size="sm" className="w-full">
+                                <Star className="w-4 h-4 mr-2" />
+                                Review Booking
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                              <DialogHeader>
+                                <DialogTitle>Reviews for {booking.booking_type} Booking</DialogTitle>
+                              </DialogHeader>
+                              <ReviewsSection bookingId={booking.id} showSubmitForm={true} />
+                            </DialogContent>
+                          </Dialog>
                         )}
                       </div>
                     </div>
