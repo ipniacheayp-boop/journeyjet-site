@@ -133,7 +133,7 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/70">
-          <p>&copy; 2025 TravelBooking. All rights reserved.</p>
+          <p>&copy; 2025 Cheap Flights. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <a href="mailto:help@chyeap.com" className="hover:text-white transition-colors flex items-center gap-2">
               <Mail className="w-4 h-4" />
