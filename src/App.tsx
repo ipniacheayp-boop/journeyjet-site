@@ -28,6 +28,7 @@ import PaymentStripeUPI from "./pages/PaymentStripeUPI";
 import PaymentQR from "./pages/PaymentQR";
 import ErrorPage from "./pages/ErrorPage";
 import NotFound from "./pages/NotFound";
+import SiteReviews from "./pages/SiteReviews";
 
 const queryClient = new QueryClient();
 
@@ -61,6 +62,7 @@ const App = () => (
               <Route path="/payment-cancel" element={<PaymentCancel />} />
               <Route path="/agent-connect" element={<AgentConnect />} />
               <Route path="/agent/wallet" element={<AgentWallet />} />
+              <Route path="/reviews/site" element={<SiteReviews />} />
               <Route path="/error" element={<ErrorPage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

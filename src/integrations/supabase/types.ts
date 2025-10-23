@@ -320,6 +320,77 @@ export type Database = {
           },
         ]
       }
+      site_review_helpful: {
+        Row: {
+          created_at: string
+          id: string
+          review_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          review_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          review_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "site_review_helpful_review_id_fkey"
+            columns: ["review_id"]
+            isOneToOne: false
+            referencedRelation: "site_reviews"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      site_reviews: {
+        Row: {
+          body: string
+          created_at: string
+          display_name: string
+          helpful_count: number
+          id: string
+          is_deleted: boolean
+          is_featured: boolean
+          rating: number
+          title: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          display_name: string
+          helpful_count?: number
+          id?: string
+          is_deleted?: boolean
+          is_featured?: boolean
+          rating: number
+          title?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          display_name?: string
+          helpful_count?: number
+          id?: string
+          is_deleted?: boolean
+          is_featured?: boolean
+          rating?: number
+          title?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null
