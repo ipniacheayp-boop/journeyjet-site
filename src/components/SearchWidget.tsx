@@ -88,10 +88,12 @@ const SearchWidget = () => {
     e.preventDefault();
     if (validateFlightForm()) {
       toast.success("Searching for flights...");
+      const origin = (flightOriginCode || flightOrigin).trim().toUpperCase();
+      const destination = (flightDestinationCode || flightDestination).trim().toUpperCase();
       const params = new URLSearchParams({
         type: "flights",
-        originLocationCode: flightOriginCode || flightOrigin,
-        destinationLocationCode: flightDestinationCode || flightDestination,
+        originLocationCode: origin,
+        destinationLocationCode: destination,
         departureDate: departDate,
         ...(tripType === "round-trip" && { returnDate }),
         adults: passengers,
@@ -125,9 +127,10 @@ const SearchWidget = () => {
     e.preventDefault();
     if (validateCarForm()) {
       toast.success("Searching for cars...");
+      const pickUp = (pickUpLocationCode || pickUpLocation).trim().toUpperCase();
       const params = new URLSearchParams({
         type: "cars",
-        pickUpLocationCode: pickUpLocationCode || pickUpLocation,
+        pickUpLocationCode: pickUp,
         pickUpDate,
         dropOffDate,
         driverAge,

@@ -68,6 +68,12 @@ const AirportDropdown = React.memo(({ value, onChange, placeholder, className }:
     setInputValue(newValue);
     setShowDropdown(true);
     setHighlightedIndex(-1);
+
+    // If user manually types a 3-letter IATA code, propagate it to parent immediately
+    const codeCandidate = newValue.trim().toUpperCase();
+    if (/^[A-Z]{3}$/.test(codeCandidate)) {
+      onChange(codeCandidate, codeCandidate);
+    }
   };
 
   // Handle airport selection
