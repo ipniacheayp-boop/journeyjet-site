@@ -321,15 +321,26 @@ const SearchResults = () => {
           ) : results.length === 0 ? (
             <Card>
               <CardContent className="py-12 text-center">
-                <div className="max-w-md mx-auto">
+                <div className="max-w-lg mx-auto">
                   <p className="text-lg font-semibold mb-2">No results found</p>
-                  <p className="text-muted-foreground mb-6">
+                  <p className="text-muted-foreground mb-4">
                     {type === 'flights' 
-                      ? 'Use 3-letter airport codes (e.g., JFK, LAX, LHR) for origin and destination.'
+                      ? 'The search API returned no available flights for this route and dates. This can happen with test environments or limited data availability.'
                       : type === 'hotels'
-                      ? 'Try searching with a valid city code (e.g., NYC, LON, PAR).'
-                      : 'Try searching with a valid airport code (e.g., JFK, LAX, LHR).'}
+                      ? 'No hotels found for the selected city and dates. Try different dates or locations.'
+                      : 'No vehicles found for the selected location and dates. Try different dates or locations.'}
                   </p>
+                  {type === 'flights' && (
+                    <div className="bg-muted/50 rounded-lg p-4 mb-6 text-left">
+                      <p className="font-medium mb-2 text-sm">💡 Tip: Try these test-friendly routes:</p>
+                      <ul className="text-sm text-muted-foreground space-y-1">
+                        <li>• New York (JFK) → Los Angeles (LAX)</li>
+                        <li>• Madrid (MAD) → Paris (CDG)</li>
+                        <li>• London (LHR) → New York (JFK)</li>
+                        <li>• Use dates 7-14 days from today</li>
+                      </ul>
+                    </div>
+                  )}
                   <Button onClick={() => window.location.href = "/"} size="lg">
                     Start a New Search
                   </Button>
