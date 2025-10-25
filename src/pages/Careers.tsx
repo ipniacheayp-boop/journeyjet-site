@@ -114,7 +114,7 @@ const Careers = () => {
                 Are you passionate about travel, innovation, and creating unforgettable experiences? 
                 Join our fast-paced, collaborative, and growing team at Cheap Travel, where every 
                 idea counts and every individual matters. We're building the future of affordable 
-                travel in India, one journey at a time.
+                travel for the world, one journey at a time.
               </p>
             </div>
             <div className="order-1 md:order-2">
@@ -166,7 +166,7 @@ const Careers = () => {
             />
             <h2 className="text-4xl font-bold text-foreground mb-4">Open Positions</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Explore exciting career opportunities and become part of our journey to revolutionize travel in India.
+              Explore exciting career opportunities and become part of our journey to revolutionize travel for the world.
             </p>
           </div>
 
@@ -228,7 +228,7 @@ const Careers = () => {
         </div>
       </section>
 
-      {/* Life at Cheap Travel */}
+      {/* Life at Cheap Flights */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
@@ -272,11 +272,11 @@ const Careers = () => {
                 Send your CV and cover letter to:
               </p>
               <a 
-                href="mailto:career@chyeap.com" 
+                href="mailto:Hr@chyeap.com" 
                 className="inline-flex items-center gap-2 text-2xl font-bold text-primary hover:text-primary-hover transition-colors duration-300"
               >
                 <Mail className="w-6 h-6" />
-                career@chyeap.com
+                Hr@chyeap.com
               </a>
             </CardContent>
           </Card>
@@ -290,7 +290,7 @@ const Careers = () => {
             <div>
               <h2 className="text-4xl font-bold text-foreground mb-6">About Cheap Travel</h2>
               <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-                Cheap Flights is India's leading online travel platform, dedicated to making travel 
+                Cheap Flights is a leading online travel platform, dedicated to making travel 
                 affordable and accessible for everyone. With a focus on customer satisfaction and 
                 innovative technology, we've helped millions of travelers explore the world without 
                 breaking the bank.
@@ -298,7 +298,7 @@ const Careers = () => {
               <p className="text-lg text-muted-foreground leading-relaxed">
                 Our comprehensive services include flight bookings, hotel reservations, car rentals, 
                 and customized travel packages for both domestic and international destinations. 
-                Join us in our mission to democratize travel across India.
+                Join us in our mission to democratize travel across the world.
               </p>
             </div>
             <div>
