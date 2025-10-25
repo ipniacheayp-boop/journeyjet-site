@@ -72,7 +72,7 @@ const AirportDropdown = React.memo(({ value, onChange, placeholder, className }:
 
   // Handle airport selection
   const handleSelect = useCallback((airport: Airport) => {
-    const displayValue = `${airport.airportName} (${airport.iataCode})`;
+    const displayValue = airport.iataCode;
     setInputValue(displayValue);
     onChange(displayValue, airport.iataCode);
     setShowDropdown(false);
