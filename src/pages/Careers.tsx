@@ -272,11 +272,11 @@ const Careers = () => {
                 Send your CV and cover letter to:
               </p>
               <a 
-                href="mailto:career@chyeap.com" 
+                href="mailto:Hr@chyeap.com" 
                 className="inline-flex items-center gap-2 text-2xl font-bold text-primary hover:text-primary-hover transition-colors duration-300"
               >
                 <Mail className="w-6 h-6" />
-                career@chyeap.com
+                Hr@chyeap.com
               </a>
             </CardContent>
           </Card>
