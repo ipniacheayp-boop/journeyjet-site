@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useNavigate } from "react-router-dom";
+import AirportDropdown from "@/components/AirportDropdown";
 
 const SearchWidget = () => {
   const navigate = useNavigate();
@@ -15,7 +16,9 @@ const SearchWidget = () => {
   // Flight state
   const [tripType, setTripType] = useState("round-trip");
   const [flightOrigin, setFlightOrigin] = useState("");
+  const [flightOriginCode, setFlightOriginCode] = useState("");
   const [flightDestination, setFlightDestination] = useState("");
+  const [flightDestinationCode, setFlightDestinationCode] = useState("");
   const [departDate, setDepartDate] = useState("");
   const [returnDate, setReturnDate] = useState("");
   const [passengers, setPassengers] = useState("1");
@@ -23,6 +26,7 @@ const SearchWidget = () => {
 
   // Hotel state
   const [cityCode, setCityCode] = useState("");
+  const [cityCodeIATA, setCityCodeIATA] = useState("");
   const [checkInDate, setCheckInDate] = useState("");
   const [checkOutDate, setCheckOutDate] = useState("");
   const [hotelGuests, setHotelGuests] = useState("2");
@@ -30,6 +34,7 @@ const SearchWidget = () => {
 
   // Car state
   const [pickUpLocation, setPickUpLocation] = useState("");
+  const [pickUpLocationCode, setPickUpLocationCode] = useState("");
   const [pickUpDate, setPickUpDate] = useState("");
   const [dropOffDate, setDropOffDate] = useState("");
   const [driverAge, setDriverAge] = useState("30");
@@ -85,8 +90,8 @@ const SearchWidget = () => {
       toast.success("Searching for flights...");
       const params = new URLSearchParams({
         type: "flights",
-        originLocationCode: flightOrigin,
-        destinationLocationCode: flightDestination,
+        originLocationCode: flightOriginCode || flightOrigin,
+        destinationLocationCode: flightDestinationCode || flightDestination,
         departureDate: departDate,
         ...(tripType === "round-trip" && { returnDate }),
         adults: passengers,
@@ -104,7 +109,7 @@ const SearchWidget = () => {
       toast.success("Searching for hotels...");
       const params = new URLSearchParams({
         type: "hotels",
-        cityCode,
+        cityCode: cityCodeIATA || cityCode,
         checkInDate,
         checkOutDate,
         adults: hotelGuests,
@@ -122,7 +127,7 @@ const SearchWidget = () => {
       toast.success("Searching for cars...");
       const params = new URLSearchParams({
         type: "cars",
-        pickUpLocationCode: pickUpLocation,
+        pickUpLocationCode: pickUpLocationCode || pickUpLocation,
         pickUpDate,
         dropOffDate,
         driverAge,
@@ -178,31 +183,29 @@ const SearchWidget = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
               <div className="space-y-2">
                 <Label htmlFor="flight-origin">From</Label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    id="flight-origin"
-                    placeholder="City or Airport Code"
-                    value={flightOrigin}
-                    onChange={(e) => setFlightOrigin(e.target.value.toUpperCase())}
-                    className={`pl-10 ${errors.origin ? 'border-destructive' : ''}`}
-                  />
-                </div>
+                <AirportDropdown
+                  value={flightOrigin}
+                  onChange={(value, iataCode) => {
+                    setFlightOrigin(value);
+                    setFlightOriginCode(iataCode);
+                  }}
+                  placeholder="City or Airport"
+                  className={`pl-10 ${errors.origin ? 'border-destructive' : ''}`}
+                />
                 {errors.origin && <p className="text-sm text-destructive">{errors.origin}</p>}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="flight-destination">To</Label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    id="flight-destination"
-                    placeholder="City or Airport Code"
-                    value={flightDestination}
-                    onChange={(e) => setFlightDestination(e.target.value.toUpperCase())}
-                    className={`pl-10 ${errors.destination ? 'border-destructive' : ''}`}
-                  />
-                </div>
+                <AirportDropdown
+                  value={flightDestination}
+                  onChange={(value, iataCode) => {
+                    setFlightDestination(value);
+                    setFlightDestinationCode(iataCode);
+                  }}
+                  placeholder="City or Airport"
+                  className={`pl-10 ${errors.destination ? 'border-destructive' : ''}`}
+                />
                 {errors.destination && <p className="text-sm text-destructive">{errors.destination}</p>}
               </div>
 
@@ -294,16 +297,15 @@ const SearchWidget = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
               <div className="space-y-2">
                 <Label htmlFor="city-code">City</Label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    id="city-code"
-                    placeholder="City Code (e.g., NYC)"
-                    value={cityCode}
-                    onChange={(e) => setCityCode(e.target.value.toUpperCase())}
-                    className={`pl-10 ${errors.cityCode ? 'border-destructive' : ''}`}
-                  />
-                </div>
+                <AirportDropdown
+                  value={cityCode}
+                  onChange={(value, iataCode) => {
+                    setCityCode(value);
+                    setCityCodeIATA(iataCode);
+                  }}
+                  placeholder="City or Airport"
+                  className={`pl-10 ${errors.cityCode ? 'border-destructive' : ''}`}
+                />
                 {errors.cityCode && <p className="text-sm text-destructive">{errors.cityCode}</p>}
               </div>
 
@@ -392,16 +394,15 @@ const SearchWidget = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
               <div className="space-y-2">
                 <Label htmlFor="pickup-location">Pick-up Location</Label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    id="pickup-location"
-                    placeholder="Airport Code"
-                    value={pickUpLocation}
-                    onChange={(e) => setPickUpLocation(e.target.value.toUpperCase())}
-                    className={`pl-10 ${errors.pickUpLocation ? 'border-destructive' : ''}`}
-                  />
-                </div>
+                <AirportDropdown
+                  value={pickUpLocation}
+                  onChange={(value, iataCode) => {
+                    setPickUpLocation(value);
+                    setPickUpLocationCode(iataCode);
+                  }}
+                  placeholder="Airport or City"
+                  className={`pl-10 ${errors.pickUpLocation ? 'border-destructive' : ''}`}
+                />
                 {errors.pickUpLocation && <p className="text-sm text-destructive">{errors.pickUpLocation}</p>}
               </div>
 
