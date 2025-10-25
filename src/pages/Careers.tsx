@@ -89,7 +89,7 @@ const Careers = () => {
         </div>
         <div className="relative z-10 max-w-4xl mx-auto px-4">
           <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 animate-fade-in">
-            Come & Join Cheap Travel
+            Come & Join Cheap Flights
           </h1>
           <p className="text-xl md:text-2xl text-white/95 mb-8 animate-fade-in">
             Helping India Travel Affordably and Seamlessly for the Past Several Years.
@@ -112,7 +112,7 @@ const Careers = () => {
               <h2 className="text-4xl font-bold text-foreground mb-6">Our Mission</h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
                 Are you passionate about travel, innovation, and creating unforgettable experiences? 
-                Join our fast-paced, collaborative, and growing team at Cheap Travel, where every 
+                Join our fast-paced, collaborative, and growing team at Cheap Flights, where every 
                 idea counts and every individual matters. We're building the future of affordable 
                 travel for the world, one journey at a time.
               </p>
@@ -140,7 +140,7 @@ const Careers = () => {
               />
             </div>
             <div>
-              <h2 className="text-4xl font-bold text-foreground mb-6">Why Work With Cheap Travel?</h2>
+              <h2 className="text-4xl font-bold text-foreground mb-6">Why Work With Cheap Flights?</h2>
               <p className="text-lg text-muted-foreground leading-relaxed mb-6">
                 We believe in empowering our team to innovate, grow, and make a real impact. 
                 Our inclusive culture celebrates diversity, encourages creativity, and supports 
@@ -272,11 +272,11 @@ const Careers = () => {
                 Send your CV and cover letter to:
               </p>
               <a 
-                href="mailto:Hr@chyeap.com" 
+                href="mailto:career@chyeap.com" 
                 className="inline-flex items-center gap-2 text-2xl font-bold text-primary hover:text-primary-hover transition-colors duration-300"
               >
                 <Mail className="w-6 h-6" />
-                Hr@chyeap.com
+                career@chyeap.com
               </a>
             </CardContent>
           </Card>
