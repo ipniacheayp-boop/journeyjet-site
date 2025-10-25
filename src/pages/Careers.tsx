@@ -232,7 +232,7 @@ const Careers = () => {
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-foreground mb-4">Life at Cheap Travel</h2>
+            <h2 className="text-4xl font-bold text-foreground mb-4">Life at Cheap Flights</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               At Cheap Flights, work feels like a journey filled with learning, collaboration, and fun.
             </p>
@@ -288,7 +288,7 @@ const Careers = () => {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
             <div>
-              <h2 className="text-4xl font-bold text-foreground mb-6">About Cheap Travel</h2>
+              <h2 className="text-4xl font-bold text-foreground mb-6">About Cheap Flights</h2>
               <p className="text-lg text-muted-foreground leading-relaxed mb-6">
                 Cheap Flights is a leading online travel platform, dedicated to making travel 
                 affordable and accessible for everyone. With a focus on customer satisfaction and 
