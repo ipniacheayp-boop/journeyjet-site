@@ -40,7 +40,7 @@ const AgentDashboard = () => {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
-        navigate('/agent/login');
+        navigate('/login?role=agent');
         return;
       }
 
@@ -71,7 +71,7 @@ const AgentDashboard = () => {
       setAgentProfile(profile);
     } catch (error) {
       console.error('Error checking agent access:', error);
-      navigate('/agent/login');
+      navigate('/login?role=agent');
     } finally {
       setLoading(false);
     }
@@ -79,7 +79,7 @@ const AgentDashboard = () => {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    navigate('/agent/login');
+    navigate('/login?role=agent');
   };
 
   if (loading) {

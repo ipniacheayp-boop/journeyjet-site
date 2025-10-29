@@ -14,8 +14,8 @@ import Account from "./pages/Account";
 import Support from "./pages/Support";
 import Terms from "./pages/Terms";
 import Admin from "./pages/Admin";
-import AdminLogin from "./pages/AdminLogin";
-import UserLogin from "./pages/UserLogin";
+import Login from "./pages/Login";
+import AuthCallback from "./pages/AuthCallback";
 import MyBookings from "./pages/MyBookings";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import AgentConnect from "./pages/AgentConnect";
@@ -32,8 +32,8 @@ import SiteReviews from "./pages/SiteReviews";
 import About from "./pages/About";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Careers from "./pages/Careers";
-import AgentLogin from "./pages/AgentLogin";
 import AgentDashboard from "./pages/AgentDashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -55,9 +55,32 @@ const App = () => (
               <Route path="/my-bookings" element={<MyBookings />} />
               <Route path="/support" element={<Support />} />
               <Route path="/terms" element={<Terms />} />
-              <Route path="/login" element={<UserLogin />} />
-              <Route path="/admin/login" element={<AdminLogin />} />
-              <Route path="/admin" element={<Admin />} />
+              
+              {/* Unified Login Routes */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/auth/callback" element={<AuthCallback />} />
+              
+              {/* Admin Routes - Protected */}
+              <Route path="/admin" element={
+                <ProtectedRoute requiredRole="admin" redirectTo="/login">
+                  <Admin />
+                </ProtectedRoute>
+              } />
+              
+              {/* Agent Routes - Protected */}
+              <Route path="/agent-connect" element={<AgentConnect />} />
+              <Route path="/agent/wallet" element={
+                <ProtectedRoute requiredRole="agent" redirectTo="/login">
+                  <AgentWallet />
+                </ProtectedRoute>
+              } />
+              <Route path="/agent/dashboard" element={
+                <ProtectedRoute requiredRole="agent" redirectTo="/login">
+                  <AgentDashboard />
+                </ProtectedRoute>
+              } />
+              
+              {/* Payment Routes */}
               <Route path="/payment-options" element={<PaymentOptions />} />
               <Route path="/payment/card" element={<PaymentCard />} />
               <Route path="/payment/upi" element={<PaymentUPI />} />
@@ -65,10 +88,6 @@ const App = () => (
               <Route path="/payment/qr" element={<PaymentQR />} />
               <Route path="/payment-success" element={<PaymentSuccess />} />
               <Route path="/payment-cancel" element={<PaymentCancel />} />
-              <Route path="/agent-connect" element={<AgentConnect />} />
-              <Route path="/agent/wallet" element={<AgentWallet />} />
-              <Route path="/agent/login" element={<AgentLogin />} />
-              <Route path="/agent/dashboard" element={<AgentDashboard />} />
               <Route path="/reviews/site" element={<SiteReviews />} />
               <Route path="/careers" element={<Careers />} />
               <Route path="/error" element={<ErrorPage />} />

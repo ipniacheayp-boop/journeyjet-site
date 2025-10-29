@@ -24,6 +24,14 @@ const Footer = () => {
       ],
     },
     {
+      title: "Partners",
+      links: [
+        { label: "Agent Portal", href: "/login?role=agent" },
+        { label: "Admin Portal", href: "/login?role=admin" },
+        { label: "Become an Agent", href: "/agent-connect" },
+      ],
+    },
+    {
       title: "Legal",
       links: [
         { label: "Terms and Conditions", href: "/terms" },
@@ -59,7 +67,7 @@ const Footer = () => {
         </div>
 
         {/* Footer Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 mb-12">
           {/* Brand Column */}
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center gap-2 mb-4 group">
