@@ -16,6 +16,7 @@ import { formatCurrency } from "@/lib/utils";
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
   const type = searchParams.get("type") || "flights";
+  const agentId = searchParams.get("agentId") || undefined;
   
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -117,8 +118,8 @@ const SearchResults = () => {
   };
 
   const handleBook = (offer: any) => {
-    // Store the offer in sessionStorage and navigate to booking
-    sessionStorage.setItem('selectedOffer', JSON.stringify({ type, offer }));
+    // Store the offer and agentId in sessionStorage and navigate to booking
+    sessionStorage.setItem('selectedOffer', JSON.stringify({ type, offer, agentId }));
     window.location.href = `/booking/${type}`;
   };
 

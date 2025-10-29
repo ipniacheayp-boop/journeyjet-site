@@ -13,7 +13,11 @@ export const useBooking = () => {
 
     try {
       const { data, error: functionError } = await supabase.functions.invoke('flights-book', {
-        body: { flightOffer, userDetails },
+        body: { 
+          flightOffer, 
+          userDetails,
+          agentId: userDetails.agentId 
+        },
       });
 
       if (functionError) throw functionError;
@@ -34,7 +38,11 @@ export const useBooking = () => {
 
     try {
       const { data, error: functionError } = await supabase.functions.invoke('hotels-book', {
-        body: { hotelOffer, userDetails },
+        body: { 
+          hotelOffer, 
+          userDetails,
+          agentId: userDetails.agentId 
+        },
       });
 
       if (functionError) throw functionError;
@@ -55,7 +63,11 @@ export const useBooking = () => {
 
     try {
       const { data, error: functionError } = await supabase.functions.invoke('cars-book', {
-        body: { carOffer, userDetails },
+        body: { 
+          carOffer, 
+          userDetails,
+          agentId: userDetails.agentId 
+        },
       });
 
       if (functionError) throw functionError;

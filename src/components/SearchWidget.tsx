@@ -104,6 +104,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
         ...(tripType === "round-trip" && { returnDate }),
         adults: passengers,
         travelClass: cabinClass,
+        ...(isAgentBooking && agentId && { agentId }),
       });
       navigate(`/search-results?${params.toString()}`);
     } else {
@@ -122,6 +123,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
         checkOutDate,
         adults: hotelGuests,
         roomQuantity: rooms,
+        ...(isAgentBooking && agentId && { agentId }),
       });
       navigate(`/search-results?${params.toString()}`);
     } else {
@@ -140,6 +142,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
         pickUpDate,
         dropOffDate,
         driverAge,
+        ...(isAgentBooking && agentId && { agentId }),
       });
       navigate(`/search-results?${params.toString()}`);
     } else {

@@ -13,6 +13,7 @@ import { Loader2 } from "lucide-react";
 const Booking = () => {
   const { id: bookingType } = useParams();
   const [offer, setOffer] = useState<any>(null);
+  const [agentId, setAgentId] = useState<string | undefined>(undefined);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -28,6 +29,7 @@ const Booking = () => {
     if (storedData) {
       const parsed = JSON.parse(storedData);
       setOffer(parsed.offer);
+      setAgentId(parsed.agentId);
     }
   }, []);
 
@@ -41,13 +43,14 @@ const Booking = () => {
 
     try {
       let response;
+      const bookingDetails = { ...formData, agentId };
       
       if (bookingType === "flights") {
-        response = await bookFlight(offer, formData);
+        response = await bookFlight(offer, bookingDetails);
       } else if (bookingType === "hotels") {
-        response = await bookHotel(offer, formData);
+        response = await bookHotel(offer, bookingDetails);
       } else if (bookingType === "cars") {
-        response = await bookCar(offer, formData);
+        response = await bookCar(offer, bookingDetails);
       }
 
       if (response?.checkoutUrl) {
@@ -57,12 +60,17 @@ const Booking = () => {
           bookingId: response.bookingId,
           amount: total.toFixed(2),
           currency: currency,
-          bookingType: bookingType
+          bookingType: bookingType,
+          agentId
         };
         sessionStorage.setItem('pendingBooking', JSON.stringify(bookingData));
         
-        // Navigate to payment options page
-        window.location.href = '/payment-options';
+        // Navigate to payment options page or agent dashboard
+        if (agentId) {
+          window.location.href = '/payment-options';
+        } else {
+          window.location.href = '/payment-options';
+        }
       } else {
         toast.error("Failed to create checkout session");
       }

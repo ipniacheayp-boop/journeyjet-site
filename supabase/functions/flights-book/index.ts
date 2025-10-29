@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { flightOffer, userDetails } = await req.json();
+    const { flightOffer, userDetails, agentId } = await req.json();
 
     if (!flightOffer || !userDetails) {
       return new Response(
@@ -46,6 +46,7 @@ serve(async (req) => {
       .from('bookings')
       .insert({
         user_id: userId,
+        agent_id: agentId || null,
         booking_type: 'flight',
         status: 'pending_payment',
         booking_details: flightOffer,
