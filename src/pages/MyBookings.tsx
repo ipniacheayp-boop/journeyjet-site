@@ -33,7 +33,7 @@ const MyBookings = () => {
 
   useEffect(() => {
     if (!authLoading && !user) {
-      navigate('/login');
+      navigate('/admin/login');
       return;
     }
 
