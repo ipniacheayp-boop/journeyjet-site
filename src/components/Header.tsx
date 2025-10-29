@@ -35,6 +35,7 @@ const Header = () => {
     { label: "Reviews", href: "/reviews/site" },
     { label: "Customer Support", href: "/support" },
     { label: "Contact Us", href: "/contact" },
+    { label: "Agent Login", href: "/agent/login" },
     { label: "Admin", href: "/admin" },
   ];
 

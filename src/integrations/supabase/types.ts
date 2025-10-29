@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      agent_clients: {
+        Row: {
+          agent_id: string
+          created_at: string | null
+          email: string
+          id: string
+          name: string
+          phone: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          agent_id: string
+          created_at?: string | null
+          email: string
+          id?: string
+          name: string
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          agent_id?: string
+          created_at?: string | null
+          email?: string
+          id?: string
+          name?: string
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_clients_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agent_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       agent_commissions: {
         Row: {
           agent_id: string
@@ -71,15 +109,56 @@ export type Database = {
           },
         ]
       }
+      agent_feedback: {
+        Row: {
+          agent_id: string
+          created_at: string | null
+          id: string
+          message: string
+          status: string | null
+          subject: string
+          updated_at: string | null
+        }
+        Insert: {
+          agent_id: string
+          created_at?: string | null
+          id?: string
+          message: string
+          status?: string | null
+          subject: string
+          updated_at?: string | null
+        }
+        Update: {
+          agent_id?: string
+          created_at?: string | null
+          id?: string
+          message?: string
+          status?: string | null
+          subject?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_feedback_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agent_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       agent_profiles: {
         Row: {
           agent_code: string
           commission_rate: number | null
           company_name: string | null
+          contact_person: string | null
           created_at: string | null
+          gst_number: string | null
           id: string
           is_verified: boolean | null
           phone: string | null
+          status: string | null
           stripe_connect_account_id: string | null
           updated_at: string | null
           user_id: string
@@ -88,10 +167,13 @@ export type Database = {
           agent_code: string
           commission_rate?: number | null
           company_name?: string | null
+          contact_person?: string | null
           created_at?: string | null
+          gst_number?: string | null
           id?: string
           is_verified?: boolean | null
           phone?: string | null
+          status?: string | null
           stripe_connect_account_id?: string | null
           updated_at?: string | null
           user_id: string
@@ -100,10 +182,13 @@ export type Database = {
           agent_code?: string
           commission_rate?: number | null
           company_name?: string | null
+          contact_person?: string | null
           created_at?: string | null
+          gst_number?: string | null
           id?: string
           is_verified?: boolean | null
           phone?: string | null
+          status?: string | null
           stripe_connect_account_id?: string | null
           updated_at?: string | null
           user_id?: string

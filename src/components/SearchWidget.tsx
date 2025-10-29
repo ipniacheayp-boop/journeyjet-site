@@ -9,9 +9,15 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useNavigate } from "react-router-dom";
 import AirportDropdown from "@/components/AirportDropdown";
 
-const SearchWidget = () => {
+interface SearchWidgetProps {
+  defaultTab?: string;
+  isAgentBooking?: boolean;
+  agentId?: string;
+}
+
+const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId }: SearchWidgetProps) => {
   const navigate = useNavigate();
-  const [searchType, setSearchType] = useState("flights");
+  const [searchType, setSearchType] = useState(defaultTab);
   
   // Flight state
   const [tripType, setTripType] = useState("round-trip");

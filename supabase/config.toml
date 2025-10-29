@@ -21,6 +21,9 @@ verify_jwt = true
 [functions.agent-wallet-topup]
 verify_jwt = true
 
+[functions.agent-register]
+verify_jwt = false
+
 [functions.cars-book]
 verify_jwt = true
 

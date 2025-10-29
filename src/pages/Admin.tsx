@@ -42,6 +42,7 @@ import {
 import { ReviewsSection } from '@/components/ReviewsSection';
 import { SiteReviewsAdmin } from '@/components/SiteReviewsAdmin';
 import { StripeHealthCheck } from '@/components/StripeHealthCheck';
+import AgentManagement from '@/components/agent/AgentManagement';
 
 interface Booking {
   id: string;
@@ -312,6 +313,10 @@ const Admin = () => {
             <TabsTrigger value="site-reviews" className="flex items-center gap-2">
               <Star className="h-4 w-4 fill-primary" />
               Site Reviews
+            </TabsTrigger>
+            <TabsTrigger value="agents" className="flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              Agents
             </TabsTrigger>
             <TabsTrigger value="reports" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
@@ -621,6 +626,10 @@ const Admin = () => {
 
           <TabsContent value="site-reviews" className="space-y-4">
             <SiteReviewsAdmin />
+          </TabsContent>
+
+          <TabsContent value="agents" className="space-y-4">
+            <AgentManagement />
           </TabsContent>
 
           <TabsContent value="reports" className="space-y-4">

@@ -32,6 +32,8 @@ import SiteReviews from "./pages/SiteReviews";
 import About from "./pages/About";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Careers from "./pages/Careers";
+import AgentLogin from "./pages/AgentLogin";
+import AgentDashboard from "./pages/AgentDashboard";
 
 const queryClient = new QueryClient();
 
@@ -65,6 +67,8 @@ const App = () => (
               <Route path="/payment-cancel" element={<PaymentCancel />} />
               <Route path="/agent-connect" element={<AgentConnect />} />
               <Route path="/agent/wallet" element={<AgentWallet />} />
+              <Route path="/agent/login" element={<AgentLogin />} />
+              <Route path="/agent/dashboard" element={<AgentDashboard />} />
               <Route path="/reviews/site" element={<SiteReviews />} />
               <Route path="/careers" element={<Careers />} />
               <Route path="/error" element={<ErrorPage />} />
