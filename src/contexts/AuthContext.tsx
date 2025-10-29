@@ -7,6 +7,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   isAdmin: boolean;
+  userRole: 'user' | 'admin' | 'agent' | null;
   loading: boolean;
   signOut: () => Promise<void>;
 }
@@ -17,6 +18,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [userRole, setUserRole] = useState<'user' | 'admin' | 'agent' | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -28,6 +30,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(session?.user ?? null);
         
         if (session?.user) {
+          // Get role from localStorage
+          const storedRole = localStorage.getItem('userRole') as 'user' | 'admin' | 'agent' | null;
+          setUserRole(storedRole || 'user');
+          
           // Check admin status after login
           setTimeout(async () => {
             try {
@@ -40,6 +46,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           }, 0);
         } else {
           setIsAdmin(false);
+          setUserRole(null);
+          localStorage.removeItem('userRole');
         }
       }
     );
@@ -50,6 +58,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(session?.user ?? null);
       
       if (session?.user) {
+        // Get role from localStorage
+        const storedRole = localStorage.getItem('userRole') as 'user' | 'admin' | 'agent' | null;
+        setUserRole(storedRole || 'user');
+        
         try {
           const { data: adminStatus } = await supabase.rpc('is_admin');
           setIsAdmin(adminStatus || false);
@@ -70,6 +82,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(null);
       setSession(null);
       setIsAdmin(false);
+      setUserRole(null);
+      localStorage.removeItem('userRole');
       navigate('/');
     } catch (error) {
       console.error('Error signing out:', error);
@@ -77,7 +91,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, isAdmin, loading, signOut }}>
+    <AuthContext.Provider value={{ user, session, isAdmin, userRole, loading, signOut }}>
       {children}
     </AuthContext.Provider>
   );

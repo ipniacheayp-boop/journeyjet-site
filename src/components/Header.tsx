@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const Header = () => {
-  const { user, signOut, isAdmin } = useAuth();
+  const { user, signOut, isAdmin, userRole } = useAuth();
   const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -35,8 +35,6 @@ const Header = () => {
     { label: "Reviews", href: "/reviews/site" },
     { label: "Customer Support", href: "/support" },
     { label: "Contact Us", href: "/contact" },
-    { label: "Agent Login", href: "/agent/login" },
-    { label: "Admin", href: "/admin" },
   ];
 
   return (
@@ -83,11 +81,35 @@ const Header = () => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm" className="gap-2">
                     <User className="w-4 h-4" />
-                    <span className="hidden sm:inline">Account</span>
+                    <span className="hidden sm:inline">
+                      {userRole === 'admin' ? 'Admin' : userRole === 'agent' ? 'Agent' : 'Account'}
+                    </span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  {!isAdmin && (
+                  {userRole === 'admin' && (
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin" className="flex items-center gap-2 w-full cursor-pointer">
+                          <BookOpen className="w-4 h-4" />
+                          Admin Dashboard
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
+                  {userRole === 'agent' && (
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link to="/agent/dashboard" className="flex items-center gap-2 w-full cursor-pointer">
+                          <BookOpen className="w-4 h-4" />
+                          Agent Dashboard
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
+                  {userRole === 'user' && (
                     <>
                       <DropdownMenuItem asChild>
                         <Link to="/my-bookings" className="flex items-center gap-2 w-full cursor-pointer">

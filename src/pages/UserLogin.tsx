@@ -5,14 +5,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, User, Briefcase, Shield } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+
+type UserRole = "user" | "agent" | "admin";
 
 const UserLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<UserRole>("user");
   const navigate = useNavigate();
 
   const handleAuth = async (e: React.FormEvent) => {
@@ -21,7 +24,11 @@ const UserLogin = () => {
 
     try {
       if (isSignUp) {
-        // Sign up flow
+        // Sign up flow (only for regular users)
+        if (selectedRole !== "user") {
+          throw new Error("Please use the appropriate registration for Agents");
+        }
+
         const { error } = await supabase.auth.signUp({
           email,
           password,
@@ -36,24 +43,76 @@ const UserLogin = () => {
           title: "Success!",
           description: "Account created successfully. You can now sign in.",
         });
+        setIsSignUp(false);
       } else {
         // Sign in flow
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data: authData, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
 
         if (error) throw error;
 
-        toast({
-          title: "Sign in successful!",
-          description: "Redirecting...",
-        });
+        // Store role in localStorage
+        localStorage.setItem("userRole", selectedRole);
 
-        // Redirect to search results
-        setTimeout(() => {
-          navigate("/search-results");
-        }, 500);
+        // Check role based on selection
+        if (selectedRole === "admin") {
+          // Check if user is admin
+          const { data: isAdmin, error: adminError } = await supabase.rpc('is_admin');
+
+          if (adminError) {
+            console.error('Error checking admin status:', adminError);
+            throw new Error('Failed to verify admin status');
+          }
+
+          if (!isAdmin) {
+            await supabase.auth.signOut();
+            localStorage.removeItem("userRole");
+            throw new Error('Admin access required. Please select the correct role.');
+          }
+
+          toast({
+            title: "Admin login successful!",
+            description: "Redirecting to dashboard...",
+          });
+
+          setTimeout(() => {
+            navigate("/admin");
+          }, 500);
+        } else if (selectedRole === "agent") {
+          // Check if user has agent role
+          const { data: roles, error: roleError } = await supabase
+            .from('user_roles')
+            .select('role')
+            .eq('user_id', authData.user.id)
+            .single();
+
+          if (roleError || roles?.role !== 'agent') {
+            await supabase.auth.signOut();
+            localStorage.removeItem("userRole");
+            throw new Error('This account is not registered as an agent');
+          }
+
+          toast({
+            title: "Agent login successful!",
+            description: "Redirecting to dashboard...",
+          });
+
+          setTimeout(() => {
+            navigate("/agent/dashboard");
+          }, 500);
+        } else {
+          // Regular user login
+          toast({
+            title: "Sign in successful!",
+            description: "Redirecting...",
+          });
+
+          setTimeout(() => {
+            navigate("/search-results");
+          }, 500);
+        }
       }
     } catch (error: any) {
       toast({
@@ -97,12 +156,53 @@ const UserLogin = () => {
           <CardDescription>
             {isSignUp
               ? "Enter your details to create your account"
-              : "Enter your credentials to continue"}
+              : "Select your role and enter your credentials"}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {/* Social Login Buttons */}
-          <div className="mb-6">
+          {/* Role Selection - Only show during login */}
+          {!isSignUp && (
+            <div className="mb-6">
+              <p className="text-sm font-medium mb-3">Login as:</p>
+              <div className="grid grid-cols-3 gap-2">
+                <Button
+                  type="button"
+                  variant={selectedRole === "user" ? "default" : "outline"}
+                  className="flex flex-col items-center py-6 h-auto"
+                  onClick={() => setSelectedRole("user")}
+                  disabled={loading}
+                >
+                  <User className="h-5 w-5 mb-1" />
+                  <span className="text-xs">User</span>
+                </Button>
+                <Button
+                  type="button"
+                  variant={selectedRole === "agent" ? "default" : "outline"}
+                  className="flex flex-col items-center py-6 h-auto"
+                  onClick={() => setSelectedRole("agent")}
+                  disabled={loading}
+                >
+                  <Briefcase className="h-5 w-5 mb-1" />
+                  <span className="text-xs">Agent</span>
+                </Button>
+                <Button
+                  type="button"
+                  variant={selectedRole === "admin" ? "default" : "outline"}
+                  className="flex flex-col items-center py-6 h-auto"
+                  onClick={() => setSelectedRole("admin")}
+                  disabled={loading}
+                >
+                  <Shield className="h-5 w-5 mb-1" />
+                  <span className="text-xs">Admin</span>
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Social Login Buttons - Only for regular users */}
+          {!isSignUp && selectedRole === "user" && (
+            <>
+              <div className="mb-6">
             <Button
               type="button"
               variant="outline"
@@ -133,16 +233,18 @@ const UserLogin = () => {
                 </svg>
               )}
               Continue with Google
-            </Button>
-          </div>
-
-          {/* Separator */}
-          <div className="relative mb-6">
-            <Separator />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="bg-background px-2 text-xs text-muted-foreground">or</span>
+              </Button>
             </div>
-          </div>
+
+            {/* Separator */}
+            <div className="relative mb-6">
+              <Separator />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="bg-background px-2 text-xs text-muted-foreground">or</span>
+              </div>
+            </div>
+          </>
+        )}
 
           {/* Email/Password Form */}
           <form onSubmit={handleAuth} className="space-y-4">
@@ -191,11 +293,15 @@ const UserLogin = () => {
             </button>
           </div>
 
-          <div className="mt-4 text-center text-sm text-muted-foreground">
-            <a href="/admin/login" className="hover:text-primary hover:underline">
-              Admin Login
-            </a>
-          </div>
+          {/* Agent Registration Link */}
+          {!isSignUp && selectedRole === "agent" && (
+            <div className="mt-4 text-center text-sm text-muted-foreground">
+              <span>Don't have an agent account? </span>
+              <a href="/agent/login" className="text-primary hover:underline">
+                Register here
+              </a>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
