@@ -90,31 +90,6 @@ const AgentDashboard = () => {
     );
   }
 
-  if (!agentProfile?.is_verified) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <Card className="max-w-md">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 text-yellow-500" />
-              Verification Pending
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Alert>
-              <AlertDescription>
-                Your agent account is currently under review. You will receive an email once your account is verified by our admin team.
-              </AlertDescription>
-            </Alert>
-            <Button onClick={handleLogout} className="w-full mt-4">
-              Logout
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}

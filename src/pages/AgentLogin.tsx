@@ -115,7 +115,7 @@ const AgentLogin = () => {
 
       toast({
         title: 'Registration successful!',
-        description: 'Your account is pending admin verification. You will be notified once approved.',
+        description: 'Welcome! You can now login to access your agent dashboard.',
       });
 
       // Switch to login tab
