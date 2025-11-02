@@ -39,8 +39,8 @@ serve(async (req) => {
         phone: phone,
         gst_number: gstNumber,
         commission_rate: 5.0, // Default 5%
-        is_verified: false,
-        status: 'pending'
+        is_verified: true,
+        status: 'active'
       })
       .select()
       .single();
@@ -79,7 +79,7 @@ serve(async (req) => {
         success: true, 
         agentId: agentProfile.id,
         agentCode: agentCode,
-        message: 'Agent registered successfully. Awaiting admin verification.' 
+        message: 'Agent registered successfully. You can now access your dashboard.'
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
     );

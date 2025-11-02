@@ -45,16 +45,16 @@ const AgentManagement = () => {
     }
   };
 
-  const handleVerify = async (agentId: string) => {
+  const handleActivate = async (agentId: string) => {
     try {
       const { error } = await supabase
         .from('agent_profiles')
-        .update({ is_verified: true, status: 'verified' })
+        .update({ status: 'active' })
         .eq('id', agentId);
 
       if (error) throw error;
       
-      toast({ title: 'Agent verified successfully' });
+      toast({ title: 'Agent activated successfully' });
       fetchAgents();
     } catch (error: any) {
       toast({
@@ -69,7 +69,7 @@ const AgentManagement = () => {
     try {
       const { error } = await supabase
         .from('agent_profiles')
-        .update({ is_verified: false, status: 'suspended' })
+        .update({ status: 'suspended' })
         .eq('id', agentId);
 
       if (error) throw error;
@@ -118,14 +118,11 @@ const AgentManagement = () => {
     }
   };
 
-  const getStatusBadge = (status: string, isVerified: boolean) => {
+  const getStatusBadge = (status: string) => {
     if (status === 'suspended') {
       return <Badge variant="destructive">Suspended</Badge>;
     }
-    if (isVerified) {
-      return <Badge variant="default">Verified</Badge>;
-    }
-    return <Badge variant="secondary">Pending</Badge>;
+    return <Badge variant="default">Active</Badge>;
   };
 
   if (loading) {
@@ -215,24 +212,25 @@ const AgentManagement = () => {
                       ${Number(agent.agent_wallet?.[0]?.balance || 0).toFixed(2)}
                     </TableCell>
                     <TableCell>
-                      {getStatusBadge(agent.status, agent.is_verified)}
+                      {getStatusBadge(agent.status)}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
-                        {!agent.is_verified && agent.status !== 'suspended' && (
+                        {agent.status === 'suspended' ? (
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => handleVerify(agent.id)}
+                            onClick={() => handleActivate(agent.id)}
+                            title="Activate agent"
                           >
                             <CheckCircle className="h-4 w-4 text-green-600" />
                           </Button>
-                        )}
-                        {agent.status !== 'suspended' && (
+                        ) : (
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => handleSuspend(agent.id)}
+                            title="Suspend agent"
                           >
                             <Ban className="h-4 w-4 text-red-600" />
                           </Button>
