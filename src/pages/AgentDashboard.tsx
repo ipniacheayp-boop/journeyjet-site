@@ -50,7 +50,7 @@ const AgentDashboard = () => {
         .from('user_roles')
         .select('role')
         .eq('user_id', session.user.id)
-        .single();
+        .maybeSingle();
 
       if (roles?.role !== 'agent') {
         toast({
@@ -67,9 +67,53 @@ const AgentDashboard = () => {
         .from('agent_profiles')
         .select('*')
         .eq('user_id', session.user.id)
-        .single();
+        .maybeSingle();
 
-      setAgentProfile(profile);
+      // If profile doesn't exist, create one automatically
+      if (!profile) {
+        const agentCode = `AGT${Date.now().toString().slice(-8)}`;
+        const { data: newProfile, error: createError } = await supabase
+          .from('agent_profiles')
+          .insert({
+            user_id: session.user.id,
+            agent_code: agentCode,
+            company_name: 'My Company',
+            contact_person: session.user.email?.split('@')[0] || 'Agent',
+            phone: '',
+            commission_rate: 5.0,
+            is_verified: true,
+            status: 'active'
+          })
+          .select()
+          .single();
+
+        if (createError) {
+          console.error('Error creating agent profile:', createError);
+          toast({
+            title: 'Setup Error',
+            description: 'Failed to create agent profile. Please contact support.',
+            variant: 'destructive',
+          });
+          return;
+        }
+
+        // Initialize wallet
+        await supabase
+          .from('agent_wallet')
+          .insert({
+            agent_id: newProfile.id,
+            balance: 0,
+            currency: 'USD'
+          });
+
+        setAgentProfile(newProfile);
+        toast({
+          title: 'Welcome!',
+          description: 'Your agent profile has been set up. Please update your details in the Profile tab.',
+        });
+      } else {
+        setAgentProfile(profile);
+      }
     } catch (error) {
       console.error('Error checking agent access:', error);
       navigate('/agent/login');
