@@ -29,15 +29,26 @@ const AgentBookings = ({ agentId }: AgentBookingsProps) => {
 
   const fetchBookings = async () => {
     try {
-      const { data, error } = await supabase
-        .from('bookings')
-        .select('*, agent_commissions(commission_amount)')
-        .eq('agent_id', agentId)
-        .order('created_at', { ascending: false });
+      const { data, error } = await supabase.functions.invoke('agent-bookings');
 
       if (error) throw error;
-      setBookings(data || []);
-      setFilteredBookings(data || []);
+
+      // Transform API response to match component expectations
+      const transformedBookings = data.bookings?.map((booking: any) => ({
+        id: booking.booking_reference,
+        booking_type: booking.booking_type,
+        amount: booking.amount,
+        currency: booking.currency,
+        status: booking.status,
+        created_at: booking.created_at,
+        contact_name: booking.user.name,
+        contact_email: booking.user.email,
+        contact_phone: booking.user.contact,
+        agent_commissions: [{ commission_amount: booking.commission }],
+      })) || [];
+
+      setBookings(transformedBookings);
+      setFilteredBookings(transformedBookings);
     } catch (error) {
       console.error('Error fetching bookings:', error);
     } finally {

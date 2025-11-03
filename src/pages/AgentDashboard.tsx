@@ -23,6 +23,7 @@ import AgentSupport from '@/components/agent/AgentSupport';
 import AgentLeads from '@/components/agent/AgentLeads';
 import AgentAnalytics from '@/components/agent/AgentAnalytics';
 import AgentProfile from '@/components/agent/AgentProfile';
+import { PlusCircle } from 'lucide-react';
 
 const AgentDashboard = () => {
   const navigate = useNavigate();
@@ -82,6 +83,35 @@ const AgentDashboard = () => {
     navigate('/agent/login');
   };
 
+  const handleStartNewBooking = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('agent-start-booking');
+      
+      if (error) throw error;
+      
+      if (data.success) {
+        // Store agent context in session storage for the booking flow
+        sessionStorage.setItem('agentBooking', JSON.stringify({
+          agentId: data.agentId,
+          agentCode: data.agentCode,
+        }));
+        
+        navigate(data.redirectUrl);
+        toast({
+          title: 'Starting New Booking',
+          description: 'Redirecting to search...',
+        });
+      }
+    } catch (error) {
+      console.error('Error starting booking:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to start new booking',
+        variant: 'destructive',
+      });
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -111,28 +141,27 @@ const AgentDashboard = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-grid">
-            <TabsTrigger value="overview" className="flex items-center gap-2">
-              <LayoutDashboard className="h-4 w-4" />
-              <span className="hidden sm:inline">Dashboard</span>
-            </TabsTrigger>
-            <TabsTrigger value="bookings" className="flex items-center gap-2">
-              <BookOpen className="h-4 w-4" />
-              <span className="hidden sm:inline">Bookings</span>
-            </TabsTrigger>
-            <TabsTrigger value="leads" className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              <span className="hidden sm:inline">Leads</span>
-            </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" />
-              <span className="hidden sm:inline">Analytics</span>
-            </TabsTrigger>
-            <TabsTrigger value="profile" className="flex items-center gap-2">
-              <User className="h-4 w-4" />
-              <span className="hidden sm:inline">Profile</span>
-            </TabsTrigger>
-          </TabsList>
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <TabsList className="grid w-full grid-cols-3 lg:w-auto lg:inline-grid">
+              <TabsTrigger value="overview" className="flex items-center gap-2">
+                <LayoutDashboard className="h-4 w-4" />
+                <span className="hidden sm:inline">Overview</span>
+              </TabsTrigger>
+              <TabsTrigger value="bookings" className="flex items-center gap-2">
+                <BookOpen className="h-4 w-4" />
+                <span className="hidden sm:inline">My Bookings</span>
+              </TabsTrigger>
+              <TabsTrigger value="profile" className="flex items-center gap-2">
+                <User className="h-4 w-4" />
+                <span className="hidden sm:inline">Profile</span>
+              </TabsTrigger>
+            </TabsList>
+
+            <Button onClick={handleStartNewBooking} className="gap-2">
+              <PlusCircle className="h-4 w-4" />
+              Start New Booking
+            </Button>
+          </div>
 
           <div className="mt-6">
             <TabsContent value="overview">
@@ -141,14 +170,6 @@ const AgentDashboard = () => {
 
             <TabsContent value="bookings">
               <AgentBookings agentId={agentProfile.id} />
-            </TabsContent>
-
-            <TabsContent value="leads">
-              <AgentLeads agentId={agentProfile.id} />
-            </TabsContent>
-
-            <TabsContent value="analytics">
-              <AgentAnalytics agentId={agentProfile.id} />
             </TabsContent>
 
             <TabsContent value="profile">

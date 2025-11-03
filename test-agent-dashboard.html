@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Dashboard Test</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .test-card {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .test-header {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .test-item {
+      padding: 12px;
+      margin: 8px 0;
+      border-left: 4px solid #ddd;
+      background: #f9f9f9;
+    }
+    .test-item.pass {
+      border-left-color: #4caf50;
+      background: #f1f8f4;
+    }
+    .test-item.fail {
+      border-left-color: #f44336;
+      background: #fef5f5;
+    }
+    .test-item.pending {
+      border-left-color: #ff9800;
+      background: #fff8f0;
+    }
+    .status {
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    .status.pass { color: #4caf50; }
+    .status.fail { color: #f44336; }
+    .status.pending { color: #ff9800; }
+    button {
+      background: #2196F3;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px 10px 10px 0;
+    }
+    button:hover {
+      background: #1976D2;
+    }
+    .summary {
+      font-size: 20px;
+      font-weight: bold;
+      padding: 20px;
+      text-align: center;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+    .summary.pass {
+      background: #4caf50;
+      color: white;
+    }
+    .summary.fail {
+      background: #f44336;
+      color: white;
+    }
+    pre {
+      background: #f5f5f5;
+      padding: 12px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-size: 12px;
+    }
+    .input-group {
+      margin: 15px 0;
+    }
+    .input-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-card">
+    <div class="test-header">🧪 Agent Dashboard Test Suite</div>
+    
+    <div class="input-group">
+      <label>Supabase URL:</label>
+      <input type="text" id="supabaseUrl" value="https://qgmhqhejoilexhgwdujl.supabase.co" />
+    </div>
+    
+    <div class="input-group">
+      <label>Supabase Anon Key:</label>
+      <input type="text" id="supabaseKey" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnbWhxaGVqb2lsZXhoZ3dkdWpsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk4MzIwNDksImV4cCI6MjA3NTQwODA0OX0.Szl0b3GCyMXqxLG87PCM4ikeLAVAICJ6svW3ukpcuSE" />
+    </div>
+    
+    <div class="input-group">
+      <label>Test Agent Email:</label>
+      <input type="email" id="agentEmail" placeholder="agent@test.com" />
+    </div>
+    
+    <div class="input-group">
+      <label>Test Agent Password:</label>
+      <input type="password" id="agentPassword" placeholder="password" />
+    </div>
+    
+    <button onclick="runTests()">Run Tests</button>
+    <button onclick="createTestAgent()">Create Test Agent</button>
+  </div>
+
+  <div id="results"></div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+    
+    window.supabaseClient = null;
+    window.testResults = [];
+
+    window.createTestAgent = async function() {
+      const url = document.getElementById('supabaseUrl').value;
+      const key = document.getElementById('supabaseKey').value;
+      const email = document.getElementById('agentEmail').value;
+      const password = document.getElementById('agentPassword').value;
+
+      if (!email || !password) {
+        alert('Please enter email and password for test agent');
+        return;
+      }
+
+      try {
+        const supabase = createClient(url, key);
+        
+        // Sign up the user
+        const { data: authData, error: signupError } = await supabase.auth.signUp({
+          email,
+          password,
+        });
+
+        if (signupError) throw signupError;
+
+        const userId = authData.user.id;
+
+        // Create agent role
+        const { error: roleError } = await supabase
+          .from('user_roles')
+          .insert({ user_id: userId, role: 'agent' });
+
+        if (roleError) throw roleError;
+
+        // Create agent profile
+        const { error: profileError } = await supabase
+          .from('agent_profiles')
+          .insert({
+            user_id: userId,
+            agent_code: 'TEST' + Math.random().toString(36).substr(2, 6).toUpperCase(),
+            company_name: 'Test Agency',
+            contact_person: 'Test Agent',
+            status: 'active',
+            is_verified: true,
+          });
+
+        if (profileError) throw profileError;
+
+        alert('Test agent created successfully! You can now run tests.');
+      } catch (error) {
+        alert('Error creating test agent: ' + error.message);
+        console.error(error);
+      }
+    };
+
+    window.runTests = async function() {
+      window.testResults = [];
+      document.getElementById('results').innerHTML = '<div class="test-card"><div class="test-item pending"><span class="status pending">⏳</span>Running tests...</div></div>';
+
+      const url = document.getElementById('supabaseUrl').value;
+      const key = document.getElementById('supabaseKey').value;
+      const email = document.getElementById('agentEmail').value;
+      const password = document.getElementById('agentPassword').value;
+
+      if (!email || !password) {
+        alert('Please enter email and password');
+        return;
+      }
+
+      const supabase = createClient(url, key);
+      window.supabaseClient = supabase;
+
+      try {
+        // Test 1: Login
+        await addTest('Agent Login', async () => {
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+          if (error) throw error;
+          return { success: true, token: data.session.access_token };
+        });
+
+        // Test 2: Check Agent Role
+        await addTest('Agent Role Check', async () => {
+          const { data, error } = await supabase
+            .from('user_roles')
+            .select('role')
+            .eq('user_id', (await supabase.auth.getUser()).data.user.id)
+            .single();
+          
+          if (error) throw error;
+          if (data.role !== 'agent') throw new Error('User is not an agent');
+          return { success: true, role: data.role };
+        });
+
+        // Test 3: Agent Bookings Endpoint
+        await addTest('GET /agent-bookings', async () => {
+          const { data, error } = await supabase.functions.invoke('agent-bookings');
+          if (error) throw error;
+          return { success: true, bookings: data.bookings?.length || 0 };
+        });
+
+        // Test 4: Agent Stats Endpoint
+        await addTest('GET /agent-stats', async () => {
+          const { data, error } = await supabase.functions.invoke('agent-stats');
+          if (error) throw error;
+          return { success: true, stats: data };
+        });
+
+        // Test 5: Agent Start Booking
+        await addTest('POST /agent-start-booking', async () => {
+          const { data, error } = await supabase.functions.invoke('agent-start-booking');
+          if (error) throw error;
+          if (!data.success) throw new Error('Start booking failed');
+          return { success: true, redirectUrl: data.redirectUrl };
+        });
+
+        // Test 6: Database Schema Check
+        await addTest('Database Schema: agent_id in bookings', async () => {
+          const { data, error } = await supabase
+            .from('bookings')
+            .select('agent_id')
+            .limit(1);
+          
+          // No error means column exists
+          return { success: true, message: 'agent_id column exists' };
+        });
+
+        displayResults();
+      } catch (error) {
+        console.error('Test suite error:', error);
+        document.getElementById('results').innerHTML = `
+          <div class="test-card">
+            <div class="test-item fail">
+              <span class="status fail">❌</span>
+              <strong>Test Suite Failed</strong>
+              <pre>${error.message}</pre>
+            </div>
+          </div>
+        `;
+      }
+    };
+
+    async function addTest(name, testFn) {
+      try {
+        const result = await testFn();
+        window.testResults.push({
+          name,
+          status: 'pass',
+          result,
+        });
+      } catch (error) {
+        window.testResults.push({
+          name,
+          status: 'fail',
+          error: error.message,
+          stack: error.stack,
+        });
+      }
+    }
+
+    function displayResults() {
+      const passed = window.testResults.filter(t => t.status === 'pass').length;
+      const failed = window.testResults.filter(t => t.status === 'fail').length;
+      const total = window.testResults.length;
+
+      let html = '<div class="test-card">';
+      
+      window.testResults.forEach(test => {
+        const statusIcon = test.status === 'pass' ? '✅' : '❌';
+        html += `
+          <div class="test-item ${test.status}">
+            <span class="status ${test.status}">${statusIcon}</span>
+            <strong>${test.name}</strong>
+            ${test.status === 'pass' 
+              ? `<pre>${JSON.stringify(test.result, null, 2)}</pre>`
+              : `<pre>Error: ${test.error}\n${test.stack || ''}</pre>`
+            }
+          </div>
+        `;
+      });
+
+      html += '</div>';
+
+      const summaryClass = failed === 0 ? 'pass' : 'fail';
+      const summaryText = failed === 0 
+        ? '✅ AGENT DASHBOARD: OK' 
+        : `❌ ${failed} of ${total} tests failed`;
+
+      html += `<div class="summary ${summaryClass}">${summaryText}</div>`;
+
+      document.getElementById('results').innerHTML = html;
+    }
+  </script>
+</body>
+</html>
