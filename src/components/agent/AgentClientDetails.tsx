@@ -50,17 +50,8 @@ const AgentClientDetails = ({ agentId }: AgentClientDetailsProps) => {
       setLoading(true);
       console.info('[ClientDetails] Fetching bookings for agent:', agentId);
       
-      const { data: session } = await supabase.auth.getSession();
-      if (!session?.session?.access_token) {
-        console.error('[ClientDetails] No session token available');
-        return;
-      }
-
-      const { data, error } = await supabase.functions.invoke('agent-bookings', {
-        headers: {
-          Authorization: `Bearer ${session.session.access_token}`,
-        },
-      });
+      // No need to manually pass Authorization header - supabase.functions.invoke() does it automatically
+      const { data, error } = await supabase.functions.invoke('agent-bookings');
 
       if (error) {
         console.error('[ClientDetails] Error response:', error);
