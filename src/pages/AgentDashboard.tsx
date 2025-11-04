@@ -23,6 +23,7 @@ import AgentSupport from '@/components/agent/AgentSupport';
 import AgentLeads from '@/components/agent/AgentLeads';
 import AgentAnalytics from '@/components/agent/AgentAnalytics';
 import AgentProfile from '@/components/agent/AgentProfile';
+import AgentClientDetails from '@/components/agent/AgentClientDetails';
 import { PlusCircle } from 'lucide-react';
 
 const AgentDashboard = () => {
@@ -191,55 +192,13 @@ const AgentDashboard = () => {
     navigate('/agent/login');
   };
 
-  const handleStartNewBooking = async () => {
-    try {
-      // Ensure we have a valid session before calling the function
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError || !session) {
-        console.error('[AgentDashboard] No valid session:', sessionError);
-        toast({
-          title: 'Session Expired',
-          description: 'Please log in again',
-          variant: 'destructive',
-        });
-        navigate('/agent/login');
-        return;
-      }
-
-      console.log('[AgentDashboard] Calling agent_safety_start_booking with session');
-      
-      const { data, error } = await supabase.functions.invoke('agent_safety_start_booking', {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`
-        }
-      });
-      
-      console.log('[AgentDashboard] agent_safety_start_booking response:', data, error);
-      
-      if (error) throw error;
-      
-      if (data.success) {
-        // Store agent context in session storage for the booking flow
-        sessionStorage.setItem('agentBooking', JSON.stringify({
-          agentId: data.agentId,
-          agentCode: data.agentCode,
-        }));
-        
-        navigate(data.redirectUrl);
-        toast({
-          title: 'Starting New Booking',
-          description: 'Redirecting to search...',
-        });
-      }
-    } catch (error) {
-      console.error('Error starting booking:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to start new booking',
-        variant: 'destructive',
-      });
-    }
+  const handleStartNewBooking = () => {
+    // Simply navigate to the public home page for search
+    navigate('/');
+    toast({
+      title: 'Starting New Booking',
+      description: 'You can now search for flights, hotels, or cars',
+    });
   };
 
   if (loading) {
@@ -332,7 +291,7 @@ const AgentDashboard = () => {
       <main className="container mx-auto px-4 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <TabsList className="grid w-full grid-cols-3 lg:w-auto lg:inline-grid">
+            <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-grid">
               <TabsTrigger value="overview" className="flex items-center gap-2">
                 <LayoutDashboard className="h-4 w-4" />
                 <span className="hidden sm:inline">Overview</span>
@@ -340,6 +299,10 @@ const AgentDashboard = () => {
               <TabsTrigger value="bookings" className="flex items-center gap-2">
                 <BookOpen className="h-4 w-4" />
                 <span className="hidden sm:inline">My Bookings</span>
+              </TabsTrigger>
+              <TabsTrigger value="clients" className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                <span className="hidden sm:inline">Client Details</span>
               </TabsTrigger>
               <TabsTrigger value="profile" className="flex items-center gap-2">
                 <User className="h-4 w-4" />
@@ -360,6 +323,10 @@ const AgentDashboard = () => {
 
             <TabsContent value="bookings">
               <AgentBookings agentId={agentProfile.id} />
+            </TabsContent>
+
+            <TabsContent value="clients">
+              <AgentClientDetails agentId={agentProfile.id} />
             </TabsContent>
 
             <TabsContent value="profile">

@@ -1,5 +1,51 @@
 # Agent Dashboard Changelog
 
+## 2025-11-04 - Client Details Tab & Start Booking Redirect
+
+### Changes Made
+
+1. **Start New Booking Flow**
+   - Changed "Start New Booking" button to redirect directly to the public homepage (/)
+   - Removed dependency on failing `agent_safety_start_booking` edge function
+   - Simplified flow: agents now use the same public search page as regular users
+
+2. **New Client Details Tab**
+   - Added new "Client Details" tab to Agent Dashboard (4th tab after Profile)
+   - Shows paginated table (20 rows/page) of client bookings assigned to the agent
+   - Features:
+     - Search by name, email, or booking reference
+     - Filter by status (All, Confirmed, Pending, Cancelled)
+     - View detailed client information in modal
+     - Contact actions: email and phone links
+     - Displays: Booking ref, Type, Name, Email, Contact, Amount, Status, Date
+   
+3. **Database Security**
+   - Added RLS policy: "Agents can view their assigned bookings"
+   - Only shows bookings where `agent_id` matches the logged-in agent's profile
+   - Returns non-sensitive fields only (no payment details, PNRs, tokens)
+
+### Files Created
+- `src/components/agent/AgentClientDetails.tsx` - New client details component
+
+### Files Modified
+- `src/pages/AgentDashboard.tsx` - Added Client Details tab, simplified Start Booking
+
+### Endpoints Reused
+- Direct Supabase query to `bookings` table (no new edge functions created)
+- Uses existing RLS policies with new agent-specific policy added
+
+### Security Note
+- Security linter warning about leaked password protection (WARN level) is a project-wide auth setting, not related to this migration
+- User should enable password strength checks in auth settings when ready
+
+### Testing
+1. Login as agent → Click "Start New Booking" → Should navigate to homepage (/)
+2. Open "Client Details" tab → Should show bookings assigned to agent
+3. Search/filter clients → Table should update accordingly
+4. Click "View Details" on a booking → Modal shows full client & booking info
+
+---
+
 ## 2025-11-04 - Fixed Auth for Start Booking Function
 
 **Problem:** `agent-start-booking` edge function returned 401 "Auth session missing!" even though frontend correctly sent `Authorization: Bearer <token>` header. Root cause: Edge functions using anon key + Authorization header cannot validate sessions via `auth.getUser()` because refresh tokens aren't available in edge function context.
