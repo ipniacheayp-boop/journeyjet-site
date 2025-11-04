@@ -1,5 +1,8 @@
 # Agent Dashboard Changelog
 
+## 2025-11-04 - Safety Variant for Registration
+- Added `agent_safety_register` edge function (idempotent upsert, optional fields, tolerant to races, no status override) and wired dashboard to use it. Prevents RLS and CHECK constraint errors.
+
 ## 2025-11-04 - Phone Field Made Optional
 
 ### Fix

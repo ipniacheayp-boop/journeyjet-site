@@ -86,10 +86,10 @@ const AgentDashboard = () => {
 
       // If profile doesn't exist, create one via edge function
       if (!profile) {
-        console.log('[AgentDashboard] No profile found, calling agent-register...');
+        console.log('[AgentDashboard] No profile found, calling agent_safety_register...');
         
         try {
-          const { data: registerData, error: registerError } = await supabase.functions.invoke('agent-register', {
+          const { data: registerData, error: registerError } = await supabase.functions.invoke('agent_safety_register', {
             body: {
               userId: session.user.id,
               companyName: 'My Company',
@@ -98,7 +98,7 @@ const AgentDashboard = () => {
             }
           });
 
-          console.log('[AgentDashboard] agent-register response:', registerData, registerError);
+          console.warn('[AgentRegister] response:', registerData, registerError);
 
           if (registerError) {
             console.error('[AgentDashboard] Registration error:', registerError);
