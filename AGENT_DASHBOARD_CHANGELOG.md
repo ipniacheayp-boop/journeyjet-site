@@ -1,5 +1,39 @@
 # Agent Dashboard Changelog
 
+## 2025-11-04 - Send Update to Client Feature Added
+
+### Changes Made
+- **New Tab**: Added "Send Update to Client" tab (5th tab) to Agent Dashboard
+- **Created**: `AgentSendUpdate.tsx` component with email form (client email, optional booking reference, message textarea)
+- **Created**: `agent-send-update` edge function to send emails via Resend API
+- **Features**:
+  - Auto-fetch agent's bookings to populate booking reference dropdown
+  - Auto-fill client email when booking is selected
+  - Validate required fields (email, message)
+  - Send formatted HTML emails with booking context
+  - Success/error toast notifications
+  - Loading spinner during API call
+- **Security**: Edge function verifies agent authentication and ownership of agent profile
+
+### Files Created
+- `src/components/agent/AgentSendUpdate.tsx` - Email form component
+- `supabase/functions/agent-send-update/index.ts` - Email sending edge function
+
+### Files Modified
+- `src/pages/AgentDashboard.tsx` - Added "Send Update" tab (Mail icon)
+
+### Email Provider
+- Uses Resend API with `RESEND_API_KEY` secret
+- Email format includes booking reference, message, and agent company info
+
+### Testing
+1. Open Agent Dashboard → "Send Update" tab
+2. Select a booking (optional) → client email auto-fills
+3. Enter message → click "Send Update"
+4. Should show success toast and reset form
+
+---
+
 ## 2025-11-04 - Client Details Wired to Live Data
 
 ### Changes Made

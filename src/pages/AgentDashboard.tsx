@@ -11,7 +11,8 @@ import {
   Users,
   TrendingUp,
   User,
-  LogOut
+  LogOut,
+  Mail
 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import AgentOverview from '@/components/agent/AgentOverview';
@@ -24,6 +25,7 @@ import AgentLeads from '@/components/agent/AgentLeads';
 import AgentAnalytics from '@/components/agent/AgentAnalytics';
 import AgentProfile from '@/components/agent/AgentProfile';
 import AgentClientDetails from '@/components/agent/AgentClientDetails';
+import AgentSendUpdate from '@/components/agent/AgentSendUpdate';
 import { PlusCircle } from 'lucide-react';
 
 const AgentDashboard = () => {
@@ -291,7 +293,7 @@ const AgentDashboard = () => {
       <main className="container mx-auto px-4 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-grid">
+            <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:inline-grid">
               <TabsTrigger value="overview" className="flex items-center gap-2">
                 <LayoutDashboard className="h-4 w-4" />
                 <span className="hidden sm:inline">Overview</span>
@@ -303,6 +305,10 @@ const AgentDashboard = () => {
               <TabsTrigger value="clients" className="flex items-center gap-2">
                 <Users className="h-4 w-4" />
                 <span className="hidden sm:inline">Client Details</span>
+              </TabsTrigger>
+              <TabsTrigger value="send-update" className="flex items-center gap-2">
+                <Mail className="h-4 w-4" />
+                <span className="hidden sm:inline">Send Update</span>
               </TabsTrigger>
               <TabsTrigger value="profile" className="flex items-center gap-2">
                 <User className="h-4 w-4" />
@@ -327,6 +333,10 @@ const AgentDashboard = () => {
 
             <TabsContent value="clients">
               <AgentClientDetails agentId={agentProfile.id} />
+            </TabsContent>
+
+            <TabsContent value="send-update">
+              <AgentSendUpdate agentId={agentProfile.id} />
             </TabsContent>
 
             <TabsContent value="profile">
