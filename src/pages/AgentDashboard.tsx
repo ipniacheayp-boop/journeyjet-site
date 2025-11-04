@@ -84,76 +84,78 @@ const AgentDashboard = () => {
         .eq('user_id', session.user.id)
         .maybeSingle();
 
-      // If profile doesn't exist, create one using upsert approach
+      // If profile doesn't exist, create one via edge function
       if (!profile) {
-        console.log('[AgentDashboard] No profile found, creating...');
-        const agentCode = `AGT${Date.now().toString().slice(-8)}`;
+        console.log('[AgentDashboard] No profile found, calling agent-register...');
         
-        // First try to insert
-        const { data: newProfile, error: createError } = await supabase
-          .from('agent_profiles')
-          .insert({
-            user_id: session.user.id,
-            agent_code: agentCode,
-            company_name: 'My Company',
-            contact_person: session.user.email?.split('@')[0] || 'Agent',
-            phone: '',
-            commission_rate: 5.0,
-            is_verified: true,
-            status: 'active'
-          })
-          .select()
-          .single();
-
-        if (createError) {
-          console.error('[AgentDashboard] Profile creation error:', createError);
-          
-          // If it's a duplicate, fetch the existing profile
-          if (createError.code === '23505') {
-            const { data: existingProfile } = await supabase
-              .from('agent_profiles')
-              .select('*')
-              .eq('user_id', session.user.id)
-              .maybeSingle();
-            
-            if (existingProfile) {
-              setAgentProfile(existingProfile);
-              clearTimeout(timeoutId);
-              setLoading(false);
-              return;
+        try {
+          const { data: registerData, error: registerError } = await supabase.functions.invoke('agent-register', {
+            body: {
+              userId: session.user.id,
+              companyName: 'My Company',
+              contactPerson: session.user.email?.split('@')[0] || 'Agent',
+              phone: ''
             }
+          });
+
+          console.log('[AgentDashboard] agent-register response:', registerData, registerError);
+
+          if (registerError) {
+            console.error('[AgentDashboard] Registration error:', registerError);
+            clearTimeout(timeoutId);
+            setError({
+              type: 'CREATE_FAILED',
+              message: 'We couldn\'t finish setting up your agent profile. This is usually temporary.'
+            });
+            setLoading(false);
+            return;
           }
-          
+
+          if (!registerData?.success) {
+            const errorType = registerData?.error || 'CREATE_FAILED';
+            const errorField = registerData?.field;
+            
+            clearTimeout(timeoutId);
+            setError({
+              type: errorType,
+              message: registerData?.message || 'Failed to create agent profile',
+              field: errorField
+            });
+            setLoading(false);
+            return;
+          }
+
+          // Fetch the created/updated profile
+          const { data: newProfile } = await supabase
+            .from('agent_profiles')
+            .select('*')
+            .eq('user_id', session.user.id)
+            .maybeSingle();
+
+          if (newProfile) {
+            setAgentProfile(newProfile);
+            clearTimeout(timeoutId);
+            toast({
+              title: 'Welcome!',
+              description: 'Agent profile ready — welcome!',
+            });
+          } else {
+            clearTimeout(timeoutId);
+            setError({
+              type: 'CREATE_FAILED',
+              message: 'Profile was created but could not be loaded. Please refresh.'
+            });
+            setLoading(false);
+          }
+        } catch (error) {
+          console.error('[AgentDashboard] Unexpected registration error:', error);
           clearTimeout(timeoutId);
           setError({
-            type: 'CREATE_FAILED',
-            message: 'We couldn\'t finish setting up your agent profile. This is usually temporary.'
+            type: 'UNEXPECTED',
+            message: 'An unexpected error occurred. Please try again.'
           });
           setLoading(false);
-          return;
         }
-
-        console.log('[AgentDashboard] Profile created successfully:', newProfile.id);
-
-        // Initialize wallet
-        const { error: walletError } = await supabase
-          .from('agent_wallet')
-          .insert({
-            agent_id: newProfile.id,
-            balance: 0,
-            currency: 'USD'
-          });
-
-        if (walletError && walletError.code !== '23505') {
-          console.warn('[AgentDashboard] Wallet initialization warning:', walletError);
-        }
-
-        setAgentProfile(newProfile);
-        clearTimeout(timeoutId);
-        toast({
-          title: 'Welcome!',
-          description: 'Agent profile ready — welcome!',
-        });
       } else {
         console.log('[AgentDashboard] Profile loaded:', profile.id);
         setAgentProfile(profile);

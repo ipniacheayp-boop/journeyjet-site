@@ -1,5 +1,14 @@
 # Agent Dashboard Changelog
 
+## 2025-11-04 - RLS Policy Fix & Edge Function Integration
+
+### Critical Fix
+- **Root cause**: Frontend was attempting direct INSERT into `agent_profiles`, violating RLS policy (only admins can insert)
+- **Solution**: Changed `AgentDashboard.tsx` to call existing `agent-register` edge function (which uses service role key)
+- **Result**: Agent profile creation now succeeds reliably, leveraging idempotent upsert logic already in edge function
+- **Testing**: Console logs show `[AgentDashboard] agent-register response:` for debugging
+- **No resources overwritten**: Reused existing `agent-register` edge function without modification
+
 ## 2025-11-04 - Agent Profile Creation Hardening
 
 ### Backend Changes (agent-register edge function)
