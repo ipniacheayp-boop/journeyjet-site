@@ -33,12 +33,7 @@ serve(async (req) => {
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
       );
     }
-    if (!phone) {
-      return new Response(
-        JSON.stringify({ error: 'MISSING_FIELD', field: 'phone', message: 'Phone is required' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
-      );
-    }
+    // Phone is now optional (can be empty string)
 
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',

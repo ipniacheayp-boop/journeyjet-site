@@ -1,5 +1,12 @@
 # Agent Dashboard Changelog
 
+## 2025-11-04 - Phone Field Made Optional
+
+### Fix
+- **Issue**: Edge function was rejecting empty phone values with 400 error
+- **Solution**: Removed phone validation requirement in `agent-register` edge function
+- **Result**: Phone can now be an empty string, allowing profile creation to succeed
+
 ## 2025-11-04 - RLS Policy Fix & Edge Function Integration
 
 ### Critical Fix
