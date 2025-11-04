@@ -1,5 +1,10 @@
 # Agent Dashboard Changelog
 
+## 2025-11-04 - Fix agent-start-booking 401 Error
+- Changed `.single()` to `.maybeSingle()` in agent-start-booking to prevent errors when querying roles/profiles
+- Added detailed console logging for auth, role, and profile checks
+- Improved error messages with specific details for debugging
+
 ## 2025-11-04 - Safety Variant for Registration
 - Added `agent_safety_register` edge function (idempotent upsert, optional fields, tolerant to races, no status override) and wired dashboard to use it. Prevents RLS and CHECK constraint errors.
 

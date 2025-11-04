@@ -23,19 +23,33 @@ serve(async (req) => {
     );
 
     const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+    
+    console.log('[agent-start-booking] Auth check:', { hasUser: !!user, authError });
+    
     if (authError || !user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      console.error('[agent-start-booking] Auth failed:', authError);
+      return new Response(JSON.stringify({ error: 'Unauthorized', details: authError?.message }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 401,
       });
     }
 
     // Verify agent role
-    const { data: roles } = await supabaseClient
+    const { data: roles, error: roleError } = await supabaseClient
       .from('user_roles')
       .select('role')
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
+
+    console.log('[agent-start-booking] Role check:', { roles, roleError });
+
+    if (roleError) {
+      console.error('[agent-start-booking] Role fetch error:', roleError);
+      return new Response(JSON.stringify({ error: 'Failed to verify role' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500,
+      });
+    }
 
     if (roles?.role !== 'agent') {
       return new Response(JSON.stringify({ error: 'Not authorized as agent' }), {
@@ -45,11 +59,21 @@ serve(async (req) => {
     }
 
     // Get agent profile
-    const { data: agentProfile } = await supabaseClient
+    const { data: agentProfile, error: profileError } = await supabaseClient
       .from('agent_profiles')
       .select('id, agent_code')
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
+
+    console.log('[agent-start-booking] Profile check:', { agentProfile, profileError });
+
+    if (profileError) {
+      console.error('[agent-start-booking] Profile fetch error:', profileError);
+      return new Response(JSON.stringify({ error: 'Failed to fetch agent profile' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500,
+      });
+    }
 
     if (!agentProfile) {
       return new Response(JSON.stringify({ error: 'Agent profile not found' }), {
