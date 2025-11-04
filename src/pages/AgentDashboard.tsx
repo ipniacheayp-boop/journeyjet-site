@@ -193,7 +193,29 @@ const AgentDashboard = () => {
 
   const handleStartNewBooking = async () => {
     try {
-      const { data, error } = await supabase.functions.invoke('agent-start-booking');
+      // Ensure we have a valid session before calling the function
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !session) {
+        console.error('[AgentDashboard] No valid session:', sessionError);
+        toast({
+          title: 'Session Expired',
+          description: 'Please log in again',
+          variant: 'destructive',
+        });
+        navigate('/agent/login');
+        return;
+      }
+
+      console.log('[AgentDashboard] Calling agent-start-booking with session');
+      
+      const { data, error } = await supabase.functions.invoke('agent-start-booking', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      });
+      
+      console.log('[AgentDashboard] agent-start-booking response:', data, error);
       
       if (error) throw error;
       

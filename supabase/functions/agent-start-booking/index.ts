@@ -11,28 +11,39 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  try {
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: {
-          headers: { Authorization: req.headers.get('Authorization')! },
-        },
+    try {
+      const authHeader = req.headers.get('Authorization');
+      
+      console.log('[agent-start-booking] Auth header present:', !!authHeader);
+      
+      if (!authHeader) {
+        return new Response(JSON.stringify({ error: 'Unauthorized', details: 'No authorization header' }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 401,
+        });
       }
-    );
 
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
-    
-    console.log('[agent-start-booking] Auth check:', { hasUser: !!user, authError });
-    
-    if (authError || !user) {
-      console.error('[agent-start-booking] Auth failed:', authError);
-      return new Response(JSON.stringify({ error: 'Unauthorized', details: authError?.message }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 401,
-      });
-    }
+      const supabaseClient = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+        {
+          global: {
+            headers: { Authorization: authHeader },
+          },
+        }
+      );
+
+      const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+      
+      console.log('[agent-start-booking] Auth check:', { hasUser: !!user, authError });
+      
+      if (authError || !user) {
+        console.error('[agent-start-booking] Auth failed:', authError);
+        return new Response(JSON.stringify({ error: 'Unauthorized', details: authError?.message || 'Auth session missing!' }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 401,
+        });
+      }
 
     // Verify agent role
     const { data: roles, error: roleError } = await supabaseClient
