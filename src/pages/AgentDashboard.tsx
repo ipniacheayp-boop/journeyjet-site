@@ -207,15 +207,15 @@ const AgentDashboard = () => {
         return;
       }
 
-      console.log('[AgentDashboard] Calling agent-start-booking with session');
+      console.log('[AgentDashboard] Calling agent_safety_start_booking with session');
       
-      const { data, error } = await supabase.functions.invoke('agent-start-booking', {
+      const { data, error } = await supabase.functions.invoke('agent_safety_start_booking', {
         headers: {
           Authorization: `Bearer ${session.access_token}`
         }
       });
       
-      console.log('[AgentDashboard] agent-start-booking response:', data, error);
+      console.log('[AgentDashboard] agent_safety_start_booking response:', data, error);
       
       if (error) throw error;
       

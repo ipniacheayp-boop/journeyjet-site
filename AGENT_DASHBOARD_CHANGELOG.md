@@ -1,5 +1,26 @@
 # Agent Dashboard Changelog
 
+## 2025-11-04 - Fixed Auth for Start Booking Function
+
+**Problem:** `agent-start-booking` edge function returned 401 "Auth session missing!" even though frontend correctly sent `Authorization: Bearer <token>` header. Root cause: Edge functions using anon key + Authorization header cannot validate sessions via `auth.getUser()` because refresh tokens aren't available in edge function context.
+
+**Solution:** Created `agent_safety_start_booking` that uses Service Role Key to properly validate JWTs without needing refresh tokens.
+
+**Changes:**
+- Created `supabase/functions/agent_safety_start_booking/index.ts`
+  - Uses `SUPABASE_SERVICE_ROLE_KEY` instead of anon key for proper JWT validation
+  - Validates JWT via `auth.getUser()` with service role privileges
+  - Returns structured errors: 401 `UNAUTHORIZED`, 403 forbidden, 404 not found, 500 `RETRYABLE_ERROR`
+  - Comprehensive logging at each auth/role/profile validation step
+- Updated `src/pages/AgentDashboard.tsx`
+  - Changed Start Booking button to call `agent_safety_start_booking` instead of `agent-start-booking`
+  - Kept existing session retrieval and Authorization header logic intact
+
+**Expected behavior after fix:**
+- Success: Returns 200 with `{ success: true, agentId: "<id>", agentCode: "<code>", redirectUrl: "/search-results" }`
+- Unauthorized: Returns 401 with `{ error: "UNAUTHORIZED", message: "Missing or invalid auth token" }`
+- Other errors: Returns 500 with `{ error: "RETRYABLE_ERROR", message: "<safe message>" }`
+
 ## 2025-11-04 - Fix agent-start-booking 401 Error
 - Changed `.single()` to `.maybeSingle()` in agent-start-booking to prevent errors when querying roles/profiles
 - Added detailed console logging for auth, role, and profile checks
