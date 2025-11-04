@@ -48,19 +48,45 @@ const AgentClientDetails = ({ agentId }: AgentClientDetailsProps) => {
   const fetchClientDetails = async () => {
     try {
       setLoading(true);
+      console.info('[ClientDetails] Fetching bookings for agent:', agentId);
       
-      const { data, error } = await supabase
-        .from('bookings')
-        .select('id, booking_type, status, amount, currency, created_at, contact_name, contact_email, contact_phone, user_id')
-        .eq('agent_id', agentId)
-        .order('created_at', { ascending: false });
+      const { data: session } = await supabase.auth.getSession();
+      if (!session?.session?.access_token) {
+        console.error('[ClientDetails] No session token available');
+        return;
+      }
 
-      if (error) throw error;
+      const { data, error } = await supabase.functions.invoke('agent-bookings', {
+        headers: {
+          Authorization: `Bearer ${session.session.access_token}`,
+        },
+      });
 
-      setBookings(data || []);
-      setFilteredBookings(data || []);
+      if (error) {
+        console.error('[ClientDetails] Error response:', error);
+        throw error;
+      }
+
+      console.info('[ClientDetails] Response:', data);
+
+      // Transform the data from edge function format to component format
+      const transformedBookings = data?.bookings?.map((booking: any) => ({
+        id: booking.booking_reference || 'N/A',
+        booking_type: booking.booking_type,
+        status: booking.status,
+        amount: booking.amount,
+        currency: booking.currency,
+        created_at: booking.created_at,
+        contact_name: booking.user?.name || 'Unknown',
+        contact_email: booking.user?.email || 'N/A',
+        contact_phone: booking.user?.contact || null,
+        user_id: null,
+      })) || [];
+
+      setBookings(transformedBookings);
+      setFilteredBookings(transformedBookings);
     } catch (error) {
-      console.error('Error fetching client details:', error);
+      console.error('[ClientDetails] Error fetching client details:', error);
     } finally {
       setLoading(false);
     }

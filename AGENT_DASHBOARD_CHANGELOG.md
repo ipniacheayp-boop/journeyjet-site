@@ -1,5 +1,24 @@
 # Agent Dashboard Changelog
 
+## 2025-11-04 - Client Details Wired to Live Data
+
+### Changes Made
+- **Reused**: Existing `agent-bookings` edge function (`/functions/v1/agent-bookings`) for fetching client bookings
+- **Updated**: `AgentClientDetails.tsx` to call edge function instead of direct DB query
+- **Added**: Console logging with `[ClientDetails]` prefix for debugging (logs request and response)
+- **Data returned**: Booking reference, type, contact info (name, email, phone), amount, currency, status, date
+- **Auth**: Uses session token via `Authorization: Bearer` header (consistent with other agent endpoints)
+
+### Files Modified
+- `src/components/agent/AgentClientDetails.tsx` - Changed from direct Supabase query to edge function call
+
+### Endpoint
+- Route: `POST /functions/v1/agent-bookings` (via `supabase.functions.invoke`)
+- Auth: Required (JWT token from session)
+- Returns: `{ bookings: [...] }` with formatted booking + contact data
+
+---
+
 ## 2025-11-04 - Client Details Tab & Start Booking Redirect
 
 ### Changes Made
