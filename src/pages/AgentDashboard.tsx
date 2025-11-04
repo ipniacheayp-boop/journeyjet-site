@@ -31,16 +31,30 @@ const AgentDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [agentProfile, setAgentProfile] = useState<any>(null);
   const [activeTab, setActiveTab] = useState('overview');
+  const [error, setError] = useState<{ type: string; message: string; field?: string } | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     checkAgentAccess();
   }, []);
 
   const checkAgentAccess = async () => {
+    const timeoutId = setTimeout(() => {
+      if (loading) {
+        console.warn('[AgentDashboard] Setup taking longer than expected (12s timeout)');
+        setError({
+          type: 'TIMEOUT',
+          message: 'Setup is taking longer than expected. Please try again.'
+        });
+        setLoading(false);
+      }
+    }, 12000);
+
     try {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
+        clearTimeout(timeoutId);
         navigate('/agent/login');
         return;
       }
@@ -53,6 +67,7 @@ const AgentDashboard = () => {
         .maybeSingle();
 
       if (roles?.role !== 'agent') {
+        clearTimeout(timeoutId);
         toast({
           title: 'Access Denied',
           description: 'You do not have agent access',
@@ -69,9 +84,12 @@ const AgentDashboard = () => {
         .eq('user_id', session.user.id)
         .maybeSingle();
 
-      // If profile doesn't exist, create one automatically
+      // If profile doesn't exist, create one using upsert approach
       if (!profile) {
+        console.log('[AgentDashboard] No profile found, creating...');
         const agentCode = `AGT${Date.now().toString().slice(-8)}`;
+        
+        // First try to insert
         const { data: newProfile, error: createError } = await supabase
           .from('agent_profiles')
           .insert({
@@ -88,17 +106,37 @@ const AgentDashboard = () => {
           .single();
 
         if (createError) {
-          console.error('Error creating agent profile:', createError);
-          toast({
-            title: 'Setup Error',
-            description: 'Failed to create agent profile. Please contact support.',
-            variant: 'destructive',
+          console.error('[AgentDashboard] Profile creation error:', createError);
+          
+          // If it's a duplicate, fetch the existing profile
+          if (createError.code === '23505') {
+            const { data: existingProfile } = await supabase
+              .from('agent_profiles')
+              .select('*')
+              .eq('user_id', session.user.id)
+              .maybeSingle();
+            
+            if (existingProfile) {
+              setAgentProfile(existingProfile);
+              clearTimeout(timeoutId);
+              setLoading(false);
+              return;
+            }
+          }
+          
+          clearTimeout(timeoutId);
+          setError({
+            type: 'CREATE_FAILED',
+            message: 'We couldn\'t finish setting up your agent profile. This is usually temporary.'
           });
+          setLoading(false);
           return;
         }
 
+        console.log('[AgentDashboard] Profile created successfully:', newProfile.id);
+
         // Initialize wallet
-        await supabase
+        const { error: walletError } = await supabase
           .from('agent_wallet')
           .insert({
             agent_id: newProfile.id,
@@ -106,20 +144,44 @@ const AgentDashboard = () => {
             currency: 'USD'
           });
 
+        if (walletError && walletError.code !== '23505') {
+          console.warn('[AgentDashboard] Wallet initialization warning:', walletError);
+        }
+
         setAgentProfile(newProfile);
+        clearTimeout(timeoutId);
         toast({
           title: 'Welcome!',
-          description: 'Your agent profile has been set up. Please update your details in the Profile tab.',
+          description: 'Agent profile ready — welcome!',
         });
       } else {
+        console.log('[AgentDashboard] Profile loaded:', profile.id);
         setAgentProfile(profile);
+        clearTimeout(timeoutId);
       }
     } catch (error) {
-      console.error('Error checking agent access:', error);
-      navigate('/agent/login');
+      console.error('[AgentDashboard] Unexpected error:', error);
+      clearTimeout(timeoutId);
+      setError({
+        type: 'UNEXPECTED',
+        message: 'An unexpected error occurred. Please try again.'
+      });
     } finally {
+      clearTimeout(timeoutId);
       setLoading(false);
     }
+  };
+
+  const handleRetry = () => {
+    setError(null);
+    setLoading(true);
+    setRetryCount(prev => prev + 1);
+    
+    // Exponential backoff
+    const delay = Math.min(1000 * Math.pow(2, retryCount), 5000);
+    setTimeout(() => {
+      checkAgentAccess();
+    }, delay);
   };
 
   const handleLogout = async () => {
@@ -158,8 +220,68 @@ const AgentDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="text-muted-foreground">Setting up your agent profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+        <Card className="max-w-md w-full">
+          <CardHeader>
+            <CardTitle className="text-destructive">Setup Error</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Alert variant="destructive">
+              <AlertDescription>{error.message}</AlertDescription>
+            </Alert>
+            {error.field && (
+              <p className="text-sm text-muted-foreground">
+                Missing or invalid field: <strong>{error.field}</strong>
+              </p>
+            )}
+            <div className="flex gap-2">
+              <Button onClick={handleRetry} className="flex-1">
+                Retry {retryCount > 0 && `(${retryCount})`}
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => navigate('/')}
+                className="flex-1"
+              >
+                Go Home
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground text-center">
+              If this persists, contact support at help@journeyjet.com
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!agentProfile) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Card className="max-w-md w-full">
+          <CardHeader>
+            <CardTitle>Access Error</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground mb-4">
+              Unable to load agent profile. Please try logging in again.
+            </p>
+            <Button onClick={() => navigate('/agent/login')} className="w-full">
+              Back to Login
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }

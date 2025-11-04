@@ -14,8 +14,30 @@ serve(async (req) => {
   try {
     const { userId, companyName, contactPerson, phone, gstNumber } = await req.json();
 
-    if (!userId || !companyName || !contactPerson || !phone) {
-      throw new Error('Missing required fields');
+    // Validate required fields
+    if (!userId) {
+      return new Response(
+        JSON.stringify({ error: 'MISSING_FIELD', field: 'userId', message: 'User ID is required' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+      );
+    }
+    if (!companyName) {
+      return new Response(
+        JSON.stringify({ error: 'MISSING_FIELD', field: 'companyName', message: 'Company name is required' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+      );
+    }
+    if (!contactPerson) {
+      return new Response(
+        JSON.stringify({ error: 'MISSING_FIELD', field: 'contactPerson', message: 'Contact person is required' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+      );
+    }
+    if (!phone) {
+      return new Response(
+        JSON.stringify({ error: 'MISSING_FIELD', field: 'phone', message: 'Phone is required' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+      );
     }
 
     const supabaseClient = createClient(
@@ -23,71 +45,133 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    console.log('[AGENT-REGISTER] Creating agent profile for user:', userId);
+    console.log('[AGENT-REGISTER] Creating/updating agent profile for user:', userId);
 
-    // Generate unique agent code
-    const agentCode = `AGT${Date.now().toString().slice(-8)}`;
-
-    // Create agent profile
-    const { data: agentProfile, error: profileError } = await supabaseClient
+    // Check if agent profile already exists
+    const { data: existingProfile } = await supabaseClient
       .from('agent_profiles')
-      .insert({
-        user_id: userId,
-        agent_code: agentCode,
-        company_name: companyName,
-        contact_person: contactPerson,
-        phone: phone,
-        gst_number: gstNumber,
-        commission_rate: 5.0, // Default 5%
-        is_verified: true,
-        status: 'active'
-      })
-      .select()
-      .single();
+      .select('*')
+      .eq('user_id', userId)
+      .maybeSingle();
 
-    if (profileError) throw profileError;
+    let agentProfile;
+    let created = false;
 
-    console.log('[AGENT-REGISTER] ✓ Agent profile created:', agentProfile.id);
+    if (existingProfile) {
+      // Update existing profile
+      console.log('[AGENT-REGISTER] Profile exists, updating...');
+      const { data: updated, error: updateError } = await supabaseClient
+        .from('agent_profiles')
+        .update({
+          company_name: companyName,
+          contact_person: contactPerson,
+          phone: phone,
+          gst_number: gstNumber,
+          updated_at: new Date().toISOString()
+        })
+        .eq('user_id', userId)
+        .select()
+        .single();
 
-    // Create agent role
-    const { error: roleError } = await supabaseClient
-      .from('user_roles')
-      .insert({
-        user_id: userId,
-        role: 'agent'
-      });
+      if (updateError) {
+        console.error('[AGENT-REGISTER] Update error:', updateError);
+        return new Response(
+          JSON.stringify({ error: 'DB_WRITE_FAILED', message: 'Failed to update agent profile' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+        );
+      }
+      agentProfile = updated;
+    } else {
+      // Create new profile
+      created = true;
+      const agentCode = `AGT${Date.now().toString().slice(-8)}`;
+      
+      const { data: newProfile, error: profileError } = await supabaseClient
+        .from('agent_profiles')
+        .insert({
+          user_id: userId,
+          agent_code: agentCode,
+          company_name: companyName,
+          contact_person: contactPerson,
+          phone: phone,
+          gst_number: gstNumber,
+          commission_rate: 5.0,
+          is_verified: true,
+          status: 'active'
+        })
+        .select()
+        .single();
 
-    if (roleError) throw roleError;
+      if (profileError) {
+        console.error('[AGENT-REGISTER] Insert error:', profileError);
+        if (profileError.code === '23505') {
+          return new Response(
+            JSON.stringify({ error: 'ALREADY_EXISTS', message: 'Agent profile already exists' }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 409 }
+          );
+        }
+        return new Response(
+          JSON.stringify({ error: 'CREATE_AGENT_FAILED', message: 'Failed to create agent profile' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+        );
+      }
 
-    console.log('[AGENT-REGISTER] ✓ Agent role assigned');
+      agentProfile = newProfile;
+      console.log('[AGENT-REGISTER] ✓ Agent profile created:', agentProfile.id);
 
-    // Initialize wallet
-    const { error: walletError } = await supabaseClient
-      .from('agent_wallet')
-      .insert({
-        agent_id: agentProfile.id,
-        balance: 0,
-        currency: 'USD'
-      });
+      // Create agent role (only if new)
+      const { error: roleError } = await supabaseClient
+        .from('user_roles')
+        .insert({
+          user_id: userId,
+          role: 'agent'
+        });
 
-    if (walletError) throw walletError;
+      if (roleError && roleError.code !== '23505') {
+        console.error('[AGENT-REGISTER] Role error:', roleError);
+      } else {
+        console.log('[AGENT-REGISTER] ✓ Agent role assigned');
+      }
 
-    console.log('[AGENT-REGISTER] ✓ Wallet initialized');
+      // Initialize wallet (only if new)
+      const { error: walletError } = await supabaseClient
+        .from('agent_wallet')
+        .insert({
+          agent_id: agentProfile.id,
+          balance: 0,
+          currency: 'USD'
+        });
+
+      if (walletError && walletError.code !== '23505') {
+        console.error('[AGENT-REGISTER] Wallet error:', walletError);
+      } else {
+        console.log('[AGENT-REGISTER] ✓ Wallet initialized');
+      }
+    }
 
     return new Response(
       JSON.stringify({ 
-        success: true, 
-        agentId: agentProfile.id,
-        agentCode: agentCode,
-        message: 'Agent registered successfully. You can now access your dashboard.'
+        success: true,
+        created: created,
+        profile: {
+          id: agentProfile.id,
+          agentCode: agentProfile.agent_code,
+          companyName: agentProfile.company_name,
+          contactPerson: agentProfile.contact_person,
+          phone: agentProfile.phone
+        },
+        message: created ? 'Agent registered successfully' : 'Agent profile updated'
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
     );
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('[AGENT-REGISTER] Error:', errorMessage);
+    console.error('[AGENT-REGISTER] Unexpected error:', errorMessage, error);
     return new Response(
-      JSON.stringify({ error: errorMessage }),
+      JSON.stringify({ 
+        error: 'RETRYABLE_ERROR',
+        message: 'An unexpected error occurred. Please try again.'
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
     );
   }
