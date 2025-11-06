@@ -3,6 +3,7 @@ import { X, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import flybotLogo from "@/assets/flybot-logo.png";
 
 const FlyBot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -55,13 +56,16 @@ const FlyBot = () => {
   return (
     <div ref={chatRef} className="fixed bottom-6 right-6 z-50">
       {!isOpen ? (
-        <Button
+        <button
           onClick={() => setIsOpen(true)}
-          size="lg"
-          className="h-16 w-16 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-primary via-primary to-primary/80 hover:scale-110"
+          className="h-[70px] w-[70px] rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 bg-transparent border-0 p-0 cursor-pointer"
         >
-          <MessageCircle className="h-7 w-7" />
-        </Button>
+          <img 
+            src={flybotLogo} 
+            alt="FlyBot" 
+            className="h-full w-full object-contain"
+          />
+        </button>
       ) : (
         <Card className="w-[380px] h-[550px] shadow-2xl animate-scale-in flex flex-col">
           <CardHeader className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground rounded-t-lg pb-4">
