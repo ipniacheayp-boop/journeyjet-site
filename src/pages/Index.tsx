@@ -4,6 +4,7 @@ import SearchWidget from "@/components/SearchWidget";
 import DealCard from "@/components/DealCard";
 import TailoredDealCard from "@/components/TailoredDealCard";
 import TrustBadges from "@/components/TrustBadges";
+import FlyBot from "@/components/FlyBot";
 import { mockDeals } from "@/data/mockDeals";
 import heroFlight from "@/assets/hero-flight.jpg";
 import dealLastMinute from "@/assets/deal-last-minute.jpg";
@@ -203,6 +204,8 @@ const Index = () => {
       </section>
 
       <Footer />
+      
+      <FlyBot />
     </div>
   );
 };
