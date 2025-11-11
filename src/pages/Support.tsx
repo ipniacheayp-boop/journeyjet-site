@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ChatWindow from "@/components/ChatWindow";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -290,27 +291,7 @@ const Support = () => {
         </span>
       </button>
 
-      {showChat && (
-        <div className="fixed bottom-28 right-8 w-96 h-[500px] bg-white rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden border-2 border-support-sky/20">
-          <div className="bg-gradient-to-r from-support-sky to-blue-600 p-4 text-white flex justify-between items-center">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                <MessageCircle className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="font-semibold">Live Chat</h3>
-                <p className="text-xs opacity-90">We typically reply instantly</p>
-              </div>
-            </div>
-            <button onClick={() => setShowChat(false)} className="hover:bg-white/20 rounded-full p-2 transition-colors">
-              <XCircle className="w-5 h-5" />
-            </button>
-          </div>
-          <div className="flex-1 p-4 bg-gray-50 flex items-center justify-center">
-            <p className="text-center text-muted-foreground">Chat feature coming soon!</p>
-          </div>
-        </div>
-      )}
+      {showChat && <ChatWindow onClose={() => setShowChat(false)} />}
 
       <Footer />
     </div>

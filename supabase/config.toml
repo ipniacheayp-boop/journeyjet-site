@@ -95,3 +95,6 @@ verify_jwt = false
 
 [functions.payments-check-status]
 verify_jwt = false
+
+[functions.chat-start]
+verify_jwt = true
