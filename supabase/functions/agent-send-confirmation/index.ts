@@ -309,7 +309,7 @@ serve(async (req) => {
       JSON.stringify({ 
         success: true, 
         message: 'Booking confirmation sent successfully',
-        messageId: emailResponse.id
+        messageId: emailResponse.data?.id
       }),
       { 
         status: 200, 
