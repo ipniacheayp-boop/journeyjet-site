@@ -55,6 +55,16 @@ All colors MUST be HSL.
 
     /* Gradient for rewards button */
     --gradient-reward: linear-gradient(135deg, hsl(211 100% 50%), hsl(197 100% 50%));
+
+    /* Support page colors */
+    --support-sky: 212 100% 50%;
+    --support-sunrise: 42 100% 70%;
+    --support-green: 164 95% 43%;
+    --support-bg-light: 210 60% 95%;
+    
+    /* Support gradients */
+    --gradient-support-button: linear-gradient(135deg, hsl(212 100% 50%), hsl(180 100% 50%));
+    --gradient-support-hero: linear-gradient(180deg, rgba(0, 0, 0, 0.4), transparent);
   }
 }
 

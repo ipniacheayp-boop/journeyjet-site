@@ -15,6 +15,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
+        poppins: ['Poppins', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -59,6 +60,12 @@ export default {
           "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
+        },
+        support: {
+          sky: "hsl(var(--support-sky))",
+          sunrise: "hsl(var(--support-sunrise))",
+          green: "hsl(var(--support-green))",
+          "bg-light": "hsl(var(--support-bg-light))",
         },
       },
       borderRadius: {

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -5,176 +6,311 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Phone, Mail, MessageCircle, HelpCircle } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { 
+  Plane, 
+  FileText, 
+  DollarSign, 
+  Ticket, 
+  RefreshCw, 
+  XCircle, 
+  Heart,
+  Shield,
+  CheckSquare,
+  Briefcase,
+  PlusCircle,
+  Hotel,
+  Car,
+  Leaf,
+  Bus,
+  MessageCircle,
+  Phone,
+  Mail,
+  Cloud
+} from "lucide-react";
 import { toast } from "sonner";
 
 const Support = () => {
+  const [showContactForm, setShowContactForm] = useState(false);
+  const [selectedService, setSelectedService] = useState("");
+  const [showChat, setShowChat] = useState(false);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     toast.success("Message sent! We'll get back to you soon.");
+    setShowContactForm(false);
   };
 
-  const faqs = [
-    {
-      question: "How do I book a flight?",
-      answer: "Use our search widget on the home page to enter your travel details, compare prices, and select the best deal. Click 'Book Now' to complete your reservation."
-    },
-    {
-      question: "What payment methods do you accept?",
-      answer: "We accept all major credit cards (Visa, Mastercard, American Express), debit cards, and PayPal for secure payments."
-    },
-    {
-      question: "Can I cancel or change my booking?",
-      answer: "Yes! You can cancel within 24 hours for a full refund. Changes depend on the airline's policy. Contact our support team for assistance."
-    },
-    {
-      question: "How do I receive my tickets?",
-      answer: "E-tickets will be sent to your email immediately after booking confirmation. You can also access them through your account dashboard."
-    },
-    {
-      question: "Do you offer travel insurance?",
-      answer: "Yes, we partner with leading insurance providers. You can add travel insurance during the booking process."
-    },
-    {
-      question: "What if my flight is delayed or cancelled?",
-      answer: "Contact our 24/7 support team immediately. We'll help you rebook or arrange a refund according to airline policies."
-    }
+  const handleServiceClick = (service: string) => {
+    setSelectedService(service);
+    setShowContactForm(true);
+  };
+
+  const assistanceServices = [
+    { icon: Plane, title: "Check Booking Status", color: "from-support-sky to-blue-500" },
+    { icon: FileText, title: "View / Email / Print Itinerary", color: "from-support-sunrise to-yellow-400" },
+    { icon: DollarSign, title: "Refund Status", color: "from-support-green to-teal-500" },
+    { icon: Ticket, title: "Check-in / Boarding Pass", color: "from-purple-500 to-pink-500" },
+    { icon: RefreshCw, title: "Change Your Trip", color: "from-orange-500 to-red-500" },
+    { icon: XCircle, title: "Cancel Your Trip", color: "from-red-500 to-rose-600" },
+    { icon: Heart, title: "Special Assistance", color: "from-indigo-500 to-purple-600" },
+  ];
+
+  const enhanceServices = [
+    { icon: Shield, title: "Traveler Protection", description: "Add insurance coverage" },
+    { icon: CheckSquare, title: "Web Check-In", description: "Check in online" },
+    { icon: Briefcase, title: "Extra Baggage", description: "Add more luggage" },
+    { icon: PlusCircle, title: "Add a Seat", description: "Choose your seat" },
+    { icon: Hotel, title: "Add Hotel Room", description: "Book accommodation" },
+    { icon: Car, title: "Book Car Rental", description: "Rent a vehicle" },
+    { icon: Leaf, title: "Plant a Tree", description: "Offset carbon footprint" },
+    { icon: Bus, title: "Airport Transfer", description: "Book ground transport" },
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col font-poppins">
       <Header />
       
-      <main className="flex-1 pt-24 pb-16">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold mb-4">How Can We Help?</h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Our support team is here to assist you 24/7 with any questions or concerns
+      {/* Hero Section */}
+      <div 
+        className="relative h-[400px] bg-cover bg-center"
+        style={{
+          backgroundImage: "linear-gradient(180deg, rgba(0, 0, 0, 0.35), transparent), url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1600&h=400&fit=crop')",
+        }}
+      >
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4">
+          <Cloud className="w-12 h-12 mb-4 opacity-60 animate-pulse" />
+          <h1 className="text-5xl md:text-6xl font-bold mb-4 drop-shadow-lg">Customer Support</h1>
+          <p className="text-xl md:text-2xl font-light max-w-2xl drop-shadow-md">
+            We're here to help make your journey smooth.
+          </p>
+        </div>
+      </div>
+
+      <main className="flex-1 bg-gradient-to-b from-support-bg-light to-white">
+        <div className="container mx-auto px-4 py-16">
+          {/* Main Assistance Grid */}
+          <div className="mb-20">
+            <h2 className="text-4xl font-bold text-center mb-4 text-foreground">How Can We Assist You?</h2>
+            <p className="text-center text-muted-foreground mb-12 text-lg">
+              Select a service below to get started
             </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {assistanceServices.map((service, index) => (
+                <Card 
+                  key={index}
+                  className="cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-0 overflow-hidden group"
+                  onClick={() => handleServiceClick(service.title)}
+                >
+                  <div className={`h-2 bg-gradient-to-r ${service.color}`} />
+                  <CardHeader className="text-center pb-4">
+                    <div className={`w-16 h-16 bg-gradient-to-br ${service.color} rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:rotate-12 transition-transform duration-300 shadow-lg`}>
+                      <service.icon className="w-8 h-8 text-white" />
+                    </div>
+                    <CardTitle className="text-lg">{service.title}</CardTitle>
+                  </CardHeader>
+                </Card>
+              ))}
+            </div>
           </div>
 
-          {/* Contact Options */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-            <Card>
-              <CardHeader className="text-center">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Phone className="w-6 h-6 text-primary" />
-                </div>
-                <CardTitle>Call Us</CardTitle>
-                <CardDescription>Available 24/7</CardDescription>
-              </CardHeader>
-              <CardContent className="text-center">
-                <a href="tel:+18001234567" className="text-primary font-semibold hover:underline">
-                  1-800-123-4567
-                </a>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="text-center">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Mail className="w-6 h-6 text-primary" />
-                </div>
-                <CardTitle>Email Us</CardTitle>
-                <CardDescription>Response within 24h</CardDescription>
-              </CardHeader>
-              <CardContent className="text-center">
-                <a href="mailto:help@chyeap.com" className="text-primary font-semibold hover:underline">
-                  help@chyeap.com
-                </a>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="text-center">
-                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <MessageCircle className="w-6 h-6 text-primary" />
-                </div>
-                <CardTitle>Live Chat</CardTitle>
-                <CardDescription>Instant assistance</CardDescription>
-              </CardHeader>
-              <CardContent className="text-center">
-                <Button onClick={() => toast.info("Chat feature coming soon!")}>
-                  Start Chat
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Contact Form */}
-            <div>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Mail className="w-5 h-5" />
-                    Send Us a Message
-                  </CardTitle>
-                  <CardDescription>
-                    Fill out the form below and we'll get back to you as soon as possible
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleSubmit} className="space-y-4" id="contact">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="name">Your Name</Label>
-                        <Input id="name" required />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Email Address</Label>
-                        <Input id="email" type="email" required />
-                      </div>
+          {/* Enhance Your Booking Section */}
+          <div className="mb-20">
+            <h2 className="text-4xl font-bold text-center mb-4 text-foreground">Enhance Your Booking</h2>
+            <p className="text-center text-muted-foreground mb-12 text-lg">
+              Add more value to your travel experience
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {enhanceServices.map((service, index) => (
+                <Card 
+                  key={index}
+                  className="transition-all duration-300 hover:scale-105 hover:shadow-xl border-0 bg-white"
+                >
+                  <CardHeader className="text-center">
+                    <div className="w-14 h-14 bg-gradient-to-br from-support-green to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md">
+                      <service.icon className="w-7 h-7 text-white" />
                     </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="subject">Subject</Label>
-                      <Input id="subject" required />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="message">Message</Label>
-                      <Textarea id="message" rows={6} required />
-                    </div>
-
-                    <Button type="submit" className="w-full">
-                      Send Message
+                    <CardTitle className="text-base mb-2">{service.title}</CardTitle>
+                    <CardDescription>{service.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="text-center pb-6">
+                    <Button 
+                      className="bg-support-green hover:bg-support-green/90 text-white rounded-full px-6"
+                      onClick={() => toast.info(`${service.title} feature coming soon!`)}
+                    >
+                      Add
                     </Button>
-                  </form>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
+          </div>
 
-            {/* FAQs */}
-            <div id="faq">
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
-                  <HelpCircle className="w-6 h-6" />
-                  Frequently Asked Questions
-                </h2>
-                <p className="text-muted-foreground">
-                  Quick answers to common questions
-                </p>
-              </div>
-              
-              <Accordion type="single" collapsible className="space-y-2">
-                {faqs.map((faq, index) => (
-                  <AccordionItem key={index} value={`item-${index}`} className="border rounded-lg px-4">
-                    <AccordionTrigger className="hover:no-underline">
-                      {faq.question}
-                    </AccordionTrigger>
-                    <AccordionContent className="text-muted-foreground">
-                      {faq.answer}
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </div>
+          {/* Contact Section */}
+          <div className="max-w-4xl mx-auto">
+            <Card className="shadow-2xl border-0 overflow-hidden">
+              <div className="h-3 bg-gradient-to-r from-support-sky via-support-sunrise to-support-green" />
+              <CardHeader className="text-center pb-8">
+                <CardTitle className="text-3xl mb-3">Send Us a Message</CardTitle>
+                <CardDescription className="text-base">
+                  Fill out the form below and we'll get back to you within 24 hours
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="px-8 pb-8">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="name" className="text-base">Your Name</Label>
+                      <Input id="name" required className="h-12 rounded-xl" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email" className="text-base">Email Address</Label>
+                      <Input id="email" type="email" required className="h-12 rounded-xl" />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="subject" className="text-base">Subject</Label>
+                    <Input id="subject" required className="h-12 rounded-xl" />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="message" className="text-base">Message</Label>
+                    <Textarea id="message" rows={6} required className="rounded-xl" />
+                  </div>
+
+                  <Button 
+                    type="submit" 
+                    className="w-full h-14 text-lg font-semibold rounded-xl shadow-lg"
+                    style={{ background: 'linear-gradient(135deg, hsl(212 100% 50%), hsl(180 100% 50%))' }}
+                  >
+                    Send Message
+                  </Button>
+                </form>
+
+                {/* Contact Info */}
+                <div className="mt-8 pt-8 border-t grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="w-12 h-12 bg-support-sky/10 rounded-full flex items-center justify-center">
+                      <Mail className="w-6 h-6 text-support-sky" />
+                    </div>
+                    <p className="text-sm font-medium">Email Support</p>
+                    <a href="mailto:help@chyeap.com" className="text-support-sky hover:underline text-sm">
+                      help@chyeap.com
+                    </a>
+                  </div>
+                  
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="w-12 h-12 bg-support-green/10 rounded-full flex items-center justify-center">
+                      <Phone className="w-6 h-6 text-support-green" />
+                    </div>
+                    <p className="text-sm font-medium">Call Us</p>
+                    <a href="tel:+18001234567" className="text-support-green hover:underline text-sm">
+                      1-800-123-4567
+                    </a>
+                  </div>
+                  
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="w-12 h-12 bg-support-sunrise/10 rounded-full flex items-center justify-center">
+                      <MessageCircle className="w-6 h-6 text-support-sunrise" />
+                    </div>
+                    <p className="text-sm font-medium">Live Chat</p>
+                    <button 
+                      onClick={() => setShowChat(true)}
+                      className="text-support-sunrise hover:underline text-sm"
+                    >
+                      Chat with us instantly
+                    </button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </main>
+
+      {/* Contact Form Dialog */}
+      <Dialog open={showContactForm} onOpenChange={setShowContactForm}>
+        <DialogContent className="sm:max-w-[500px] rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">Get Help with {selectedService}</DialogTitle>
+            <DialogDescription>
+              Tell us more about how we can assist you
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+            <div className="space-y-2">
+              <Label htmlFor="dialog-name">Your Name</Label>
+              <Input id="dialog-name" required className="rounded-xl" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="dialog-email">Email Address</Label>
+              <Input id="dialog-email" type="email" required className="rounded-xl" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="dialog-message">Message</Label>
+              <Textarea id="dialog-message" rows={5} required className="rounded-xl" />
+            </div>
+            <div className="flex gap-3">
+              <Button 
+                type="submit" 
+                className="flex-1 rounded-xl"
+                style={{ background: 'linear-gradient(135deg, hsl(212 100% 50%), hsl(180 100% 50%))' }}
+              >
+                Send Message
+              </Button>
+              <Button 
+                type="button"
+                variant="outline"
+                className="flex-1 rounded-xl"
+                onClick={() => setShowChat(true)}
+              >
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Live Chat
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Floating Chat Button */}
+      <button
+        onClick={() => setShowChat(!showChat)}
+        className="fixed bottom-8 right-8 w-16 h-16 bg-gradient-to-br from-support-sky to-blue-600 rounded-full shadow-2xl flex items-center justify-center text-white hover:scale-110 transition-transform duration-300 z-50 group"
+        aria-label="Open chat"
+      >
+        <MessageCircle className="w-7 h-7 group-hover:scale-110 transition-transform" />
+        <span className="absolute -top-1 -right-1 w-4 h-4 bg-support-green rounded-full animate-pulse" />
+        
+        {/* Tooltip */}
+        <span className="absolute bottom-full mb-2 right-0 bg-gray-900 text-white text-sm px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
+          Chat with us instantly!
+        </span>
+      </button>
+
+      {showChat && (
+        <div className="fixed bottom-28 right-8 w-96 h-[500px] bg-white rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden border-2 border-support-sky/20">
+          <div className="bg-gradient-to-r from-support-sky to-blue-600 p-4 text-white flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                <MessageCircle className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-semibold">Live Chat</h3>
+                <p className="text-xs opacity-90">We typically reply instantly</p>
+              </div>
+            </div>
+            <button onClick={() => setShowChat(false)} className="hover:bg-white/20 rounded-full p-2 transition-colors">
+              <XCircle className="w-5 h-5" />
+            </button>
+          </div>
+          <div className="flex-1 p-4 bg-gray-50 flex items-center justify-center">
+            <p className="text-center text-muted-foreground">Chat feature coming soon!</p>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>
