@@ -165,7 +165,7 @@ const FlyBot = () => {
           <img 
             src={flybotLogo} 
             alt="FlyBot" 
-            className="h-full w-full object-contain brightness-0"
+            className="h-full w-full object-contain"
           />
         </button>
       ) : (
