@@ -590,7 +590,6 @@ const Terms = () => {
 
         <Footer />
       </div>
-    </>
   );
 };
 
