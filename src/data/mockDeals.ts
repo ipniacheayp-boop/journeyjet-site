@@ -3,7 +3,23 @@ import dealParis from "@/assets/deal-paris.jpg";
 import dealNyc from "@/assets/deal-nyc.jpg";
 import dealTokyo from "@/assets/deal-tokyo.jpg";
 
-export const mockDeals = [
+export interface Deal {
+  id: string;
+  title: string;
+  image: string;
+  origin: string;
+  destination: string;
+  airline: string;
+  departDate: string;
+  returnDate: string;
+  price: number;
+  originalPrice: number;
+  cabinClass: string;
+  isPinned?: boolean;
+  link?: string;
+}
+
+export const mockDeals: Deal[] = [
   {
     id: "1",
     title: "Paradise Beach Getaway - Maldives",
@@ -15,7 +31,8 @@ export const mockDeals = [
     returnDate: "2025-11-25",
     price: 899,
     originalPrice: 1299,
-    cabinClass: "Economy"
+    cabinClass: "Economy",
+    link: "/booking"
   },
   {
     id: "2",
@@ -28,7 +45,8 @@ export const mockDeals = [
     returnDate: "2025-12-08",
     price: 649,
     originalPrice: 899,
-    cabinClass: "Economy"
+    cabinClass: "Economy",
+    link: "/booking"
   },
   {
     id: "3",
@@ -41,7 +59,8 @@ export const mockDeals = [
     returnDate: "2025-11-27",
     price: 299,
     originalPrice: 449,
-    cabinClass: "Economy"
+    cabinClass: "Economy",
+    link: "/booking"
   },
   {
     id: "4",
@@ -54,7 +73,8 @@ export const mockDeals = [
     returnDate: "2025-12-20",
     price: 799,
     originalPrice: 1099,
-    cabinClass: "Economy"
+    cabinClass: "Economy",
+    link: "/booking"
   },
   {
     id: "5",
@@ -67,7 +87,8 @@ export const mockDeals = [
     returnDate: "2025-11-25",
     price: 399,
     originalPrice: 599,
-    cabinClass: "Economy"
+    cabinClass: "Economy",
+    link: "/booking"
   },
   {
     id: "6",
@@ -80,6 +101,343 @@ export const mockDeals = [
     returnDate: "2025-12-15",
     price: 549,
     originalPrice: 799,
-    cabinClass: "Economy"
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "7",
+    title: "Bali Relaxation Retreat",
+    image: dealBeach,
+    origin: "Los Angeles (LAX)",
+    destination: "Bali (DPS)",
+    airline: "Singapore Airlines",
+    departDate: "2025-12-15",
+    returnDate: "2025-12-28",
+    price: 949,
+    originalPrice: 1399,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "8",
+    title: "Dubai Luxury Stopover",
+    image: dealNyc,
+    origin: "New York (JFK)",
+    destination: "Dubai (DXB)",
+    airline: "Emirates",
+    departDate: "2025-11-22",
+    returnDate: "2025-11-29",
+    price: 699,
+    originalPrice: 999,
+    cabinClass: "Business",
+    link: "/booking"
+  },
+  {
+    id: "9",
+    title: "Bangkok Food & Markets",
+    image: dealTokyo,
+    origin: "Seattle (SEA)",
+    destination: "Bangkok (BKK)",
+    airline: "Thai Airways",
+    departDate: "2025-12-08",
+    returnDate: "2025-12-18",
+    price: 729,
+    originalPrice: 1029,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "10",
+    title: "Singapore City Break",
+    image: dealNyc,
+    origin: "San Francisco (SFO)",
+    destination: "Singapore (SIN)",
+    airline: "Singapore Airlines",
+    departDate: "2025-11-25",
+    returnDate: "2025-12-05",
+    price: 849,
+    originalPrice: 1199,
+    cabinClass: "Premium Economy",
+    link: "/booking"
+  },
+  {
+    id: "11",
+    title: "Sydney Beach & Opera",
+    image: dealBeach,
+    origin: "Los Angeles (LAX)",
+    destination: "Sydney (SYD)",
+    airline: "Qantas",
+    departDate: "2025-12-20",
+    returnDate: "2026-01-05",
+    price: 1099,
+    originalPrice: 1599,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "12",
+    title: "Rome History Holiday",
+    image: dealParis,
+    origin: "Chicago (ORD)",
+    destination: "Rome (FCO)",
+    airline: "Alitalia",
+    departDate: "2025-11-28",
+    returnDate: "2025-12-08",
+    price: 579,
+    originalPrice: 849,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "13",
+    title: "Barcelona Sun & Culture",
+    image: dealBeach,
+    origin: "Miami (MIA)",
+    destination: "Barcelona (BCN)",
+    airline: "Iberia",
+    departDate: "2025-12-03",
+    returnDate: "2025-12-12",
+    price: 529,
+    originalPrice: 779,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "14",
+    title: "Iceland Northern Lights",
+    image: dealNyc,
+    origin: "Boston (BOS)",
+    destination: "Reykjavik (KEF)",
+    airline: "Icelandair",
+    departDate: "2025-12-10",
+    returnDate: "2025-12-17",
+    price: 449,
+    originalPrice: 699,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "15",
+    title: "Cairo Pyramids Tour",
+    image: dealTokyo,
+    origin: "New York (JFK)",
+    destination: "Cairo (CAI)",
+    airline: "EgyptAir",
+    departDate: "2025-11-30",
+    returnDate: "2025-12-09",
+    price: 629,
+    originalPrice: 899,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "16",
+    title: "Kenya Safari Adventure",
+    image: dealBeach,
+    origin: "Atlanta (ATL)",
+    destination: "Nairobi (NBO)",
+    airline: "Kenya Airways",
+    departDate: "2025-12-15",
+    returnDate: "2025-12-27",
+    price: 979,
+    originalPrice: 1399,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "17",
+    title: "Mauritius Island Escape",
+    image: dealBeach,
+    origin: "London (LHR)",
+    destination: "Mauritius (MRU)",
+    airline: "Air Mauritius",
+    departDate: "2025-12-08",
+    returnDate: "2025-12-22",
+    price: 829,
+    originalPrice: 1199,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "18",
+    title: "Seychelles Romantic Getaway",
+    image: dealBeach,
+    origin: "Paris (CDG)",
+    destination: "Seychelles (SEZ)",
+    airline: "Air Seychelles",
+    departDate: "2025-11-25",
+    returnDate: "2025-12-08",
+    price: 1049,
+    originalPrice: 1499,
+    cabinClass: "Business",
+    link: "/booking"
+  },
+  {
+    id: "19",
+    title: "Hawaiian Surf & Sun",
+    image: dealBeach,
+    origin: "San Diego (SAN)",
+    destination: "Honolulu (HNL)",
+    airline: "Hawaiian Airlines",
+    departDate: "2025-12-12",
+    returnDate: "2025-12-20",
+    price: 449,
+    originalPrice: 649,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "20",
+    title: "Portuguese Coastline",
+    image: dealBeach,
+    origin: "Newark (EWR)",
+    destination: "Lisbon (LIS)",
+    airline: "TAP Portugal",
+    departDate: "2025-11-27",
+    returnDate: "2025-12-06",
+    price: 499,
+    originalPrice: 749,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "21",
+    title: "Prague & Vienna Culture Loop",
+    image: dealParis,
+    origin: "Washington (IAD)",
+    destination: "Prague (PRG)",
+    airline: "Czech Airlines",
+    departDate: "2025-12-04",
+    returnDate: "2025-12-14",
+    price: 579,
+    originalPrice: 849,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "22",
+    title: "Amsterdam Tulip Season",
+    image: dealParis,
+    origin: "Denver (DEN)",
+    destination: "Amsterdam (AMS)",
+    airline: "KLM",
+    departDate: "2026-03-20",
+    returnDate: "2026-03-30",
+    price: 629,
+    originalPrice: 899,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "23",
+    title: "Buenos Aires Tango Nights",
+    image: dealNyc,
+    origin: "Miami (MIA)",
+    destination: "Buenos Aires (EZE)",
+    airline: "Aerolineas Argentinas",
+    departDate: "2025-12-18",
+    returnDate: "2026-01-02",
+    price: 749,
+    originalPrice: 1099,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "24",
+    title: "Peru Machu Picchu Trek",
+    image: dealTokyo,
+    origin: "Houston (IAH)",
+    destination: "Lima (LIM)",
+    airline: "LATAM",
+    departDate: "2025-12-05",
+    returnDate: "2025-12-15",
+    price: 599,
+    originalPrice: 899,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "25",
+    title: "Mexico Riviera Relax",
+    image: dealBeach,
+    origin: "Dallas (DFW)",
+    destination: "Puerto Vallarta (PVR)",
+    airline: "Aeromexico",
+    departDate: "2025-11-29",
+    returnDate: "2025-12-06",
+    price: 349,
+    originalPrice: 529,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "26",
+    title: "South Africa Coast & Safari",
+    image: dealBeach,
+    origin: "Atlanta (ATL)",
+    destination: "Cape Town (CPT)",
+    airline: "South African Airways",
+    departDate: "2025-12-20",
+    returnDate: "2026-01-03",
+    price: 1129,
+    originalPrice: 1599,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "27",
+    title: "Amalfi Coast Romance",
+    image: dealBeach,
+    origin: "Philadelphia (PHL)",
+    destination: "Naples (NAP)",
+    airline: "Alitalia",
+    departDate: "2025-12-02",
+    returnDate: "2025-12-12",
+    price: 649,
+    originalPrice: 949,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "28",
+    title: "Istanbul Cultures & Bazaars",
+    image: dealTokyo,
+    origin: "Boston (BOS)",
+    destination: "Istanbul (IST)",
+    airline: "Turkish Airlines",
+    departDate: "2025-11-26",
+    returnDate: "2025-12-05",
+    price: 529,
+    originalPrice: 799,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "29",
+    title: "Maldives Overwater Luxury",
+    image: dealBeach,
+    origin: "Los Angeles (LAX)",
+    destination: "Maldives (MLE)",
+    airline: "Emirates",
+    departDate: "2025-12-22",
+    returnDate: "2026-01-05",
+    price: 1399,
+    originalPrice: 1999,
+    cabinClass: "Business",
+    link: "/booking"
+  },
+  {
+    id: "30",
+    title: "Alaska Northern Wilderness",
+    image: dealNyc,
+    origin: "Seattle (SEA)",
+    destination: "Anchorage (ANC)",
+    airline: "Alaska Airlines",
+    departDate: "2026-06-15",
+    returnDate: "2026-06-25",
+    price: 379,
+    originalPrice: 579,
+    cabinClass: "Economy",
+    link: "/booking"
   }
 ];

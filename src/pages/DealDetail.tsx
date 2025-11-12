@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { mockDeals } from "@/data/mockDeals";
+import { mockDeals, type Deal } from "@/data/mockDeals";
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Plane, ArrowRight, Clock, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";

@@ -2,7 +2,8 @@ import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import DealCard from "@/components/DealCard";
-import { mockDeals } from "@/data/mockDeals";
+import DealModal from "@/components/DealModal";
+import { mockDeals, type Deal } from "@/data/mockDeals";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
@@ -12,6 +13,8 @@ const Deals = () => {
   const [priceRange, setPriceRange] = useState([0, 1500]);
   const [selectedAirlines, setSelectedAirlines] = useState<string[]>([]);
   const [selectedCabinClass, setSelectedCabinClass] = useState<string[]>([]);
+  const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const airlines = [...new Set(mockDeals.map(deal => deal.airline))];
   const cabinClasses = [...new Set(mockDeals.map(deal => deal.cabinClass))];
@@ -43,6 +46,11 @@ const Deals = () => {
     setPriceRange([0, 1500]);
     setSelectedAirlines([]);
     setSelectedCabinClass([]);
+  };
+
+  const handleDealClick = (deal: Deal) => {
+    setSelectedDeal(deal);
+    setIsModalOpen(true);
   };
 
   return (
@@ -137,7 +145,7 @@ const Deals = () => {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredDeals.map(deal => (
-                  <DealCard key={deal.id} deal={deal} />
+                  <DealCard key={deal.id} deal={deal} onClick={() => handleDealClick(deal)} />
                 ))}
               </div>
               {filteredDeals.length === 0 && (
@@ -149,6 +157,13 @@ const Deals = () => {
           </div>
         </div>
       </main>
+
+      {/* Deal Modal */}
+      <DealModal 
+        deal={selectedDeal}
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+      />
 
       <Footer />
     </div>
