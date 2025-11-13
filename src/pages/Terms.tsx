@@ -1,31 +1,62 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 const Terms = () => {
+  const mainRef = useRef<HTMLElement | null>(null);
+
+  // Set meta + title
   useEffect(() => {
     document.title = "Terms & Conditions | Chyeap - Travel Booking Terms of Service";
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute("content", "Read Chyeap's terms and conditions for booking flights, hotels, and travel services. Understand your rights and responsibilities when using our travel platform.");
+      metaDescription.setAttribute(
+        "content",
+        "Read Chyeap's terms and conditions for booking flights, hotels, and travel services. Understand your rights and responsibilities when using our travel platform."
+      );
     }
+  }, []);
+
+  // Ensure content is pushed below the header (works if header is fixed/sticky)
+  useEffect(() => {
+    function updateTopPadding() {
+      const hdr = document.querySelector("header");
+      if (!mainRef.current) return;
+      if (hdr) {
+        const h = Math.ceil(hdr.getBoundingClientRect().height);
+        mainRef.current.style.paddingTop = `${h + 16}px`; // +16 for small breathing room
+      } else {
+        // fallback
+        mainRef.current.style.paddingTop = "";
+      }
+    }
+
+    // initial set and on resize
+    updateTopPadding();
+    window.addEventListener("resize", updateTopPadding);
+    // in case header content loads late (images / fonts) update after a tick
+    const t = setTimeout(updateTopPadding, 300);
+
+    return () => {
+      window.removeEventListener("resize", updateTopPadding);
+      clearTimeout(t);
+    };
   }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-        <Header />
-        
-        <main className="flex-1">
-          <div className="container mx-auto px-4 py-12 sm:px-6 lg:px-8">
-            <article className="max-w-4xl mx-auto prose prose-slate dark:prose-invert">
-              <header className="mb-12 text-center border-b border-border pb-8">
-                <h1 className="text-4xl sm:text-5xl font-bold text-foreground mb-4">
-                  Terms & Conditions
-                </h1>
-                <p className="text-sm text-muted-foreground">
-                  Last Updated: October 7, 2025
-                </p>
-              </header>
+      <Header />
+
+      {/* main has a fallback pt-24 so content isn't hidden before JS runs */}
+      <main ref={mainRef} className="flex-1 pt-24">
+        <div className="container mx-auto px-4 py-12 sm:px-6 lg:px-8">
+          <article className="max-w-4xl mx-auto prose prose-slate dark:prose-invert">
+            <header className="mb-12 text-center border-b border-border pb-8">
+              <h1 className="text-4xl sm:text-5xl font-bold text-foreground mb-4">
+                Terms & Conditions
+              </h1>
+              <p className="text-sm text-muted-foreground">Last Updated: October 7, 2025</p>
+            </header>
 
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold text-foreground mb-4">Introduction</h2>
