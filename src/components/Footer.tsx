@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Mail, Facebook, Twitter, Instagram, Youtube } from "lucide-react";
+import { Plane, Mail, Facebook, Twitter, Instagram, Youtube } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -63,11 +63,9 @@ const Footer = () => {
           {/* Brand Column */}
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center gap-2 mb-4 group">
-              <img 
-                src="/bot-logo.png" 
-                alt="AI Bot Logo" 
-                className="w-10 h-10 transition-transform group-hover:scale-105"
-              />
+              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center transition-transform group-hover:scale-105">
+                <Plane className="w-6 h-6 text-primary-foreground" />
+              </div>
               <span className="text-xl font-bold">Cheap Flights</span>
             </Link>
             <p className="text-white/70 mb-4 max-w-sm">

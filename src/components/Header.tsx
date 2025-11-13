@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Phone, User, Menu, X, LogOut, BookOpen } from "lucide-react";
+import { Plane, Phone, User, Menu, X, LogOut, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -47,11 +47,9 @@ const Header = () => {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <img 
-              src="/bot-logo.png" 
-              alt="AI Bot Logo" 
-              className="w-10 h-10 transition-transform group-hover:scale-105"
-            />
+            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center transition-transform group-hover:scale-105">
+              <Plane className="w-6 h-6 text-primary-foreground" />
+            </div>
             <span className="text-xl font-bold text-foreground hidden sm:block">Cheap Flights</span>
           </Link>
 
