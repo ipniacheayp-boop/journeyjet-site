@@ -2,9 +2,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import FlyBot from "@/components/FlyBot";
 import Index from "./pages/Index";
 import Deals from "./pages/Deals";
 import DealDetail from "./pages/DealDetail";
@@ -36,6 +37,19 @@ import AgentLogin from "./pages/AgentLogin";
 import AgentDashboard from "./pages/AgentDashboard";
 
 const queryClient = new QueryClient();
+
+const FlybotWrapper = () => {
+  const location = useLocation();
+  const isFlybotEnabled = import.meta.env.VITE_ENABLE_FLYBOT !== 'false';
+  
+  // Exclude Flybot from support pages
+  const shouldShowFlybot = isFlybotEnabled && 
+    !location.pathname.includes('/support') &&
+    !location.pathname.includes('/customer-support') &&
+    !location.pathname.includes('/help/support');
+  
+  return shouldShowFlybot ? <FlyBot /> : null;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -78,6 +92,7 @@ const App = () => (
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
+            <FlybotWrapper />
           </AuthProvider>
         </ErrorBoundary>
       </BrowserRouter>
