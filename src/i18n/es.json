@@ -151,7 +151,13 @@
     "notHelpful": "No Útil",
     "verified": "Compra Verificada",
     "noReviews": "Aún no hay reseñas",
-    "beFirst": "Sea el primero en opinar"
+    "beFirst": "Sea el primero en opinar",
+    "trustedBy": "Confiado por",
+    "travelers": "Viajeros",
+    "whatTravelersSay": "Lo Que Dicen Nuestros Viajeros",
+    "verifiedReviews": "reseñas verificadas",
+    "verifiedTraveler": "Viajero Verificado",
+    "readAllReviews": "Leer Todas las Reseñas"
   },
   "admin": {
     "dashboard": "Panel de Administrador",
