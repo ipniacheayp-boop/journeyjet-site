@@ -73,13 +73,15 @@ export const useDeals = (query: DealsQuery = {}) => {
 
       const params = new URLSearchParams();
       Object.entries(query).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
+        if (value !== undefined && value !== null && value !== '') {
           params.append(key, String(value));
         }
       });
 
-      const { data, error: fetchError } = await supabase.functions.invoke('deals-get', {
-        body: {},
+      const queryString = params.toString();
+      const functionPath = queryString ? `deals-get?${queryString}` : 'deals-get';
+
+      const { data, error: fetchError } = await supabase.functions.invoke(functionPath, {
         method: 'GET',
       });
 
