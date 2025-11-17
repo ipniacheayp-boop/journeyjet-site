@@ -7,6 +7,7 @@ import DealModal from "@/components/DealModal";
 import TailoredDealCard from "@/components/TailoredDealCard";
 import TrustBadges from "@/components/TrustBadges";
 import FlyBot from "@/components/FlyBot";
+import { ReviewsHighlight } from "@/components/ReviewsHighlight";
 import { mockDeals, type Deal } from "@/data/mockDeals";
 import heroFlight from "@/assets/hero-flight.jpg";
 import dealLastMinute from "@/assets/deal-last-minute.jpg";
@@ -172,6 +173,9 @@ const Index = () => {
         open={isModalOpen}
         onOpenChange={setIsModalOpen}
       />
+
+      {/* Reviews Highlight Section */}
+      <ReviewsHighlight />
 
       {/* Tailored Travel Deals */}
       <section className="py-16 bg-muted/30">

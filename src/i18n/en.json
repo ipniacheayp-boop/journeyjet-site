@@ -151,7 +151,13 @@
     "notHelpful": "Not Helpful",
     "verified": "Verified Purchase",
     "noReviews": "No reviews yet",
-    "beFirst": "Be the first to review"
+    "beFirst": "Be the first to review",
+    "trustedBy": "Trusted by",
+    "travelers": "Travelers",
+    "whatTravelersSay": "What Our Travelers Say",
+    "verifiedReviews": "verified reviews",
+    "verifiedTraveler": "Verified Traveler",
+    "readAllReviews": "Read All Reviews"
   },
   "admin": {
     "dashboard": "Admin Dashboard",
