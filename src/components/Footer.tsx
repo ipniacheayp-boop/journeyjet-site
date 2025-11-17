@@ -1,35 +1,35 @@
 import { Link } from "react-router-dom";
-import { Plane, Mail, Facebook, Twitter, Instagram, Youtube } from "lucide-react";
+import { Plane, Mail, Facebook, Twitter, Instagram, Youtube, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const Footer = () => {
+  const { t, language, toggleLanguage } = useLanguage();
+  
   const footerSections = [
     {
-      title: "Company",
+      title: t('footer.company'),
       links: [
-        { label: "About Us", href: "/about" },
-        { label: "Careers", href: "/careers" },
-        { label: "Press", href: "/press" },
-        { label: "Blog", href: "/blog" },
+        { label: t('footer.about'), href: "/about" },
+        { label: t('footer.careers'), href: "/careers" },
+        { label: t('footer.press'), href: "/press" },
       ],
     },
     {
-      title: "Support",
+      title: t('footer.support'),
       links: [
-        { label: "Help Center", href: "/support" },
-        { label: "Contact Us", href: "/support#contact" },
-        { label: "FAQs", href: "/support#faq" },
-        { label: "Travel Guides", href: "/guides" },
+        { label: t('footer.help'), href: "/support" },
+        { label: t('footer.contact'), href: "/support#contact" },
+        { label: t('footer.faq'), href: "/support#faq" },
       ],
     },
     {
-      title: "Legal",
+      title: t('footer.legal'),
       links: [
-        { label: "Terms and Conditions", href: "/terms" },
-        { label: "Privacy Policy", href: "/privacy" },
-        { label: "Cookie Policy", href: "/cookies" },
-        { label: "Accessibility", href: "/accessibility" },
+        { label: t('footer.terms'), href: "/terms" },
+        { label: t('footer.privacy'), href: "/privacy" },
+        { label: t('footer.cookies'), href: "/cookies" },
       ],
     },
   ];
@@ -40,19 +40,19 @@ const Footer = () => {
         {/* Newsletter Section */}
         <div className="mb-12 pb-12 border-b border-white/10">
           <div className="max-w-2xl mx-auto text-center">
-            <h3 className="text-2xl font-bold mb-3">Get Exclusive Travel Deals</h3>
+            <h3 className="text-2xl font-bold mb-3">{t('footer.newsletter')}</h3>
             <p className="text-white/70 mb-6">
-              Subscribe to our newsletter for the best flight offers and travel tips
+              {t('footer.newsletterDesc')}
             </p>
             <form className="flex gap-2 max-w-md mx-auto">
               <Input
                 type="email"
-                placeholder="Enter your email"
+                placeholder={t('auth.email')}
                 className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
                 required
               />
               <Button type="submit" className="bg-accent hover:bg-accent/90 text-accent-foreground">
-                Subscribe
+                {t('footer.subscribe')}
               </Button>
             </form>
           </div>
@@ -111,10 +111,10 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Link Columns */}
+          {/* Footer Sections */}
           {footerSections.map((section) => (
             <div key={section.title}>
-              <h4 className="font-semibold mb-4">{section.title}</h4>
+              <h4 className="font-semibold mb-4 text-white">{section.title}</h4>
               <ul className="space-y-2">
                 {section.links.map((link) => (
                   <li key={link.href}>
@@ -131,13 +131,41 @@ const Footer = () => {
           ))}
         </div>
 
+        {/* Language Switcher */}
+        <div className="pb-8 mb-8 border-b border-white/10">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="flex items-center gap-2 text-white/70">
+              <Globe className="w-4 h-4" />
+              <span className="text-sm font-medium">{t('common.language')}</span>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant={language === 'en' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => toggleLanguage('en')}
+                className="min-w-[100px]"
+              >
+                🇺🇸 English
+              </Button>
+              <Button
+                variant={language === 'es' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => toggleLanguage('es')}
+                className="min-w-[100px]"
+              >
+                🇪🇸 Español
+              </Button>
+            </div>
+          </div>
+        </div>
+
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/70">
-          <p>&copy; 2025 Cheap Flights. All rights reserved.</p>
-          <div className="flex items-center gap-4">
-            <a href="mailto:help@chyeap.com" className="hover:text-white transition-colors flex items-center gap-2">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/60">
+          <p>© {new Date().getFullYear()} Cheap Flights. {t('footer.allRights')}.</p>
+          <div className="flex items-center gap-6">
+            <a href="mailto:support@cheapflights.com" className="hover:text-white transition-colors flex items-center gap-2">
               <Mail className="w-4 h-4" />
-              help@chyeap.com
+              support@cheapflights.com
             </a>
           </div>
         </div>
