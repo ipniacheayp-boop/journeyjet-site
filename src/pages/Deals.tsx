@@ -67,6 +67,18 @@ const Deals = () => {
 
   const deals = apiDeals.map(adaptDeal);
   
+  // Debug logging
+  useEffect(() => {
+    console.log('📊 Deals loaded:', {
+      count: deals.length,
+      total,
+      loading,
+      error,
+      page,
+      totalPages
+    });
+  }, [deals.length, total, loading, error, page, totalPages]);
+  
   const airlines = [...new Set(deals.map(deal => deal.airline))];
   const cabinClasses = [...new Set(deals.map(deal => deal.cabinClass))];
 
