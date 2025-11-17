@@ -36,6 +36,8 @@ import Careers from "./pages/Careers";
 import AgentLogin from "./pages/AgentLogin";
 import AgentDashboard from "./pages/AgentDashboard";
 
+import DealsManagement from "./pages/DealsManagement";
+
 const queryClient = new QueryClient();
 
 const FlybotWrapper = () => {
@@ -72,6 +74,7 @@ const App = () => (
               <Route path="/login" element={<UserLogin />} />
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/admin" element={<Admin />} />
+              <Route path="/admin/deals" element={<DealsManagement />} />
               <Route path="/payment-options" element={<PaymentOptions />} />
               <Route path="/payment/card" element={<PaymentCard />} />
               <Route path="/payment/upi" element={<PaymentUPI />} />

@@ -454,6 +454,99 @@ export type Database = {
           },
         ]
       }
+      deals: {
+        Row: {
+          airline: string
+          airline_code: string | null
+          bookings_count: number | null
+          class: string
+          clicks_count: number | null
+          created_at: string | null
+          currency: string | null
+          date_from: string
+          date_to: string
+          description: string | null
+          dest_city: string
+          dest_code: string
+          featured: boolean | null
+          id: string
+          images: Json | null
+          notes: string | null
+          origin_city: string
+          origin_code: string
+          original_price_usd: number
+          price_usd: number
+          published: boolean | null
+          short_description: string | null
+          slug: string
+          source: string | null
+          tags: Json | null
+          title: string
+          updated_at: string | null
+          views_count: number | null
+        }
+        Insert: {
+          airline: string
+          airline_code?: string | null
+          bookings_count?: number | null
+          class?: string
+          clicks_count?: number | null
+          created_at?: string | null
+          currency?: string | null
+          date_from: string
+          date_to: string
+          description?: string | null
+          dest_city: string
+          dest_code: string
+          featured?: boolean | null
+          id?: string
+          images?: Json | null
+          notes?: string | null
+          origin_city: string
+          origin_code: string
+          original_price_usd: number
+          price_usd: number
+          published?: boolean | null
+          short_description?: string | null
+          slug: string
+          source?: string | null
+          tags?: Json | null
+          title: string
+          updated_at?: string | null
+          views_count?: number | null
+        }
+        Update: {
+          airline?: string
+          airline_code?: string | null
+          bookings_count?: number | null
+          class?: string
+          clicks_count?: number | null
+          created_at?: string | null
+          currency?: string | null
+          date_from?: string
+          date_to?: string
+          description?: string | null
+          dest_city?: string
+          dest_code?: string
+          featured?: boolean | null
+          id?: string
+          images?: Json | null
+          notes?: string | null
+          origin_city?: string
+          origin_code?: string
+          original_price_usd?: number
+          price_usd?: number
+          published?: boolean | null
+          short_description?: string | null
+          slug?: string
+          source?: string | null
+          tags?: Json | null
+          title?: string
+          updated_at?: string | null
+          views_count?: number | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string | null
