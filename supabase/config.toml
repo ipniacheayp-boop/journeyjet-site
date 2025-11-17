@@ -98,3 +98,36 @@ verify_jwt = false
 
 [functions.chat-start]
 verify_jwt = true
+
+[functions.site-reviews-get]
+verify_jwt = false
+
+[functions.site-reviews-create]
+verify_jwt = true
+
+[functions.site-reviews-update]
+verify_jwt = true
+
+[functions.site-reviews-helpful]
+verify_jwt = true
+
+[functions.seed-reviews]
+verify_jwt = false
+
+[functions.deals-get]
+verify_jwt = false
+
+[functions.deals-get-by-id]
+verify_jwt = false
+
+[functions.deals-create]
+verify_jwt = true
+
+[functions.deals-update]
+verify_jwt = true
+
+[functions.deals-delete]
+verify_jwt = true
+
+[functions.deals-seed]
+verify_jwt = false

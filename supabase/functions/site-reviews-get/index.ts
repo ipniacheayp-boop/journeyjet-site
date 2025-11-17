@@ -17,10 +17,23 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
     );
 
-    const url = new URL(req.url);
-    const filter = url.searchParams.get('filter') || 'recent';
-    const page = parseInt(url.searchParams.get('page') || '1');
-    const limit = parseInt(url.searchParams.get('limit') || '10');
+    // Support both GET (query params) and POST (body) requests
+    let filter = 'recent';
+    let page = 1;
+    let limit = 10;
+
+    if (req.method === 'GET') {
+      const url = new URL(req.url);
+      filter = url.searchParams.get('filter') || 'recent';
+      page = parseInt(url.searchParams.get('page') || '1');
+      limit = parseInt(url.searchParams.get('limit') || '10');
+    } else if (req.method === 'POST') {
+      const body = await req.json();
+      filter = body.filter || 'recent';
+      page = body.page || 1;
+      limit = body.limit || 10;
+    }
+
     const offset = (page - 1) * limit;
 
     let query = supabase
