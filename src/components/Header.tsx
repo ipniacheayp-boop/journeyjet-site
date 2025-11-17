@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Plane, Phone, User, Menu, X, LogOut, BookOpen } from "lucide-react";
+import { Plane, Phone, User, Menu, X, LogOut, BookOpen, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/hooks/useLanguage";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +15,7 @@ import {
 const Header = () => {
   const { user, signOut, isAdmin, userRole } = useAuth();
   const navigate = useNavigate();
+  const { t, language, toggleLanguage } = useLanguage();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -31,10 +33,10 @@ const Header = () => {
   };
 
   const navLinks = [
-    { label: "Deals", href: "/deals" },
-    { label: "Reviews", href: "/reviews/site" },
-    { label: "Customer Support", href: "/support" },
-    { label: "Contact Us", href: "/contact" },
+    { label: t('navigation.deals'), href: "/deals" },
+    { label: t('navigation.reviews'), href: "/reviews/site" },
+    { label: t('navigation.support'), href: "/support" },
+    { label: t('navigation.about'), href: "/about" },
   ];
 
   return (
@@ -76,23 +78,41 @@ const Header = () => {
               <span>1-800-123-4567</span>
             </a>
 
+            {/* Language Switcher */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="gap-2 hidden md:flex">
+                  <Globe className="w-4 h-4" />
+                  {language === 'en' ? '🇺🇸 EN' : '🇪🇸 ES'}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-background z-[60]">
+                <DropdownMenuItem onClick={() => toggleLanguage('en')}>
+                  🇺🇸 English
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => toggleLanguage('es')}>
+                  🇪🇸 Español
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm" className="gap-2">
                     <User className="w-4 h-4" />
                     <span className="hidden sm:inline">
-                      {userRole === 'admin' ? 'Admin' : userRole === 'agent' ? 'Agent' : 'Account'}
+                      {userRole === 'admin' ? t('navigation.admin') : userRole === 'agent' ? t('navigation.agent') : t('navigation.account')}
                     </span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="z-[60] bg-background">
                   {userRole === 'admin' && (
                     <>
                       <DropdownMenuItem asChild>
                         <Link to="/admin" className="flex items-center gap-2 w-full cursor-pointer">
                           <BookOpen className="w-4 h-4" />
-                          Admin Dashboard
+                          {t('navigation.admin')}
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
@@ -103,74 +123,102 @@ const Header = () => {
                       <DropdownMenuItem asChild>
                         <Link to="/agent/dashboard" className="flex items-center gap-2 w-full cursor-pointer">
                           <BookOpen className="w-4 h-4" />
-                          Agent Dashboard
+                          {t('navigation.agent')}
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                     </>
                   )}
-                  {userRole === 'user' && (
-                    <>
-                      <DropdownMenuItem asChild>
-                        <Link to="/my-bookings" className="flex items-center gap-2 w-full cursor-pointer">
-                          <BookOpen className="w-4 h-4" />
-                          My Bookings
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                    </>
-                  )}
-                  <DropdownMenuItem onClick={handleSignOut} className="flex items-center gap-2 cursor-pointer">
+                  <DropdownMenuItem asChild>
+                    <Link to="/account" className="flex items-center gap-2 w-full cursor-pointer">
+                      <User className="w-4 h-4" />
+                      {t('navigation.account')}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/my-bookings" className="flex items-center gap-2 w-full cursor-pointer">
+                      <BookOpen className="w-4 h-4" />
+                      {t('navigation.myBookings')}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={handleSignOut}
+                    className="flex items-center gap-2 text-destructive cursor-pointer"
+                  >
                     <LogOut className="w-4 h-4" />
-                    Sign Out
+                    {t('navigation.signOut')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Link to="/login">
-                <Button variant="outline" size="sm" className="gap-2">
-                  <User className="w-4 h-4" />
-                  <span className="hidden sm:inline">Sign In</span>
-                </Button>
-              </Link>
+              <Button size="sm" asChild>
+                <Link to="/login">{t('navigation.signIn')}</Link>
+              </Button>
             )}
 
             {/* Mobile Menu Toggle */}
-            <button
+            <Button
+              variant="ghost"
+              size="sm"
+              className="lg:hidden"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-foreground hover:text-primary transition-colors"
-              aria-label="Toggle menu"
             >
-              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </Button>
           </div>
         </div>
-      </div>
 
-      {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <div className="lg:hidden bg-white border-t border-border">
-          <nav className="container mx-auto px-4 py-4 flex flex-col gap-2">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                to={link.href}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="px-4 py-3 text-sm font-medium text-foreground hover:bg-secondary rounded-lg transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
-            <a
-              href="tel:+18001234567"
-              className="px-4 py-3 text-sm font-medium text-foreground hover:bg-secondary rounded-lg transition-colors flex items-center gap-2"
-            >
-              <Phone className="w-4 h-4" />
-              <span>1-800-123-4567</span>
-            </a>
-          </nav>
-        </div>
-      )}
+        {/* Mobile Navigation */}
+        {isMobileMenuOpen && (
+          <div className="lg:hidden border-t border-border py-4">
+            <nav className="flex flex-col gap-2">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className="px-4 py-2 text-sm font-medium text-foreground hover:bg-accent/10 rounded-md transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ))}
+              
+              {/* Mobile Language Switcher */}
+              <div className="px-4 py-3 border-t border-border mt-2">
+                <div className="flex items-center gap-2 mb-2 text-sm font-medium">
+                  <Globe className="w-4 h-4" />
+                  {t('common.language')}
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant={language === 'en' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => {
+                      toggleLanguage('en');
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="flex-1"
+                  >
+                    🇺🇸 EN
+                  </Button>
+                  <Button
+                    variant={language === 'es' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => {
+                      toggleLanguage('es');
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="flex-1"
+                  >
+                    🇪🇸 ES
+                  </Button>
+                </div>
+              </div>
+            </nav>
+          </div>
+        )}
+      </div>
     </header>
   );
 };
