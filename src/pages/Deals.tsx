@@ -2,18 +2,19 @@ import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import DealCard from "@/components/DealCard";
-import DealModal from "@/components/DealModal";
+import DealCardEnhanced from "@/components/DealCardEnhanced";
+import DealQuickView from "@/components/DealQuickView";
+import DealsSkeleton from "@/components/DealsSkeleton";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useDeals, type Deal as ApiDeal } from "@/hooks/useDeals";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Badge } from "@/components/ui/badge";
-import { Plane, Calendar } from "lucide-react";
+import { Plane, Filter, TrendingDown, Sparkles, ChevronDown } from "lucide-react";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 // Adapter to convert API deal to component deal format
 const adaptDeal = (apiDeal: ApiDeal): Deal => ({
@@ -47,19 +48,20 @@ interface Deal {
 }
 
 const Deals = () => {
+  const navigate = useNavigate();
   const { t } = useLanguage();
-  const [priceRange, setPriceRange] = useState([0, 1500]);
-  const [selectedAirlines, setSelectedAirlines] = useState<string[]>([]);
-  const [selectedCabinClass, setSelectedCabinClass] = useState<string[]>([]);
+  const [priceRange, setPriceRange] = useState([0, 2000]);
+  const [selectedAirline, setSelectedAirline] = useState<string>("");
   const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [sort, setSort] = useState('featured');
+  const [showFilters, setShowFilters] = useState(false);
 
   const { deals: apiDeals, loading, error, total, totalPages } = useDeals({
     min_price: priceRange[0],
     max_price: priceRange[1],
-    airline: selectedAirlines.join(',') || undefined,
+    airline: selectedAirline || undefined,
     page,
     limit: 12,
     sort,
@@ -80,259 +82,300 @@ const Deals = () => {
   }, [deals.length, total, loading, error, page, totalPages]);
   
   const airlines = [...new Set(deals.map(deal => deal.airline))];
-  const cabinClasses = [...new Set(deals.map(deal => deal.cabinClass))];
 
-  const filteredDeals = deals.filter(deal => {
-    const cabinMatch = selectedCabinClass.length === 0 || selectedCabinClass.includes(deal.cabinClass);
-    return cabinMatch;
-  });
-
-  const handleAirlineToggle = (airline: string) => {
-    setSelectedAirlines(prev =>
-      prev.includes(airline)
-        ? prev.filter(a => a !== airline)
-        : [...prev, airline]
-    );
-  };
-
-  const handleCabinToggle = (cabin: string) => {
-    setSelectedCabinClass(prev =>
-      prev.includes(cabin)
-        ? prev.filter(c => c !== cabin)
-        : [...prev, cabin]
-    );
-  };
-
-  const resetFilters = () => {
-    setPriceRange([0, 1500]);
-    setSelectedAirlines([]);
-    setSelectedCabinClass([]);
-    setPage(1);
+  const handleQuickView = (deal: Deal) => {
+    setSelectedDeal(deal);
+    setIsQuickViewOpen(true);
   };
 
   const handleDealClick = (deal: Deal) => {
-    setSelectedDeal(deal);
-    setIsModalOpen(true);
+    if (deal.link) {
+      navigate(deal.link);
+    }
+  };
+
+  const handleBookDeal = () => {
+    if (selectedDeal?.link) {
+      navigate(selectedDeal.link);
+      setIsQuickViewOpen(false);
+    }
+  };
+
+  const resetFilters = () => {
+    setPriceRange([0, 2000]);
+    setSelectedAirline("");
+    setPage(1);
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col relative overflow-hidden">
       <Helmet>
         <title>Exclusive Travel Deals - Best Flight Offers | Tripile</title>
         <meta name="description" content="Discover exclusive travel deals on flights worldwide. Save up to 50% on roundtrip flights with Tripile's best offers." />
         <meta property="og:title" content="Exclusive Travel Deals - Best Flight Offers" />
         <meta property="og:description" content="Discover exclusive travel deals on flights worldwide. Save up to 50% on roundtrip flights." />
-        <meta property="og:type" content="website" />
-        <link rel="canonical" href="https://tripile.com/deals" />
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "OfferCatalog",
-            "name": "Tripile Travel Deals",
-            "description": "Exclusive flight deals and offers",
-            "itemListElement": deals.slice(0, 5).map((deal, index) => ({
-              "@type": "Offer",
-              "position": index + 1,
-              "itemOffered": {
-                "@type": "Flight",
-                "name": deal.title,
-                "flightNumber": deal.airline,
-              },
-              "price": deal.price,
-              "priceCurrency": "USD",
-            })),
-          })}
-        </script>
       </Helmet>
+
+      {/* Animated Background Shapes */}
+      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+        <motion.div
+          className="absolute top-20 -left-20 w-72 h-72 bg-primary/5 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.5, 0.3],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        <motion.div
+          className="absolute bottom-20 -right-20 w-96 h-96 bg-secondary/5 rounded-full blur-3xl"
+          animate={{
+            scale: [1.2, 1, 1.2],
+            opacity: [0.2, 0.4, 0.2],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      </div>
+
       <Header />
       
-      <main className="flex-1 pt-24 pb-16">
-        <div className="container mx-auto px-4">
-          {/* Hero Section */}
-          <div className="mb-8 text-center">
-            <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              {t('deals.title') || 'Exclusive Travel Deals'}
-            </h1>
-            <p className="text-xl text-muted-foreground mb-6">
-              {t('deals.subtitle') || 'Discover amazing offers on flights worldwide'}
+      <main className="flex-1 container mx-auto px-4 py-8 relative z-10">
+        {/* Hero Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12 space-y-4"
+        >
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <motion.div
+              animate={{
+                rotate: [0, 10, -10, 0],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            >
+              <Plane className="w-12 h-12 text-primary" />
+            </motion.div>
+            <Badge variant="secondary" className="px-4 py-2 text-sm font-bold animate-pulse">
+              <Sparkles className="w-4 h-4 mr-1" />
+              {total}+ Live Deals
+            </Badge>
+          </div>
+          
+          <h1 className="text-4xl md:text-6xl font-black bg-gradient-to-r from-foreground via-foreground/80 to-foreground bg-clip-text text-transparent">
+            Today's Best Flight Deals
+          </h1>
+          
+          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+            Exclusive offers handpicked for you. Save up to <span className="text-primary font-bold">50%</span> on flights worldwide
+          </p>
+        </motion.div>
+
+        {/* Filters Bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mb-8"
+        >
+          <div className="bg-card/50 backdrop-blur-xl border border-border/50 rounded-2xl p-6 shadow-lg">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Filter className="w-5 h-5 text-muted-foreground" />
+                <h2 className="font-bold text-lg">Filter Deals</h2>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowFilters(!showFilters)}
+                className="lg:hidden"
+              >
+                {showFilters ? "Hide" : "Show"}
+              </Button>
+            </div>
+
+            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 ${!showFilters && 'hidden lg:grid'}`}>
+              {/* Price Range */}
+              <div className="space-y-3">
+                <Label className="text-sm font-semibold flex items-center gap-2">
+                  <TrendingDown className="w-4 h-4" />
+                  Price Range
+                </Label>
+                <Slider
+                  min={0}
+                  max={2000}
+                  step={50}
+                  value={priceRange}
+                  onValueChange={setPriceRange}
+                  className="mt-2"
+                />
+                <div className="flex items-center justify-between text-sm text-muted-foreground">
+                  <span>${priceRange[0]}</span>
+                  <span>${priceRange[1]}</span>
+                </div>
+              </div>
+
+              {/* Airline */}
+              <div className="space-y-3">
+                <Label className="text-sm font-semibold">Airline</Label>
+                <Select value={selectedAirline} onValueChange={setSelectedAirline}>
+                  <SelectTrigger className="bg-background/50">
+                    <SelectValue placeholder="All Airlines" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background z-50">
+                    <SelectItem value="">All Airlines</SelectItem>
+                    {airlines.map((airline) => (
+                      <SelectItem key={airline} value={airline}>
+                        {airline}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Sort */}
+              <div className="space-y-3">
+                <Label className="text-sm font-semibold">Sort By</Label>
+                <Select value={sort} onValueChange={setSort}>
+                  <SelectTrigger className="bg-background/50">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background z-50">
+                    <SelectItem value="featured">Featured</SelectItem>
+                    <SelectItem value="price_asc">Lowest Price</SelectItem>
+                    <SelectItem value="price_desc">Highest Price</SelectItem>
+                    <SelectItem value="date">Travel Date</SelectItem>
+                    <SelectItem value="popularity">Most Popular</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Reset */}
+              <div className="flex items-end">
+                <Button
+                  variant="outline"
+                  onClick={resetFilters}
+                  className="w-full"
+                >
+                  Reset Filters
+                </Button>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Results Count */}
+        {!loading && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="mb-6 flex items-center justify-between"
+          >
+            <p className="text-muted-foreground">
+              Showing <span className="font-bold text-foreground">{deals.length}</span> of{" "}
+              <span className="font-bold text-foreground">{total}</span> deals
             </p>
-            <div className="flex justify-center gap-4 flex-wrap">
-              <Badge variant="secondary" className="text-sm py-2 px-4">
-                <Plane className="w-4 h-4 mr-2" />
-                {total}+ Active Deals
-              </Badge>
-              <Badge variant="secondary" className="text-sm py-2 px-4">
-                <Calendar className="w-4 h-4 mr-2" />
-                Updated Daily
-              </Badge>
-            </div>
+          </motion.div>
+        )}
+
+        {/* Deals Grid */}
+        {loading ? (
+          <DealsSkeleton />
+        ) : error ? (
+          <div className="text-center py-12">
+            <p className="text-destructive text-lg">Failed to load deals. Please try again.</p>
+            <Button onClick={() => window.location.reload()} className="mt-4">
+              Retry
+            </Button>
           </div>
-
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Filters Sidebar */}
-            <aside className="lg:w-64 shrink-0">
-              <div className="bg-white rounded-lg shadow-md p-6 sticky top-24">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="font-bold text-lg">Filters</h2>
-                  <Button variant="ghost" size="sm" onClick={resetFilters}>
-                    Reset
-                  </Button>
-                </div>
-
-                {/* Price Range */}
-                <div className="mb-6">
-                  <Label className="mb-3 block">Price Range</Label>
-                  <Slider
-                    value={priceRange}
-                    onValueChange={setPriceRange}
-                    min={0}
-                    max={1500}
-                    step={50}
-                    className="mb-2"
-                  />
-                  <div className="flex justify-between text-sm text-muted-foreground">
-                    <span>${priceRange[0]}</span>
-                    <span>${priceRange[1]}</span>
-                  </div>
-                </div>
-
-                {/* Airlines */}
-                <div className="mb-6">
-                  <Label className="mb-3 block">Airlines</Label>
-                  <div className="space-y-2">
-                    {airlines.map(airline => (
-                      <div key={airline} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`airline-${airline}`}
-                          checked={selectedAirlines.includes(airline)}
-                          onCheckedChange={() => handleAirlineToggle(airline)}
-                        />
-                        <label
-                          htmlFor={`airline-${airline}`}
-                          className="text-sm cursor-pointer"
-                        >
-                          {airline}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Cabin Class */}
-                <div className="mb-6">
-                  <Label className="mb-3 block">Cabin Class</Label>
-                  <div className="space-y-2">
-                    {cabinClasses.map(cabin => (
-                      <div key={cabin} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`cabin-${cabin}`}
-                          checked={selectedCabinClass.includes(cabin)}
-                          onCheckedChange={() => handleCabinToggle(cabin)}
-                        />
-                        <label
-                          htmlFor={`cabin-${cabin}`}
-                          className="text-sm cursor-pointer"
-                        >
-                          {cabin}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </aside>
-
-            {/* Deals Grid */}
-            <div className="flex-1">
-              <div className="mb-4 flex justify-between items-center">
-                <div className="text-sm text-muted-foreground">
-                  {loading ? 'Loading...' : `Showing ${filteredDeals.length} of ${total} deals`}
-                </div>
-                <div className="flex gap-2 items-center">
-                  <Label className="text-sm">Sort:</Label>
-                  <select
-                    value={sort}
-                    onChange={(e) => setSort(e.target.value)}
-                    className="text-sm border rounded-md px-2 py-1 bg-background"
-                  >
-                    <option value="featured">Featured</option>
-                    <option value="price_asc">Price: Low to High</option>
-                    <option value="price_desc">Price: High to Low</option>
-                    <option value="date">Departure Date</option>
-                    <option value="popularity">Popularity</option>
-                  </select>
-                </div>
-              </div>
-
-              {loading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {[...Array(6)].map((_, i) => (
-                    <Card key={i} className="overflow-hidden">
-                      <Skeleton className="h-48 w-full" />
-                      <CardContent className="p-5 space-y-3">
-                        <Skeleton className="h-6 w-3/4" />
-                        <Skeleton className="h-4 w-full" />
-                        <Skeleton className="h-4 w-2/3" />
-                        <Skeleton className="h-10 w-full" />
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              ) : error ? (
-                <div className="text-center py-12">
-                  <p className="text-destructive">{error}</p>
-                </div>
-              ) : (
-                <>
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {filteredDeals.map(deal => (
-                      <DealCard key={deal.id} deal={deal} onClick={() => handleDealClick(deal)} />
-                    ))}
-                  </div>
-                  {filteredDeals.length === 0 && (
-                    <div className="text-center py-12">
-                      <p className="text-muted-foreground">No deals match your filters. Try adjusting your criteria.</p>
-                    </div>
-                  )}
-                  {/* Pagination */}
-                  {totalPages > 1 && (
-                    <div className="mt-8 flex justify-center gap-2">
-                      <Button
-                        variant="outline"
-                        onClick={() => setPage(p => Math.max(1, p - 1))}
-                        disabled={page === 1}
-                      >
-                        Previous
-                      </Button>
-                      <span className="flex items-center px-4">
-                        Page {page} of {totalPages}
-                      </span>
-                      <Button
-                        variant="outline"
-                        onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                        disabled={page === totalPages}
-                      >
-                        Next
-                      </Button>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
+        ) : deals.length === 0 ? (
+          <div className="text-center py-12">
+            <Plane className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+            <h3 className="text-xl font-bold mb-2">No deals found</h3>
+            <p className="text-muted-foreground mb-4">Try adjusting your filters</p>
+            <Button onClick={resetFilters}>Reset Filters</Button>
           </div>
-        </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+              {deals.map((deal, index) => (
+                <DealCardEnhanced
+                  key={deal.id}
+                  deal={deal}
+                  index={index}
+                  onQuickView={() => handleQuickView(deal)}
+                  onClick={() => handleDealClick(deal)}
+                />
+              ))}
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center justify-center gap-2 mt-12"
+              >
+                <Button
+                  variant="outline"
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                >
+                  Previous
+                </Button>
+                
+                <div className="flex items-center gap-2">
+                  {[...Array(Math.min(5, totalPages))].map((_, i) => {
+                    const pageNum = i + 1;
+                    return (
+                      <Button
+                        key={pageNum}
+                        variant={page === pageNum ? "default" : "outline"}
+                        onClick={() => setPage(pageNum)}
+                        className="w-10"
+                      >
+                        {pageNum}
+                      </Button>
+                    );
+                  })}
+                </div>
+
+                <Button
+                  variant="outline"
+                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                >
+                  Next
+                </Button>
+              </motion.div>
+            )}
+          </>
+        )}
       </main>
 
-      {/* Deal Modal */}
-      <DealModal 
-        deal={selectedDeal}
-        open={isModalOpen}
-        onOpenChange={setIsModalOpen}
-      />
-
       <Footer />
+
+      {/* Quick View Modal */}
+      <DealQuickView
+        deal={selectedDeal}
+        open={isQuickViewOpen}
+        onClose={() => setIsQuickViewOpen(false)}
+        onBook={handleBookDeal}
+      />
     </div>
   );
 };
 
 export default Deals;
+
