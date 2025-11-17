@@ -98,6 +98,10 @@
     "baseFare": "Tarifa Base",
     "taxes": "Impuestos y Tarifas",
     "total": "Total",
+    "termsAgree": "Acepto los",
+    "termsLink": "Términos y Condiciones",
+    "termsRequired": "Debe aceptar los Términos y Condiciones antes de reservar.",
+    "termsError": "Debe aceptar los Términos y Condiciones para continuar",
     "travelers": "Viajeros",
     "traveler": "Viajero",
     "contactInfo": "Información de Contacto",
@@ -191,7 +195,8 @@
     "haveAccount": "¿Ya tiene una cuenta?",
     "createAccount": "Crear Cuenta",
     "signInWithGoogle": "Iniciar sesión con Google",
-    "signUpWithGoogle": "Registrarse con Google"
+    "signUpWithGoogle": "Registrarse con Google",
+    "signInRequired": "Por favor inicie sesión para continuar"
   },
   "footer": {
     "company": "Compañía",

@@ -98,6 +98,10 @@
     "baseFare": "Base Fare",
     "taxes": "Taxes & Fees",
     "total": "Total",
+    "termsAgree": "I agree to the",
+    "termsLink": "Terms & Conditions",
+    "termsRequired": "You must accept the Terms & Conditions before booking.",
+    "termsError": "You must accept the Terms & Conditions to continue",
     "travelers": "Travelers",
     "traveler": "Traveler",
     "contactInfo": "Contact Information",
@@ -191,7 +195,8 @@
     "haveAccount": "Already have an account?",
     "createAccount": "Create Account",
     "signInWithGoogle": "Sign in with Google",
-    "signUpWithGoogle": "Sign up with Google"
+    "signUpWithGoogle": "Sign up with Google",
+    "signInRequired": "Please sign in to continue"
   },
   "footer": {
     "company": "Company",

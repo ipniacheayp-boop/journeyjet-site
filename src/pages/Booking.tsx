@@ -6,14 +6,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useBooking } from "@/hooks/useBooking";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { useRequireAuth } from "@/hooks/useRequireAuth";
 
 const Booking = () => {
   const { id: bookingType } = useParams();
+  const { user } = useRequireAuth();
   const [offer, setOffer] = useState<any>(null);
   const [agentId, setAgentId] = useState<string | undefined>(undefined);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -36,6 +40,11 @@ const Booking = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!acceptedTerms) {
+      toast.error("You must accept the Terms & Conditions to continue");
+      return;
+    }
+
     if (!offer) {
       toast.error("No offer selected");
       return;
@@ -43,7 +52,7 @@ const Booking = () => {
 
     try {
       let response;
-      const bookingDetails = { ...formData, agentId };
+      const bookingDetails = { ...formData, agentId, acceptedTerms };
       
       if (bookingType === "flights") {
         response = await bookFlight(offer, bookingDetails);
@@ -189,7 +198,39 @@ const Booking = () => {
                       />
                     </div>
 
-                    <Button type="submit" size="lg" className="w-full" disabled={loading}>
+                    <div className="flex items-start space-x-3 p-4 bg-muted/50 rounded-lg">
+                      <Checkbox
+                        id="terms"
+                        checked={acceptedTerms}
+                        onCheckedChange={(checked) => setAcceptedTerms(checked as boolean)}
+                      />
+                      <div className="space-y-1">
+                        <label
+                          htmlFor="terms"
+                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          I agree to the{" "}
+                          <a
+                            href="/terms"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary hover:underline"
+                          >
+                            Terms & Conditions
+                          </a>
+                        </label>
+                        <p className="text-xs text-muted-foreground">
+                          You must accept the Terms & Conditions before booking.
+                        </p>
+                      </div>
+                    </div>
+
+                    <Button 
+                      type="submit" 
+                      size="lg" 
+                      className="w-full" 
+                      disabled={loading || !acceptedTerms}
+                    >
                       {loading ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />

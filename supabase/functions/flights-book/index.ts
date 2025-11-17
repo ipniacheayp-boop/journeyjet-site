@@ -22,6 +22,13 @@ serve(async (req) => {
       );
     }
 
+    if (!userDetails.acceptedTerms) {
+      return new Response(
+        JSON.stringify({ error: 'You must accept the Terms & Conditions to complete this booking.' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Initialize Supabase client
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
