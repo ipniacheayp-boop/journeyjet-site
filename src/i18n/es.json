@@ -86,8 +86,21 @@
     "topAirlines": "Mejores Ofertas de Aerolíneas",
     "topAirlinesDesc": "Hasta 20% de Descuento* en Sus Aerolíneas Favoritas."
   },
+  "deals": {
+    "title": "Ofertas Exclusivas de Viajes",
+    "subtitle": "Descubre ofertas increíbles en vuelos en todo el mundo",
+    "filterByPrice": "Rango de Precio",
+    "filterByAirline": "Aerolíneas",
+    "filterByCabinClass": "Clase de Cabina",
+    "resetFilters": "Restablecer",
+    "showing": "Mostrando",
+    "of": "de",
+    "noDeals": "No hay ofertas que coincidan con tus filtros. Intenta ajustar tus criterios.",
+    "viewDeal": "Ver Oferta",
+    "bookNow": "Reservar Ahora"
+  },
   "booking": {
-    "bookingDetails": "Detalles de Reserva",
+    "bookingDetails": "Detalles de la Reserva",
     "confirmed": "Reserva Confirmada",
     "pending": "Pago Pendiente",
     "cancelled": "Cancelado",
@@ -140,6 +153,7 @@
     "cardholderName": "Nombre del Titular"
   },
   "reviews": {
+    "bookingDetails": "Detalles de la Reserva",
     "reviews": "Reseñas",
     "writeReview": "Escribir una Reseña",
     "rating": "Calificación",
