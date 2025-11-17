@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { useFlightSearch } from "@/hooks/useFlightSearch";
 import { useHotelSearch } from "@/hooks/useHotelSearch";
 import { useCarSearch } from "@/hooks/useCarSearch";
+import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { toast } from "sonner";
 import { Plane, Hotel as HotelIcon, Car, MapPin, Calendar, Users, Clock } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
@@ -17,6 +18,7 @@ const SearchResults = () => {
   const [searchParams] = useSearchParams();
   const type = searchParams.get("type") || "flights";
   const agentId = searchParams.get("agentId") || undefined;
+  const { user } = useRequireAuth();
   
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

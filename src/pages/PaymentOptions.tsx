@@ -6,10 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CreditCard, Smartphone, QrCode, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useRequireAuth } from "@/hooks/useRequireAuth";
 
 const PaymentOptions = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { user } = useRequireAuth();
   const [loading, setLoading] = useState(false);
   const [bookingDetails, setBookingDetails] = useState<any>(null);
 
