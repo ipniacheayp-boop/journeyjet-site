@@ -8,6 +8,14 @@ const corsHeaders = {
 // In-memory cache for Amadeus access token
 let cachedToken: { token: string; expiresAt: number } | null = null;
 
+// Determine which API endpoint to use based on environment
+const USE_PROD_APIS = Deno.env.get('USE_PROD_APIS') === 'true';
+const AMADEUS_BASE_URL = USE_PROD_APIS 
+  ? 'https://api.amadeus.com' 
+  : 'https://test.api.amadeus.com';
+
+console.log(`🔧 Using Amadeus ${USE_PROD_APIS ? 'PRODUCTION' : 'TEST'} API: ${AMADEUS_BASE_URL}`);
+
 async function getAmadeusToken(): Promise<string> {
   // Check if we have a valid cached token
   if (cachedToken && cachedToken.expiresAt > Date.now()) {
@@ -21,7 +29,8 @@ async function getAmadeusToken(): Promise<string> {
     throw new Error('Amadeus API credentials not configured');
   }
 
-  const authResponse = await fetch('https://test.api.amadeus.com/v1/security/oauth2/token', {
+  console.log(`🔑 Authenticating with Amadeus (${USE_PROD_APIS ? 'PRODUCTION' : 'TEST'} mode)`);
+  const authResponse = await fetch(`${AMADEUS_BASE_URL}/v1/security/oauth2/token`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -98,9 +107,10 @@ serve(async (req) => {
     }
 
     console.log('🔍 Searching flights with params:', params.toString());
+    console.log(`📍 API Endpoint: ${AMADEUS_BASE_URL}/v2/shopping/flight-offers`);
 
     const flightResponse = await fetch(
-      `https://test.api.amadeus.com/v2/shopping/flight-offers?${params.toString()}`,
+      `${AMADEUS_BASE_URL}/v2/shopping/flight-offers?${params.toString()}`,
       {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -121,6 +131,11 @@ serve(async (req) => {
 
     const flightData = await flightResponse.json();
     console.log('✅ Flight search response:', flightData.data?.length || 0, 'offers found');
+    
+    // Add metadata about which environment was used
+    if (flightData.meta) {
+      flightData.meta.environment = USE_PROD_APIS ? 'production' : 'test';
+    }
 
     // Sort flights by price (ascending) to show cheapest first
     if (flightData.data && Array.isArray(flightData.data)) {
