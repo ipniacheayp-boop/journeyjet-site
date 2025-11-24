@@ -131,3 +131,12 @@ verify_jwt = true
 
 [functions.deals-seed]
 verify_jwt = false
+
+[functions.admin-settings-get]
+verify_jwt = true
+
+[functions.admin-settings-update]
+verify_jwt = true
+
+[functions.admin-reviews-purge-demo]
+verify_jwt = true

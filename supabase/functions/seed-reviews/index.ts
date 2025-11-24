@@ -29,8 +29,11 @@ const routes = [
   "New York → Los Angeles", "Miami → Chicago", "San Francisco → Seattle",
   "London → Paris", "Madrid → Barcelona", "Tokyo → Osaka",
   "Sydney → Melbourne", "Toronto → Vancouver", "Berlin → Munich",
-  "Rome → Venice", "Dubai → Mumbai", "Singapore → Bangkok"
+  "Rome → Venice", "Dubai → Mumbai", "Singapore → Bangkok",
+  "NYC → LAX", "SFO → LAS", "MIA → ORD", "BOS → LAX", "DFW → NYC"
 ];
+
+const bookingTypes = ["Flight", "Hotel", "Car"];
 
 const comments5Star = [
   "Absolutely fantastic service! Found the perfect flight at an amazing price. Booking was smooth and easy.",
@@ -97,15 +100,21 @@ serve(async (req) => {
       
       const route = Math.random() < 0.3 ? routes[Math.floor(Math.random() * routes.length)] : '';
       const title = route ? `Great flight on ${route}` : 'Excellent Service';
+      const bookingType = bookingTypes[Math.floor(Math.random() * bookingTypes.length)];
       
       reviews.push({
-        display_name: `${name} (${country})`,
+        display_name: `${name} from ${country}`,
+        reviewer_name: name,
+        country,
         rating: Math.floor(rating), // Store as integer (5 or 4)
         title,
         body,
         helpful_count: Math.floor(Math.random() * 50),
         is_featured: i < 20, // First 20 are featured
         is_deleted: false,
+        demo: true, // Mark as demo review
+        booking_type: bookingType,
+        travel_route: route || null,
         created_at: createdAt.toISOString(),
         updated_at: createdAt.toISOString(),
       });

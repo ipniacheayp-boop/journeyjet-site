@@ -1,16 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useSiteReviews } from '@/hooks/useSiteReviews';
+import { useAdminSettings } from '@/hooks/useAdminSettings';
 import { SiteReviewCard } from './SiteReviewCard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Tabs, TabsList, TabsTrigger } from './ui/tabs';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
-import { Search, Loader2, TrendingUp, Star, MessageSquare } from 'lucide-react';
+import { Switch } from './ui/switch';
+import { Label } from './ui/label';
+import { Alert, AlertDescription, AlertTitle } from './ui/alert';
+import { Search, Loader2, TrendingUp, Star, MessageSquare, AlertTriangle, Trash } from 'lucide-react';
 
 export const SiteReviewsAdmin = () => {
   const [filter, setFilter] = useState('recent');
   const [searchQuery, setSearchQuery] = useState('');
+  const [showDemoReviews, setShowDemoReviews] = useState(false);
   const { 
     reviews, 
     loading, 
@@ -19,9 +24,23 @@ export const SiteReviewsAdmin = () => {
     ratingDistribution,
     updateReview,
     markHelpful,
+    refetch,
   } = useSiteReviews(filter);
+  
+  const { getSetting, updateSetting, purgeDemoReviews, loading: settingsLoading } = useAdminSettings();
 
   const [filteredReviews, setFilteredReviews] = useState(reviews);
+
+  useEffect(() => {
+    loadSettings();
+  }, []);
+
+  const loadSettings = async () => {
+    const setting = await getSetting('show_demo_reviews');
+    if (setting) {
+      setShowDemoReviews(setting.value?.enabled || false);
+    }
+  };
 
   useEffect(() => {
     if (searchQuery.trim()) {
@@ -36,6 +55,19 @@ export const SiteReviewsAdmin = () => {
       setFilteredReviews(reviews);
     }
   }, [searchQuery, reviews]);
+
+  const handleToggleDemoReviews = async (enabled: boolean) => {
+    setShowDemoReviews(enabled);
+    await updateSetting('show_demo_reviews', { enabled });
+    refetch();
+  };
+
+  const handlePurgeDemoReviews = async () => {
+    if (confirm('Are you sure you want to permanently delete ALL demo reviews? This cannot be undone.')) {
+      await purgeDemoReviews();
+      refetch();
+    }
+  };
 
   const handleToggleFeatured = async (reviewId: string, currentStatus: boolean) => {
     await updateReview(reviewId, { isFeatured: !currentStatus });
@@ -56,6 +88,56 @@ export const SiteReviewsAdmin = () => {
 
   return (
     <div className="space-y-6">
+      {/* Security Warning */}
+      <Alert variant="destructive">
+        <AlertTriangle className="h-4 w-4" />
+        <AlertTitle>Demo Reviews - For Testing Only</AlertTitle>
+        <AlertDescription>
+          Demo reviews are for development and testing purposes only. Adding fake public reviews is fraudulent and violates platform policies. 
+          <strong> Do NOT enable demo reviews on the live public site.</strong>
+        </AlertDescription>
+      </Alert>
+
+      {/* Demo Review Controls */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Demo Review Settings</CardTitle>
+          <CardDescription>Manage demo/test reviews for UI testing</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="demo-toggle">Show demo reviews on site</Label>
+              <p className="text-sm text-muted-foreground">
+                When enabled, demo reviews will be visible on the public site (for testing only)
+              </p>
+            </div>
+            <Switch
+              id="demo-toggle"
+              checked={showDemoReviews}
+              onCheckedChange={handleToggleDemoReviews}
+              disabled={settingsLoading}
+            />
+          </div>
+          
+          <div className="flex items-center justify-between pt-4 border-t">
+            <div className="space-y-0.5">
+              <Label>Purge all demo reviews</Label>
+              <p className="text-sm text-muted-foreground">
+                Permanently delete all demo/test reviews from the database
+              </p>
+            </div>
+            <Button
+              variant="destructive"
+              onClick={handlePurgeDemoReviews}
+              disabled={settingsLoading}
+            >
+              <Trash className="w-4 h-4 mr-2" />
+              Purge Demo Reviews
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
       {/* Metrics Cards */}
       <div className="grid gap-4 md:grid-cols-3">
         <Card>

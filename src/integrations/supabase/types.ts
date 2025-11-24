@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_settings: {
+        Row: {
+          created_at: string | null
+          id: string
+          key: string
+          updated_at: string | null
+          value: Json
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          key: string
+          updated_at?: string | null
+          value: Json
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          key?: string
+          updated_at?: string | null
+          value?: Json
+        }
+        Relationships: []
+      }
       agent_availability: {
         Row: {
           agent_id: string
@@ -650,40 +674,55 @@ export type Database = {
       site_reviews: {
         Row: {
           body: string
+          booking_type: string | null
+          country: string | null
           created_at: string
+          demo: boolean
           display_name: string
           helpful_count: number
           id: string
           is_deleted: boolean
           is_featured: boolean
           rating: number
+          reviewer_name: string | null
           title: string | null
+          travel_route: string | null
           updated_at: string
           user_id: string | null
         }
         Insert: {
           body: string
+          booking_type?: string | null
+          country?: string | null
           created_at?: string
+          demo?: boolean
           display_name: string
           helpful_count?: number
           id?: string
           is_deleted?: boolean
           is_featured?: boolean
           rating: number
+          reviewer_name?: string | null
           title?: string | null
+          travel_route?: string | null
           updated_at?: string
           user_id?: string | null
         }
         Update: {
           body?: string
+          booking_type?: string | null
+          country?: string | null
           created_at?: string
+          demo?: boolean
           display_name?: string
           helpful_count?: number
           id?: string
           is_deleted?: boolean
           is_featured?: boolean
           rating?: number
+          reviewer_name?: string | null
           title?: string | null
+          travel_route?: string | null
           updated_at?: string
           user_id?: string | null
         }
