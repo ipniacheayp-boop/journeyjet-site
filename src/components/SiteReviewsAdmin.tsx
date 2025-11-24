@@ -11,6 +11,8 @@ import { Switch } from './ui/switch';
 import { Label } from './ui/label';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import { Search, Loader2, TrendingUp, Star, MessageSquare, AlertTriangle, Trash } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
 
 export const SiteReviewsAdmin = () => {
   const [filter, setFilter] = useState('recent');
@@ -101,26 +103,62 @@ export const SiteReviewsAdmin = () => {
       {/* Demo Review Controls */}
       <Card>
         <CardHeader>
-          <CardTitle>Demo Review Settings</CardTitle>
-          <CardDescription>Manage demo/test reviews for UI testing</CardDescription>
+          <CardTitle>Review Management</CardTitle>
+          <CardDescription>Manage reviews for UI testing and production</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label htmlFor="demo-toggle">Show demo reviews on site</Label>
-              <p className="text-sm text-muted-foreground">
-                When enabled, demo reviews will be visible on the public site (for testing only)
-              </p>
-            </div>
-            <Switch
-              id="demo-toggle"
-              checked={showDemoReviews}
-              onCheckedChange={handleToggleDemoReviews}
+          <div className="border-b pb-4">
+            <h3 className="font-semibold mb-2">Real Reviews (Production)</h3>
+            <p className="text-sm text-muted-foreground mb-3">
+              Seed realistic USA customer reviews for your production site. These will appear as authentic customer reviews.
+            </p>
+            <Button
+              variant="default"
+              onClick={async () => {
+                if (confirm('This will add 1000 realistic USA customer reviews. Continue?')) {
+                  try {
+                    const { data } = await supabase.functions.invoke('seed-real-reviews', {
+                      body: { count: 1000 },
+                    });
+                    toast({
+                      title: 'Success',
+                      description: `Added ${data.inserted} real customer reviews`,
+                    });
+                    refetch();
+                  } catch (error: any) {
+                    toast({
+                      title: 'Error',
+                      description: 'Failed to seed reviews',
+                      variant: 'destructive',
+                    });
+                  }
+                }
+              }}
               disabled={settingsLoading}
-            />
+            >
+              Seed 1000 Real Reviews
+            </Button>
+          </div>
+
+          <div className="border-b pb-4">
+            <h3 className="font-semibold mb-2">Demo Reviews (Testing Only)</h3>
+            <div className="flex items-center justify-between mb-3">
+              <div className="space-y-0.5">
+                <Label htmlFor="demo-toggle">Show demo reviews on site</Label>
+                <p className="text-sm text-muted-foreground">
+                  When enabled, demo reviews will be visible on the public site (for testing only)
+                </p>
+              </div>
+              <Switch
+                id="demo-toggle"
+                checked={showDemoReviews}
+                onCheckedChange={handleToggleDemoReviews}
+                disabled={settingsLoading}
+              />
+            </div>
           </div>
           
-          <div className="flex items-center justify-between pt-4 border-t">
+          <div className="flex items-center justify-between pt-2">
             <div className="space-y-0.5">
               <Label>Purge all demo reviews</Label>
               <p className="text-sm text-muted-foreground">

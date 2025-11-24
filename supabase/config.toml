@@ -132,6 +132,9 @@ verify_jwt = true
 [functions.deals-seed]
 verify_jwt = false
 
+[functions.seed-real-reviews]
+verify_jwt = false
+
 [functions.admin-settings-get]
 verify_jwt = true
 

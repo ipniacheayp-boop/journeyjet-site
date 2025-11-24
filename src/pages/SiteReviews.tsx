@@ -28,7 +28,7 @@ export default function SiteReviews() {
   const [editingReview, setEditingReview] = useState<SiteReview | null>(null);
   const [submitting, setSubmitting] = useState(false);
   
-  // Always include demo reviews for visibility
+  // Show only real reviews (demo=false) by default
   const { 
     reviews, 
     loading, 
@@ -38,7 +38,7 @@ export default function SiteReviews() {
     createReview,
     updateReview,
     markHelpful,
-  } = useSiteReviews(filter, true);
+  } = useSiteReviews(filter, false);
 
   const [formData, setFormData] = useState({
     rating: 5,

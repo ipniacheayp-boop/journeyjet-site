@@ -20,14 +20,14 @@ export interface SiteReview {
   travel_route?: string | null;
 }
 
-export const useSiteReviews = (filter: string = 'recent', includeDemo: boolean = true) => {
+export const useSiteReviews = (filter: string = 'recent', includeDemo: boolean = false) => {
   const [reviews, setReviews] = useState<SiteReview[]>([]);
   const [loading, setLoading] = useState(true);
   const [averageRating, setAverageRating] = useState(0);
   const [totalReviews, setTotalReviews] = useState(0);
   const [ratingDistribution, setRatingDistribution] = useState<Record<number, number>>({});
 
-  const fetchReviews = async (page: number = 1, limit: number = 20) => {
+  const fetchReviews = async (page: number = 1, limit: number = 50) => {
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke('site-reviews-get', {

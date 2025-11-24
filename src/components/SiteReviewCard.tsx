@@ -52,8 +52,8 @@ export const SiteReviewCard = ({
             <div>
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="font-medium text-foreground">{review.display_name}</span>
-                {review.is_featured && (
-                  <Badge variant="secondary" className="text-xs">Featured</Badge>
+                {review.is_featured && !review.demo && (
+                  <Badge variant="secondary" className="text-xs">Verified</Badge>
                 )}
               </div>
               <p className="text-sm text-muted-foreground">
