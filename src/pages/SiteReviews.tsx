@@ -1,12 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { StarRating } from '@/components/StarRating';
 import { SiteReviewCard } from '@/components/SiteReviewCard';
 import { useSiteReviews, SiteReview } from '@/hooks/useSiteReviews';
-import { useAdminSettings } from '@/hooks/useAdminSettings';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
   Dialog,
   DialogContent,
@@ -21,7 +19,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
-import { Loader2, AlertTriangle } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 export default function SiteReviews() {
   const { user } = useAuth();
@@ -29,8 +27,8 @@ export default function SiteReviews() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingReview, setEditingReview] = useState<SiteReview | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [showDemoWarning, setShowDemoWarning] = useState(false);
   
+  // Always include demo reviews for visibility
   const { 
     reviews, 
     loading, 
@@ -40,24 +38,13 @@ export default function SiteReviews() {
     createReview,
     updateReview,
     markHelpful,
-  } = useSiteReviews(filter);
-
-  const { getSetting } = useAdminSettings();
+  } = useSiteReviews(filter, true);
 
   const [formData, setFormData] = useState({
     rating: 5,
     title: '',
     body: '',
   });
-
-  useEffect(() => {
-    checkDemoReviews();
-  }, []);
-
-  const checkDemoReviews = async () => {
-    const setting = await getSetting('show_demo_reviews');
-    setShowDemoWarning(setting?.value?.enabled || false);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -264,28 +251,17 @@ export default function SiteReviews() {
                   <p className="text-muted-foreground">No reviews yet. Be the first to share your experience!</p>
                 </div>
               ) : (
-                <>
-                  {showDemoWarning && (
-                    <Alert variant="destructive" className="mb-6">
-                      <AlertTriangle className="h-4 w-4" />
-                      <AlertTitle>DEMO Mode Active</AlertTitle>
-                      <AlertDescription>
-                        This page displays demo/test reviews only. These are not real customer reviews and are for development/testing purposes.
-                      </AlertDescription>
-                    </Alert>
-                  )}
-                  <div className="space-y-6">
-                    {reviews.map((review) => (
-                      <SiteReviewCard
-                        key={review.id}
-                        review={review}
-                        onMarkHelpful={markHelpful}
-                        onEdit={handleEdit}
-                        onDelete={handleDelete}
-                      />
-                    ))}
-                  </div>
-                </>
+                <div className="space-y-6">
+                  {reviews.map((review) => (
+                    <SiteReviewCard
+                      key={review.id}
+                      review={review}
+                      onMarkHelpful={markHelpful}
+                      onEdit={handleEdit}
+                      onDelete={handleDelete}
+                    />
+                  ))}
+                </div>
               )}
             </div>
           </div>

@@ -13,16 +13,21 @@ export interface SiteReview {
   is_featured: boolean;
   created_at: string;
   updated_at: string;
+  demo?: boolean;
+  reviewer_name?: string | null;
+  country?: string | null;
+  booking_type?: string | null;
+  travel_route?: string | null;
 }
 
-export const useSiteReviews = (filter: string = 'recent') => {
+export const useSiteReviews = (filter: string = 'recent', includeDemo: boolean = true) => {
   const [reviews, setReviews] = useState<SiteReview[]>([]);
   const [loading, setLoading] = useState(true);
   const [averageRating, setAverageRating] = useState(0);
   const [totalReviews, setTotalReviews] = useState(0);
   const [ratingDistribution, setRatingDistribution] = useState<Record<number, number>>({});
 
-  const fetchReviews = async (page: number = 1, limit: number = 10) => {
+  const fetchReviews = async (page: number = 1, limit: number = 20) => {
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke('site-reviews-get', {
@@ -30,6 +35,7 @@ export const useSiteReviews = (filter: string = 'recent') => {
           filter,
           page,
           limit,
+          include_demo: includeDemo,
         },
       });
 
@@ -161,7 +167,7 @@ export const useSiteReviews = (filter: string = 'recent') => {
 
   useEffect(() => {
     fetchReviews();
-  }, [filter]);
+  }, [filter, includeDemo]);
 
   return { 
     reviews, 
