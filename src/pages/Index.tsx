@@ -9,7 +9,7 @@ import TrustBadges from "@/components/TrustBadges";
 import FlyBot from "@/components/FlyBot";
 import { ReviewsHighlight } from "@/components/ReviewsHighlight";
 import { mockDeals, type Deal } from "@/data/mockDeals";
-import heroFlight from "@/assets/hero-flight.jpg";
+import heroBlackFriday from "@/assets/hero-black-friday.jpg";
 import dealLastMinute from "@/assets/deal-last-minute.jpg";
 import dealBudget from "@/assets/deal-budget.jpg";
 import dealSeniors from "@/assets/deal-seniors.jpg";
@@ -112,22 +112,31 @@ const Index = () => {
       
       {/* Hero Section */}
       <section 
-        className="relative pt-32 pb-20 bg-cover bg-center"
-        style={{ backgroundImage: `url(${heroFlight})` }}
+        className="relative h-[350px] md:h-[550px] bg-cover bg-center rounded-2xl mx-4 mt-20 overflow-hidden animate-fade-in"
+        style={{ backgroundImage: `url(${heroBlackFriday})` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-foreground/70 to-foreground/50" />
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
-              Find Your Next Adventure
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
+        <div className="container mx-auto px-4 h-full relative z-10 flex flex-col items-center justify-center">
+          <div className="text-center mb-8">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold text-white mb-4 tracking-tight">
+              Happening Now!
             </h1>
-            <p className="text-xl text-white/90 max-w-2xl mx-auto">
-              Compare and book flights, hotels, and more at the best prices
+            <p className="text-2xl md:text-4xl font-bold text-white mb-2">
+              Biggest Sale of the Year is Live
+            </p>
+            <p className="text-xl md:text-3xl font-semibold text-white/95">
+              Zero Booking Fees on Flights
             </p>
           </div>
-          <SearchWidget />
         </div>
       </section>
+
+      {/* Search Widget Below Hero */}
+      <div className="container mx-auto px-4 -mt-8 relative z-20">
+        <div className="bg-white rounded-xl shadow-lg p-2">
+          <SearchWidget />
+        </div>
+      </div>
 
       {/* Featured Deals */}
       <section className="py-16 bg-gradient-to-b from-[#E8F1FA] to-white">
