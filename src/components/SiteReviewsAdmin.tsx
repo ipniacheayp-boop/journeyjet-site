@@ -10,11 +10,13 @@ import { Badge } from './ui/badge';
 import { Switch } from './ui/switch';
 import { Label } from './ui/label';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
-import { Search, Loader2, TrendingUp, Star, MessageSquare, AlertTriangle, Trash } from 'lucide-react';
+import { Search, Loader2, TrendingUp, Star, MessageSquare, AlertTriangle, Trash, BarChart3 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 export const SiteReviewsAdmin = () => {
+  const navigate = useNavigate();
   const [filter, setFilter] = useState('recent');
   const [searchQuery, setSearchQuery] = useState('');
   const [showDemoReviews, setShowDemoReviews] = useState(false);
@@ -90,6 +92,14 @@ export const SiteReviewsAdmin = () => {
 
   return (
     <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold">Site Reviews Management</h2>
+        <Button variant="outline" onClick={() => navigate('/reviews/analytics')}>
+          <BarChart3 className="mr-2 h-4 w-4" />
+          View Analytics
+        </Button>
+      </div>
+
       {/* Security Warning */}
       <Alert variant="destructive">
         <AlertTriangle className="h-4 w-4" />

@@ -143,3 +143,30 @@ verify_jwt = true
 
 [functions.admin-reviews-purge-demo]
 verify_jwt = true
+
+[functions.site-reviews-analytics]
+verify_jwt = true
+
+[functions.stripe-health-check]
+verify_jwt = false
+
+[functions.agent-bookings]
+verify_jwt = true
+
+[functions.agent-stats]
+verify_jwt = true
+
+[functions.agent-profile-update]
+verify_jwt = true
+
+[functions.agent-leads]
+verify_jwt = true
+
+[functions.agent-send-update]
+verify_jwt = true
+
+[functions.agent-start-booking]
+verify_jwt = true
+
+[functions.agent-send-confirmation]
+verify_jwt = true
