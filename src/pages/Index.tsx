@@ -112,19 +112,19 @@ const Index = () => {
       
       {/* Hero Section */}
       <section 
-        className="relative h-[350px] md:h-[550px] bg-cover bg-center rounded-2xl mx-4 mt-20 overflow-hidden animate-fade-in"
+        className="relative h-[360px] md:h-[560px] bg-cover bg-center w-full overflow-hidden animate-fade-in"
         style={{ backgroundImage: `url(${heroBlackFriday})` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black/85" />
         <div className="container mx-auto px-4 h-full relative z-10 flex flex-col items-center justify-center">
-          <div className="text-center mb-8">
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold text-white mb-4 tracking-tight">
+          <div className="text-center mb-8 backdrop-blur-sm bg-black/20 px-8 py-6 rounded-2xl">
+            <h1 className="text-2xl md:text-4xl font-extrabold text-white mb-4 tracking-tight">
               Happening Now!
             </h1>
-            <p className="text-2xl md:text-4xl font-bold text-white mb-2">
+            <p className="text-2xl font-bold text-white mb-2">
               Biggest Sale of the Year is Live
             </p>
-            <p className="text-xl md:text-3xl font-semibold text-white/95">
+            <p className="text-lg font-semibold text-white/95">
               Zero Booking Fees on Flights
             </p>
           </div>
@@ -133,7 +133,7 @@ const Index = () => {
 
       {/* Search Widget Below Hero */}
       <div className="container mx-auto px-4 -mt-8 relative z-20">
-        <div className="bg-white rounded-xl shadow-lg p-2">
+        <div className="bg-white rounded-2xl shadow-lg p-2">
           <SearchWidget />
         </div>
       </div>
