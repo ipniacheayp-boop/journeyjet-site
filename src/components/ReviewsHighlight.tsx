@@ -27,7 +27,7 @@ export const ReviewsHighlight = () => {
   const fetchTopReviews = async () => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/site-reviews-get?filter=top&limit=10`,
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/site-reviews-get?filter=top&limit=10&include_demo=true`,
         {
           headers: {
             'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,

@@ -36,31 +36,33 @@ export const SiteReviewCard = ({
 
   return (
     <div className="bg-card border border-border rounded-lg p-6 space-y-4">
-      <div className="flex items-start justify-between">
-      <div className="space-y-2 flex-1">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold">
-            {review.display_name[0].toUpperCase()}
-          </div>
-          <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-medium text-foreground">{review.display_name}</span>
-              {review.is_featured && (
-                <Badge variant="secondary" className="text-xs">Featured</Badge>
-              )}
-              {(review as any).demo && (
-                <Badge variant="destructive" className="text-xs">
-                  DEMO — Not a real customer review
-                </Badge>
-              )}
-            </div>
-            <p className="text-sm text-muted-foreground">
-              {format(new Date(review.created_at), 'MMM d, yyyy')}
-            </p>
-          </div>
+      {review.demo && (
+        <div className="mb-2">
+          <Badge variant="outline" className="text-xs bg-orange-100 text-orange-800 border-orange-300">
+            DEMO REVIEW (testing only)
+          </Badge>
         </div>
-        <StarRating rating={review.rating} readonly size="sm" />
-      </div>
+      )}
+      <div className="flex items-start justify-between">
+        <div className="space-y-2 flex-1">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold">
+              {review.display_name[0].toUpperCase()}
+            </div>
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-medium text-foreground">{review.display_name}</span>
+                {review.is_featured && (
+                  <Badge variant="secondary" className="text-xs">Featured</Badge>
+                )}
+              </div>
+              <p className="text-sm text-muted-foreground">
+                {format(new Date(review.created_at), 'MMM d, yyyy')}
+              </p>
+            </div>
+          </div>
+          <StarRating rating={review.rating} readonly size="sm" />
+        </div>
         
         {canModerate && (
           <div className="flex gap-2">

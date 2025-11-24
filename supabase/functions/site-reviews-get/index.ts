@@ -61,7 +61,8 @@ serve(async (req) => {
     const offset = (page - 1) * limit;
 
     // Determine if we should show demo reviews
-    const shouldShowDemo = showDemoReviews || (includeDemo && isAdmin);
+    // Show demo reviews if: admin setting is enabled OR includeDemo parameter is true
+    const shouldShowDemo = showDemoReviews || includeDemo;
 
     let query = supabase
       .from('site_reviews')
