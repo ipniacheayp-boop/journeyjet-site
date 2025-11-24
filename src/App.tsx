@@ -30,6 +30,7 @@ import PaymentQR from "./pages/PaymentQR";
 import ErrorPage from "./pages/ErrorPage";
 import NotFound from "./pages/NotFound";
 import SiteReviews from "./pages/SiteReviews";
+import ReviewsAnalytics from "./pages/ReviewsAnalytics";
 import About from "./pages/About";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Careers from "./pages/Careers";
@@ -87,6 +88,7 @@ const App = () => (
               <Route path="/agent/login" element={<AgentLogin />} />
               <Route path="/agent/dashboard" element={<AgentDashboard />} />
               <Route path="/reviews/site" element={<SiteReviews />} />
+              <Route path="/reviews/analytics" element={<ReviewsAnalytics />} />
               <Route path="/careers" element={<Careers />} />
               <Route path="/error" element={<ErrorPage />} />
               <Route path="/about" element={<About />} />
