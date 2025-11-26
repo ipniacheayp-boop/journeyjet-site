@@ -116,7 +116,7 @@ const Index = () => {
         style={{ 
           backgroundImage: `url(${heroBlackFriday})`,
           backgroundSize: 'cover',
-          backgroundPosition: 'center 35%',
+          backgroundPosition: 'center 28%',
           backgroundRepeat: 'no-repeat'
         }}
       >
