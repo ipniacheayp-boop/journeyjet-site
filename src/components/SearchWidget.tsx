@@ -157,9 +157,9 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto bg-white rounded-2xl shadow-xl p-6 md:p-8">
+    <div className="w-full max-w-6xl mx-auto bg-white rounded-2xl shadow-xl p-4 md:p-6">
       <Tabs value={searchType} onValueChange={setSearchType} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 mb-8">
+        <TabsList className="grid w-full grid-cols-4 mb-5">
           <TabsTrigger value="flights" className="flex items-center gap-2">
             <Plane className="w-4 h-4" />
             <span className="hidden sm:inline">Flights</span>
@@ -179,7 +179,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
         </TabsList>
 
         {/* FLIGHTS TAB */}
-        <TabsContent value="flights" className="space-y-6">
+        <TabsContent value="flights" className="space-y-4">
           <RadioGroup value={tripType} onValueChange={setTripType} className="flex gap-4">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="round-trip" id="round-trip" />
@@ -192,7 +192,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
           </RadioGroup>
 
           <form onSubmit={handleFlightSearch}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
               <div className="space-y-2">
                 <Label htmlFor="flight-origin">From</Label>
                 <AirportDropdown
@@ -256,7 +256,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
               )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               <div className="space-y-2">
                 <Label htmlFor="passengers">Passengers</Label>
                 <div className="relative">
@@ -304,9 +304,9 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
         </TabsContent>
 
         {/* HOTELS TAB */}
-        <TabsContent value="hotels" className="space-y-6">
+        <TabsContent value="hotels" className="space-y-4">
           <form onSubmit={handleHotelSearch}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
               <div className="space-y-2">
                 <Label htmlFor="city-code">City</Label>
                 <AirportDropdown
@@ -372,7 +372,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               <div className="space-y-2">
                 <Label htmlFor="rooms">Rooms</Label>
                 <div className="relative">
@@ -401,9 +401,9 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
         </TabsContent>
 
         {/* CARS TAB */}
-        <TabsContent value="cars" className="space-y-6">
+        <TabsContent value="cars" className="space-y-4">
           <form onSubmit={handleCarSearch}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
               <div className="space-y-2">
                 <Label htmlFor="pickup-location">Pick-up Location</Label>
                 <AirportDropdown
@@ -475,9 +475,9 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
         </TabsContent>
 
         {/* CRUISE TAB */}
-        <TabsContent value="cruise" className="space-y-6">
+        <TabsContent value="cruise" className="space-y-4">
           <form onSubmit={handleCruiseSearch}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
               <div className="space-y-2">
                 <Label htmlFor="cruise-origin">Departure Port</Label>
                 <div className="relative">
