@@ -157,9 +157,9 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto bg-white rounded-2xl shadow-xl p-4 md:p-6">
+    <div className="w-full max-w-6xl mx-auto bg-white rounded-2xl shadow-xl p-3 md:p-4">
       <Tabs value={searchType} onValueChange={setSearchType} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 mb-5">
+        <TabsList className="grid w-full grid-cols-4 mb-3 h-9">
           <TabsTrigger value="flights" className="flex items-center gap-2">
             <Plane className="w-4 h-4" />
             <span className="hidden sm:inline">Flights</span>
@@ -179,22 +179,22 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
         </TabsList>
 
         {/* FLIGHTS TAB */}
-        <TabsContent value="flights" className="space-y-4">
-          <RadioGroup value={tripType} onValueChange={setTripType} className="flex gap-4">
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="round-trip" id="round-trip" />
-              <Label htmlFor="round-trip" className="cursor-pointer">Round Trip</Label>
+        <TabsContent value="flights" className="space-y-2">
+          <RadioGroup value={tripType} onValueChange={setTripType} className="flex gap-3">
+            <div className="flex items-center space-x-1.5">
+              <RadioGroupItem value="round-trip" id="round-trip" className="h-4 w-4" />
+              <Label htmlFor="round-trip" className="cursor-pointer text-sm">Round Trip</Label>
             </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="one-way" id="one-way" />
-              <Label htmlFor="one-way" className="cursor-pointer">One Way</Label>
+            <div className="flex items-center space-x-1.5">
+              <RadioGroupItem value="one-way" id="one-way" className="h-4 w-4" />
+              <Label htmlFor="one-way" className="cursor-pointer text-sm">One Way</Label>
             </div>
           </RadioGroup>
 
           <form onSubmit={handleFlightSearch}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-              <div className="space-y-2">
-                <Label htmlFor="flight-origin">From</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+              <div className="space-y-1">
+                <Label htmlFor="flight-origin" className="text-sm">From</Label>
                 <AirportDropdown
                   value={flightOrigin}
                   onChange={(value, iataCode) => {
@@ -207,8 +207,8 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                 {errors.origin && <p className="text-sm text-destructive">{errors.origin}</p>}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="flight-destination">To</Label>
+              <div className="space-y-1">
+                <Label htmlFor="flight-destination" className="text-sm">To</Label>
                 <AirportDropdown
                   value={flightDestination}
                   onChange={(value, iataCode) => {
@@ -221,8 +221,8 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                 {errors.destination && <p className="text-sm text-destructive">{errors.destination}</p>}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="depart-date">Depart</Label>
+              <div className="space-y-1">
+                <Label htmlFor="depart-date" className="text-sm">Depart</Label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
@@ -230,7 +230,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     type="date"
                     value={departDate}
                     onChange={(e) => setDepartDate(e.target.value)}
-                    className={`pl-10 ${errors.departDate ? 'border-destructive' : ''}`}
+                    className={`pl-10 h-9 ${errors.departDate ? 'border-destructive' : ''}`}
                     min={new Date().toISOString().split('T')[0]}
                   />
                 </div>
@@ -238,8 +238,8 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
               </div>
 
               {tripType === "round-trip" && (
-                <div className="space-y-2">
-                  <Label htmlFor="return-date">Return</Label>
+                <div className="space-y-1">
+                  <Label htmlFor="return-date" className="text-sm">Return</Label>
                   <div className="relative">
                     <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
@@ -247,7 +247,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                       type="date"
                       value={returnDate}
                       onChange={(e) => setReturnDate(e.target.value)}
-                      className={`pl-10 ${errors.returnDate ? 'border-destructive' : ''}`}
+                      className={`pl-10 h-9 ${errors.returnDate ? 'border-destructive' : ''}`}
                       min={departDate || new Date().toISOString().split('T')[0]}
                     />
                   </div>
@@ -256,16 +256,16 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
               )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              <div className="space-y-2">
-                <Label htmlFor="passengers">Passengers</Label>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+              <div className="space-y-1">
+                <Label htmlFor="passengers" className="text-sm">Passengers</Label>
                 <div className="relative">
                   <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <select
                     id="passengers"
                     value={passengers}
                     onChange={(e) => setPassengers(e.target.value)}
-                    className="w-full pl-10 pr-10 h-10 rounded-md border border-input bg-background"
+                    className="w-full pl-10 pr-10 h-9 rounded-md border border-input bg-background"
                   >
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
                       <option key={num} value={num}>{num} {num === 1 ? 'Passenger' : 'Passengers'}</option>
@@ -275,14 +275,14 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="cabin-class">Cabin Class</Label>
+              <div className="space-y-1">
+                <Label htmlFor="cabin-class" className="text-sm">Cabin Class</Label>
                 <div className="relative">
                   <select
                     id="cabin-class"
                     value={cabinClass}
                     onChange={(e) => setCabinClass(e.target.value)}
-                    className="w-full px-3 pr-10 h-10 rounded-md border border-input bg-background"
+                    className="w-full px-3 pr-10 h-9 rounded-md border border-input bg-background"
                   >
                     <option value="ECONOMY">Economy</option>
                     <option value="PREMIUM_ECONOMY">Premium Economy</option>
@@ -294,8 +294,8 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
               </div>
 
               <div className="flex items-end">
-                <Button type="submit" size="lg" className="w-full gap-2">
-                  <Search className="w-5 h-5" />
+                <Button type="submit" className="w-full h-9 gap-2">
+                  <Search className="w-4 h-4" />
                   Search Flights
                 </Button>
               </div>
@@ -304,11 +304,11 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
         </TabsContent>
 
         {/* HOTELS TAB */}
-        <TabsContent value="hotels" className="space-y-4">
+        <TabsContent value="hotels" className="space-y-2">
           <form onSubmit={handleHotelSearch}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-              <div className="space-y-2">
-                <Label htmlFor="city-code">City</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+              <div className="space-y-1">
+                <Label htmlFor="city-code" className="text-sm">City</Label>
                 <AirportDropdown
                   value={cityCode}
                   onChange={(value, iataCode) => {
@@ -321,8 +321,8 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                 {errors.cityCode && <p className="text-sm text-destructive">{errors.cityCode}</p>}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="check-in">Check-in</Label>
+              <div className="space-y-1">
+                <Label htmlFor="check-in" className="text-sm">Check-in</Label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
@@ -330,15 +330,15 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     type="date"
                     value={checkInDate}
                     onChange={(e) => setCheckInDate(e.target.value)}
-                    className={`pl-10 ${errors.checkInDate ? 'border-destructive' : ''}`}
+                    className={`pl-10 h-9 ${errors.checkInDate ? 'border-destructive' : ''}`}
                     min={new Date().toISOString().split('T')[0]}
                   />
                 </div>
                 {errors.checkInDate && <p className="text-sm text-destructive">{errors.checkInDate}</p>}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="check-out">Check-out</Label>
+              <div className="space-y-1">
+                <Label htmlFor="check-out" className="text-sm">Check-out</Label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
@@ -346,22 +346,22 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     type="date"
                     value={checkOutDate}
                     onChange={(e) => setCheckOutDate(e.target.value)}
-                    className={`pl-10 ${errors.checkOutDate ? 'border-destructive' : ''}`}
+                    className={`pl-10 h-9 ${errors.checkOutDate ? 'border-destructive' : ''}`}
                     min={checkInDate || new Date().toISOString().split('T')[0]}
                   />
                 </div>
                 {errors.checkOutDate && <p className="text-sm text-destructive">{errors.checkOutDate}</p>}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="hotel-guests">Guests</Label>
+              <div className="space-y-1">
+                <Label htmlFor="hotel-guests" className="text-sm">Guests</Label>
                 <div className="relative">
                   <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <select
                     id="hotel-guests"
                     value={hotelGuests}
                     onChange={(e) => setHotelGuests(e.target.value)}
-                    className="w-full pl-10 pr-10 h-10 rounded-md border border-input bg-background"
+                    className="w-full pl-10 pr-10 h-9 rounded-md border border-input bg-background"
                   >
                     {[1, 2, 3, 4, 5, 6].map((num) => (
                       <option key={num} value={num}>{num} {num === 1 ? 'Guest' : 'Guests'}</option>
@@ -372,15 +372,15 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              <div className="space-y-2">
-                <Label htmlFor="rooms">Rooms</Label>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+              <div className="space-y-1">
+                <Label htmlFor="rooms" className="text-sm">Rooms</Label>
                 <div className="relative">
                   <select
                     id="rooms"
                     value={rooms}
                     onChange={(e) => setRooms(e.target.value)}
-                    className="w-full px-3 pr-10 h-10 rounded-md border border-input bg-background"
+                    className="w-full px-3 pr-10 h-9 rounded-md border border-input bg-background"
                   >
                     {[1, 2, 3, 4, 5].map((num) => (
                       <option key={num} value={num}>{num} {num === 1 ? 'Room' : 'Rooms'}</option>
@@ -391,8 +391,8 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
               </div>
 
               <div className="md:col-span-2 flex items-end">
-                <Button type="submit" size="lg" className="w-full gap-2">
-                  <Search className="w-5 h-5" />
+                <Button type="submit" className="w-full h-9 gap-2">
+                  <Search className="w-4 h-4" />
                   Search Hotels
                 </Button>
               </div>
@@ -401,11 +401,11 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
         </TabsContent>
 
         {/* CARS TAB */}
-        <TabsContent value="cars" className="space-y-4">
+        <TabsContent value="cars" className="space-y-2">
           <form onSubmit={handleCarSearch}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-              <div className="space-y-2">
-                <Label htmlFor="pickup-location">Pick-up Location</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+              <div className="space-y-1">
+                <Label htmlFor="pickup-location" className="text-sm">Pick-up Location</Label>
                 <AirportDropdown
                   value={pickUpLocation}
                   onChange={(value, iataCode) => {
@@ -418,8 +418,8 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                 {errors.pickUpLocation && <p className="text-sm text-destructive">{errors.pickUpLocation}</p>}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="pickup-date">Pick-up Date</Label>
+              <div className="space-y-1">
+                <Label htmlFor="pickup-date" className="text-sm">Pick-up Date</Label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
@@ -427,15 +427,15 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     type="date"
                     value={pickUpDate}
                     onChange={(e) => setPickUpDate(e.target.value)}
-                    className={`pl-10 ${errors.pickUpDate ? 'border-destructive' : ''}`}
+                    className={`pl-10 h-9 ${errors.pickUpDate ? 'border-destructive' : ''}`}
                     min={new Date().toISOString().split('T')[0]}
                   />
                 </div>
                 {errors.pickUpDate && <p className="text-sm text-destructive">{errors.pickUpDate}</p>}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="dropoff-date">Drop-off Date</Label>
+              <div className="space-y-1">
+                <Label htmlFor="dropoff-date" className="text-sm">Drop-off Date</Label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
@@ -443,15 +443,15 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     type="date"
                     value={dropOffDate}
                     onChange={(e) => setDropOffDate(e.target.value)}
-                    className={`pl-10 ${errors.dropOffDate ? 'border-destructive' : ''}`}
+                    className={`pl-10 h-9 ${errors.dropOffDate ? 'border-destructive' : ''}`}
                     min={pickUpDate || new Date().toISOString().split('T')[0]}
                   />
                 </div>
                 {errors.dropOffDate && <p className="text-sm text-destructive">{errors.dropOffDate}</p>}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="driver-age">Driver Age</Label>
+              <div className="space-y-1">
+                <Label htmlFor="driver-age" className="text-sm">Driver Age</Label>
                 <div className="relative">
                   <Input
                     id="driver-age"
@@ -460,14 +460,15 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     onChange={(e) => setDriverAge(e.target.value)}
                     min="18"
                     max="99"
+                    className="h-9"
                   />
                 </div>
               </div>
             </div>
 
             <div className="flex justify-end">
-              <Button type="submit" size="lg" className="w-full md:w-auto gap-2">
-                <Search className="w-5 h-5" />
+              <Button type="submit" className="w-full md:w-auto h-9 gap-2">
+                <Search className="w-4 h-4" />
                 Search Cars
               </Button>
             </div>
@@ -475,11 +476,11 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
         </TabsContent>
 
         {/* CRUISE TAB */}
-        <TabsContent value="cruise" className="space-y-4">
+        <TabsContent value="cruise" className="space-y-2">
           <form onSubmit={handleCruiseSearch}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-              <div className="space-y-2">
-                <Label htmlFor="cruise-origin">Departure Port</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+              <div className="space-y-1">
+                <Label htmlFor="cruise-origin" className="text-sm">Departure Port</Label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
@@ -487,13 +488,13 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     placeholder="Port City"
                     value={cruiseOrigin}
                     onChange={(e) => setCruiseOrigin(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 h-9"
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="cruise-destination">Destination</Label>
+              <div className="space-y-1">
+                <Label htmlFor="cruise-destination" className="text-sm">Destination</Label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
@@ -501,13 +502,13 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     placeholder="Destination Region"
                     value={cruiseDestination}
                     onChange={(e) => setCruiseDestination(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 h-9"
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="cruise-date">Departure Date</Label>
+              <div className="space-y-1">
+                <Label htmlFor="cruise-date" className="text-sm">Departure Date</Label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
@@ -515,21 +516,21 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     type="date"
                     value={cruiseDate}
                     onChange={(e) => setCruiseDate(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 h-9"
                     min={new Date().toISOString().split('T')[0]}
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="cruise-passengers">Passengers</Label>
+              <div className="space-y-1">
+                <Label htmlFor="cruise-passengers" className="text-sm">Passengers</Label>
                 <div className="relative">
                   <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <select
                     id="cruise-passengers"
                     value={cruisePassengers}
                     onChange={(e) => setCruisePassengers(e.target.value)}
-                    className="w-full pl-10 pr-10 h-10 rounded-md border border-input bg-background"
+                    className="w-full pl-10 pr-10 h-9 rounded-md border border-input bg-background"
                   >
                     {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
                       <option key={num} value={num}>{num} {num === 1 ? 'Passenger' : 'Passengers'}</option>
@@ -541,8 +542,8 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
             </div>
 
             <div className="flex justify-end">
-              <Button type="submit" size="lg" className="w-full md:w-auto gap-2">
-                <Search className="w-5 h-5" />
+              <Button type="submit" className="w-full md:w-auto h-9 gap-2">
+                <Search className="w-4 h-4" />
                 Search Cruises
               </Button>
             </div>
