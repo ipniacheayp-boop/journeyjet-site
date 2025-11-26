@@ -112,8 +112,13 @@ const Index = () => {
       
       {/* Hero Section */}
       <section 
-        className="relative h-[280px] md:h-[400px] bg-cover bg-center w-full overflow-hidden animate-fade-in"
-        style={{ backgroundImage: `url(${heroBlackFriday})` }}
+        className="relative h-[280px] md:h-[400px] w-full overflow-hidden animate-fade-in"
+        style={{ 
+          backgroundImage: `url(${heroBlackFriday})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center center',
+          backgroundRepeat: 'no-repeat'
+        }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black/85" />
         <div className="container mx-auto px-4 h-full relative z-10 flex flex-col items-center justify-center">
