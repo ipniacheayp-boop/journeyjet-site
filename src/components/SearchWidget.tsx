@@ -159,6 +159,18 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
   return (
     <div className="w-full max-w-6xl mx-auto bg-white rounded-2xl shadow-xl p-3 md:p-4">
       <Tabs value={searchType} onValueChange={setSearchType} className="w-full">
+        {/* Minimal Search Bar */}
+        <div className="mb-4">
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search here…"
+              className="w-full h-10 pl-11 pr-4 rounded-full border-border bg-background/50 backdrop-blur-sm shadow-sm focus:shadow-md transition-shadow"
+            />
+          </div>
+        </div>
+
         <TabsList className="grid w-full grid-cols-4 mb-3 h-9">
           <TabsTrigger value="flights" className="flex items-center gap-2">
             <Plane className="w-4 h-4" />
