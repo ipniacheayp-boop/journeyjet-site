@@ -93,7 +93,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Header />
       
-      {/* Premium Hero Section */}
+      {/* Premium Hero Section - Vibrant & Colorful */}
       <section className="relative min-h-[600px] md:min-h-[700px] w-full overflow-hidden">
         {/* Background Image with Parallax Effect */}
         <div 
@@ -101,9 +101,14 @@ const Index = () => {
           style={{ backgroundImage: `url(${heroBlackFriday})` }}
         />
         
-        {/* Premium Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-900/70 via-slate-900/50 to-slate-900/80" />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-blue-600/20" />
+        {/* Vibrant Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/80 via-purple-900/60 to-pink-900/50" />
+        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-transparent to-orange-500/20" />
+        
+        {/* Animated gradient orbs */}
+        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/30 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-cyan-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
         
         {/* Content */}
         <div className="container mx-auto px-4 h-full relative z-10 flex flex-col items-center justify-center pt-24 pb-32">
@@ -117,7 +122,7 @@ const Index = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2, duration: 0.5 }}
-              className="inline-block px-4 py-2 bg-coral/90 text-white text-sm font-semibold rounded-full mb-6 shadow-lg"
+              className="inline-block px-5 py-2.5 bg-gradient-to-r from-coral via-rose-500 to-orange-500 text-white text-sm font-bold rounded-full mb-6 shadow-lg shadow-coral/30 animate-bounce-subtle"
             >
               ✈️ BIGGEST SALE OF THE YEAR
             </motion.span>
@@ -129,7 +134,7 @@ const Index = () => {
               className="font-display text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight"
             >
               Discover Your Next
-              <span className="block text-gradient bg-gradient-to-r from-cyan-400 via-blue-400 to-primary bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
                 Adventure
               </span>
             </motion.h1>
@@ -162,20 +167,24 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Floating Search Widget */}
+      {/* Floating Search Widget - Glowing Border */}
       <div className="container mx-auto px-4 -mt-24 relative z-20">
         <motion.div 
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.6 }}
-          className="glass-card rounded-3xl shadow-premium p-3 md:p-4 border border-white/20 dark:border-slate-700/50"
+          className="relative"
         >
-          <SearchWidget />
+          {/* Glowing border effect */}
+          <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl opacity-75 blur-sm animate-pulse" />
+          <div className="glass-vibrant rounded-3xl shadow-colorful-lg p-3 md:p-4 relative">
+            <SearchWidget />
+          </div>
         </motion.div>
       </div>
 
-      {/* Why Choose Us Section */}
-      <section className="py-20 bg-background">
+      {/* Why Choose Us Section - Colorful */}
+      <section className="py-20 bg-gradient-to-b from-background via-blue-50/30 to-background dark:from-background dark:via-blue-950/20 dark:to-background">
         <div className="container mx-auto px-4">
           <motion.div 
             initial="initial"
@@ -188,7 +197,7 @@ const Index = () => {
               variants={fadeInUp}
               className="font-display text-3xl md:text-4xl font-bold mb-4"
             >
-              Why Travelers Choose <span className="text-gradient">FlyBot</span>
+              Why Travelers Choose <span className="text-gradient-vibrant">FlyBot</span>
             </motion.h2>
             <motion.p 
               variants={fadeInUp}
@@ -205,26 +214,34 @@ const Index = () => {
             variants={staggerContainer}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
           >
-            {whyChooseUs.map((item, index) => (
-              <motion.div
-                key={item.title}
-                variants={fadeInUp}
-                whileHover={{ y: -8, transition: { duration: 0.3 } }}
-                className="card-premium p-6 text-center group"
-              >
-                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-primary/10 to-blue-600/10 flex items-center justify-center group-hover:from-primary/20 group-hover:to-blue-600/20 transition-colors">
-                  <item.icon className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
-                <p className="text-muted-foreground text-sm">{item.description}</p>
-              </motion.div>
-            ))}
+            {whyChooseUs.map((item, index) => {
+              const gradients = [
+                "from-blue-500 to-cyan-500",
+                "from-purple-500 to-pink-500",
+                "from-orange-500 to-rose-500",
+                "from-emerald-500 to-teal-500"
+              ];
+              return (
+                <motion.div
+                  key={item.title}
+                  variants={fadeInUp}
+                  whileHover={{ y: -8, transition: { duration: 0.3 } }}
+                  className="card-colorful p-6 text-center group hover-glow-blue"
+                >
+                  <div className={`w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${gradients[index]} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
+                    <item.icon className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
+                  <p className="text-muted-foreground text-sm">{item.description}</p>
+                </motion.div>
+              );
+            })}
           </motion.div>
         </div>
       </section>
 
-      {/* Featured Deals */}
-      <section className="py-20 bg-gradient-to-b from-muted/30 to-background">
+      {/* Featured Deals - Colorful Section */}
+      <section className="py-20 bg-gradient-to-b from-purple-50/50 via-blue-50/30 to-background dark:from-purple-950/20 dark:via-blue-950/10 dark:to-background">
         <div className="container mx-auto px-4">
           <motion.div 
             initial="initial"
@@ -233,7 +250,9 @@ const Index = () => {
             className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-12 gap-4"
           >
             <motion.div variants={fadeInUp}>
-              <h2 className="font-display text-3xl md:text-4xl font-bold mb-2">Featured Deals</h2>
+              <h2 className="font-display text-3xl md:text-4xl font-bold mb-2">
+                <span className="text-gradient-vibrant">Featured</span> Deals
+              </h2>
               <p className="text-muted-foreground">Handpicked offers refreshed daily</p>
             </motion.div>
             <motion.div variants={fadeInUp} className="flex gap-3">
