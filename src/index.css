@@ -2,38 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* Premium Travel OTA Design System
+   All colors MUST be HSL for theme consistency.
 */
 
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 218 15% 25%;
+    --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 218 15% 25%;
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 218 15% 25%;
+    --popover-foreground: 222 47% 11%;
 
-    /* Travel blue - vibrant and trustworthy */
-    --primary: 214 100% 52%;
+    /* Premium Blue - Trust & Reliability */
+    --primary: 217 91% 60%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 214 100% 45%;
+    --primary-hover: 217 91% 50%;
 
-    /* Neutral gray for secondary actions */
-    --secondary: 220 13% 95%;
-    --secondary-foreground: 218 15% 25%;
+    /* Secondary - Soft Gray */
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 220 13% 95%;
-    --muted-foreground: 218 10% 50%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
 
-    /* Orange accent for deals and highlights */
+    /* Coral Accent - Energy & Excitement */
+    --coral: 0 84% 71%;
+    --coral-foreground: 0 0% 100%;
+
+    /* Accent - Warm Orange for deals */
     --accent: 25 95% 53%;
     --accent-foreground: 0 0% 100%;
 
-    /* Success green */
+    /* Success */
     --success: 142 76% 36%;
     --success-foreground: 0 0% 100%;
 
@@ -42,29 +46,84 @@ All colors MUST be HSL.
 
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 214 100% 52%;
+    --ring: 217 91% 60%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    /* Shadows and effects */
+    /* Premium shadows */
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
     --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
     --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
     --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 
-    /* Gradient for rewards button */
-    --gradient-reward: linear-gradient(135deg, hsl(211 100% 50%), hsl(197 100% 50%));
+    /* Gradients */
+    --gradient-reward: linear-gradient(135deg, hsl(217 91% 60%), hsl(190 100% 50%));
+    --gradient-premium: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(220 100% 60%) 50%, hsl(190 100% 50%) 100%);
+    --gradient-coral: linear-gradient(135deg, hsl(0 84% 71%), hsl(25 95% 53%));
 
     /* Support page colors */
     --support-sky: 212 100% 50%;
     --support-sunrise: 42 100% 70%;
     --support-green: 164 95% 43%;
-    --support-bg-light: 210 60% 95%;
+    --support-bg-light: 210 60% 98%;
     
-    /* Support gradients */
-    --gradient-support-button: linear-gradient(135deg, hsl(212 100% 50%), hsl(180 100% 50%));
-    --gradient-support-hero: linear-gradient(180deg, rgba(0, 0, 0, 0.4), transparent);
+    /* Sidebar */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 14% 96%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217 91% 60%;
+  }
+
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 13%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 13%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 217 91% 70%;
+
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --coral: 0 84% 71%;
+    --coral-foreground: 0 0% 100%;
+
+    --accent: 25 95% 53%;
+    --accent-foreground: 0 0% 100%;
+
+    --success: 142 76% 46%;
+    --success-foreground: 0 0% 100%;
+
+    --destructive: 0 63% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 217 33% 22%;
+    --input: 217 33% 22%;
+    --ring: 217 91% 60%;
+
+    /* Dark mode sidebar */
+    --sidebar-background: 222 47% 11%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 217 33% 17%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 33% 22%;
+    --sidebar-ring: 217 91% 60%;
   }
 }
 
@@ -73,7 +132,135 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1, h2, h3 {
+    @apply font-display tracking-tight;
+  }
+}
+
+@layer components {
+  /* Glassmorphism */
+  .glass {
+    @apply bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/20 dark:border-slate-700/50;
+  }
+
+  .glass-card {
+    @apply bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-white/30 dark:border-slate-700/50 shadow-glass;
+  }
+
+  .glass-dark {
+    @apply bg-slate-900/80 backdrop-blur-xl border border-slate-700/50;
+  }
+
+  /* Premium card styles */
+  .card-premium {
+    @apply bg-card rounded-2xl shadow-lg border border-border/50 transition-all duration-300;
+  }
+
+  .card-premium:hover {
+    @apply shadow-card-hover -translate-y-1;
+  }
+
+  /* Gradient text */
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary via-blue-500 to-cyan-500 bg-clip-text text-transparent;
+  }
+
+  .text-gradient-coral {
+    @apply bg-gradient-to-r from-coral to-accent bg-clip-text text-transparent;
+  }
+
+  /* Premium buttons */
+  .btn-premium {
+    @apply bg-gradient-to-r from-primary to-blue-600 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-glow transition-all duration-300 hover:-translate-y-0.5;
+  }
+
+  .btn-coral {
+    @apply bg-gradient-to-r from-coral to-accent text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-glow-coral transition-all duration-300 hover:-translate-y-0.5;
+  }
+
+  /* Hero gradient overlay */
+  .hero-gradient {
+    @apply bg-gradient-to-b from-black/60 via-black/40 to-black/60;
+  }
+
+  /* Sticky header styles */
+  .header-scrolled {
+    @apply shadow-lg bg-background/95 backdrop-blur-xl;
+  }
+
+  /* Deal ribbons */
+  .ribbon {
+    @apply absolute -top-1 -right-1 px-3 py-1 text-xs font-bold text-white rounded-bl-lg rounded-tr-xl;
+  }
+
+  .ribbon-hot {
+    @apply bg-gradient-to-r from-red-500 to-orange-500;
+  }
+
+  .ribbon-popular {
+    @apply bg-gradient-to-r from-purple-500 to-pink-500;
+  }
+
+  .ribbon-best {
+    @apply bg-gradient-to-r from-emerald-500 to-teal-500;
+  }
+
+  /* Shimmer effect */
+  .shimmer {
+    @apply relative overflow-hidden;
+  }
+
+  .shimmer::after {
+    content: '';
+    @apply absolute inset-0 -translate-x-full;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    animation: shimmer 2s infinite;
+  }
+
+  /* Animation delays */
+  .delay-100 { animation-delay: 100ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-400 { animation-delay: 400ms; }
+  .delay-500 { animation-delay: 500ms; }
+
+  /* Hover scale */
+  .hover-scale {
+    @apply transition-transform duration-300 hover:scale-105;
+  }
+
+  .hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-2 hover:shadow-xl;
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Text balance for headings */
+  .text-balance {
+    text-wrap: balance;
   }
 }
