@@ -9,29 +9,55 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useDeals, type Deal as ApiDeal } from "@/hooks/useDeals";
+import { useMinPriceDeals, type MinPriceDeal } from "@/hooks/useMinPriceDeals";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Badge } from "@/components/ui/badge";
-import { Plane, Filter, TrendingDown, Sparkles, AlertCircle } from "lucide-react";
+import { Plane, Filter, TrendingDown, Sparkles, AlertCircle, RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { mockDeals, type Deal } from "@/data/mockDeals";
 
-// Adapter to convert API deal to component deal format
-const adaptDeal = (apiDeal: ApiDeal): Deal => ({
-  id: apiDeal.id,
-  title: apiDeal.title,
-  image: Array.isArray(apiDeal.images) ? apiDeal.images[0] : apiDeal.images || '/deal-beach.jpg',
-  origin: `${apiDeal.origin_city} (${apiDeal.origin_code})`,
-  destination: `${apiDeal.dest_city} (${apiDeal.dest_code})`,
-  airline: apiDeal.airline,
-  departDate: apiDeal.date_from,
-  returnDate: apiDeal.date_to,
-  price: apiDeal.price_usd,
-  originalPrice: apiDeal.original_price_usd,
-  cabinClass: apiDeal.class,
-  link: `/deals/${apiDeal.slug}`,
+// Adapter to convert MinPriceDeal to component deal format
+const adaptMinPriceDeal = (deal: MinPriceDeal): Deal => ({
+  id: deal.id,
+  title: `${deal.originCity} to ${deal.destCity}`,
+  image: getDestinationImage(deal.destination),
+  origin: `${deal.originCity} (${deal.origin})`,
+  destination: `${deal.destCity} (${deal.destination})`,
+  airline: deal.airline,
+  departDate: deal.departureDate,
+  returnDate: deal.returnDate,
+  price: deal.price,
+  originalPrice: Math.round(deal.price * 1.3), // Estimate original price
+  cabinClass: deal.cabinClass,
+  link: deal.bookingLink,
 });
+
+// Get image based on destination
+const getDestinationImage = (destCode: string): string => {
+  const imageMap: Record<string, string> = {
+    'LAX': '/deal-beach.jpg',
+    'SFO': '/deal-nyc.jpg',
+    'MIA': '/deal-beach.jpg',
+    'LAS': '/deal-tokyo.jpg',
+    'DEN': '/deal-nyc.jpg',
+    'PHX': '/deal-beach.jpg',
+    'ORD': '/deal-nyc.jpg',
+    'LHR': '/deal-paris.jpg',
+    'NRT': '/deal-tokyo.jpg',
+    'CDG': '/deal-paris.jpg',
+    'CUN': '/deal-beach.jpg',
+    'FCO': '/deal-paris.jpg',
+    'HNL': '/deal-beach.jpg',
+    'MEX': '/deal-tokyo.jpg',
+    'SJU': '/deal-beach.jpg',
+    'ANC': '/deal-nyc.jpg',
+    'DUB': '/deal-paris.jpg',
+    'BCN': '/deal-paris.jpg',
+    'SYD': '/deal-beach.jpg',
+  };
+  return imageMap[destCode] || '/deal-beach.jpg';
+};
 
 const Deals = () => {
   const navigate = useNavigate();
@@ -42,27 +68,19 @@ const Deals = () => {
   const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
   const [page, setPage] = useState(1);
-  const [sort, setSort] = useState('featured');
+  const [sort, setSort] = useState('price_asc'); // Default to lowest price first
   const [showFilters, setShowFilters] = useState(false);
-  const [usingFallback, setUsingFallback] = useState(false);
 
-  const { deals: apiDeals, loading, error, total, totalPages } = useDeals({
-    min_price: priceRange[0],
-    max_price: priceRange[1],
-    airline: selectedAirline !== "all" ? selectedAirline : undefined,
-    page,
-    limit: 12,
-    sort,
-  });
+  // Fetch minimum price deals from API
+  const { deals: minPriceDeals, loading, error, fromCache, refetch } = useMinPriceDeals(50);
 
   // Use API deals or fallback to mock deals
-  const rawDeals = error || apiDeals.length === 0 ? mockDeals : apiDeals.map(adaptDeal);
-  
-  useEffect(() => {
-    setUsingFallback(error !== null || (apiDeals.length === 0 && !loading));
-  }, [error, apiDeals.length, loading]);
+  const usingFallback = error !== null || (minPriceDeals.length === 0 && !loading);
+  const rawDeals: Deal[] = usingFallback 
+    ? mockDeals 
+    : minPriceDeals.map(adaptMinPriceDeal);
 
-  // Apply client-side filtering for fallback deals
+  // Apply client-side filtering
   let filteredDeals = rawDeals.filter(deal => {
     const priceMatch = deal.price >= priceRange[0] && deal.price <= priceRange[1];
     const airlineMatch = selectedAirline === "all" || deal.airline === selectedAirline;
@@ -70,33 +88,37 @@ const Deals = () => {
     return priceMatch && airlineMatch && destMatch;
   });
 
-  // Apply client-side sorting for fallback deals
-  if (usingFallback) {
-    switch (sort) {
-      case 'price_asc':
-        filteredDeals = [...filteredDeals].sort((a, b) => a.price - b.price);
-        break;
-      case 'price_desc':
-        filteredDeals = [...filteredDeals].sort((a, b) => b.price - a.price);
-        break;
-      case 'popularity':
-        filteredDeals = [...filteredDeals].sort((a, b) => (b.originalPrice - b.price) - (a.originalPrice - a.price));
-        break;
-      default:
-        break;
-    }
+  // Apply client-side sorting
+  switch (sort) {
+    case 'price_asc':
+      filteredDeals = [...filteredDeals].sort((a, b) => a.price - b.price);
+      break;
+    case 'price_desc':
+      filteredDeals = [...filteredDeals].sort((a, b) => b.price - a.price);
+      break;
+    case 'popularity':
+      filteredDeals = [...filteredDeals].sort((a, b) => (b.originalPrice - b.price) - (a.originalPrice - a.price));
+      break;
+    case 'date':
+      filteredDeals = [...filteredDeals].sort((a, b) => new Date(a.departDate).getTime() - new Date(b.departDate).getTime());
+      break;
+    default:
+      // Featured - keep original order (already sorted by price from API)
+      break;
   }
 
-  const deals = filteredDeals;
-  const displayTotal = usingFallback ? mockDeals.length : total;
-  const displayTotalPages = usingFallback ? Math.ceil(deals.length / 12) : totalPages;
+  // Paginate
+  const itemsPerPage = 12;
+  const paginatedDeals = filteredDeals.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+  const displayTotal = filteredDeals.length;
+  const displayTotalPages = Math.ceil(filteredDeals.length / itemsPerPage);
   
   // Get unique airlines and destinations for filters
-  const airlines = [...new Set(rawDeals.map(deal => deal.airline))].sort();
-  const destinations = [...new Set(rawDeals.map(deal => {
+  const airlines: string[] = [...new Set(rawDeals.map(deal => deal.airline))].filter(Boolean).sort();
+  const destinations: string[] = [...new Set(rawDeals.map(deal => {
     const match = deal.destination.match(/^([^(]+)/);
     return match ? match[1].trim() : deal.destination;
-  }))].sort();
+  }))].filter(Boolean).sort();
 
   const handleQuickView = (deal: Deal) => {
     setSelectedDeal(deal);
@@ -331,16 +353,22 @@ const Deals = () => {
             className="mb-6 flex items-center justify-between"
           >
             <p className="text-muted-foreground">
-              Showing <span className="font-bold text-foreground">{deals.length}</span> of{" "}
+              Showing <span className="font-bold text-foreground">{paginatedDeals.length}</span> of{" "}
               <span className="font-bold text-foreground">{displayTotal}</span> deals
             </p>
+            {!usingFallback && (
+              <Button variant="outline" size="sm" onClick={refetch} className="gap-2">
+                <RefreshCw className="w-4 h-4" />
+                Refresh Prices
+              </Button>
+            )}
           </motion.div>
         )}
 
         {/* Deals Grid */}
         {loading ? (
           <DealsSkeleton />
-        ) : deals.length === 0 ? (
+        ) : paginatedDeals.length === 0 ? (
           <div className="text-center py-12">
             <Plane className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
             <h3 className="text-xl font-bold mb-2">No deals found</h3>
@@ -363,7 +391,7 @@ const Deals = () => {
                 }
               }}
             >
-              {deals.map((deal, index) => (
+              {paginatedDeals.map((deal, index) => (
                 <motion.div
                   key={deal.id}
                   variants={{
