@@ -7,11 +7,89 @@ const corsHeaders = {
 
 let cachedToken: { token: string; expiresAt: number } | null = null;
 
-// Determine API base URL based on API key (live keys start with "live_")
+// Determine API base URL based on environment
 function getBaseUrl(): string {
-  const apiKey = Deno.env.get('AMADEUS_API_KEY') || '';
-  const isLiveKey = apiKey.startsWith('live_');
-  return isLiveKey ? 'https://api.amadeus.com' : 'https://test.api.amadeus.com';
+  const useProd = Deno.env.get('USE_PROD_APIS') === 'true';
+  return useProd ? 'https://api.amadeus.com' : 'https://test.api.amadeus.com';
+}
+
+function isTestEnvironment(): boolean {
+  return Deno.env.get('USE_PROD_APIS') !== 'true';
+}
+
+// Generate mock car data for test environment when Amadeus has no results
+function generateMockCars(locationCode: string, pickUpDate: string, dropOffDate: string): any[] {
+  const providers = ['Hertz', 'Avis', 'Enterprise', 'Budget', 'National'];
+  const categories = [
+    { name: 'Economy', seats: 4, bags: 2, doors: 4 },
+    { name: 'Compact', seats: 5, bags: 3, doors: 4 },
+    { name: 'SUV', seats: 7, bags: 4, doors: 4 },
+    { name: 'Luxury', seats: 5, bags: 3, doors: 4 },
+    { name: 'Minivan', seats: 8, bags: 5, doors: 4 },
+  ];
+  const makes = ['Toyota', 'Honda', 'Ford', 'Chevrolet', 'Nissan', 'BMW', 'Mercedes'];
+  const models = {
+    Economy: ['Corolla', 'Civic', 'Focus', 'Cruze'],
+    Compact: ['Camry', 'Accord', 'Fusion', 'Malibu'],
+    SUV: ['RAV4', 'CR-V', 'Explorer', 'Equinox'],
+    Luxury: ['3 Series', 'C-Class', 'A4', 'ES'],
+    Minivan: ['Sienna', 'Odyssey', 'Pacifica', 'Carnival'],
+  };
+
+  const start = new Date(pickUpDate);
+  const end = new Date(dropOffDate);
+  const days = Math.max(1, Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)));
+
+  return categories.map((cat, index) => {
+    const provider = providers[index % providers.length];
+    const make = makes[index % makes.length];
+    const model = models[cat.name as keyof typeof models][index % models[cat.name as keyof typeof models].length];
+    const dailyRate = cat.name === 'Economy' ? 35 : cat.name === 'Compact' ? 45 : cat.name === 'SUV' ? 65 : cat.name === 'Luxury' ? 95 : 75;
+
+    return {
+      id: `mock-${locationCode}-${index}-${Date.now()}`,
+      provider: {
+        name: provider,
+        code: provider.substring(0, 2).toUpperCase(),
+        logo: null,
+      },
+      vehicle: {
+        make,
+        model,
+        category: cat.name,
+        type: cat.name,
+        doors: cat.doors,
+        seats: cat.seats,
+        bags: cat.bags,
+        transmission: index % 2 === 0 ? 'Automatic' : 'Manual',
+        airConditioning: true,
+        fuelType: 'Petrol',
+        imageUrl: null,
+      },
+      pricing: {
+        currency: 'USD',
+        dailyRate,
+        totalDays: days,
+        totalPrice: dailyRate * days,
+        taxes: Math.round(dailyRate * days * 0.12),
+        grandTotal: Math.round(dailyRate * days * 1.12),
+      },
+      pickup: {
+        locationCode,
+        address: `${locationCode} Airport Car Rental Center`,
+        date: pickUpDate,
+        time: '10:00',
+      },
+      dropoff: {
+        locationCode,
+        address: `${locationCode} Airport Car Rental Center`,
+        date: dropOffDate,
+        time: '10:00',
+      },
+      features: ['Unlimited Mileage', 'Free Cancellation', 'Insurance Included'],
+      isMockData: true,
+    };
+  });
 }
 
 async function getAmadeusToken(): Promise<string> {
@@ -274,11 +352,30 @@ serve(async (req) => {
         const altError = await altResponse.text();
         console.error('❌ Alternative endpoint also failed:', altResponse.status, altError);
         
+        // In test environment, return mock data since Amadeus test has limited coverage
+        if (isTestEnvironment()) {
+          console.log('📦 Returning mock car data for test environment');
+          const mockCars = generateMockCars(resolvedCode, pickUpDate, dropOffDate);
+          return new Response(
+            JSON.stringify({
+              data: mockCars,
+              meta: {
+                count: mockCars.length,
+                location: resolvedLocation,
+                environment: 'test',
+                isMockData: true,
+                notice: 'Using demo data - Amadeus test environment has limited coverage for this location.'
+              }
+            }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+        
         return new Response(
           JSON.stringify({ 
             error: 'No car rentals available',
             details: `No vehicles found for ${resolvedLocation.name} (${resolvedCode}) on the selected dates. Try different dates or another location.`,
-            meta: { environment: baseUrl.includes('test') ? 'test' : 'production' }
+            meta: { environment: 'production' }
           }),
           { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
