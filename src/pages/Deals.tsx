@@ -12,9 +12,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useDeals, type Deal as ApiDeal } from "@/hooks/useDeals";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Badge } from "@/components/ui/badge";
-import { Plane, Filter, TrendingDown, Sparkles, ChevronDown } from "lucide-react";
+import { Plane, Filter, TrendingDown, Sparkles, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { mockDeals, type Deal } from "@/data/mockDeals";
 
 // Adapter to convert API deal to component deal format
 const adaptDeal = (apiDeal: ApiDeal): Deal => ({
@@ -32,56 +33,70 @@ const adaptDeal = (apiDeal: ApiDeal): Deal => ({
   link: `/deals/${apiDeal.slug}`,
 });
 
-interface Deal {
-  id: string;
-  title: string;
-  image: string;
-  origin: string;
-  destination: string;
-  airline: string;
-  departDate: string;
-  returnDate: string;
-  price: number;
-  originalPrice: number;
-  cabinClass: string;
-  link?: string;
-}
-
 const Deals = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const [priceRange, setPriceRange] = useState([0, 2000]);
-  const [selectedAirline, setSelectedAirline] = useState<string>("");
+  const [selectedAirline, setSelectedAirline] = useState<string>("all");
+  const [selectedDestination, setSelectedDestination] = useState<string>("all");
   const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [sort, setSort] = useState('featured');
   const [showFilters, setShowFilters] = useState(false);
+  const [usingFallback, setUsingFallback] = useState(false);
 
   const { deals: apiDeals, loading, error, total, totalPages } = useDeals({
     min_price: priceRange[0],
     max_price: priceRange[1],
-    airline: selectedAirline || undefined,
+    airline: selectedAirline !== "all" ? selectedAirline : undefined,
     page,
     limit: 12,
     sort,
   });
 
-  const deals = apiDeals.map(adaptDeal);
+  // Use API deals or fallback to mock deals
+  const rawDeals = error || apiDeals.length === 0 ? mockDeals : apiDeals.map(adaptDeal);
   
-  // Debug logging
   useEffect(() => {
-    console.log('📊 Deals loaded:', {
-      count: deals.length,
-      total,
-      loading,
-      error,
-      page,
-      totalPages
-    });
-  }, [deals.length, total, loading, error, page, totalPages]);
+    setUsingFallback(error !== null || (apiDeals.length === 0 && !loading));
+  }, [error, apiDeals.length, loading]);
+
+  // Apply client-side filtering for fallback deals
+  let filteredDeals = rawDeals.filter(deal => {
+    const priceMatch = deal.price >= priceRange[0] && deal.price <= priceRange[1];
+    const airlineMatch = selectedAirline === "all" || deal.airline === selectedAirline;
+    const destMatch = selectedDestination === "all" || deal.destination.toLowerCase().includes(selectedDestination.toLowerCase());
+    return priceMatch && airlineMatch && destMatch;
+  });
+
+  // Apply client-side sorting for fallback deals
+  if (usingFallback) {
+    switch (sort) {
+      case 'price_asc':
+        filteredDeals = [...filteredDeals].sort((a, b) => a.price - b.price);
+        break;
+      case 'price_desc':
+        filteredDeals = [...filteredDeals].sort((a, b) => b.price - a.price);
+        break;
+      case 'popularity':
+        filteredDeals = [...filteredDeals].sort((a, b) => (b.originalPrice - b.price) - (a.originalPrice - a.price));
+        break;
+      default:
+        break;
+    }
+  }
+
+  const deals = filteredDeals;
+  const displayTotal = usingFallback ? mockDeals.length : total;
+  const displayTotalPages = usingFallback ? Math.ceil(deals.length / 12) : totalPages;
   
-  const airlines = [...new Set(deals.map(deal => deal.airline))];
+  // Get unique airlines and destinations for filters
+  const airlines = [...new Set(rawDeals.map(deal => deal.airline))].sort();
+  const destinations = [...new Set(rawDeals.map(deal => {
+    const match = deal.destination.match(/^([^(]+)/);
+    return match ? match[1].trim() : deal.destination;
+  }))].sort();
 
   const handleQuickView = (deal: Deal) => {
     setSelectedDeal(deal);
@@ -103,12 +118,13 @@ const Deals = () => {
 
   const resetFilters = () => {
     setPriceRange([0, 2000]);
-    setSelectedAirline("");
+    setSelectedAirline("all");
+    setSelectedDestination("all");
     setPage(1);
   };
 
   return (
-    <div className="min-h-screen flex flex-col relative overflow-hidden">
+    <div className="min-h-screen flex flex-col relative overflow-hidden bg-background">
       <Helmet>
         <title>Exclusive Travel Deals - Best Flight Offers | Tripile</title>
         <meta name="description" content="Discover exclusive travel deals on flights worldwide. Save up to 50% on roundtrip flights with Tripile's best offers." />
@@ -169,11 +185,11 @@ const Deals = () => {
             </motion.div>
             <Badge variant="secondary" className="px-4 py-2 text-sm font-bold animate-pulse">
               <Sparkles className="w-4 h-4 mr-1" />
-              {total}+ Live Deals
+              {displayTotal}+ Live Deals
             </Badge>
           </div>
           
-          <h1 className="text-4xl md:text-6xl font-black bg-gradient-to-r from-foreground via-foreground/80 to-foreground bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-6xl font-black bg-gradient-to-r from-foreground via-foreground/80 to-foreground bg-clip-text text-transparent font-display">
             Today's Best Flight Deals
           </h1>
           
@@ -182,6 +198,20 @@ const Deals = () => {
           </p>
         </motion.div>
 
+        {/* Error/Fallback Notice */}
+        {usingFallback && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-center gap-3"
+          >
+            <AlertCircle className="w-5 h-5 text-amber-500 flex-shrink-0" />
+            <p className="text-sm text-amber-700 dark:text-amber-400">
+              Unable to fetch live deals. Showing curated featured deals instead.
+            </p>
+          </motion.div>
+        )}
+
         {/* Filters Bar */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -189,7 +219,7 @@ const Deals = () => {
           transition={{ delay: 0.2 }}
           className="mb-8"
         >
-          <div className="bg-card/50 backdrop-blur-xl border border-border/50 rounded-2xl p-6 shadow-lg">
+          <div className="glass-card p-6 rounded-2xl">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Filter className="w-5 h-5 text-muted-foreground" />
@@ -205,7 +235,7 @@ const Deals = () => {
               </Button>
             </div>
 
-            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 ${!showFilters && 'hidden lg:grid'}`}>
+            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 ${!showFilters && 'hidden lg:grid'}`}>
               {/* Price Range */}
               <div className="space-y-3">
                 <Label className="text-sm font-semibold flex items-center gap-2">
@@ -234,10 +264,28 @@ const Deals = () => {
                     <SelectValue placeholder="All Airlines" />
                   </SelectTrigger>
                   <SelectContent className="bg-background z-50">
-                    <SelectItem value="">All Airlines</SelectItem>
+                    <SelectItem value="all">All Airlines</SelectItem>
                     {airlines.map((airline) => (
                       <SelectItem key={airline} value={airline}>
                         {airline}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Destination */}
+              <div className="space-y-3">
+                <Label className="text-sm font-semibold">Destination</Label>
+                <Select value={selectedDestination} onValueChange={setSelectedDestination}>
+                  <SelectTrigger className="bg-background/50">
+                    <SelectValue placeholder="All Destinations" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background z-50 max-h-60">
+                    <SelectItem value="all">All Destinations</SelectItem>
+                    {destinations.map((dest) => (
+                      <SelectItem key={dest} value={dest}>
+                        {dest}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -253,8 +301,8 @@ const Deals = () => {
                   </SelectTrigger>
                   <SelectContent className="bg-background z-50">
                     <SelectItem value="featured">Featured</SelectItem>
-                    <SelectItem value="price_asc">Lowest Price</SelectItem>
-                    <SelectItem value="price_desc">Highest Price</SelectItem>
+                    <SelectItem value="price_asc">Price: Low → High</SelectItem>
+                    <SelectItem value="price_desc">Price: High → Low</SelectItem>
                     <SelectItem value="date">Travel Date</SelectItem>
                     <SelectItem value="popularity">Most Popular</SelectItem>
                   </SelectContent>
@@ -284,7 +332,7 @@ const Deals = () => {
           >
             <p className="text-muted-foreground">
               Showing <span className="font-bold text-foreground">{deals.length}</span> of{" "}
-              <span className="font-bold text-foreground">{total}</span> deals
+              <span className="font-bold text-foreground">{displayTotal}</span> deals
             </p>
           </motion.div>
         )}
@@ -292,13 +340,6 @@ const Deals = () => {
         {/* Deals Grid */}
         {loading ? (
           <DealsSkeleton />
-        ) : error ? (
-          <div className="text-center py-12">
-            <p className="text-destructive text-lg">Failed to load deals. Please try again.</p>
-            <Button onClick={() => window.location.reload()} className="mt-4">
-              Retry
-            </Button>
-          </div>
         ) : deals.length === 0 ? (
           <div className="text-center py-12">
             <Plane className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
@@ -308,20 +349,40 @@ const Deals = () => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+            <motion.div 
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8"
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.05
+                  }
+                }
+              }}
+            >
               {deals.map((deal, index) => (
-                <DealCardEnhanced
+                <motion.div
                   key={deal.id}
-                  deal={deal}
-                  index={index}
-                  onQuickView={() => handleQuickView(deal)}
-                  onClick={() => handleDealClick(deal)}
-                />
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0 }
+                  }}
+                >
+                  <DealCardEnhanced
+                    deal={deal}
+                    index={index}
+                    onQuickView={() => handleQuickView(deal)}
+                    onClick={() => handleDealClick(deal)}
+                  />
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
 
             {/* Pagination */}
-            {totalPages > 1 && (
+            {displayTotalPages > 1 && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -336,7 +397,7 @@ const Deals = () => {
                 </Button>
                 
                 <div className="flex items-center gap-2">
-                  {[...Array(Math.min(5, totalPages))].map((_, i) => {
+                  {[...Array(Math.min(5, displayTotalPages))].map((_, i) => {
                     const pageNum = i + 1;
                     return (
                       <Button
@@ -353,8 +414,8 @@ const Deals = () => {
 
                 <Button
                   variant="outline"
-                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
+                  onClick={() => setPage(p => Math.min(displayTotalPages, p + 1))}
+                  disabled={page === displayTotalPages}
                 >
                   Next
                 </Button>
@@ -378,4 +439,3 @@ const Deals = () => {
 };
 
 export default Deals;
-
