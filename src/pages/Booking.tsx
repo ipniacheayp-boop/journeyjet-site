@@ -265,9 +265,25 @@ const Booking = () => {
                       </p>
                     )}
                     {bookingType === "cars" && (
-                      <p className="text-sm text-muted-foreground">
-                        {offer.vehicle?.make} {offer.vehicle?.model || "Car Rental"}
-                      </p>
+                      <div className="space-y-1">
+                        <p className="text-sm text-muted-foreground">
+                          {offer.vehicle?.make} {offer.vehicle?.model || offer.vehicle?.category || "Car Rental"}
+                        </p>
+                        {offer.provider?.name && (
+                          <p className="text-xs text-muted-foreground">Provider: {offer.provider.name}</p>
+                        )}
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          {offer.vehicle?.seats && (
+                            <span className="text-xs bg-muted px-2 py-0.5 rounded">{offer.vehicle.seats} seats</span>
+                          )}
+                          {offer.vehicle?.transmission && (
+                            <span className="text-xs bg-muted px-2 py-0.5 rounded">{offer.vehicle.transmission}</span>
+                          )}
+                          {offer.vehicle?.hasAC !== false && (
+                            <span className="text-xs bg-muted px-2 py-0.5 rounded">AC</span>
+                          )}
+                        </div>
+                      </div>
                     )}
                   </div>
 

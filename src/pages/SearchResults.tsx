@@ -250,50 +250,89 @@ const SearchResults = () => {
   };
 
   const renderCarCard = (car: any, index: number) => {
-    const vehicle = car.vehicle;
+    const vehicle = car.vehicle || {};
     const price = car.price?.total || "N/A";
     const currency = car.price?.currency || "USD";
+    const provider = car.provider || {};
+
+    // Build vehicle name
+    const vehicleName = vehicle.make && vehicle.model 
+      ? `${vehicle.make} ${vehicle.model}` 
+      : vehicle.category || "Car Rental";
 
     return (
       <Card key={index} className="hover:shadow-lg transition-shadow">
         <CardHeader>
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                <Car className="w-6 h-6 text-primary" />
-              </div>
+              {vehicle.imageUrl ? (
+                <img 
+                  src={vehicle.imageUrl} 
+                  alt={vehicleName}
+                  className="w-16 h-12 object-contain rounded-lg bg-muted"
+                />
+              ) : (
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <Car className="w-6 h-6 text-primary" />
+                </div>
+              )}
               <div>
-                <CardTitle className="text-lg">
-                  {vehicle?.make || ""} {vehicle?.model || "Vehicle"}
-                </CardTitle>
-                <p className="text-sm text-muted-foreground">{vehicle?.category || "Standard"}</p>
+                <CardTitle className="text-lg">{vehicleName}</CardTitle>
+                <p className="text-sm text-muted-foreground">{vehicle.category || "Standard"}</p>
+                {provider.name && (
+                  <p className="text-xs text-muted-foreground mt-1">by {provider.name}</p>
+                )}
               </div>
             </div>
             <div className="text-right">
               <div className="flex items-center gap-2 justify-end mb-1">
-                <Badge variant="default" className="bg-green-600 hover:bg-green-700 text-white">
-                  🟢 Lowest Price Guaranteed
+                <Badge variant="default" className="bg-green-600 hover:bg-green-700 text-white text-xs">
+                  🟢 Best Price
                 </Badge>
               </div>
               <div className="text-2xl font-bold text-primary">{formatCurrency(price, currency)}</div>
-              <p className="text-sm text-muted-foreground">{currency}</p>
+              <p className="text-xs text-muted-foreground">total</p>
             </div>
           </div>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            <div className="flex items-center gap-2 text-sm">
-              <Users className="w-4 h-4 text-muted-foreground" />
-              <span>{vehicle?.seats || "N/A"} seats</span>
+            {/* Vehicle Features */}
+            <div className="grid grid-cols-2 gap-2 text-sm">
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-muted-foreground" />
+                <span>{vehicle.seats || 5} seats</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-4 h-4 text-muted-foreground">🚪</span>
+                <span>{vehicle.doors || 4} doors</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-4 h-4 text-muted-foreground">🧳</span>
+                <span>{vehicle.bags || 2} bags</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-4 h-4 text-muted-foreground">⚙️</span>
+                <span>{vehicle.transmission || "Auto"}</span>
+              </div>
             </div>
+
+            {/* Feature badges */}
             <div className="flex flex-wrap gap-2">
-              {vehicle?.transmission && (
-                <Badge variant="outline">{vehicle.transmission}</Badge>
+              {vehicle.hasAC !== false && (
+                <Badge variant="outline" className="text-xs">❄️ AC</Badge>
               )}
-              {vehicle?.acrissCode && (
-                <Badge variant="outline">{vehicle.acrissCode}</Badge>
+              {vehicle.transmission && (
+                <Badge variant="outline" className="text-xs">{vehicle.transmission}</Badge>
+              )}
+              {vehicle.fuelType && (
+                <Badge variant="outline" className="text-xs">{vehicle.fuelType}</Badge>
+              )}
+              {vehicle.acrissCode && (
+                <Badge variant="secondary" className="text-xs">{vehicle.acrissCode}</Badge>
               )}
             </div>
+
             <Button onClick={() => handleBook(car)} className="w-full">
               Book Now
             </Button>
