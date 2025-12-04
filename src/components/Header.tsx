@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Plane, Phone, User, Menu, X, LogOut, BookOpen, Globe } from "lucide-react";
+import { Plane, Phone, User, Menu, X, LogOut, BookOpen, Globe, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useTheme } from "@/components/ThemeProvider";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,11 +12,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Header = () => {
   const { user, signOut, isAdmin, userRole } = useAuth();
   const navigate = useNavigate();
   const { t, language, toggleLanguage } = useLanguage();
+  const { theme, setTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -40,57 +43,80 @@ const Header = () => {
   ];
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-white shadow-md" : "bg-white/95 backdrop-blur-sm"
+    <motion.header
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        isScrolled 
+          ? "bg-background/95 backdrop-blur-xl shadow-lg border-b border-border/50" 
+          : "bg-background/80 backdrop-blur-sm"
       }`}
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center transition-transform group-hover:scale-105">
-              <Plane className="w-6 h-6 text-primary-foreground" />
-            </div>
-            <span className="text-xl font-bold text-foreground hidden sm:block">Cheap Flights</span>
+          <Link to="/" className="flex items-center gap-3 group">
+            <motion.div 
+              whileHover={{ scale: 1.05, rotate: 5 }}
+              className="w-11 h-11 bg-gradient-to-br from-primary to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary/25"
+            >
+              <Plane className="w-6 h-6 text-white" />
+            </motion.div>
+            <span className="text-xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent hidden sm:block">
+              FlyBot
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
-                className="text-sm font-medium text-foreground hover:text-primary transition-colors"
+                className="relative px-4 py-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors rounded-lg hover:bg-muted/50 group"
               >
                 {link.label}
+                <span className="absolute bottom-1 left-4 right-4 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform origin-left rounded-full" />
               </Link>
             ))}
           </nav>
 
           {/* Right Side Actions */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             <a
               href="tel:+18001234567"
-              className="hidden md:flex items-center gap-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
+              className="hidden md:flex items-center gap-2 px-3 py-2 text-sm font-medium text-foreground/70 hover:text-foreground transition-colors rounded-lg hover:bg-muted/50"
             >
               <Phone className="w-4 h-4" />
               <span>1-800-123-4567</span>
             </a>
 
+            {/* Dark Mode Toggle */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="rounded-xl hover:bg-muted/50"
+            >
+              <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+              <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+              <span className="sr-only">Toggle theme</span>
+            </Button>
+
             {/* Language Switcher */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="gap-2 hidden md:flex">
+                <Button variant="ghost" size="sm" className="gap-2 hidden md:flex rounded-xl hover:bg-muted/50">
                   <Globe className="w-4 h-4" />
-                  {language === 'en' ? '🇺🇸 EN' : '🇪🇸 ES'}
+                  {language === 'en' ? '🇺🇸' : '🇪🇸'}
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-background z-[60]">
-                <DropdownMenuItem onClick={() => toggleLanguage('en')}>
+              <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur-xl border-border/50 z-[60]">
+                <DropdownMenuItem onClick={() => toggleLanguage('en')} className="cursor-pointer">
                   🇺🇸 English
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => toggleLanguage('es')}>
+                <DropdownMenuItem onClick={() => toggleLanguage('es')} className="cursor-pointer">
                   🇪🇸 Español
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -99,14 +125,14 @@ const Header = () => {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-2">
+                  <Button variant="outline" size="sm" className="gap-2 rounded-xl border-border/50 hover:bg-muted/50">
                     <User className="w-4 h-4" />
                     <span className="hidden sm:inline">
                       {userRole === 'admin' ? t('navigation.admin') : userRole === 'agent' ? t('navigation.agent') : t('navigation.account')}
                     </span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="z-[60] bg-background">
+                <DropdownMenuContent align="end" className="z-[60] bg-background/95 backdrop-blur-xl border-border/50">
                   {userRole === 'admin' && (
                     <>
                       <DropdownMenuItem asChild>
@@ -152,7 +178,7 @@ const Header = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button size="sm" asChild>
+              <Button size="sm" asChild className="rounded-xl bg-gradient-to-r from-primary to-blue-600 hover:opacity-90 shadow-lg shadow-primary/25">
                 <Link to="/login">{t('navigation.signIn')}</Link>
               </Button>
             )}
@@ -160,8 +186,8 @@ const Header = () => {
             {/* Mobile Menu Toggle */}
             <Button
               variant="ghost"
-              size="sm"
-              className="lg:hidden"
+              size="icon"
+              className="lg:hidden rounded-xl"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -170,56 +196,80 @@ const Header = () => {
         </div>
 
         {/* Mobile Navigation */}
-        {isMobileMenuOpen && (
-          <div className="lg:hidden border-t border-border py-4">
-            <nav className="flex flex-col gap-2">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  to={link.href}
-                  className="px-4 py-2 text-sm font-medium text-foreground hover:bg-accent/10 rounded-md transition-colors"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              ))}
-              
-              {/* Mobile Language Switcher */}
-              <div className="px-4 py-3 border-t border-border mt-2">
-                <div className="flex items-center gap-2 mb-2 text-sm font-medium">
-                  <Globe className="w-4 h-4" />
-                  {t('common.language')}
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant={language === 'en' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => {
-                      toggleLanguage('en');
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="flex-1"
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="lg:hidden border-t border-border/50 overflow-hidden"
+            >
+              <nav className="flex flex-col gap-1 py-4">
+                {navLinks.map((link, index) => (
+                  <motion.div
+                    key={link.href}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
                   >
-                    🇺🇸 EN
-                  </Button>
-                  <Button
-                    variant={language === 'es' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => {
-                      toggleLanguage('es');
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="flex-1"
-                  >
-                    🇪🇸 ES
-                  </Button>
+                    <Link
+                      to={link.href}
+                      className="px-4 py-3 text-sm font-medium text-foreground hover:bg-muted/50 rounded-xl transition-colors block"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {link.label}
+                    </Link>
+                  </motion.div>
+                ))}
+                
+                {/* Mobile Language & Theme */}
+                <div className="px-4 py-4 border-t border-border/50 mt-2 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-muted-foreground">Theme</span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                      className="gap-2 rounded-xl"
+                    >
+                      {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                      {theme === "dark" ? "Light" : "Dark"}
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-muted-foreground">{t('common.language')}</span>
+                    <div className="flex gap-2">
+                      <Button
+                        variant={language === 'en' ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => {
+                          toggleLanguage('en');
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className="rounded-xl"
+                      >
+                        🇺🇸
+                      </Button>
+                      <Button
+                        variant={language === 'es' ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => {
+                          toggleLanguage('es');
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className="rounded-xl"
+                      >
+                        🇪🇸
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </nav>
-          </div>
-        )}
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-    </header>
+    </motion.header>
   );
 };
 
