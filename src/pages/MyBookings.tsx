@@ -136,6 +136,82 @@ const MyBookings = () => {
     }
   };
 
+  const getBookingDetails = (booking: Booking) => {
+    const details = booking.booking_details || {};
+    
+    if (booking.booking_type === 'car') {
+      const vehicle = details.vehicle || {};
+      const provider = details.provider || {};
+      const pickUp = details.pickUp || {};
+      const dropOff = details.dropOff || {};
+      
+      return (
+        <div className="mt-3 pt-3 border-t space-y-2">
+          <div className="text-sm">
+            <span className="font-medium">Vehicle: </span>
+            {vehicle.make} {vehicle.model || vehicle.category || 'Car Rental'}
+          </div>
+          {provider.name && (
+            <div className="text-sm text-muted-foreground">
+              <span className="font-medium">Provider: </span>{provider.name}
+            </div>
+          )}
+          {details.confirmationNumber && (
+            <div className="text-sm">
+              <span className="font-medium">Confirmation: </span>
+              <span className="font-mono">{details.confirmationNumber}</span>
+            </div>
+          )}
+          <div className="flex flex-wrap gap-2 mt-2">
+            {vehicle.category && (
+              <Badge variant="outline" className="text-xs">{vehicle.category}</Badge>
+            )}
+            {vehicle.transmission && (
+              <Badge variant="outline" className="text-xs">{vehicle.transmission}</Badge>
+            )}
+            {vehicle.seats && (
+              <Badge variant="outline" className="text-xs">{vehicle.seats} seats</Badge>
+            )}
+          </div>
+        </div>
+      );
+    }
+    
+    if (booking.booking_type === 'flight') {
+      const itinerary = details.itineraries?.[0];
+      const segments = itinerary?.segments || [];
+      const firstSegment = segments[0];
+      const lastSegment = segments[segments.length - 1];
+      
+      if (firstSegment && lastSegment) {
+        return (
+          <div className="mt-3 pt-3 border-t text-sm">
+            <span className="font-medium">{firstSegment.departure?.iataCode}</span>
+            <span className="mx-2">→</span>
+            <span className="font-medium">{lastSegment.arrival?.iataCode}</span>
+            {details.amadeus_pnr && (
+              <span className="ml-4 text-muted-foreground">PNR: {details.amadeus_pnr}</span>
+            )}
+          </div>
+        );
+      }
+    }
+    
+    if (booking.booking_type === 'hotel') {
+      const hotel = details.hotel || {};
+      return (
+        <div className="mt-3 pt-3 border-t text-sm">
+          <span className="font-medium">{hotel.name || 'Hotel Booking'}</span>
+          {hotel.cityCode && (
+            <span className="text-muted-foreground ml-2">({hotel.cityCode})</span>
+          )}
+        </div>
+      );
+    }
+    
+    return null;
+  };
+
   if (authLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -236,6 +312,7 @@ const MyBookings = () => {
                         )}
                       </div>
                     </div>
+                    {getBookingDetails(booking)}
                   </CardContent>
                 </Card>
               ))}
