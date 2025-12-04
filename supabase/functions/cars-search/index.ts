@@ -7,10 +7,11 @@ const corsHeaders = {
 
 let cachedToken: { token: string; expiresAt: number } | null = null;
 
-// Determine API base URL based on environment
+// Determine API base URL based on API key (live keys start with "live_")
 function getBaseUrl(): string {
-  const useProd = Deno.env.get('USE_PROD_APIS') === 'true';
-  return useProd ? 'https://api.amadeus.com' : 'https://test.api.amadeus.com';
+  const apiKey = Deno.env.get('AMADEUS_API_KEY') || '';
+  const isLiveKey = apiKey.startsWith('live_');
+  return isLiveKey ? 'https://api.amadeus.com' : 'https://test.api.amadeus.com';
 }
 
 async function getAmadeusToken(): Promise<string> {
