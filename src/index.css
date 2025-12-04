@@ -2,13 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Premium Travel OTA Design System
+/* Premium Travel OTA Design System - Vibrant & Modern
    All colors MUST be HSL for theme consistency.
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 210 40% 98%;
     --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
@@ -17,13 +17,13 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    /* Premium Blue - Trust & Reliability */
+    /* Premium Sky Blue - Trust & Reliability */
     --primary: 217 91% 60%;
     --primary-foreground: 0 0% 100%;
     --primary-hover: 217 91% 50%;
 
-    /* Secondary - Soft Gray */
-    --secondary: 220 14% 96%;
+    /* Secondary - Soft Blue Gray */
+    --secondary: 215 25% 95%;
     --secondary-foreground: 222 47% 11%;
 
     --muted: 220 14% 96%;
@@ -33,13 +33,25 @@
     --coral: 0 84% 71%;
     --coral-foreground: 0 0% 100%;
 
+    /* Golden Yellow Accent */
+    --gold: 45 93% 58%;
+    --gold-foreground: 222 47% 11%;
+
     /* Accent - Warm Orange for deals */
     --accent: 25 95% 53%;
     --accent-foreground: 0 0% 100%;
 
-    /* Success */
-    --success: 142 76% 36%;
+    /* Success Green */
+    --success: 160 84% 39%;
     --success-foreground: 0 0% 100%;
+
+    /* Purple for special features */
+    --purple: 265 83% 57%;
+    --purple-foreground: 0 0% 100%;
+
+    /* Cyan for highlights */
+    --cyan: 188 94% 43%;
+    --cyan-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
@@ -56,11 +68,6 @@
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
     --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
     --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-
-    /* Gradients */
-    --gradient-reward: linear-gradient(135deg, hsl(217 91% 60%), hsl(190 100% 50%));
-    --gradient-premium: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(220 100% 60%) 50%, hsl(190 100% 50%) 100%);
-    --gradient-coral: linear-gradient(135deg, hsl(0 84% 71%), hsl(25 95% 53%));
 
     /* Support page colors */
     --support-sky: 212 100% 50%;
@@ -80,13 +87,13 @@
   }
 
   .dark {
-    --background: 222 47% 11%;
+    --background: 222 47% 8%;
     --foreground: 210 40% 98%;
 
-    --card: 222 47% 13%;
+    --card: 222 47% 11%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222 47% 13%;
+    --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
 
     --primary: 217 91% 60%;
@@ -99,20 +106,29 @@
     --muted: 217 33% 17%;
     --muted-foreground: 215 20% 65%;
 
-    --coral: 0 84% 71%;
+    --coral: 0 84% 65%;
     --coral-foreground: 0 0% 100%;
+
+    --gold: 45 93% 58%;
+    --gold-foreground: 222 47% 11%;
 
     --accent: 25 95% 53%;
     --accent-foreground: 0 0% 100%;
 
-    --success: 142 76% 46%;
+    --success: 160 84% 45%;
     --success-foreground: 0 0% 100%;
+
+    --purple: 265 83% 65%;
+    --purple-foreground: 0 0% 100%;
+
+    --cyan: 188 94% 50%;
+    --cyan-foreground: 222 47% 11%;
 
     --destructive: 0 63% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 217 33% 22%;
-    --input: 217 33% 22%;
+    --border: 217 33% 20%;
+    --input: 217 33% 20%;
     --ring: 217 91% 60%;
 
     /* Dark mode sidebar */
@@ -147,17 +163,38 @@
 }
 
 @layer components {
-  /* Glassmorphism */
+  /* Glassmorphism - Enhanced */
   .glass {
     @apply bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/20 dark:border-slate-700/50;
   }
 
   .glass-card {
-    @apply bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-white/30 dark:border-slate-700/50 shadow-glass;
+    @apply bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-white/30 dark:border-slate-700/50 shadow-glass rounded-2xl;
+  }
+
+  .glass-vibrant {
+    @apply bg-gradient-to-br from-white/90 via-white/80 to-blue-50/80 dark:from-slate-900/90 dark:via-slate-800/80 dark:to-blue-950/80 backdrop-blur-xl border border-white/40 dark:border-blue-500/20 shadow-xl;
   }
 
   .glass-dark {
     @apply bg-slate-900/80 backdrop-blur-xl border border-slate-700/50;
+  }
+
+  /* Neon glow effects for dark mode */
+  .neon-blue {
+    @apply shadow-[0_0_30px_rgba(59,130,246,0.5)] dark:shadow-[0_0_40px_rgba(59,130,246,0.6)];
+  }
+
+  .neon-cyan {
+    @apply shadow-[0_0_30px_rgba(6,182,212,0.5)] dark:shadow-[0_0_40px_rgba(6,182,212,0.6)];
+  }
+
+  .neon-purple {
+    @apply shadow-[0_0_30px_rgba(139,92,246,0.5)] dark:shadow-[0_0_40px_rgba(139,92,246,0.6)];
+  }
+
+  .neon-coral {
+    @apply shadow-[0_0_30px_rgba(255,107,107,0.5)] dark:shadow-[0_0_40px_rgba(255,107,107,0.6)];
   }
 
   /* Premium card styles */
@@ -169,49 +206,158 @@
     @apply shadow-card-hover -translate-y-1;
   }
 
-  /* Gradient text */
+  .card-colorful {
+    @apply bg-gradient-to-br from-white via-blue-50/50 to-cyan-50/50 dark:from-slate-800 dark:via-blue-950/50 dark:to-cyan-950/50 rounded-2xl shadow-lg border border-blue-100/50 dark:border-blue-500/20 transition-all duration-300;
+  }
+
+  .card-colorful:hover {
+    @apply shadow-xl border-blue-200 dark:border-blue-400/30 -translate-y-1;
+  }
+
+  /* Gradient text - Enhanced */
   .text-gradient {
-    @apply bg-gradient-to-r from-primary via-blue-500 to-cyan-500 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 bg-clip-text text-transparent;
+  }
+
+  .text-gradient-vibrant {
+    @apply bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 bg-clip-text text-transparent;
   }
 
   .text-gradient-coral {
-    @apply bg-gradient-to-r from-coral to-accent bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-coral to-orange-500 bg-clip-text text-transparent;
   }
 
-  /* Premium buttons */
+  .text-gradient-gold {
+    @apply bg-gradient-to-r from-amber-500 via-yellow-500 to-orange-400 bg-clip-text text-transparent;
+  }
+
+  .text-gradient-cyan {
+    @apply bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent;
+  }
+
+  /* Premium buttons - Enhanced with gradients */
   .btn-premium {
-    @apply bg-gradient-to-r from-primary to-blue-600 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-glow transition-all duration-300 hover:-translate-y-0.5;
+    @apply bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-[0_10px_40px_rgba(59,130,246,0.4)] transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110;
   }
 
   .btn-coral {
-    @apply bg-gradient-to-r from-coral to-accent text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-glow-coral transition-all duration-300 hover:-translate-y-0.5;
+    @apply bg-gradient-to-r from-rose-500 via-coral to-orange-500 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-[0_10px_40px_rgba(255,107,107,0.4)] transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110;
   }
 
-  /* Hero gradient overlay */
+  .btn-gold {
+    @apply bg-gradient-to-r from-amber-500 via-yellow-500 to-orange-400 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-[0_10px_40px_rgba(245,158,11,0.4)] transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110;
+  }
+
+  .btn-purple {
+    @apply bg-gradient-to-r from-purple-600 via-violet-500 to-pink-500 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-[0_10px_40px_rgba(139,92,246,0.4)] transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110;
+  }
+
+  .btn-cyan {
+    @apply bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-[0_10px_40px_rgba(6,182,212,0.4)] transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110;
+  }
+
+  /* Gradient backgrounds */
+  .bg-gradient-hero {
+    @apply bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900;
+  }
+
+  .bg-gradient-vibrant {
+    @apply bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500;
+  }
+
+  .bg-gradient-ocean {
+    @apply bg-gradient-to-br from-blue-600 via-cyan-500 to-teal-400;
+  }
+
+  .bg-gradient-sunset {
+    @apply bg-gradient-to-br from-orange-500 via-rose-500 to-pink-500;
+  }
+
+  .bg-gradient-aurora {
+    @apply bg-gradient-to-br from-emerald-400 via-cyan-500 to-blue-500;
+  }
+
+  /* Hero gradient overlay - More vibrant */
   .hero-gradient {
-    @apply bg-gradient-to-b from-black/60 via-black/40 to-black/60;
+    @apply bg-gradient-to-b from-black/70 via-blue-900/30 to-black/70;
+  }
+
+  .hero-gradient-vibrant {
+    @apply bg-gradient-to-br from-blue-900/80 via-purple-900/60 to-pink-900/50;
   }
 
   /* Sticky header styles */
   .header-scrolled {
-    @apply shadow-lg bg-background/95 backdrop-blur-xl;
+    @apply shadow-lg bg-background/95 backdrop-blur-xl border-b border-primary/10;
   }
 
-  /* Deal ribbons */
+  /* Deal ribbons - Colorful */
   .ribbon {
-    @apply absolute -top-1 -right-1 px-3 py-1 text-xs font-bold text-white rounded-bl-lg rounded-tr-xl;
+    @apply absolute -top-1 -right-1 px-3 py-1 text-xs font-bold text-white rounded-bl-lg rounded-tr-xl shadow-lg;
   }
 
   .ribbon-hot {
-    @apply bg-gradient-to-r from-red-500 to-orange-500;
+    @apply bg-gradient-to-r from-red-500 via-rose-500 to-orange-500;
   }
 
   .ribbon-popular {
-    @apply bg-gradient-to-r from-purple-500 to-pink-500;
+    @apply bg-gradient-to-r from-purple-500 via-violet-500 to-pink-500;
   }
 
   .ribbon-best {
-    @apply bg-gradient-to-r from-emerald-500 to-teal-500;
+    @apply bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500;
+  }
+
+  .ribbon-flash {
+    @apply bg-gradient-to-r from-amber-500 via-yellow-500 to-orange-400;
+  }
+
+  .ribbon-top {
+    @apply bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500;
+  }
+
+  /* Colorful badges */
+  .badge-hot {
+    @apply bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold;
+  }
+
+  .badge-popular {
+    @apply bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-xs font-bold;
+  }
+
+  .badge-best {
+    @apply bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-3 py-1 rounded-full text-xs font-bold;
+  }
+
+  .badge-flash {
+    @apply bg-gradient-to-r from-amber-500 to-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold;
+  }
+
+  .badge-recommended {
+    @apply bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-3 py-1 rounded-full text-xs font-bold;
+  }
+
+  .badge-limited {
+    @apply bg-gradient-to-r from-rose-500 to-pink-500 text-white px-3 py-1 rounded-full text-xs font-bold;
+  }
+
+  /* Section headers with gradients */
+  .section-header-gradient {
+    @apply bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 bg-clip-text text-transparent;
+  }
+
+  /* Glowing border effect */
+  .glow-border {
+    @apply relative;
+  }
+
+  .glow-border::before {
+    content: '';
+    @apply absolute -inset-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-2xl opacity-0 blur transition-opacity duration-300;
+  }
+
+  .glow-border:hover::before {
+    @apply opacity-75;
   }
 
   /* Shimmer effect */
@@ -225,10 +371,33 @@
     background: linear-gradient(
       90deg,
       transparent,
-      rgba(255, 255, 255, 0.2),
+      rgba(255, 255, 255, 0.3),
       transparent
     );
     animation: shimmer 2s infinite;
+  }
+
+  /* Price highlight */
+  .price-highlight {
+    @apply relative inline-block;
+  }
+
+  .price-highlight::after {
+    content: '';
+    @apply absolute bottom-0 left-0 right-0 h-3 bg-gradient-to-r from-yellow-300/50 to-orange-300/50 -z-10 rounded;
+  }
+
+  /* Category tabs - Colorful pills */
+  .tab-pill {
+    @apply px-5 py-2.5 rounded-full font-semibold text-sm transition-all duration-300;
+  }
+
+  .tab-pill-active {
+    @apply bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg;
+  }
+
+  .tab-pill-inactive {
+    @apply bg-white/80 dark:bg-slate-800/80 text-muted-foreground hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-primary;
   }
 
   /* Animation delays */
@@ -238,13 +407,45 @@
   .delay-400 { animation-delay: 400ms; }
   .delay-500 { animation-delay: 500ms; }
 
-  /* Hover scale */
+  /* Hover effects */
   .hover-scale {
     @apply transition-transform duration-300 hover:scale-105;
   }
 
   .hover-lift {
     @apply transition-all duration-300 hover:-translate-y-2 hover:shadow-xl;
+  }
+
+  .hover-glow-blue {
+    @apply transition-all duration-300 hover:shadow-[0_0_30px_rgba(59,130,246,0.4)];
+  }
+
+  .hover-glow-coral {
+    @apply transition-all duration-300 hover:shadow-[0_0_30px_rgba(255,107,107,0.4)];
+  }
+
+  .hover-glow-purple {
+    @apply transition-all duration-300 hover:shadow-[0_0_30px_rgba(139,92,246,0.4)];
+  }
+
+  /* Border gradients */
+  .border-gradient {
+    @apply relative rounded-2xl;
+    background: linear-gradient(var(--background), var(--background)) padding-box,
+                linear-gradient(135deg, hsl(217 91% 60%), hsl(265 83% 57%), hsl(0 84% 71%)) border-box;
+    border: 2px solid transparent;
+  }
+
+  /* Animated gradient background */
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient-shift 5s ease infinite;
+  }
+
+  @keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
   }
 }
 
