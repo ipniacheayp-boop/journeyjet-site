@@ -1,8 +1,3 @@
-import dealBeach from "@/assets/deal-beach.jpg";
-import dealParis from "@/assets/deal-paris.jpg";
-import dealNyc from "@/assets/deal-nyc.jpg";
-import dealTokyo from "@/assets/deal-tokyo.jpg";
-
 export interface Deal {
   id: string;
   title: string;
@@ -19,11 +14,12 @@ export interface Deal {
   link?: string;
 }
 
+// Static fallback deals with working image paths
 export const mockDeals: Deal[] = [
   {
-    id: "1",
+    id: "mock-1",
     title: "Paradise Beach Getaway - Maldives",
-    image: dealBeach,
+    image: "/deal-beach.jpg",
     origin: "New York (JFK)",
     destination: "Maldives (MLE)",
     airline: "Emirates",
@@ -35,9 +31,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "2",
+    id: "mock-2",
     title: "Romantic Paris Escape",
-    image: dealParis,
+    image: "/deal-paris.jpg",
     origin: "Los Angeles (LAX)",
     destination: "Paris (CDG)",
     airline: "Air France",
@@ -49,9 +45,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "3",
+    id: "mock-3",
     title: "New York City Adventure",
-    image: dealNyc,
+    image: "/deal-nyc.jpg",
     origin: "Miami (MIA)",
     destination: "New York (JFK)",
     airline: "American Airlines",
@@ -63,9 +59,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "4",
+    id: "mock-4",
     title: "Tokyo Cultural Experience",
-    image: dealTokyo,
+    image: "/deal-tokyo.jpg",
     origin: "San Francisco (SFO)",
     destination: "Tokyo (NRT)",
     airline: "JAL",
@@ -77,9 +73,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "5",
+    id: "mock-5",
     title: "Caribbean Dream Vacation",
-    image: dealBeach,
+    image: "/deal-beach.jpg",
     origin: "Chicago (ORD)",
     destination: "Cancun (CUN)",
     airline: "United",
@@ -91,9 +87,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "6",
+    id: "mock-6",
     title: "European Discovery Tour",
-    image: dealParis,
+    image: "/deal-paris.jpg",
     origin: "Boston (BOS)",
     destination: "London (LHR)",
     airline: "British Airways",
@@ -105,9 +101,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "7",
+    id: "mock-7",
     title: "Bali Relaxation Retreat",
-    image: dealBeach,
+    image: "/deal-beach.jpg",
     origin: "Los Angeles (LAX)",
     destination: "Bali (DPS)",
     airline: "Singapore Airlines",
@@ -119,9 +115,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "8",
+    id: "mock-8",
     title: "Dubai Luxury Stopover",
-    image: dealNyc,
+    image: "/deal-nyc.jpg",
     origin: "New York (JFK)",
     destination: "Dubai (DXB)",
     airline: "Emirates",
@@ -133,9 +129,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "9",
+    id: "mock-9",
     title: "Bangkok Food & Markets",
-    image: dealTokyo,
+    image: "/deal-tokyo.jpg",
     origin: "Seattle (SEA)",
     destination: "Bangkok (BKK)",
     airline: "Thai Airways",
@@ -147,9 +143,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "10",
+    id: "mock-10",
     title: "Singapore City Break",
-    image: dealNyc,
+    image: "/deal-nyc.jpg",
     origin: "San Francisco (SFO)",
     destination: "Singapore (SIN)",
     airline: "Singapore Airlines",
@@ -161,9 +157,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "11",
+    id: "mock-11",
     title: "Sydney Beach & Opera",
-    image: dealBeach,
+    image: "/deal-beach.jpg",
     origin: "Los Angeles (LAX)",
     destination: "Sydney (SYD)",
     airline: "Qantas",
@@ -175,9 +171,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "12",
+    id: "mock-12",
     title: "Rome History Holiday",
-    image: dealParis,
+    image: "/deal-paris.jpg",
     origin: "Chicago (ORD)",
     destination: "Rome (FCO)",
     airline: "Alitalia",
@@ -189,9 +185,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "13",
+    id: "mock-13",
     title: "Barcelona Sun & Culture",
-    image: dealBeach,
+    image: "/deal-beach.jpg",
     origin: "Miami (MIA)",
     destination: "Barcelona (BCN)",
     airline: "Iberia",
@@ -203,9 +199,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "14",
+    id: "mock-14",
     title: "Iceland Northern Lights",
-    image: dealNyc,
+    image: "/deal-nyc.jpg",
     origin: "Boston (BOS)",
     destination: "Reykjavik (KEF)",
     airline: "Icelandair",
@@ -217,9 +213,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "15",
+    id: "mock-15",
     title: "Cairo Pyramids Tour",
-    image: dealTokyo,
+    image: "/deal-tokyo.jpg",
     origin: "New York (JFK)",
     destination: "Cairo (CAI)",
     airline: "EgyptAir",
@@ -231,9 +227,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "16",
+    id: "mock-16",
     title: "Kenya Safari Adventure",
-    image: dealBeach,
+    image: "/deal-beach.jpg",
     origin: "Atlanta (ATL)",
     destination: "Nairobi (NBO)",
     airline: "Kenya Airways",
@@ -245,9 +241,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "17",
+    id: "mock-17",
     title: "Mauritius Island Escape",
-    image: dealBeach,
+    image: "/deal-beach.jpg",
     origin: "London (LHR)",
     destination: "Mauritius (MRU)",
     airline: "Air Mauritius",
@@ -259,9 +255,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "18",
+    id: "mock-18",
     title: "Seychelles Romantic Getaway",
-    image: dealBeach,
+    image: "/deal-beach.jpg",
     origin: "Paris (CDG)",
     destination: "Seychelles (SEZ)",
     airline: "Air Seychelles",
@@ -273,9 +269,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "19",
+    id: "mock-19",
     title: "Hawaiian Surf & Sun",
-    image: dealBeach,
+    image: "/deal-beach.jpg",
     origin: "San Diego (SAN)",
     destination: "Honolulu (HNL)",
     airline: "Hawaiian Airlines",
@@ -287,9 +283,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "20",
+    id: "mock-20",
     title: "Portuguese Coastline",
-    image: dealBeach,
+    image: "/deal-beach.jpg",
     origin: "Newark (EWR)",
     destination: "Lisbon (LIS)",
     airline: "TAP Portugal",
@@ -301,9 +297,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "21",
+    id: "mock-21",
     title: "Prague & Vienna Culture Loop",
-    image: dealParis,
+    image: "/deal-paris.jpg",
     origin: "Washington (IAD)",
     destination: "Prague (PRG)",
     airline: "Czech Airlines",
@@ -315,9 +311,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "22",
+    id: "mock-22",
     title: "Amsterdam Tulip Season",
-    image: dealParis,
+    image: "/deal-paris.jpg",
     origin: "Denver (DEN)",
     destination: "Amsterdam (AMS)",
     airline: "KLM",
@@ -329,9 +325,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "23",
+    id: "mock-23",
     title: "Buenos Aires Tango Nights",
-    image: dealNyc,
+    image: "/deal-nyc.jpg",
     origin: "Miami (MIA)",
     destination: "Buenos Aires (EZE)",
     airline: "Aerolineas Argentinas",
@@ -343,9 +339,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "24",
+    id: "mock-24",
     title: "Peru Machu Picchu Trek",
-    image: dealTokyo,
+    image: "/deal-tokyo.jpg",
     origin: "Houston (IAH)",
     destination: "Lima (LIM)",
     airline: "LATAM",
@@ -357,9 +353,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "25",
+    id: "mock-25",
     title: "Mexico Riviera Relax",
-    image: dealBeach,
+    image: "/deal-beach.jpg",
     origin: "Dallas (DFW)",
     destination: "Puerto Vallarta (PVR)",
     airline: "Aeromexico",
@@ -371,9 +367,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "26",
+    id: "mock-26",
     title: "South Africa Coast & Safari",
-    image: dealBeach,
+    image: "/deal-beach.jpg",
     origin: "Atlanta (ATL)",
     destination: "Cape Town (CPT)",
     airline: "South African Airways",
@@ -385,9 +381,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "27",
+    id: "mock-27",
     title: "Amalfi Coast Romance",
-    image: dealBeach,
+    image: "/deal-beach.jpg",
     origin: "Philadelphia (PHL)",
     destination: "Naples (NAP)",
     airline: "Alitalia",
@@ -399,9 +395,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "28",
+    id: "mock-28",
     title: "Istanbul Cultures & Bazaars",
-    image: dealTokyo,
+    image: "/deal-tokyo.jpg",
     origin: "Boston (BOS)",
     destination: "Istanbul (IST)",
     airline: "Turkish Airlines",
@@ -413,9 +409,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "29",
+    id: "mock-29",
     title: "Maldives Overwater Luxury",
-    image: dealBeach,
+    image: "/deal-beach.jpg",
     origin: "Los Angeles (LAX)",
     destination: "Maldives (MLE)",
     airline: "Emirates",
@@ -427,9 +423,9 @@ export const mockDeals: Deal[] = [
     link: "/booking"
   },
   {
-    id: "30",
+    id: "mock-30",
     title: "Alaska Northern Wilderness",
-    image: dealNyc,
+    image: "/deal-nyc.jpg",
     origin: "Seattle (SEA)",
     destination: "Anchorage (ANC)",
     airline: "Alaska Airlines",
@@ -437,6 +433,286 @@ export const mockDeals: Deal[] = [
     returnDate: "2026-06-25",
     price: 379,
     originalPrice: 579,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "mock-31",
+    title: "Greek Islands Hopping",
+    image: "/deal-beach.jpg",
+    origin: "New York (JFK)",
+    destination: "Athens (ATH)",
+    airline: "Aegean Airlines",
+    departDate: "2026-05-01",
+    returnDate: "2026-05-14",
+    price: 699,
+    originalPrice: 999,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "mock-32",
+    title: "Swiss Alps Adventure",
+    image: "/deal-paris.jpg",
+    origin: "Chicago (ORD)",
+    destination: "Zurich (ZRH)",
+    airline: "Swiss International",
+    departDate: "2026-01-10",
+    returnDate: "2026-01-20",
+    price: 749,
+    originalPrice: 1049,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "mock-33",
+    title: "Vietnam Heritage Trail",
+    image: "/deal-tokyo.jpg",
+    origin: "San Francisco (SFO)",
+    destination: "Ho Chi Minh (SGN)",
+    airline: "Vietnam Airlines",
+    departDate: "2025-12-26",
+    returnDate: "2026-01-08",
+    price: 829,
+    originalPrice: 1199,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "mock-34",
+    title: "Morocco Desert Discovery",
+    image: "/deal-tokyo.jpg",
+    origin: "Washington (IAD)",
+    destination: "Marrakech (RAK)",
+    airline: "Royal Air Maroc",
+    departDate: "2025-12-05",
+    returnDate: "2025-12-14",
+    price: 599,
+    originalPrice: 879,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "mock-35",
+    title: "Jordan Petra Explorer",
+    image: "/deal-tokyo.jpg",
+    origin: "New York (JFK)",
+    destination: "Amman (AMM)",
+    airline: "Royal Jordanian",
+    departDate: "2026-02-01",
+    returnDate: "2026-02-10",
+    price: 679,
+    originalPrice: 979,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "mock-36",
+    title: "Costa Rica Eco Adventure",
+    image: "/deal-beach.jpg",
+    origin: "Atlanta (ATL)",
+    destination: "San Jose (SJO)",
+    airline: "Copa Airlines",
+    departDate: "2025-12-28",
+    returnDate: "2026-01-05",
+    price: 449,
+    originalPrice: 699,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "mock-37",
+    title: "Croatia Adriatic Coast",
+    image: "/deal-beach.jpg",
+    origin: "Boston (BOS)",
+    destination: "Dubrovnik (DBV)",
+    airline: "Croatia Airlines",
+    departDate: "2026-06-01",
+    returnDate: "2026-06-12",
+    price: 799,
+    originalPrice: 1149,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "mock-38",
+    title: "New Zealand Adventure",
+    image: "/deal-beach.jpg",
+    origin: "Los Angeles (LAX)",
+    destination: "Auckland (AKL)",
+    airline: "Air New Zealand",
+    departDate: "2026-03-01",
+    returnDate: "2026-03-15",
+    price: 1149,
+    originalPrice: 1599,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "mock-39",
+    title: "Chile Wine Country",
+    image: "/deal-paris.jpg",
+    origin: "Miami (MIA)",
+    destination: "Santiago (SCL)",
+    airline: "LATAM",
+    departDate: "2026-02-15",
+    returnDate: "2026-02-25",
+    price: 699,
+    originalPrice: 1029,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "mock-40",
+    title: "Scotland Highlands Tour",
+    image: "/deal-paris.jpg",
+    origin: "New York (JFK)",
+    destination: "Edinburgh (EDI)",
+    airline: "British Airways",
+    departDate: "2026-04-10",
+    returnDate: "2026-04-20",
+    price: 579,
+    originalPrice: 849,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "mock-41",
+    title: "Philippines Island Paradise",
+    image: "/deal-beach.jpg",
+    origin: "Los Angeles (LAX)",
+    destination: "Manila (MNL)",
+    airline: "Philippine Airlines",
+    departDate: "2025-12-20",
+    returnDate: "2026-01-03",
+    price: 749,
+    originalPrice: 1099,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "mock-42",
+    title: "Norway Fjords Expedition",
+    image: "/deal-nyc.jpg",
+    origin: "Chicago (ORD)",
+    destination: "Oslo (OSL)",
+    airline: "Norwegian Air",
+    departDate: "2026-06-20",
+    returnDate: "2026-07-01",
+    price: 649,
+    originalPrice: 949,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "mock-43",
+    title: "Cuba Cultural Immersion",
+    image: "/deal-paris.jpg",
+    origin: "Miami (MIA)",
+    destination: "Havana (HAV)",
+    airline: "American Airlines",
+    departDate: "2025-12-10",
+    returnDate: "2025-12-17",
+    price: 399,
+    originalPrice: 599,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "mock-44",
+    title: "India Golden Triangle",
+    image: "/deal-tokyo.jpg",
+    origin: "New York (JFK)",
+    destination: "New Delhi (DEL)",
+    airline: "Air India",
+    departDate: "2026-01-05",
+    returnDate: "2026-01-18",
+    price: 799,
+    originalPrice: 1199,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "mock-45",
+    title: "Australia Great Barrier Reef",
+    image: "/deal-beach.jpg",
+    origin: "San Francisco (SFO)",
+    destination: "Cairns (CNS)",
+    airline: "Qantas",
+    departDate: "2026-02-10",
+    returnDate: "2026-02-22",
+    price: 1249,
+    originalPrice: 1799,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "mock-46",
+    title: "Tanzania Safari Experience",
+    image: "/deal-beach.jpg",
+    origin: "Washington (IAD)",
+    destination: "Kilimanjaro (JRO)",
+    airline: "Ethiopian Airlines",
+    departDate: "2026-03-05",
+    returnDate: "2026-03-16",
+    price: 1099,
+    originalPrice: 1549,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "mock-47",
+    title: "Finland Northern Lights",
+    image: "/deal-nyc.jpg",
+    origin: "Boston (BOS)",
+    destination: "Helsinki (HEL)",
+    airline: "Finnair",
+    departDate: "2026-01-20",
+    returnDate: "2026-01-28",
+    price: 629,
+    originalPrice: 899,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "mock-48",
+    title: "Colombia Cartagena Beach",
+    image: "/deal-beach.jpg",
+    origin: "Houston (IAH)",
+    destination: "Cartagena (CTG)",
+    airline: "Avianca",
+    departDate: "2025-12-15",
+    returnDate: "2025-12-23",
+    price: 449,
+    originalPrice: 679,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "mock-49",
+    title: "Malaysia & Singapore Duo",
+    image: "/deal-tokyo.jpg",
+    origin: "Los Angeles (LAX)",
+    destination: "Kuala Lumpur (KUL)",
+    airline: "Malaysia Airlines",
+    departDate: "2026-02-01",
+    returnDate: "2026-02-14",
+    price: 879,
+    originalPrice: 1249,
+    cabinClass: "Economy",
+    link: "/booking"
+  },
+  {
+    id: "mock-50",
+    title: "Ireland Castle Country",
+    image: "/deal-paris.jpg",
+    origin: "New York (JFK)",
+    destination: "Dublin (DUB)",
+    airline: "Aer Lingus",
+    departDate: "2026-05-15",
+    returnDate: "2026-05-25",
+    price: 529,
+    originalPrice: 779,
     cabinClass: "Economy",
     link: "/booking"
   }
