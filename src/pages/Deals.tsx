@@ -71,14 +71,17 @@ const Deals = () => {
   const [sort, setSort] = useState('price_asc'); // Default to lowest price first
   const [showFilters, setShowFilters] = useState(false);
 
-  // Fetch minimum price deals from API with React Query caching
+  // Fetch minimum price deals from API with React Query caching (guaranteed 50+ deals)
   const { deals: minPriceDeals, loading, isFetching, error, fromCache, refetch } = useOptimizedMinPriceDeals(50);
 
-  // Use API deals or fallback to mock deals
-  const usingFallback = error !== null || (minPriceDeals.length === 0 && !loading);
-  const rawDeals: Deal[] = usingFallback 
-    ? mockDeals 
-    : minPriceDeals.map(adaptMinPriceDeal);
+  // Hook guarantees 50+ deals by combining API + fallback deals
+  // Only show fallback notice if error occurred and deals are all fallback
+  const usingFallback = error !== null && minPriceDeals.every(d => d.id.startsWith('fallback-'));
+  
+  // Always use minPriceDeals (hook guarantees 50+ deals with fallback)
+  const rawDeals: Deal[] = minPriceDeals.length > 0 
+    ? minPriceDeals.map(adaptMinPriceDeal)
+    : mockDeals;
 
   // Apply client-side filtering
   let filteredDeals = rawDeals.filter(deal => {
