@@ -127,7 +127,7 @@ serve(async (req) => {
 
     // Send email via Resend
     const emailResponse = await resend.emails.send({
-      from: "JourneyJet Travel <onboarding@resend.dev>",
+      from: "CheapFlights <onboarding@resend.dev>",
       to: [clientEmail],
       subject: subject,
       html: htmlContent,
