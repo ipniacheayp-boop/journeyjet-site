@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Plane, Phone, User, Menu, X, LogOut, BookOpen, Globe, Moon, Sun } from "lucide-react";
+import { Phone, User, Menu, X, LogOut, BookOpen, Globe, Moon, Sun } from "lucide-react";
+import cheapflightsLogo from "@/assets/cheapflights-logo.png";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -57,16 +58,17 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 group">
+          <Link to="/" className="flex items-center gap-2 group">
             <motion.div 
-              whileHover={{ scale: 1.05, rotate: 5 }}
-              className="w-11 h-11 bg-gradient-to-br from-primary to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary/25"
+              whileHover={{ scale: 1.05 }}
+              className="h-10 w-auto"
             >
-              <Plane className="w-6 h-6 text-white" />
+              <img 
+                src={cheapflightsLogo} 
+                alt="CheapFlights" 
+                className="h-10 w-auto object-contain"
+              />
             </motion.div>
-            <span className="text-xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent hidden sm:block">
-              CheapFlights
-            </span>
           </Link>
 
           {/* Desktop Navigation */}

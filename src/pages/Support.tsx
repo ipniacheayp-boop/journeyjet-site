@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Helmet } from "react-helmet";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ChatWindow from "@/components/ChatWindow";
@@ -70,6 +71,11 @@ const Support = () => {
 
   return (
     <div className="min-h-screen flex flex-col font-poppins">
+      <Helmet>
+        <title>Customer Support | CheapFlights - 24/7 Travel Assistance</title>
+        <meta name="description" content="Get 24/7 customer support for your travel bookings. Contact CheapFlights for help with flights, hotels, car rentals, refunds, and more." />
+        <link rel="canonical" href="https://cheapflights.com/support" />
+      </Helmet>
       <Header />
       
       {/* Hero Section */}
