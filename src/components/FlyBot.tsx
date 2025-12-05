@@ -16,7 +16,7 @@ const FlyBot = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "bot",
-      content: "Hey there! 👋 I'm FlyBot — here to help you with flights, hotels, and travel deals. What can I help you find today?",
+      content: "Hey there! 👋 I'm your CheapFlights assistant — here to help you with flights, hotels, and travel deals. What can I help you find today?",
     },
   ]);
   const [inputValue, setInputValue] = useState("");
@@ -164,7 +164,7 @@ const FlyBot = () => {
         >
           <img 
             src={flybotLogo} 
-            alt="FlyBot" 
+            alt="CheapFlights" 
             className="h-full w-full object-contain"
           />
         </button>
@@ -177,7 +177,7 @@ const FlyBot = () => {
                   <MessageCircle className="h-6 w-6" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg">FlyBot</CardTitle>
+                  <CardTitle className="text-lg">CheapFlights</CardTitle>
                   <p className="text-xs text-primary-foreground/90">
                     Always here to help
                   </p>

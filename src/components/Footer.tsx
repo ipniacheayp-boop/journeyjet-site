@@ -86,7 +86,7 @@ const Footer = () => {
               <div className="w-12 h-12 bg-gradient-to-br from-primary to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary/25 transition-transform group-hover:scale-105">
                 <Plane className="w-6 h-6 text-white" />
               </div>
-              <span className="text-2xl font-bold">FlyBot</span>
+              <span className="text-2xl font-bold">CheapFlights</span>
             </Link>
             <p className="text-white/70 mb-6 max-w-sm leading-relaxed">
               Your trusted partner for finding the best deals on flights, hotels, and travel experiences worldwide.
@@ -100,11 +100,11 @@ const Footer = () => {
                 </div>
                 <span>1-800-123-4567</span>
               </a>
-              <a href="mailto:support@flybot.com" className="flex items-center gap-3 text-white/70 hover:text-white transition-colors">
+              <a href="mailto:support@cheapflights.com" className="flex items-center gap-3 text-white/70 hover:text-white transition-colors">
                 <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
                   <Mail className="w-4 h-4" />
                 </div>
-                <span>support@flybot.com</span>
+                <span>support@cheapflights.com</span>
               </a>
               <div className="flex items-center gap-3 text-white/70">
                 <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
@@ -182,7 +182,7 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/50">
-          <p>© {new Date().getFullYear()} FlyBot. {t('footer.allRights')}.</p>
+          <p>© {new Date().getFullYear()} CheapFlights. {t('footer.allRights')}.</p>
           <div className="flex items-center gap-6">
             <Link to="/terms" className="hover:text-white transition-colors">Terms</Link>
             <Link to="/privacy" className="hover:text-white transition-colors">Privacy</Link>

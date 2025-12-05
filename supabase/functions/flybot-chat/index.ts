@@ -16,7 +16,7 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    console.log("FlyBot chat request:", { messageCount: messages?.length });
+    console.log("CheapFlights chat request:", { messageCount: messages?.length });
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -29,7 +29,7 @@ serve(async (req) => {
         messages: [
           { 
             role: "system", 
-            content: "You are FlyBot, a friendly AI travel assistant. Help users find flights, hotels, and travel deals. Be concise, helpful, and enthusiastic about travel. Provide practical advice about booking, destinations, and travel planning." 
+            content: "You are the CheapFlights assistant, a friendly AI travel assistant. Help users find flights, hotels, and travel deals. Be concise, helpful, and enthusiastic about travel. Provide practical advice about booking, destinations, and travel planning." 
           },
           ...messages,
         ],
@@ -64,7 +64,7 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
   } catch (e) {
-    console.error("FlyBot chat error:", e);
+    console.error("CheapFlights chat error:", e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }), 
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
