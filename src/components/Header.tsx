@@ -64,7 +64,7 @@ const Header = () => {
               <Plane className="w-6 h-6 text-white" />
             </motion.div>
             <span className="text-xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent hidden sm:block">
-              FlyBot
+              CheapFlights
             </span>
           </Link>
 

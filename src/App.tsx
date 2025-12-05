@@ -55,7 +55,7 @@ const FlybotWrapper = () => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider defaultTheme="light" storageKey="flybot-theme">
+    <ThemeProvider defaultTheme="light" storageKey="cheapflights-theme">
       <TooltipProvider>
         <Toaster />
         <Sonner />

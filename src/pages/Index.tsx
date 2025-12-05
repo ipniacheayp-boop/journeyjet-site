@@ -197,7 +197,7 @@ const Index = () => {
               variants={fadeInUp}
               className="font-display text-3xl md:text-4xl font-bold mb-4"
             >
-              Why Travelers Choose <span className="text-gradient-vibrant">FlyBot</span>
+              Why Travelers Choose <span className="text-gradient-vibrant">CheapFlights</span>
             </motion.h2>
             <motion.p 
               variants={fadeInUp}
