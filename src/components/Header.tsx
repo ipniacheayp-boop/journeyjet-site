@@ -36,8 +36,9 @@ const Header = () => {
   };
 
   const navLinks = [
+    { label: t('navigation.home'), href: "/" },
     { label: t('navigation.deals'), href: "/deals" },
-    { label: t('navigation.reviews'), href: "/reviews/site" },
+    { label: t('navigation.reviews'), href: "/reviews" },
     { label: t('navigation.support'), href: "/support" },
     { label: t('navigation.about'), href: "/about" },
   ];
