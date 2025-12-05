@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
-import { Plane, Mail, Facebook, Twitter, Instagram, Youtube, Globe, MapPin, Phone, ArrowRight } from "lucide-react";
+import { Mail, Facebook, Twitter, Instagram, Youtube, Globe, MapPin, Phone, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/hooks/useLanguage";
 import { motion } from "framer-motion";
+import cheapflightsLogo from "@/assets/cheapflights-logo.png";
 
 const Footer = () => {
   const { t, language, toggleLanguage } = useLanguage();
@@ -82,14 +83,15 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-16">
           {/* Brand Column */}
           <div className="lg:col-span-2">
-            <Link to="/" className="flex items-center gap-3 mb-6 group">
-              <div className="w-12 h-12 bg-gradient-to-br from-primary to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary/25 transition-transform group-hover:scale-105">
-                <Plane className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-2xl font-bold">CheapFlights</span>
+            <Link to="/" className="flex items-center gap-2 mb-6 group">
+              <img 
+                src={cheapflightsLogo} 
+                alt="CheapFlights" 
+                className="h-12 w-auto object-contain transition-transform group-hover:scale-105"
+              />
             </Link>
             <p className="text-white/70 mb-6 max-w-sm leading-relaxed">
-              Your trusted partner for finding the best deals on flights, hotels, and travel experiences worldwide.
+              Your trusted partner for finding the best deals on flights, hotels, and travel experiences across the USA.
             </p>
             
             {/* Contact Info */}

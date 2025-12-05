@@ -8,7 +8,7 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
+    --background: 210 20% 98%;
     --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
@@ -17,10 +17,10 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    /* Premium Sky Blue - Trust & Reliability */
-    --primary: 217 91% 60%;
+    /* American Blue - Primary Brand Color */
+    --primary: 216 100% 52%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 217 91% 50%;
+    --primary-hover: 216 100% 45%;
 
     /* Secondary - Soft Blue Gray */
     --secondary: 215 25% 95%;
@@ -29,16 +29,16 @@
     --muted: 220 14% 96%;
     --muted-foreground: 220 9% 46%;
 
-    /* Coral Accent - Energy & Excitement */
-    --coral: 0 84% 71%;
+    /* Coral Red - Secondary Brand Color */
+    --coral: 0 100% 71%;
     --coral-foreground: 0 0% 100%;
 
     /* Golden Yellow Accent */
     --gold: 45 93% 58%;
     --gold-foreground: 222 47% 11%;
 
-    /* Accent - Warm Orange for deals */
-    --accent: 25 95% 53%;
+    /* Sky Blue Accent */
+    --accent: 195 100% 50%;
     --accent-foreground: 0 0% 100%;
 
     /* Success Green */
@@ -50,7 +50,7 @@
     --purple-foreground: 0 0% 100%;
 
     /* Cyan for highlights */
-    --cyan: 188 94% 43%;
+    --cyan: 195 100% 50%;
     --cyan-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
@@ -58,7 +58,7 @@
 
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 217 91% 60%;
+    --ring: 216 100% 52%;
 
     --radius: 0.75rem;
 
@@ -87,18 +87,18 @@
   }
 
   .dark {
-    --background: 222 47% 8%;
+    --background: 0 0% 4%;
     --foreground: 210 40% 98%;
 
-    --card: 222 47% 11%;
+    --card: 0 0% 7%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222 47% 11%;
+    --popover: 0 0% 7%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 217 91% 60%;
+    --primary: 216 100% 55%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 217 91% 70%;
+    --primary-hover: 216 100% 65%;
 
     --secondary: 217 33% 17%;
     --secondary-foreground: 210 40% 98%;
@@ -106,13 +106,13 @@
     --muted: 217 33% 17%;
     --muted-foreground: 215 20% 65%;
 
-    --coral: 0 84% 65%;
+    --coral: 0 100% 68%;
     --coral-foreground: 0 0% 100%;
 
     --gold: 45 93% 58%;
     --gold-foreground: 222 47% 11%;
 
-    --accent: 25 95% 53%;
+    --accent: 195 100% 55%;
     --accent-foreground: 0 0% 100%;
 
     --success: 160 84% 45%;
@@ -121,7 +121,7 @@
     --purple: 265 83% 65%;
     --purple-foreground: 0 0% 100%;
 
-    --cyan: 188 94% 50%;
+    --cyan: 195 100% 55%;
     --cyan-foreground: 222 47% 11%;
 
     --destructive: 0 63% 50%;
@@ -129,17 +129,17 @@
 
     --border: 217 33% 20%;
     --input: 217 33% 20%;
-    --ring: 217 91% 60%;
+    --ring: 216 100% 55%;
 
     /* Dark mode sidebar */
-    --sidebar-background: 222 47% 11%;
+    --sidebar-background: 0 0% 7%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary: 216 100% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 217 33% 17%;
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 217 33% 22%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-ring: 216 100% 55%;
   }
 }
 

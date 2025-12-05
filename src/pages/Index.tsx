@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Helmet } from "react-helmet";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -91,6 +92,12 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>CheapFlights – Book Cheap Flights, Hotels & Car Rentals in the USA</title>
+        <meta name="description" content="CheapFlights helps you find the best flight deals, hotel discounts, and car rentals across the USA. Compare thousands of fares instantly and save big on your next trip." />
+        <meta name="keywords" content="cheap flights USA, flight deals, book flights online, US travel deals, last-minute flights, discounted airline tickets, cheap hotels, car rentals USA" />
+        <link rel="canonical" href="https://cheapflights.com/" />
+      </Helmet>
       <Header />
       
       {/* Premium Hero Section - Vibrant & Colorful */}
