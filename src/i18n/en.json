@@ -1,5 +1,6 @@
 {
   "navigation": {
+    "home": "Home",
     "flights": "Flights",
     "hotels": "Hotels",
     "cars": "Cars",
