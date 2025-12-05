@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Phone, User, Menu, X, LogOut, BookOpen, Globe, Moon, Sun } from "lucide-react";
-import cheapflightsLogo from "@/assets/cheapflights-logo.png";
+import flybotLogo from "@/assets/flybot-logo.png";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -64,7 +64,7 @@ const Header = () => {
               className="h-10 w-auto"
             >
               <img 
-                src={cheapflightsLogo} 
+                src={flybotLogo} 
                 alt="CheapFlights" 
                 className="h-10 w-auto object-contain"
               />
