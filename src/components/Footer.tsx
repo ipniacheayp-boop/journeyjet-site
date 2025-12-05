@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/hooks/useLanguage";
 import { motion } from "framer-motion";
-import cheapflightsLogo from "@/assets/cheapflights-logo.png";
+import flybotLogo from "@/assets/flybot-logo.png";
 
 const Footer = () => {
   const { t, language, toggleLanguage } = useLanguage();
@@ -85,7 +85,7 @@ const Footer = () => {
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center gap-2 mb-6 group">
               <img 
-                src={cheapflightsLogo} 
+                src={flybotLogo} 
                 alt="CheapFlights" 
                 className="h-12 w-auto object-contain transition-transform group-hover:scale-105"
               />
