@@ -354,13 +354,22 @@ const Deals = () => {
             animate={{ opacity: 1 }}
             className="mb-6 flex items-center justify-between"
           >
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground flex items-center gap-2">
               Showing <span className="font-bold text-foreground">{paginatedDeals.length}</span> of{" "}
               <span className="font-bold text-foreground">{displayTotal}</span> deals
+              {isFetching && !loading && (
+                <span className="inline-flex items-center gap-1 text-xs text-primary">
+                  <RefreshCw className="w-3 h-3 animate-spin" />
+                  Updating...
+                </span>
+              )}
+              {fromCache && !isFetching && (
+                <span className="text-xs text-muted-foreground/70">(cached)</span>
+              )}
             </p>
             {!usingFallback && (
-              <Button variant="outline" size="sm" onClick={refetch} className="gap-2">
-                <RefreshCw className="w-4 h-4" />
+              <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching} className="gap-2">
+                <RefreshCw className={`w-4 h-4 ${isFetching ? 'animate-spin' : ''}`} />
                 Refresh Prices
               </Button>
             )}
