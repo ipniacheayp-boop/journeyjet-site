@@ -178,7 +178,7 @@ serve(async (req) => {
     <!-- Header -->
     <div class="header">
       <h1>✈️ Your Booking is Confirmed!</h1>
-      <p>FlyWithAnurag</p>
+      <p>CheapFlights</p>
     </div>
 
     <!-- Content -->
@@ -286,8 +286,8 @@ serve(async (req) => {
 
     <!-- Footer -->
     <div class="footer">
-      <p><strong>Thank you for booking with FlyWithAnurag. Safe travels!</strong></p>
-      <p>© FlyWithAnurag LLC | 815 Superior Ave, Cleveland, OH 44114</p>
+      <p><strong>Thank you for booking with CheapFlights. Safe travels!</strong></p>
+      <p>© CheapFlights | San Francisco, CA</p>
     </div>
   </div>
 </body>
@@ -297,9 +297,9 @@ serve(async (req) => {
     // Send email
     console.log("[agent-send-confirmation] Sending booking confirmation email...");
     const emailResponse = await resend.emails.send({
-      from: "FlyWithAnurag <onboarding@resend.dev>",
+      from: "CheapFlights <onboarding@resend.dev>",
       to: [requestData.clientEmail],
-      subject: `✈️ Booking Confirmation - ${requestData.bookingRef}`,
+      subject: `✈️ CheapFlights Booking Confirmation - ${requestData.bookingRef}`,
       html: htmlContent,
     });
 
