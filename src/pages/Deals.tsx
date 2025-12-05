@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useMinPriceDeals, type MinPriceDeal } from "@/hooks/useMinPriceDeals";
+import { useOptimizedMinPriceDeals, type MinPriceDeal } from "@/hooks/useOptimizedMinPriceDeals";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Badge } from "@/components/ui/badge";
 import { Plane, Filter, TrendingDown, Sparkles, AlertCircle, RefreshCw } from "lucide-react";
@@ -71,8 +71,8 @@ const Deals = () => {
   const [sort, setSort] = useState('price_asc'); // Default to lowest price first
   const [showFilters, setShowFilters] = useState(false);
 
-  // Fetch minimum price deals from API
-  const { deals: minPriceDeals, loading, error, fromCache, refetch } = useMinPriceDeals(50);
+  // Fetch minimum price deals from API with React Query caching
+  const { deals: minPriceDeals, loading, isFetching, error, fromCache, refetch } = useOptimizedMinPriceDeals(50);
 
   // Use API deals or fallback to mock deals
   const usingFallback = error !== null || (minPriceDeals.length === 0 && !loading);
