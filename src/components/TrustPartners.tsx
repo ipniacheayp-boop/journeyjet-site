@@ -91,14 +91,17 @@ const TrustPartners = () => {
 
   return (
     <section
-      className="bg-gray-50 dark:bg-slate-900/60 border-t border-b border-gray-200 dark:border-slate-700/50"
+      className="bg-[#f8f9fa] dark:bg-slate-900/60 py-6 md:py-8"
       aria-labelledby="trust-partners-heading"
       role="region"
     >
-      <div className="container mx-auto px-4 py-6 md:py-8">
-        {/* Section Title (hidden visually but accessible) */}
-        <h2 id="trust-partners-heading" className="sr-only">
-          Our Trusted Partners & Certifications
+      <div className="container mx-auto px-4">
+        {/* Section Title */}
+        <h2 
+          id="trust-partners-heading" 
+          className="text-center text-lg md:text-xl font-semibold text-foreground tracking-wide mb-6"
+        >
+          TrustPartners
         </h2>
 
         {/* Logos Row */}
