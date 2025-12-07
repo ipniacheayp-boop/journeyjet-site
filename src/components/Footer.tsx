@@ -1,45 +1,66 @@
 import { Link } from "react-router-dom";
-import { Mail, Facebook, Twitter, Instagram, Youtube, Globe, MapPin, Phone, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useLanguage } from "@/hooks/useLanguage";
-import { motion } from "framer-motion";
-import flybotLogo from "@/assets/flybot-logo.png";
+import { Facebook, Twitter, Instagram, Youtube, Linkedin } from "lucide-react";
 import TrustPartners from "./TrustPartners";
 
 const Footer = () => {
-  const { t, language, toggleLanguage } = useLanguage();
-  
   const footerSections = [
     {
-      title: t('footer.company'),
+      title: "Quick Links",
       links: [
-        { label: t('footer.about'), href: "/about" },
-        { label: t('footer.careers'), href: "/careers" },
-        { label: t('footer.press'), href: "/press" },
+        { label: "Popular Airlines", href: "/deals?filter=airlines" },
+        { label: "Popular Flight Routes", href: "/deals?filter=routes" },
+        { label: "Top U.S. Destinations", href: "/deals?filter=us" },
+        { label: "Top International Destinations", href: "/deals?filter=international" },
+        { label: "Top Airports", href: "/deals?filter=airports" },
+        { label: "Cruise", href: "/deals?filter=cruise" },
       ],
     },
     {
-      title: t('footer.support'),
+      title: "Book",
       links: [
-        { label: t('footer.help'), href: "/support" },
-        { label: t('footer.contact'), href: "/support#contact" },
-        { label: t('footer.faq'), href: "/support#faq" },
+        { label: "Cheap Flights", href: "/deals" },
+        { label: "Cheap Hotels", href: "/search?type=hotels" },
+        { label: "Car Rentals", href: "/search?type=cars" },
+        { label: "Group Travel", href: "/support?topic=group" },
       ],
     },
     {
-      title: t('footer.legal'),
+      title: "Traveler Tools",
       links: [
-        { label: t('footer.terms'), href: "/terms" },
-        { label: t('footer.privacy'), href: "/privacy" },
-        { label: t('footer.cookies'), href: "/cookies" },
+        { label: "Customer Support", href: "/support" },
+        { label: "Online Check-in", href: "/support?topic=checkin" },
+        { label: "Airline Baggage Fees", href: "/support?topic=baggage" },
+        { label: "Travel Blog", href: "/about#blog" },
+        { label: "Customer Reviews", href: "/reviews" },
+        { label: "Browser Compatibility", href: "/support?topic=browser" },
+      ],
+    },
+    {
+      title: "About CheapFlights",
+      links: [
+        { label: "About Us", href: "/about" },
+        { label: "Contact Us", href: "/support#contact" },
+        { label: "Site Map", href: "/sitemap" },
+      ],
+    },
+    {
+      title: "Legal",
+      links: [
+        { label: "Privacy Policy", href: "/privacy" },
+        { label: "Terms & Conditions", href: "/terms" },
+        { label: "Taxes & Fees", href: "/terms#taxes" },
+        { label: "Post-Ticketing Fees", href: "/terms#post-ticketing" },
+        { label: "Affiliate Program", href: "/about#affiliates" },
+        { label: "Your California Privacy Rights", href: "/privacy#california" },
+        { label: "Travel Now, Pay Later with FlexPay", href: "/support?topic=flexpay" },
       ],
     },
   ];
 
   const socialLinks = [
     { icon: Facebook, href: "https://facebook.com", label: "Facebook" },
-    { icon: Twitter, href: "https://twitter.com", label: "Twitter" },
+    { icon: Twitter, href: "https://twitter.com", label: "X (Twitter)" },
+    { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
     { icon: Instagram, href: "https://instagram.com", label: "Instagram" },
     { icon: Youtube, href: "https://youtube.com", label: "YouTube" },
   ];
@@ -47,154 +68,59 @@ const Footer = () => {
   return (
     <>
       <TrustPartners />
-      <footer className="bg-slate-900 text-white relative overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSA2MCAwIEwgMCAwIDAgNjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-50" />
-      
-      <div className="container mx-auto px-4 py-16 relative z-10">
-        {/* Newsletter Section */}
-        <div className="mb-16 pb-16 border-b border-white/10">
-          <div className="max-w-3xl mx-auto text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-            >
-              <h3 className="font-display text-3xl md:text-4xl font-bold mb-4">
-                Get Exclusive <span className="text-gradient">Travel Deals</span>
-              </h3>
-              <p className="text-white/70 mb-8 text-lg">
-                Subscribe to our newsletter and be the first to know about amazing flight deals and travel offers.
-              </p>
-              <form className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
-                <Input
-                  type="email"
-                  placeholder={t('auth.email')}
-                  className="bg-white/10 border-white/20 text-white placeholder:text-white/50 h-12 rounded-xl focus:border-primary"
-                  required
-                />
-                <Button type="submit" className="btn-coral h-12 px-8 whitespace-nowrap">
-                  {t('footer.subscribe')} <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </form>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Footer Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-16">
-          {/* Brand Column */}
-          <div className="lg:col-span-2">
-            <Link to="/" className="flex items-center gap-2 mb-6 group">
-              <img 
-                src={flybotLogo} 
-                alt="CheapFlights" 
-                className="h-12 w-auto object-contain transition-transform group-hover:scale-105"
-              />
-            </Link>
-            <p className="text-white/70 mb-6 max-w-sm leading-relaxed">
-              Your trusted partner for finding the best deals on flights, hotels, and travel experiences across the USA.
-            </p>
-            
-            {/* Contact Info */}
-            <div className="space-y-3 mb-6">
-              <a href="tel:+18001234567" className="flex items-center gap-3 text-white/70 hover:text-white transition-colors">
-                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
-                  <Phone className="w-4 h-4" />
-                </div>
-                <span>1-800-123-4567</span>
-              </a>
-              <a href="mailto:support@cheapflights.com" className="flex items-center gap-3 text-white/70 hover:text-white transition-colors">
-                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
-                  <Mail className="w-4 h-4" />
-                </div>
-                <span>support@cheapflights.com</span>
-              </a>
-              <div className="flex items-center gap-3 text-white/70">
-                <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
-                  <MapPin className="w-4 h-4" />
-                </div>
-                <span>San Francisco, CA</span>
+      <footer className="bg-[#0a1a3c] text-white">
+        <div className="container mx-auto px-4 py-12">
+          {/* Footer Grid - 5 Columns */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 mb-12">
+            {footerSections.map((section) => (
+              <div key={section.title}>
+                <h4 className="font-bold text-white text-sm uppercase tracking-wide mb-4">
+                  {section.title}
+                </h4>
+                <ul className="space-y-2">
+                  {section.links.map((link) => (
+                    <li key={link.href + link.label}>
+                      <Link
+                        to={link.href}
+                        className="text-sky-200/80 hover:text-white hover:underline transition-colors text-sm"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </div>
-            
-            {/* Social Links */}
-            <div className="flex gap-3">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-xl bg-white/10 hover:bg-primary flex items-center justify-center transition-all hover:scale-110"
-                  aria-label={social.label}
-                >
-                  <social.icon className="w-5 h-5" />
-                </a>
-              ))}
-            </div>
+            ))}
           </div>
 
-          {/* Footer Sections */}
-          {footerSections.map((section) => (
-            <div key={section.title}>
-              <h4 className="font-semibold mb-5 text-white text-lg">{section.title}</h4>
-              <ul className="space-y-3">
-                {section.links.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      to={link.href}
-                      className="text-white/60 hover:text-white transition-colors text-sm flex items-center gap-2 group"
+          {/* Social Media Section */}
+          <div className="border-t border-white/10 pt-8">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-white/70 font-medium">Follow us on</span>
+                <div className="flex gap-3">
+                  {socialLinks.map((social) => (
+                    <a
+                      key={social.label}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-9 h-9 rounded-full bg-white/10 hover:bg-primary flex items-center justify-center transition-all hover:scale-110"
+                      aria-label={social.label}
+                      title={social.label}
                     >
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary/50 group-hover:bg-primary transition-colors" />
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-
-        {/* Language Switcher */}
-        <div className="pb-8 mb-8 border-b border-white/10">
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <div className="flex items-center gap-2 text-white/70">
-              <Globe className="w-4 h-4" />
-              <span className="text-sm font-medium">{t('common.language')}</span>
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant={language === 'en' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => toggleLanguage('en')}
-                className={`rounded-xl ${language === 'en' ? 'btn-premium' : 'bg-white/10 hover:bg-white/20'}`}
-              >
-                🇺🇸 English
-              </Button>
-              <Button
-                variant={language === 'es' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => toggleLanguage('es')}
-                className={`rounded-xl ${language === 'es' ? 'btn-premium' : 'bg-white/10 hover:bg-white/20'}`}
-              >
-                🇪🇸 Español
-              </Button>
+                      <social.icon className="w-4 h-4" />
+                    </a>
+                  ))}
+                </div>
+              </div>
+              
+              <p className="text-sm text-white/50">
+                © {new Date().getFullYear()} CheapFlights. All rights reserved.
+              </p>
             </div>
           </div>
         </div>
-
-        {/* Bottom Bar */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/50">
-          <p>© {new Date().getFullYear()} CheapFlights. {t('footer.allRights')}.</p>
-          <div className="flex items-center gap-6">
-            <Link to="/terms" className="hover:text-white transition-colors">Terms</Link>
-            <Link to="/privacy" className="hover:text-white transition-colors">Privacy</Link>
-            <Link to="/cookies" className="hover:text-white transition-colors">Cookies</Link>
-          </div>
-        </div>
-      </div>
       </footer>
     </>
   );
