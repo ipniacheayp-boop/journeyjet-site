@@ -3,66 +3,60 @@ import { motion } from "framer-motion";
 // Feature flag for toggling trust badges visibility
 export const FEATURE_SHOW_TRUST_BADGES = true;
 
-// Fallback SVG placeholder for missing images
-const FallbackIcon = ({ initials }: { initials: string }) => (
-  <div className="flex items-center justify-center h-7 md:h-9 px-3 bg-muted rounded text-xs font-bold text-muted-foreground">
-    {initials}
+// Fallback placeholder for missing images
+const FallbackBadge = ({ name }: { name: string }) => (
+  <div className="flex items-center justify-center h-8 md:h-10 px-4 bg-gray-200 dark:bg-gray-700 rounded text-xs font-semibold text-gray-600 dark:text-gray-300 whitespace-nowrap">
+    {name}
   </div>
 );
 
 const TrustPartners = () => {
   if (!FEATURE_SHOW_TRUST_BADGES) return null;
 
+  // Official logos in exact order from reference
   const partners = [
     {
       name: "IATA",
-      logo: "https://cdn.brandfetch.io/idhf_2Fxpu/theme/dark/logo.svg",
-      alt: "IATA certified - International Air Transport Association Member",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/IATA_logo.svg/512px-IATA_logo.svg.png",
+      alt: "IATA - International Air Transport Association",
       href: "https://www.iata.org/",
-      initials: "IATA"
     },
     {
       name: "ASTA",
-      logo: "https://cdn.brandfetch.io/idvS89lnpR/w/400/h/400/theme/dark/logo.png",
-      alt: "ASTA member - American Society of Travel Advisors",
+      logo: "https://www.asta.org/Portals/0/Images/asta-member-logo.png",
+      alt: "ASTA - American Society of Travel Advisors Member",
       href: "https://www.asta.org/",
-      initials: "ASTA"
     },
     {
-      name: "GoDaddy Verified & Secured",
-      logo: "https://img1.wsimg.com/isteam/ip/static/verified-and-secured-light.svg",
-      alt: "GoDaddy Verified and Secured",
+      name: "GoDaddy Verified",
+      logo: "https://seal.godaddy.com/images/3/en/siteseal_gd_3_h_l_m.gif",
+      alt: "GoDaddy Verified & Secured",
       href: "https://www.godaddy.com/web-security/website-security",
-      initials: "V&S"
     },
     {
-      name: "TRUE Accredited",
-      logo: "https://cdn.brandfetch.io/idDFpsfvY5/theme/dark/logo.svg",
-      alt: "TRUE Accredited Travel Agency",
-      href: "#",
-      initials: "TRUE"
+      name: "TRUE",
+      logo: "https://trueaccreditation.org/wp-content/uploads/2021/06/TRUE-Logo-2021.png",
+      alt: "TRUE - Travel Retailer Universal Enumeration Accredited",
+      href: "https://trueaccreditation.org/",
     },
     {
       name: "Cloudflare",
-      logo: "https://cdn.brandfetch.io/id2S-kXbuq/theme/dark/logo.svg",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Cloudflare_Logo.png/512px-Cloudflare_Logo.png",
       alt: "Protected by Cloudflare",
       href: "https://www.cloudflare.com/",
-      initials: "CF"
     },
     {
       name: "FlexPay",
-      logo: "https://cdn.brandfetch.io/idpCXXxqEY/theme/dark/logo.svg",
+      logo: "https://uploads-ssl.webflow.com/60d7c0c8c02e60d31a8c3f3f/60d7c0c8c02e602a578c4040_flexpay-logo.svg",
       alt: "FlexPay - Buy Now Pay Later",
       href: "#",
-      initials: "FP"
     },
     {
       name: "Amazon Pay",
-      logo: "https://cdn.brandfetch.io/idEhf3DcL-/theme/dark/logo.svg",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Amazon_Pay_logo.svg/512px-Amazon_Pay_logo.svg.png",
       alt: "Amazon Pay Accepted",
       href: "https://pay.amazon.com/",
-      initials: "AP"
-    }
+    },
   ];
 
   const containerVariants = {
@@ -70,43 +64,50 @@ const TrustPartners = () => {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.05,
-        delayChildren: 0.1
-      }
-    }
+        staggerChildren: 0.08,
+        delayChildren: 0.1,
+      },
+    },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, scale: 0.9 },
+    hidden: { opacity: 0, y: 10 },
     visible: {
       opacity: 1,
-      scale: 1,
+      y: 0,
       transition: {
-        duration: 0.2,
-        ease: [0.25, 0.1, 0.25, 1] as const
-      }
-    }
+        duration: 0.3,
+        ease: [0.25, 0.1, 0.25, 1] as const,
+      },
+    },
   };
 
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    e.currentTarget.style.display = 'none';
-    const fallback = e.currentTarget.nextElementSibling as HTMLElement;
-    if (fallback) fallback.style.display = 'flex';
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>, name: string) => {
+    const target = e.currentTarget;
+    target.style.display = "none";
+    const fallback = target.nextElementSibling as HTMLElement;
+    if (fallback) fallback.style.display = "flex";
   };
 
   return (
-    <section 
-      className="bg-slate-50 dark:bg-slate-900/50 border-t border-border/30"
-      aria-labelledby="trust-partners-title"
+    <section
+      className="bg-gray-50 dark:bg-slate-900/60 border-t border-b border-gray-200 dark:border-slate-700/50"
+      aria-labelledby="trust-partners-heading"
       role="region"
     >
       <div className="container mx-auto px-4 py-6 md:py-8">
-        <motion.div 
-          className="w-full flex items-center justify-center flex-wrap gap-6 md:gap-10 lg:gap-12"
+        {/* Section Title (hidden visually but accessible) */}
+        <h2 id="trust-partners-heading" className="sr-only">
+          Our Trusted Partners & Certifications
+        </h2>
+
+        {/* Logos Row */}
+        <motion.div
+          className="flex flex-wrap items-center justify-center gap-6 md:gap-8 lg:gap-10"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-30px" }}
+          viewport={{ once: true, margin: "-50px" }}
           role="list"
           aria-label="Trust and security partner logos"
         >
@@ -117,8 +118,12 @@ const TrustPartners = () => {
               target="_blank"
               rel="noopener noreferrer"
               variants={itemVariants}
-              whileHover={{ scale: 1.05 }}
-              className="flex-shrink-0 flex items-center justify-center transition-all duration-200 hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
+              whileHover={{ 
+                scale: 1.05,
+                boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)"
+              }}
+              whileTap={{ scale: 0.98 }}
+              className="flex items-center justify-center p-2 md:p-3 rounded-lg bg-white dark:bg-slate-800/80 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
               role="listitem"
               aria-label={partner.alt}
               title={partner.alt}
@@ -126,13 +131,13 @@ const TrustPartners = () => {
               <img
                 src={partner.logo}
                 alt={partner.alt}
-                className="h-6 md:h-8 lg:h-9 w-auto max-w-[90px] md:max-w-[110px] lg:max-w-[130px] object-contain grayscale-0 dark:brightness-110"
+                className="h-7 md:h-9 lg:h-10 w-auto max-w-[100px] md:max-w-[120px] object-contain"
                 loading="lazy"
                 decoding="async"
-                onError={handleImageError}
+                onError={(e) => handleImageError(e, partner.name)}
               />
               <div className="hidden">
-                <FallbackIcon initials={partner.initials} />
+                <FallbackBadge name={partner.name} />
               </div>
             </motion.a>
           ))}
