@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { Facebook, Twitter, Instagram, Youtube, Linkedin } from "lucide-react";
 import TrustPartners from "./TrustPartners";
-import FeatureHighlights from "./FeatureHighlights";
 
 // Pinterest icon component
 const Pinterest = ({ className }: { className?: string }) => (
@@ -76,9 +75,6 @@ const Footer = () => {
 
   return (
     <>
-      {/* Feature Highlights Section */}
-      <FeatureHighlights />
-      
       {/* Trust Partners Section */}
       <TrustPartners />
       

@@ -10,6 +10,7 @@ import TailoredDealCard from "@/components/TailoredDealCard";
 import TrustBadges from "@/components/TrustBadges";
 import FlyBot from "@/components/FlyBot";
 import { ReviewsHighlight } from "@/components/ReviewsHighlight";
+import FeatureHighlights from "@/components/FeatureHighlights";
 import { mockDeals, type Deal } from "@/data/mockDeals";
 import heroBlackFriday from "@/assets/hero-black-friday.jpg";
 import dealLastMinute from "@/assets/deal-last-minute.jpg";
@@ -190,6 +191,9 @@ const Index = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* Feature Highlights Strip - Three Columns */}
+      <FeatureHighlights />
 
       {/* Why Choose Us Section - Colorful */}
       <section className="py-20 bg-gradient-to-b from-background via-blue-50/30 to-background dark:from-background dark:via-blue-950/20 dark:to-background">
