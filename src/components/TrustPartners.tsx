@@ -16,49 +16,49 @@ const TrustPartners = () => {
   const partners = [
     {
       name: "IATA",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/IATA_logo.svg/200px-IATA_logo.svg.png",
+      logo: "https://cdn.brandfetch.io/idhf_2Fxpu/theme/dark/logo.svg",
       alt: "IATA certified - International Air Transport Association Member",
       href: "https://www.iata.org/",
       initials: "IATA"
     },
     {
       name: "ASTA",
-      logo: "https://www.asta.org/Portals/0/asta-logo-1.png",
+      logo: "https://cdn.brandfetch.io/idvS89lnpR/w/400/h/400/theme/dark/logo.png",
       alt: "ASTA member - American Society of Travel Advisors",
       href: "https://www.asta.org/",
       initials: "ASTA"
     },
     {
-      name: "GoDaddy Secured",
-      logo: "https://img1.wsimg.com/isteam/ip/static/godaddy-verified-seal.svg",
-      alt: "Verified and Secured by GoDaddy",
-      href: "https://www.godaddy.com/",
+      name: "GoDaddy Verified & Secured",
+      logo: "https://img1.wsimg.com/isteam/ip/static/verified-and-secured-light.svg",
+      alt: "GoDaddy Verified and Secured",
+      href: "https://www.godaddy.com/web-security/website-security",
       initials: "V&S"
     },
     {
-      name: "TRUE",
-      logo: "https://images.squarespace-cdn.com/content/v1/5e7a8c7c8d9b0a6e3e5c5e5e/1585149428507-TRUE-LOGO.png",
-      alt: "TRUE accredited Travel Agency",
+      name: "TRUE Accredited",
+      logo: "https://cdn.brandfetch.io/idDFpsfvY5/theme/dark/logo.svg",
+      alt: "TRUE Accredited Travel Agency",
       href: "#",
       initials: "TRUE"
     },
     {
       name: "Cloudflare",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Cloudflare_Logo.png/200px-Cloudflare_Logo.png",
+      logo: "https://cdn.brandfetch.io/id2S-kXbuq/theme/dark/logo.svg",
       alt: "Protected by Cloudflare",
       href: "https://www.cloudflare.com/",
       initials: "CF"
     },
     {
       name: "FlexPay",
-      logo: "https://cdn.brandfetch.io/idpCXXxqEY/w/400/h/400/theme/dark/icon.png",
+      logo: "https://cdn.brandfetch.io/idpCXXxqEY/theme/dark/logo.svg",
       alt: "FlexPay - Buy Now Pay Later",
       href: "#",
       initials: "FP"
     },
     {
       name: "Amazon Pay",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Amazon_Pay_logo.svg/200px-Amazon_Pay_logo.svg.png",
+      logo: "https://cdn.brandfetch.io/idEhf3DcL-/theme/dark/logo.svg",
       alt: "Amazon Pay Accepted",
       href: "https://pay.amazon.com/",
       initials: "AP"
@@ -96,20 +96,13 @@ const TrustPartners = () => {
 
   return (
     <section 
-      className="bg-muted/50 border-t border-border/50"
+      className="bg-slate-50 dark:bg-slate-900/50 border-t border-border/30"
       aria-labelledby="trust-partners-title"
       role="region"
     >
-      <div className="container mx-auto px-4 py-5 md:py-8">
-        <h3 
-          id="trust-partners-title"
-          className="text-center text-sm md:text-base font-semibold text-foreground mb-4 md:mb-6"
-        >
-          Our Trusted Partners & Certifications
-        </h3>
-
+      <div className="container mx-auto px-4 py-6 md:py-8">
         <motion.div 
-          className="w-full flex items-center justify-center gap-3 md:gap-7 py-2 overflow-x-auto scrollbar-hide"
+          className="w-full flex items-center justify-center flex-wrap gap-6 md:gap-10 lg:gap-12"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -124,7 +117,8 @@ const TrustPartners = () => {
               target="_blank"
               rel="noopener noreferrer"
               variants={itemVariants}
-              className="flex-shrink-0 flex items-center justify-center p-2 rounded-lg bg-white/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-700 transition-all duration-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              whileHover={{ scale: 1.05 }}
+              className="flex-shrink-0 flex items-center justify-center transition-all duration-200 hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
               role="listitem"
               aria-label={partner.alt}
               title={partner.alt}
@@ -132,7 +126,7 @@ const TrustPartners = () => {
               <img
                 src={partner.logo}
                 alt={partner.alt}
-                className="h-6 md:h-9 w-auto max-w-[80px] md:max-w-[100px] object-contain"
+                className="h-6 md:h-8 lg:h-9 w-auto max-w-[90px] md:max-w-[110px] lg:max-w-[130px] object-contain grayscale-0 dark:brightness-110"
                 loading="lazy"
                 decoding="async"
                 onError={handleImageError}
@@ -143,10 +137,6 @@ const TrustPartners = () => {
             </motion.a>
           ))}
         </motion.div>
-
-        <p className="text-center text-xs text-muted-foreground mt-3">
-          Your safety and trust are our highest priority.
-        </p>
       </div>
     </section>
   );
