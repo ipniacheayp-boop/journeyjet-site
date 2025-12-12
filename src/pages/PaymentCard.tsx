@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CreditCard, Loader2 } from "lucide-react";
+import { CreditCard, Loader2, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -30,14 +30,14 @@ const CheckoutForm = ({ bookingDetails, onSuccess }: any) => {
     setLoading(true);
 
     try {
-      // Create payment intent
+      // Create payment intent - always in USD
       const { data: intentData, error: intentError } = await supabase.functions.invoke(
         'payments-stripe-create-intent',
         {
           body: {
             bookingId: bookingDetails.bookingId,
-            amount: bookingDetails.amount,
-            currency: 'USD', // Always use USD
+            amount: parseFloat(bookingDetails.amount),
+            currency: 'USD',
           },
         }
       );
@@ -57,7 +57,7 @@ const CheckoutForm = ({ bookingDetails, onSuccess }: any) => {
             card: cardElement,
             billing_details: {
               name: cardholderName,
-              email: bookingDetails.contact_email,
+              email: bookingDetails.travelerInfo?.email || bookingDetails.contact_email,
             },
           },
         }
@@ -164,13 +164,14 @@ const CheckoutForm = ({ bookingDetails, onSuccess }: any) => {
   );
 };
 
-// Stripe publishable key (public key, safe for frontend)
+// Stripe publishable key
 const STRIPE_PUBLISHABLE_KEY = "pk_live_51SCf0hRZ1oiw5xMj93coxIRQh0ahJ0sCGdwUo7AdrlH3qnPbHM3GtwVLaDwooEq6P158m4zHkYlXfxIkEZplD3P700BU9V0kRY";
 
 const PaymentCard = () => {
   const navigate = useNavigate();
   const [bookingDetails, setBookingDetails] = useState<any>(null);
   const [stripePromise, setStripePromise] = useState<Promise<any> | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const initializePayment = async () => {
@@ -178,27 +179,55 @@ const PaymentCard = () => {
         // Check for booking first
         const storedBooking = sessionStorage.getItem('pendingBooking');
         if (!storedBooking) {
-          toast.error("No booking found");
-          navigate('/');
+          setError("Session expired. Please search again.");
           return;
         }
         
         const parsed = JSON.parse(storedBooking);
+        console.log('[PaymentCard] Loaded booking:', { bookingId: parsed.bookingId, amount: parsed.amount });
         setBookingDetails(parsed);
 
-        // Initialize Stripe with publishable key directly
-        console.log('Initializing Stripe...');
+        // If there's a checkout URL, redirect to Stripe Checkout instead
+        if (parsed.checkoutUrl) {
+          console.log('[PaymentCard] Redirecting to Stripe Checkout');
+          window.location.href = parsed.checkoutUrl;
+          return;
+        }
+
+        // Initialize Stripe
+        console.log('[PaymentCard] Initializing Stripe Elements...');
         const stripe = await loadStripe(STRIPE_PUBLISHABLE_KEY);
         setStripePromise(Promise.resolve(stripe));
-        console.log('Stripe initialized successfully');
+        console.log('[PaymentCard] Stripe initialized successfully');
       } catch (e: any) {
-        console.error('Failed to initialize payment:', e);
-        toast.error(e.message || 'Failed to load payment form');
+        console.error('[PaymentCard] Failed to initialize payment:', e);
+        setError(e.message || 'Failed to load payment form');
       }
     };
 
     initializePayment();
   }, [navigate]);
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 pt-24 pb-16 flex items-center justify-center">
+          <Card className="max-w-md">
+            <CardContent className="pt-6 text-center">
+              <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
+              <h2 className="text-xl font-semibold mb-2">Payment Error</h2>
+              <p className="text-muted-foreground mb-4">{error}</p>
+              <Button onClick={() => navigate('/')}>
+                Return to Search
+              </Button>
+            </CardContent>
+          </Card>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!bookingDetails) {
     return (
