@@ -13,7 +13,9 @@ serve(async (req) => {
   }
 
   try {
-    const { bookingId, amount, currency = 'USD' } = await req.json();
+    const { bookingId, amount } = await req.json();
+    // ALWAYS use USD for Stripe payments
+    const currency = 'USD';
 
     if (!bookingId || !amount) {
       throw new Error("Missing required fields");

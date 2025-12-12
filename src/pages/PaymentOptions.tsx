@@ -45,36 +45,54 @@ const PaymentOptions = () => {
     }
   }, [navigate, searchParams]);
 
-  const handlePaymentMethod = (method: string) => {
+  const handlePaymentMethod = async (method: string) => {
     if (!bookingDetails?.bookingId) {
       toast.error("Booking not found. Please go back and try again.");
       return;
     }
 
     setLoading(true);
+    setPaymentError(null);
     
-    // Navigate to the appropriate payment page
-    switch (method) {
-      case 'card':
-        navigate('/payment/card');
-        break;
-      case 'upi':
-        navigate('/payment/upi');
-        break;
-      case 'stripe-upi':
-        navigate('/payment/stripe-upi');
-        break;
-      case 'scanner':
-        navigate('/payment/qr');
-        break;
-      default:
-        // Fallback to Stripe Checkout if checkoutUrl exists
+    try {
+      // If we have a checkoutUrl from Stripe, use it directly for card payments
+      if (method === 'card' || method === 'default') {
         if (bookingDetails.checkoutUrl) {
+          // Redirect to Stripe Checkout (USD)
           window.location.href = bookingDetails.checkoutUrl;
+          return;
         } else {
-          toast.error("Payment method not available");
-          setLoading(false);
+          // Fallback: navigate to card payment page for manual entry
+          navigate('/payment/card');
+          return;
         }
+      }
+      
+      // Navigate to the appropriate payment page
+      switch (method) {
+        case 'upi':
+          navigate('/payment/upi');
+          break;
+        case 'stripe-upi':
+          navigate('/payment/stripe-upi');
+          break;
+        case 'scanner':
+          navigate('/payment/qr');
+          break;
+        default:
+          // Default to Stripe Checkout
+          if (bookingDetails.checkoutUrl) {
+            window.location.href = bookingDetails.checkoutUrl;
+          } else {
+            toast.error("Payment method not available");
+          }
+      }
+    } catch (error: any) {
+      console.error("Payment method error:", error);
+      toast.error("Failed to process payment. Please try again.");
+      setPaymentError(error.message || "Payment error");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -96,7 +114,8 @@ const PaymentOptions = () => {
     );
   }
 
-  const { amount, currency = 'USD', bookingType } = bookingDetails;
+  const { amount, bookingType } = bookingDetails;
+  const currency = 'USD'; // Always use USD
 
   return (
     <div className="min-h-screen flex flex-col">
