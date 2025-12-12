@@ -154,11 +154,11 @@ const CheckoutForm = ({ bookingDetails, onSuccess }: any) => {
       <Button
         type="button"
         variant="outline"
-        onClick={() => navigate('/payment-options')}
+        onClick={() => navigate(-1)}
         className="w-full"
         disabled={loading}
       >
-        Choose Another Method
+        Go Back
       </Button>
     </form>
   );

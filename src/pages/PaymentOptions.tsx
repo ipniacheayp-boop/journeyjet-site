@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Smartphone, QrCode, Loader2 } from "lucide-react";
+import { CreditCard, Loader2, Shield, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
 
@@ -44,8 +44,8 @@ const PaymentOptions = () => {
     }
   }, [navigate, searchParams]);
 
-  const handlePaymentMethod = (method: string) => {
-    console.log('[PaymentOptions] Payment method selected:', method);
+  const handleStripePayment = () => {
+    console.log('[PaymentOptions] Stripe payment selected');
     
     if (!bookingDetails?.bookingId) {
       toast.error("Session expired. Please search again.");
@@ -53,32 +53,17 @@ const PaymentOptions = () => {
       return;
     }
 
-    setLoading(true);
-    
-    // Navigate to the appropriate payment page
-    switch (method) {
-      case 'card':
-        // For card payments, redirect to Stripe Checkout URL if available
-        if (bookingDetails.checkoutUrl) {
-          console.log('[PaymentOptions] Redirecting to Stripe Checkout:', bookingDetails.checkoutUrl);
-          toast.success("Redirecting to secure payment...");
-          window.location.href = bookingDetails.checkoutUrl;
-        } else {
-          // Fallback to card page for manual payment
-          navigate('/payment/card');
-        }
-        break;
-      case 'upi':
-      case 'stripe-upi':
-        navigate('/payment/upi');
-        break;
-      case 'scanner':
-        navigate('/payment/qr');
-        break;
-      default:
-        toast.error("Unknown payment method");
-        setLoading(false);
+    if (!bookingDetails.checkoutUrl) {
+      toast.error("Payment session not available. Please try again.");
+      navigate('/');
+      return;
     }
+
+    setLoading(true);
+    toast.success("Redirecting to secure Stripe checkout...");
+    
+    // Redirect to Stripe Checkout
+    window.location.href = bookingDetails.checkoutUrl;
   };
 
   const handleGoBack = () => {
@@ -91,7 +76,10 @@ const PaymentOptions = () => {
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-1 pt-24 pb-16 flex items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <div className="text-center">
+            <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
+            <p className="text-muted-foreground">Loading payment details...</p>
+          </div>
         </main>
         <Footer />
       </div>
@@ -99,103 +87,65 @@ const PaymentOptions = () => {
   }
 
   const { amount, bookingType } = bookingDetails;
-  const currency = 'USD';
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       
       <main className="flex-1 pt-24 pb-16 bg-secondary">
-        <div className="container mx-auto px-4 max-w-4xl">
+        <div className="container mx-auto px-4 max-w-2xl">
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold mb-2">Choose Payment Method</h1>
+            <h1 className="text-4xl font-bold mb-2">Complete Your Payment</h1>
             <p className="text-muted-foreground">
-              Complete your {bookingType} booking securely
+              Secure payment for your {bookingType} booking
             </p>
           </div>
 
-          {/* Recommended: Card Payment */}
-          <div className="mb-6">
-            <Card 
-              className={`cursor-pointer hover:shadow-lg transition-all border-2 border-primary bg-primary/5 group ${loading ? 'opacity-50 pointer-events-none' : ''}`}
-              onClick={() => handlePaymentMethod('card')}
-            >
-              <CardContent className="flex items-center justify-between p-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 bg-primary rounded-full flex items-center justify-center">
-                    <CreditCard className="w-7 h-7 text-primary-foreground" />
+          {/* Stripe Payment Option */}
+          <Card 
+            className={`cursor-pointer hover:shadow-xl transition-all border-2 border-primary bg-primary/5 mb-6 ${loading ? 'opacity-50 pointer-events-none' : ''}`}
+            onClick={handleStripePayment}
+          >
+            <CardContent className="p-8">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-5">
+                  <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center">
+                    <CreditCard className="w-8 h-8 text-primary-foreground" />
                   </div>
                   <div>
-                    <div className="flex items-center gap-2">
-                      <CardTitle className="text-xl">Credit/Debit Card</CardTitle>
-                      <span className="text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-full">Recommended</span>
+                    <div className="flex items-center gap-3">
+                      <CardTitle className="text-2xl">Pay with Stripe (USD)</CardTitle>
                     </div>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Pay securely via Stripe • Visa, Mastercard, Amex
+                    <p className="text-muted-foreground mt-2">
+                      Visa, Mastercard, American Express, and more
                     </p>
+                    <div className="flex items-center gap-4 mt-3 text-sm text-muted-foreground">
+                      <span className="flex items-center gap-1">
+                        <Shield className="w-4 h-4" />
+                        Secure
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <CheckCircle className="w-4 h-4" />
+                        Instant
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <Button disabled={loading}>
-                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Pay Now'}
+                <Button size="lg" disabled={loading} className="px-8">
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      Redirecting...
+                    </>
+                  ) : (
+                    'Pay Now'
+                  )}
                 </Button>
-              </CardContent>
-            </Card>
-          </div>
+              </div>
+            </CardContent>
+          </Card>
 
-          {/* Other Payment Methods (INR only) */}
-          <div className={`grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 ${loading ? 'opacity-50 pointer-events-none' : ''}`}>
-            <Card 
-              className="cursor-pointer hover:shadow-lg transition-all hover:border-muted-foreground/50 group"
-              onClick={() => handlePaymentMethod('upi')}
-            >
-              <CardHeader className="text-center pb-2">
-                <div className="mx-auto w-12 h-12 bg-muted rounded-full flex items-center justify-center mb-2 group-hover:bg-muted/80 transition-colors">
-                  <Smartphone className="w-6 h-6 text-muted-foreground" />
-                </div>
-                <CardTitle className="text-lg">UPI</CardTitle>
-              </CardHeader>
-              <CardContent className="text-center pt-0">
-                <p className="text-xs text-muted-foreground">
-                  Pay via Razorpay (INR)
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card 
-              className="cursor-pointer hover:shadow-lg transition-all hover:border-muted-foreground/50 group"
-              onClick={() => handlePaymentMethod('stripe-upi')}
-            >
-              <CardHeader className="text-center pb-2">
-                <div className="mx-auto w-12 h-12 bg-muted rounded-full flex items-center justify-center mb-2 group-hover:bg-muted/80 transition-colors">
-                  <Smartphone className="w-6 h-6 text-muted-foreground" />
-                </div>
-                <CardTitle className="text-lg">UPI (Stripe)</CardTitle>
-              </CardHeader>
-              <CardContent className="text-center pt-0">
-                <p className="text-xs text-muted-foreground">
-                  Pay via Stripe UPI (INR)
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card 
-              className="cursor-pointer hover:shadow-lg transition-all hover:border-muted-foreground/50 group"
-              onClick={() => handlePaymentMethod('scanner')}
-            >
-              <CardHeader className="text-center pb-2">
-                <div className="mx-auto w-12 h-12 bg-muted rounded-full flex items-center justify-center mb-2 group-hover:bg-muted/80 transition-colors">
-                  <QrCode className="w-6 h-6 text-muted-foreground" />
-                </div>
-                <CardTitle className="text-lg">QR Scanner</CardTitle>
-              </CardHeader>
-              <CardContent className="text-center pt-0">
-                <p className="text-xs text-muted-foreground">
-                  Scan QR to pay (INR)
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-
+          {/* Payment Summary */}
           <Card>
             <CardHeader>
               <CardTitle>Payment Summary</CardTitle>
@@ -213,12 +163,12 @@ const PaymentOptions = () => {
                 <div className="border-t pt-3 flex justify-between">
                   <span className="font-bold">Total Amount</span>
                   <span className="text-2xl font-bold text-primary">
-                    {currency} {parseFloat(amount).toFixed(2)}
+                    USD {parseFloat(amount).toFixed(2)}
                   </span>
                 </div>
               </div>
 
-              <div className="mt-6 text-center">
+              <div className="mt-6">
                 <Button 
                   variant="outline" 
                   onClick={handleGoBack}
@@ -231,8 +181,12 @@ const PaymentOptions = () => {
             </CardContent>
           </Card>
 
-          <div className="mt-6 text-center text-sm text-muted-foreground">
-            <p>🔒 Your payment is secured with 256-bit SSL encryption</p>
+          <div className="mt-6 text-center text-sm text-muted-foreground space-y-2">
+            <p className="flex items-center justify-center gap-2">
+              <Shield className="w-4 h-4" />
+              Your payment is secured with 256-bit SSL encryption
+            </p>
+            <p>Powered by Stripe — the world's most trusted payment platform</p>
           </div>
         </div>
       </main>

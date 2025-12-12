@@ -180,12 +180,16 @@ const Booking = () => {
   ) => {
     const productTypeName = bookingType as string;
     
+    // ALWAYS use USD for Stripe payments
+    const finalCurrency = 'USD';
+    const finalPrice = checkoutPrice;
+    
     const result = await createProvisionalBooking(
       productTypeName,
       offer,
       offerToBook,
-      checkoutPrice,
-      checkoutCurrency,
+      finalPrice,
+      finalCurrency,
       clientRequestIdRef.current,
       {
         ...formData,
@@ -202,12 +206,12 @@ const Booking = () => {
       return;
     }
 
-    // Store booking details for payment options page
+    // Store booking details for payment options page - ALWAYS USD
     const pendingBookingData = {
       bookingId: result.bookingId,
       checkoutUrl: result.checkoutUrl || null,
-      amount: checkoutPrice.toFixed(2),
-      currency: checkoutCurrency,
+      amount: finalPrice.toFixed(2),
+      currency: finalCurrency,
       bookingType,
       agentId,
       bookingReference: result.bookingReference,
@@ -228,7 +232,7 @@ const Booking = () => {
       return;
     }
 
-    toast.success("Redirecting to payment options...");
+    toast.success("Redirecting to payment...");
     
     // Navigate to payment options page
     navigate(`/payment-options?bookingId=${result.bookingId}`);
@@ -239,10 +243,10 @@ const Booking = () => {
     clearPriceChange();
 
     if (priceChangeData && pendingPriceChangeOffer) {
-      // Update with new price and proceed
+      // Update with new price and proceed - ALWAYS use USD
       setValidatedOffer(pendingPriceChangeOffer);
       setValidatedPrice(priceChangeData.newPrice);
-      setValidatedCurrency(priceChangeData.currency);
+      setValidatedCurrency('USD');
       
       // Generate new clientRequestId for the new price
       clientRequestIdRef.current = generateClientRequestId();
@@ -250,7 +254,7 @@ const Booking = () => {
       await proceedToCheckout(
         pendingPriceChangeOffer,
         priceChangeData.newPrice,
-        priceChangeData.currency
+        'USD'
       );
     }
   };
