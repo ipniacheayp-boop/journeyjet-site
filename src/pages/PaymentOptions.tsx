@@ -45,24 +45,36 @@ const PaymentOptions = () => {
     }
   }, [navigate, searchParams]);
 
-  const handlePaymentMethod = async (method: string) => {
-    if (!bookingDetails?.checkoutUrl) {
-      toast.error("Payment session not available. Please go back and try again.");
-      setPaymentError("Payment session not created. Please go back and try again.");
+  const handlePaymentMethod = (method: string) => {
+    if (!bookingDetails?.bookingId) {
+      toast.error("Booking not found. Please go back and try again.");
       return;
     }
 
     setLoading(true);
     
-    try {
-      // All methods redirect to Stripe Checkout
-      if (method === 'card' || method === 'upi' || method === 'stripe-upi' || method === 'scanner') {
-        // Redirect to Stripe Checkout
-        window.location.href = bookingDetails.checkoutUrl;
-      }
-    } catch (error) {
-      toast.error("Failed to process payment method");
-      setLoading(false);
+    // Navigate to the appropriate payment page
+    switch (method) {
+      case 'card':
+        navigate('/payment/card');
+        break;
+      case 'upi':
+        navigate('/payment/upi');
+        break;
+      case 'stripe-upi':
+        navigate('/payment/stripe-upi');
+        break;
+      case 'scanner':
+        navigate('/payment/qr');
+        break;
+      default:
+        // Fallback to Stripe Checkout if checkoutUrl exists
+        if (bookingDetails.checkoutUrl) {
+          window.location.href = bookingDetails.checkoutUrl;
+        } else {
+          toast.error("Payment method not available");
+          setLoading(false);
+        }
     }
   };
 
