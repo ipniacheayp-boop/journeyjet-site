@@ -173,3 +173,18 @@ verify_jwt = true
 
 [functions.agent-send-confirmation]
 verify_jwt = true
+
+[functions.fx-rates]
+verify_jwt = false
+
+[functions.fx-smart-save]
+verify_jwt = false
+
+[functions.fx-hedge-suggestion]
+verify_jwt = false
+
+[functions.fx-smart-save-log]
+verify_jwt = false
+
+[functions.fx-admin-stats]
+verify_jwt = true

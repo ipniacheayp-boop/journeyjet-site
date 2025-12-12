@@ -571,6 +571,68 @@ export type Database = {
         }
         Relationships: []
       }
+      fx_rates_cache: {
+        Row: {
+          currency: string
+          rate: number
+          updated_at: string
+        }
+        Insert: {
+          currency: string
+          rate: number
+          updated_at?: string
+        }
+        Update: {
+          currency?: string
+          rate?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      fx_smart_save_logs: {
+        Row: {
+          booking_id: string | null
+          created_at: string
+          id: string
+          original_amount: number
+          original_currency: string
+          product_type: string
+          recommended_amount: number
+          recommended_currency: string
+          savings_usd: number
+        }
+        Insert: {
+          booking_id?: string | null
+          created_at?: string
+          id?: string
+          original_amount: number
+          original_currency: string
+          product_type: string
+          recommended_amount: number
+          recommended_currency: string
+          savings_usd?: number
+        }
+        Update: {
+          booking_id?: string | null
+          created_at?: string
+          id?: string
+          original_amount?: number
+          original_currency?: string
+          product_type?: string
+          recommended_amount?: number
+          recommended_currency?: string
+          savings_usd?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fx_smart_save_logs_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string | null
