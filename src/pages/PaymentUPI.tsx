@@ -4,7 +4,9 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Smartphone, Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Smartphone, Loader2, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -20,6 +22,7 @@ const PaymentUPI = () => {
   const [bookingDetails, setBookingDetails] = useState<any>(null);
   const [convertedAmount, setConvertedAmount] = useState<number | null>(null);
   const [razorpayLoaded, setRazorpayLoaded] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Load Razorpay script
@@ -34,11 +37,10 @@ const PaymentUPI = () => {
       const booking = JSON.parse(storedBooking);
       setBookingDetails(booking);
       
-      // Convert currency if needed
-      convertCurrency(booking.amount);
+      // Convert currency from USD to INR
+      convertCurrency(parseFloat(booking.amount));
     } else {
-      toast.error("No booking found");
-      navigate('/');
+      setError("Session expired. Please search again.");
     }
 
     return () => {
@@ -47,7 +49,7 @@ const PaymentUPI = () => {
         document.body.removeChild(existingScript);
       }
     };
-  }, [navigate]);
+  }, []);
 
   const convertCurrency = async (usdAmount: number) => {
     try {
@@ -59,7 +61,8 @@ const PaymentUPI = () => {
       setConvertedAmount(data.convertedAmount);
     } catch (error) {
       console.error("Currency conversion error:", error);
-      setConvertedAmount(usdAmount * 83); // Fallback rate
+      // Fallback rate USD to INR
+      setConvertedAmount(usdAmount * 83);
     }
   };
 
@@ -88,19 +91,19 @@ const PaymentUPI = () => {
 
       if (error) throw error;
 
-      console.log('Opening Razorpay checkout with order ID:', data.orderId);
+      console.log('[PaymentUPI] Opening Razorpay checkout with order ID:', data.orderId);
 
       // Open Razorpay checkout
       const options = {
         key: data.keyId,
         amount: data.amount,
         currency: data.currency,
-        name: 'GoCheapFlights',
+        name: 'CheapFlights',
         description: `Booking #${bookingDetails.bookingId.slice(0, 8)}`,
         order_id: data.orderId,
         prefill: {
-          email: bookingDetails.contact_email,
-          contact: bookingDetails.contact_phone || '',
+          email: bookingDetails.travelerInfo?.email || bookingDetails.contact_email,
+          contact: bookingDetails.travelerInfo?.phone || bookingDetails.contact_phone || '',
         },
         theme: {
           color: '#0EA5E9',
@@ -113,7 +116,7 @@ const PaymentUPI = () => {
         },
         handler: async function (response: any) {
           try {
-            console.log('Payment completed, verifying:', response.razorpay_payment_id);
+            console.log('[PaymentUPI] Payment completed, verifying:', response.razorpay_payment_id);
             
             // Verify payment
             const { data: verifyData, error: verifyError } = await supabase.functions.invoke(
@@ -129,12 +132,12 @@ const PaymentUPI = () => {
             );
 
             if (verifyError) {
-              console.error('Verification failed:', verifyError);
+              console.error('[PaymentUPI] Verification failed:', verifyError);
               throw verifyError;
             }
 
             if (verifyData.success) {
-              console.log('Payment verified successfully');
+              console.log('[PaymentUPI] Payment verified successfully');
               sessionStorage.removeItem('pendingBooking');
               toast.success("Payment successful!");
               navigate(`/payment-success?transaction_id=${response.razorpay_payment_id}`);
@@ -142,7 +145,7 @@ const PaymentUPI = () => {
               throw new Error('Payment verification failed');
             }
           } catch (error: any) {
-            console.error("Payment verification error:", error);
+            console.error("[PaymentUPI] Payment verification error:", error);
             toast.error("Payment verification failed");
             navigate('/payment-cancel');
           } finally {
@@ -151,7 +154,7 @@ const PaymentUPI = () => {
         },
         modal: {
           ondismiss: function () {
-            console.log('Payment modal dismissed');
+            console.log('[PaymentUPI] Payment modal dismissed');
             setLoading(false);
             toast.info("Payment cancelled");
           },
@@ -160,7 +163,7 @@ const PaymentUPI = () => {
 
       const razorpay = new window.Razorpay(options);
       razorpay.on('payment.failed', function (response: any) {
-        console.error('Payment failed:', response.error);
+        console.error('[PaymentUPI] Payment failed:', response.error);
         toast.error(`Payment failed: ${response.error.description}`);
         setLoading(false);
         navigate('/payment-cancel');
@@ -168,11 +171,32 @@ const PaymentUPI = () => {
       
       razorpay.open();
     } catch (error: any) {
-      console.error("Payment error:", error);
+      console.error("[PaymentUPI] Payment error:", error);
       toast.error(error.message || "Payment failed. Please try again.");
       setLoading(false);
     }
   };
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 pt-24 pb-16 flex items-center justify-center">
+          <Card className="max-w-md">
+            <CardContent className="pt-6 text-center">
+              <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
+              <h2 className="text-xl font-semibold mb-2">Session Expired</h2>
+              <p className="text-muted-foreground mb-4">{error}</p>
+              <Button onClick={() => navigate('/')}>
+                Return to Search
+              </Button>
+            </CardContent>
+          </Card>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!bookingDetails) {
     return (
@@ -185,8 +209,6 @@ const PaymentUPI = () => {
       </div>
     );
   }
-
-  const { amount, currency = 'INR', bookingType } = bookingDetails;
 
   return (
     <div className="min-h-screen flex flex-col">
