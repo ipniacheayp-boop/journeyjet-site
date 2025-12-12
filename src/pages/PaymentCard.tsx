@@ -12,9 +12,6 @@ import { CreditCard, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
-// Stripe publishable key is loaded at runtime from backend
-// const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "");
-
 const CheckoutForm = ({ bookingDetails, onSuccess }: any) => {
   const stripe = useStripe();
   const elements = useElements();
@@ -40,7 +37,7 @@ const CheckoutForm = ({ bookingDetails, onSuccess }: any) => {
           body: {
             bookingId: bookingDetails.bookingId,
             amount: bookingDetails.amount,
-            currency: bookingDetails.currency || 'USD',
+            currency: 'USD', // Always use USD
           },
         }
       );
@@ -134,7 +131,7 @@ const CheckoutForm = ({ bookingDetails, onSuccess }: any) => {
       <div className="flex justify-between p-4 bg-primary/5 rounded-lg border border-primary/20">
         <span className="font-medium">Total Amount</span>
         <span className="text-2xl font-bold text-primary">
-          {bookingDetails.currency} {parseFloat(bookingDetails.amount).toFixed(2)}
+          USD {parseFloat(bookingDetails.amount).toFixed(2)}
         </span>
       </div>
 
@@ -150,7 +147,7 @@ const CheckoutForm = ({ bookingDetails, onSuccess }: any) => {
             Processing Payment...
           </>
         ) : (
-          `Pay ${bookingDetails.currency} ${parseFloat(bookingDetails.amount).toFixed(2)}`
+          `Pay USD ${parseFloat(bookingDetails.amount).toFixed(2)}`
         )}
       </Button>
 
@@ -167,7 +164,11 @@ const CheckoutForm = ({ bookingDetails, onSuccess }: any) => {
   );
 };
 
+// Stripe publishable key (public key, safe for frontend)
+const STRIPE_PUBLISHABLE_KEY = "pk_live_51SCf0hRZ1oiw5xMj93coxIRQh0ahJ0sCGdwUo7AdrlH3qnPbHM3GtwVLaDwooEq6P158m4zHkYlXfxIkEZplD3P700BU9V0kRY";
+
 const PaymentCard = () => {
+  const navigate = useNavigate();
   const [bookingDetails, setBookingDetails] = useState<any>(null);
   const [stripePromise, setStripePromise] = useState<Promise<any> | null>(null);
 
@@ -178,29 +179,16 @@ const PaymentCard = () => {
         const storedBooking = sessionStorage.getItem('pendingBooking');
         if (!storedBooking) {
           toast.error("No booking found");
-          window.location.href = '/';
-          return;
-        }
-        setBookingDetails(JSON.parse(storedBooking));
-
-        // Load Stripe publishable key
-        console.log('Loading Stripe publishable key...');
-        const { data, error } = await supabase.functions.invoke('payments-stripe-publishable-key');
-        
-        if (error) {
-          console.error('Error loading Stripe key:', error);
-          toast.error('Failed to load payment system. Please try again.');
+          navigate('/');
           return;
         }
         
-        if (!data?.publishableKey) {
-          console.error('No publishable key returned');
-          toast.error('Stripe is not configured properly');
-          return;
-        }
+        const parsed = JSON.parse(storedBooking);
+        setBookingDetails(parsed);
 
-        console.log('Stripe key loaded, initializing Stripe...');
-        const stripe = await loadStripe(data.publishableKey);
+        // Initialize Stripe with publishable key directly
+        console.log('Initializing Stripe...');
+        const stripe = await loadStripe(STRIPE_PUBLISHABLE_KEY);
         setStripePromise(Promise.resolve(stripe));
         console.log('Stripe initialized successfully');
       } catch (e: any) {
@@ -210,7 +198,7 @@ const PaymentCard = () => {
     };
 
     initializePayment();
-  }, []);
+  }, [navigate]);
 
   if (!bookingDetails) {
     return (

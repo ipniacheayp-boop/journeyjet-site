@@ -247,12 +247,14 @@ async function createStripeCheckout(
     productDescription = offer.provider?.name || 'Car Rental';
   }
 
+  // ALWAYS use USD for Stripe payments
+  const checkoutCurrency = 'usd';
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card', 'link'],
     line_items: [
       {
         price_data: {
-          currency: currency.toLowerCase(),
+          currency: checkoutCurrency,
           unit_amount: Math.round(price * 100),
           product_data: {
             name: productName,
