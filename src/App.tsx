@@ -39,6 +39,7 @@ import Careers from "./pages/Careers";
 import AgentLogin from "./pages/AgentLogin";
 import AgentDashboard from "./pages/AgentDashboard";
 import DealsManagement from "./pages/DealsManagement";
+import FxSavingsDashboard from "./pages/FxSavingsDashboard";
 
 const FlybotWrapper = () => {
   const location = useLocation();
@@ -75,6 +76,7 @@ const App = () => (
                 <Route path="/admin/login" element={<AdminLogin />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin/deals" element={<DealsManagement />} />
+                <Route path="/admin/fx-savings" element={<FxSavingsDashboard />} />
                 <Route path="/payment-options" element={<PaymentOptions />} />
                 <Route path="/payment/card" element={<PaymentCard />} />
                 <Route path="/payment/upi" element={<PaymentUPI />} />
