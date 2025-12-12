@@ -11,6 +11,8 @@ import { useBooking } from "@/hooks/useBooking";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
+import { useFxSmartSave } from "@/hooks/useFxSmartSave";
+import FxSmartSaveCheckout from "@/components/FxSmartSaveCheckout";
 
 const Booking = () => {
   const { id: bookingType } = useParams();
@@ -18,6 +20,7 @@ const Booking = () => {
   const [offer, setOffer] = useState<any>(null);
   const [agentId, setAgentId] = useState<string | undefined>(undefined);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [selectedCurrency, setSelectedCurrency] = useState<string>('USD');
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -52,7 +55,7 @@ const Booking = () => {
 
     try {
       let response;
-      const bookingDetails = { ...formData, agentId, acceptedTerms };
+      const bookingDetails = { ...formData, agentId, acceptedTerms, preferredCurrency: selectedCurrency };
       
       if (bookingType === "flights") {
         response = await bookFlight(offer, bookingDetails);
@@ -69,6 +72,7 @@ const Booking = () => {
           bookingId: response.bookingId,
           amount: total.toFixed(2),
           currency: currency,
+          preferredCurrency: selectedCurrency,
           bookingType: bookingType,
           agentId
         };
@@ -139,6 +143,21 @@ const Booking = () => {
   const taxes = price * 0.15; // 15% estimated taxes
   const total = price + taxes;
 
+  // FX-SmartSave calculation
+  const { data: fxData } = useFxSmartSave({
+    productType: bookingType as 'flight' | 'hotel' | 'car',
+    prices: [
+      { currency: 'USD', amount: total },
+      { currency: 'EUR', amount: total * 0.92 },
+      { currency: 'GBP', amount: total * 0.79 },
+    ],
+    travelDate: offer?.itineraries?.[0]?.segments?.[0]?.departure?.at?.split('T')[0],
+  });
+
+  const handleCurrencySelect = (useRecommended: boolean, currency: string) => {
+    setSelectedCurrency(currency);
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -197,6 +216,20 @@ const Booking = () => {
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       />
                     </div>
+
+                    {/* FX-SmartSave Checkout Panel */}
+                    {fxData && fxData.savingsUSD >= 5 && (
+                      <FxSmartSaveCheckout
+                        savingsUSD={fxData.savingsUSD}
+                        recommendedCurrency={fxData.recommendedCurrency}
+                        recommendedAmountLocal={fxData.recommendedAmountLocal}
+                        recommendedAmountUSD={fxData.recommendedAmountUSD}
+                        originalCurrency={currency}
+                        originalAmount={total}
+                        travelDate={offer?.itineraries?.[0]?.segments?.[0]?.departure?.at?.split('T')[0]}
+                        onCurrencySelect={handleCurrencySelect}
+                      />
+                    )}
 
                     <div className="flex items-start space-x-3 p-4 bg-muted/50 rounded-lg">
                       <Checkbox
