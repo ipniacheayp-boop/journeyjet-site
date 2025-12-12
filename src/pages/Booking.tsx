@@ -1,5 +1,5 @@
-import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -7,15 +7,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useBooking } from "@/hooks/useBooking";
+import { useBookingFlow } from "@/hooks/useBookingFlow";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, CheckCircle } from "lucide-react";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { useFxSmartSave } from "@/hooks/useFxSmartSave";
 import FxSmartSaveCheckout from "@/components/FxSmartSaveCheckout";
+import PriceChangeModal from "@/components/PriceChangeModal";
 
 const Booking = () => {
   const { id: bookingType } = useParams();
+  const navigate = useNavigate();
   const { user } = useRequireAuth();
   const [offer, setOffer] = useState<any>(null);
   const [agentId, setAgentId] = useState<string | undefined>(undefined);
@@ -28,7 +30,25 @@ const Booking = () => {
     phone: "",
   });
 
-  const { bookFlight, bookHotel, bookCar, loading } = useBooking();
+  // Idempotency: Generate clientRequestId once per booking attempt
+  const clientRequestIdRef = useRef<string>('');
+  const [validatedOffer, setValidatedOffer] = useState<any>(null);
+  const [validatedPrice, setValidatedPrice] = useState<number | null>(null);
+  const [validatedCurrency, setValidatedCurrency] = useState<string>('USD');
+  const [expiresAt, setExpiresAt] = useState<string | null>(null);
+  const [showPriceChangeModal, setShowPriceChangeModal] = useState(false);
+  const [pendingPriceChangeOffer, setPendingPriceChangeOffer] = useState<any>(null);
+
+  const {
+    loading,
+    validating,
+    error,
+    priceChangeData,
+    generateClientRequestId,
+    validatePrebooking,
+    createProvisionalBooking,
+    clearPriceChange,
+  } = useBookingFlow();
 
   useEffect(() => {
     // Retrieve the selected offer from sessionStorage
@@ -38,7 +58,16 @@ const Booking = () => {
       setOffer(parsed.offer);
       setAgentId(parsed.agentId);
     }
-  }, []);
+    // Generate a fresh clientRequestId for this booking session
+    clientRequestIdRef.current = generateClientRequestId();
+  }, [generateClientRequestId]);
+
+  // Show price change modal when price changes
+  useEffect(() => {
+    if (priceChangeData) {
+      setShowPriceChangeModal(true);
+    }
+  }, [priceChangeData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,43 +82,121 @@ const Booking = () => {
       return;
     }
 
-    try {
-      let response;
-      const bookingDetails = { ...formData, agentId, acceptedTerms, preferredCurrency: selectedCurrency };
-      
-      if (bookingType === "flights") {
-        response = await bookFlight(offer, bookingDetails);
-      } else if (bookingType === "hotels") {
-        response = await bookHotel(offer, bookingDetails);
-      } else if (bookingType === "cars") {
-        response = await bookCar(offer, bookingDetails);
-      }
+    // Step 1: Validate prebooking with provider
+    const productType = bookingType as 'flight' | 'hotel' | 'car' | 'flights' | 'hotels' | 'cars';
+    const validationResult = await validatePrebooking(
+      productType,
+      validatedOffer || offer,
+      clientRequestIdRef.current
+    );
 
-      if (response?.checkoutUrl) {
-        // Store booking details for payment options page
-        const bookingData = {
-          checkoutUrl: response.checkoutUrl,
-          bookingId: response.bookingId,
-          amount: total.toFixed(2),
-          currency: currency,
-          preferredCurrency: selectedCurrency,
-          bookingType: bookingType,
-          agentId
-        };
-        sessionStorage.setItem('pendingBooking', JSON.stringify(bookingData));
-        
-        // Navigate to payment options page or agent dashboard
-        if (agentId) {
-          window.location.href = '/payment-options';
-        } else {
-          window.location.href = '/payment-options';
-        }
-      } else {
-        toast.error("Failed to create checkout session");
+    if (!validationResult.ok) {
+      if (validationResult.code === 'PRICE_CHANGED') {
+        // Modal will be shown via useEffect
+        setPendingPriceChangeOffer(validationResult.validatedOffer);
+        return;
       }
-    } catch (error: any) {
-      toast.error(error.message || "Booking failed");
+      toast.error(validationResult.message || 'Validation failed. Please try again.');
+      return;
     }
+
+    // If we already have a booking from idempotency check
+    if (validationResult.existingBooking && validationResult.bookingId) {
+      toast.info("Resuming your existing booking...");
+      // Need to create checkout session for existing booking
+    }
+
+    // Store validated data
+    setValidatedOffer(validationResult.validatedOffer);
+    setValidatedPrice(validationResult.price || null);
+    setValidatedCurrency(validationResult.currency || 'USD');
+    setExpiresAt(validationResult.expiresAt || null);
+
+    // Step 2: Create provisional booking
+    await proceedToCheckout(
+      validationResult.validatedOffer || offer,
+      validationResult.price || parseFloat(getPrice()),
+      validationResult.currency || 'USD',
+      validationResult.expiresAt
+    );
+  };
+
+  const proceedToCheckout = async (
+    offerToBook: any,
+    price: number,
+    currency: string,
+    expires?: string
+  ) => {
+    const productType = bookingType as string;
+    
+    const result = await createProvisionalBooking(
+      productType,
+      offer,
+      offerToBook,
+      price,
+      currency,
+      clientRequestIdRef.current,
+      {
+        ...formData,
+        acceptedTerms,
+      },
+      agentId,
+      expires
+    );
+
+    if (!result.ok) {
+      toast.error(result.message || 'Failed to create booking');
+      // Generate new clientRequestId for retry
+      clientRequestIdRef.current = generateClientRequestId();
+      return;
+    }
+
+    if (result.checkoutUrl) {
+      // Store booking details for status polling after payment
+      sessionStorage.setItem('pendingBooking', JSON.stringify({
+        bookingId: result.bookingId,
+        checkoutUrl: result.checkoutUrl,
+        amount: price.toFixed(2),
+        currency,
+        bookingType,
+        agentId,
+      }));
+
+      toast.success("Redirecting to secure payment...");
+      
+      // Redirect to Stripe Checkout
+      window.location.href = result.checkoutUrl;
+    } else {
+      toast.error("Failed to create checkout session");
+    }
+  };
+
+  const handlePriceChangeConfirm = async () => {
+    setShowPriceChangeModal(false);
+    clearPriceChange();
+
+    if (priceChangeData && pendingPriceChangeOffer) {
+      // Update with new price and proceed
+      setValidatedOffer(pendingPriceChangeOffer);
+      setValidatedPrice(priceChangeData.newPrice);
+      setValidatedCurrency(priceChangeData.currency);
+      
+      // Generate new clientRequestId for the new price
+      clientRequestIdRef.current = generateClientRequestId();
+      
+      await proceedToCheckout(
+        pendingPriceChangeOffer,
+        priceChangeData.newPrice,
+        priceChangeData.currency
+      );
+    }
+  };
+
+  const handlePriceChangeCancel = () => {
+    setShowPriceChangeModal(false);
+    clearPriceChange();
+    setPendingPriceChangeOffer(null);
+    toast.info("Booking cancelled. You can search for new options.");
   };
 
   if (!offer) {
@@ -103,7 +210,7 @@ const Booking = () => {
                 No offer selected. Please search and select an offer first.
               </p>
               <div className="mt-4 text-center">
-                <Button onClick={() => window.location.href = "/"}>
+                <Button onClick={() => navigate("/")}>
                   Go to Search
                 </Button>
               </div>
@@ -118,13 +225,13 @@ const Booking = () => {
   // Extract pricing info based on booking type
   const getPrice = () => {
     if (bookingType === "flights") {
-      return offer.price?.total || offer.price?.grandTotal || "N/A";
+      return offer.price?.total || offer.price?.grandTotal || "0";
     } else if (bookingType === "hotels") {
-      return offer.offers?.[0]?.price?.total || offer.price?.total || "N/A";
+      return offer.offers?.[0]?.price?.total || offer.price?.total || "0";
     } else if (bookingType === "cars") {
-      return offer.price?.total || "N/A";
+      return offer.price?.total || "0";
     }
-    return "N/A";
+    return "0";
   };
 
   const getCurrency = () => {
@@ -138,8 +245,8 @@ const Booking = () => {
     return "USD";
   };
 
-  const price = parseFloat(getPrice());
-  const currency = getCurrency();
+  const price = validatedPrice || parseFloat(getPrice());
+  const currency = validatedCurrency || getCurrency();
   const taxes = price * 0.15; // 15% estimated taxes
   const total = price + taxes;
 
@@ -154,13 +261,27 @@ const Booking = () => {
     travelDate: offer?.itineraries?.[0]?.segments?.[0]?.departure?.at?.split('T')[0],
   });
 
-  const handleCurrencySelect = (useRecommended: boolean, currency: string) => {
-    setSelectedCurrency(currency);
+  const handleCurrencySelect = (useRecommended: boolean, curr: string) => {
+    setSelectedCurrency(curr);
   };
+
+  const isProcessing = loading || validating;
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
+      
+      {/* Price Change Modal */}
+      {priceChangeData && (
+        <PriceChangeModal
+          open={showPriceChangeModal}
+          originalPrice={priceChangeData.originalPrice}
+          newPrice={priceChangeData.newPrice}
+          currency={priceChangeData.currency}
+          onConfirm={handlePriceChangeConfirm}
+          onCancel={handlePriceChangeCancel}
+        />
+      )}
       
       <main className="flex-1 pt-24 pb-16 bg-secondary">
         <div className="container mx-auto px-4 max-w-5xl">
@@ -180,6 +301,7 @@ const Booking = () => {
                         <Input
                           id="firstName"
                           required
+                          disabled={isProcessing}
                           value={formData.firstName}
                           onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                         />
@@ -189,6 +311,7 @@ const Booking = () => {
                         <Input
                           id="lastName"
                           required
+                          disabled={isProcessing}
                           value={formData.lastName}
                           onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                         />
@@ -201,6 +324,7 @@ const Booking = () => {
                         id="email"
                         type="email"
                         required
+                        disabled={isProcessing}
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       />
@@ -212,6 +336,7 @@ const Booking = () => {
                         id="phone"
                         type="tel"
                         required
+                        disabled={isProcessing}
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       />
@@ -235,6 +360,7 @@ const Booking = () => {
                       <Checkbox
                         id="terms"
                         checked={acceptedTerms}
+                        disabled={isProcessing}
                         onCheckedChange={(checked) => setAcceptedTerms(checked as boolean)}
                       />
                       <div className="space-y-1">
@@ -262,17 +388,24 @@ const Booking = () => {
                       type="submit" 
                       size="lg" 
                       className="w-full" 
-                      disabled={loading || !acceptedTerms}
+                      disabled={isProcessing || !acceptedTerms}
                     >
-                      {loading ? (
+                      {isProcessing ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Processing...
+                          {validating ? "Validating Price..." : "Creating Booking..."}
                         </>
                       ) : (
                         "Proceed to Payment"
                       )}
                     </Button>
+
+                    {validatedOffer && (
+                      <div className="flex items-center gap-2 text-sm text-green-600">
+                        <CheckCircle className="h-4 w-4" />
+                        <span>Price validated with provider</span>
+                      </div>
+                    )}
                   </form>
                 </CardContent>
               </Card>
@@ -305,17 +438,6 @@ const Booking = () => {
                         {offer.provider?.name && (
                           <p className="text-xs text-muted-foreground">Provider: {offer.provider.name}</p>
                         )}
-                        <div className="flex flex-wrap gap-1 mt-2">
-                          {offer.vehicle?.seats && (
-                            <span className="text-xs bg-muted px-2 py-0.5 rounded">{offer.vehicle.seats} seats</span>
-                          )}
-                          {offer.vehicle?.transmission && (
-                            <span className="text-xs bg-muted px-2 py-0.5 rounded">{offer.vehicle.transmission}</span>
-                          )}
-                          {offer.vehicle?.hasAC !== false && (
-                            <span className="text-xs bg-muted px-2 py-0.5 rounded">AC</span>
-                          )}
-                        </div>
                       </div>
                     )}
                   </div>

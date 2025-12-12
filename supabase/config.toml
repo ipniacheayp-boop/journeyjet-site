@@ -188,3 +188,12 @@ verify_jwt = false
 
 [functions.fx-admin-stats]
 verify_jwt = true
+
+[functions.prebooking-validate]
+verify_jwt = true
+
+[functions.bookings-provisional]
+verify_jwt = true
+
+[functions.bookings-status]
+verify_jwt = false
