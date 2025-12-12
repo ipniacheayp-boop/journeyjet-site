@@ -123,7 +123,7 @@ const PaymentOptions = () => {
   }, [navigate]);
 
   const handleStripePayment = async () => {
-    console.log('[PaymentOptions] Stripe payment initiated');
+    console.log('[PaymentOptions] Stripe payment initiated', { bookingDetails });
     
     if (!bookingDetails?.bookingId) {
       toast.error("Session expired. Please search again.");
@@ -133,25 +133,29 @@ const PaymentOptions = () => {
 
     setLoading(true);
 
-    // If we already have a checkoutUrl, use it directly
-    if (bookingDetails.checkoutUrl) {
-      console.log('[PaymentOptions] Using existing checkout URL');
-      toast.success("Redirecting to secure Stripe checkout...");
-      window.location.href = bookingDetails.checkoutUrl;
-      return;
-    }
-
-    // Otherwise, create a new checkout session
-    const checkoutUrl = await createCheckoutSession(bookingDetails.bookingId);
-    
-    if (checkoutUrl) {
-      // Update stored booking with new checkout URL
-      const updatedBooking = { ...bookingDetails, checkoutUrl };
-      sessionStorage.setItem('pendingBooking', JSON.stringify(updatedBooking));
+    try {
+      // Always create/retrieve a fresh checkout session to ensure URL is valid
+      console.log('[PaymentOptions] Creating/retrieving checkout session...');
+      const checkoutUrl = await createCheckoutSession(bookingDetails.bookingId);
       
-      toast.success("Redirecting to secure Stripe checkout...");
-      window.location.href = checkoutUrl;
-    } else {
+      if (checkoutUrl) {
+        // Update stored booking with new checkout URL
+        const updatedBooking = { ...bookingDetails, checkoutUrl };
+        sessionStorage.setItem('pendingBooking', JSON.stringify(updatedBooking));
+        
+        console.log('[PaymentOptions] Redirecting to Stripe checkout:', checkoutUrl);
+        toast.success("Redirecting to secure Stripe checkout...");
+        
+        // Use location.replace for cleaner redirect (no back button to payment page)
+        window.location.replace(checkoutUrl);
+      } else {
+        console.error('[PaymentOptions] No checkout URL returned');
+        toast.error("Failed to initialize payment. Please try again.");
+        setLoading(false);
+      }
+    } catch (err) {
+      console.error('[PaymentOptions] Payment error:', err);
+      toast.error("Payment initialization failed. Please try again.");
       setLoading(false);
     }
   };
