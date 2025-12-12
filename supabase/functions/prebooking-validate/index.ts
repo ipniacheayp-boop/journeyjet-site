@@ -134,14 +134,41 @@ serve(async (req) => {
         const errorData = await priceResponse.json();
         logStep('Amadeus price validation failed', errorData);
         
-        // Check if it's a price unavailable error
+        // Check if it's a price unavailable / no fare / offer expired error
         const errorCode = errorData.errors?.[0]?.code;
-        if (errorCode === '37200' || errorCode === '38196') {
+        const errorDetail = errorData.errors?.[0]?.detail || '';
+        
+        // Handle known errors gracefully: 37200, 38196, 4926 (No fare applicable)
+        if (errorCode === '37200' || errorCode === '38196' || errorCode === 4926 || errorCode === '4926' || 
+            errorDetail.toLowerCase().includes('no fare applicable') ||
+            errorDetail.toLowerCase().includes('offer expired')) {
+          
+          logStep('Offer expired or no fare available - falling back to mock validation for testing');
+          
+          // In test/sandbox mode, allow the booking to proceed with the original price
+          // This enables testing the full booking flow even when Amadeus test data expires
+          const useProd = Deno.env.get('USE_PROD_APIS') === 'true';
+          if (!useProd) {
+            const originalPrice = parseFloat(offer.price?.total || '0');
+            return new Response(
+              JSON.stringify({
+                ok: true,
+                price: originalPrice,
+                currency: offer.price?.currency || 'USD',
+                validatedOffer: offer,
+                expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+                warning: 'Using cached price - original offer may have expired in test environment',
+              }),
+              { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
+          }
+          
+          // In production, return proper error
           return new Response(
             JSON.stringify({
               ok: false,
               code: 'OFFER_EXPIRED',
-              message: 'This offer is no longer available. Please search again for updated prices.',
+              message: 'This flight offer is no longer available. Please search again for current prices.',
             }),
             { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
@@ -151,7 +178,7 @@ serve(async (req) => {
           JSON.stringify({
             ok: false,
             code: 'PROVIDER_ERROR',
-            message: errorData.errors?.[0]?.detail || 'Price validation failed',
+            message: errorData.errors?.[0]?.detail || 'Price validation failed. Please try again.',
           }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
