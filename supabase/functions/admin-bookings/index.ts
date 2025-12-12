@@ -17,14 +17,51 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // In production, you should verify admin permissions here
+    // Validate authorization header exists
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
+      console.log('[admin-bookings] No authorization header provided');
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    // Validate JWT token and get user
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
+    
+    if (userError || !user) {
+      console.log('[admin-bookings] Invalid token or user not found:', userError?.message);
+      return new Response(
+        JSON.stringify({ error: 'Invalid authentication token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log('[admin-bookings] User authenticated:', user.id);
+
+    // Verify admin role using the is_admin RPC function
+    const { data: isAdmin, error: roleError } = await supabaseClient
+      .rpc('is_admin');
+
+    if (roleError) {
+      console.error('[admin-bookings] Error checking admin role:', roleError.message);
+      return new Response(
+        JSON.stringify({ error: 'Failed to verify permissions' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!isAdmin) {
+      console.log('[admin-bookings] User is not an admin:', user.id);
+      return new Response(
+        JSON.stringify({ error: 'Forbidden - Admin access required' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log('[admin-bookings] Admin access verified for user:', user.id);
 
     const url = new URL(req.url);
     const bookingType = url.searchParams.get('type');
@@ -56,17 +93,20 @@ serve(async (req) => {
     const { data: bookings, error } = await query;
 
     if (error) {
+      console.error('[admin-bookings] Database query error:', error.message);
       throw error;
     }
+
+    console.log('[admin-bookings] Successfully retrieved', bookings?.length ?? 0, 'bookings');
 
     return new Response(
       JSON.stringify({ bookings }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
-    console.error('Error in admin-bookings:', error);
+    console.error('[admin-bookings] Unexpected error:', error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error occurred' }),
+      JSON.stringify({ error: 'An unexpected error occurred' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
