@@ -29,6 +29,7 @@ import PaymentCard from "./pages/PaymentCard";
 import PaymentUPI from "./pages/PaymentUPI";
 import PaymentStripeUPI from "./pages/PaymentStripeUPI";
 import PaymentQR from "./pages/PaymentQR";
+import PaymentProcessing from "./pages/PaymentProcessing";
 import ErrorPage from "./pages/ErrorPage";
 import NotFound from "./pages/NotFound";
 import SiteReviews from "./pages/SiteReviews";
@@ -79,12 +80,15 @@ const App = () => (
                 <Route path="/admin/deals" element={<DealsManagement />} />
                 <Route path="/admin/fx-savings" element={<FxSavingsDashboard />} />
                 <Route path="/payment-options" element={<PaymentOptions />} />
+                <Route path="/payment/processing" element={<PaymentProcessing />} />
                 <Route path="/payment/card" element={<PaymentCard />} />
                 <Route path="/payment/upi" element={<PaymentUPI />} />
                 <Route path="/payment/stripe-upi" element={<PaymentStripeUPI />} />
                 <Route path="/payment/qr" element={<PaymentQR />} />
                 <Route path="/payment-success" element={<PaymentSuccess />} />
+                <Route path="/payment/success" element={<PaymentSuccess />} />
                 <Route path="/payment-cancel" element={<PaymentCancel />} />
+                <Route path="/payment/cancel" element={<PaymentCancel />} />
                 <Route path="/agent-connect" element={<AgentConnect />} />
                 <Route path="/agent/wallet" element={<AgentWallet />} />
                 <Route path="/agent/login" element={<AgentLogin />} />

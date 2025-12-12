@@ -4,11 +4,24 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, BookOpen, Loader2, AlertCircle } from "lucide-react";
+import { CheckCircle2, BookOpen, Loader2, AlertCircle, Download, Ticket } from "lucide-react";
 import { toast } from "sonner";
-import { useBookingFlow } from "@/hooks/useBookingFlow";
+import { supabase } from "@/integrations/supabase/client";
 
 type BookingStage = 'pending_payment' | 'processing_provider' | 'confirmed' | 'failed' | 'unknown';
+
+interface BookingDetails {
+  bookingId: string;
+  bookingStatus: string;
+  paymentStatus: string;
+  paymentVerified: boolean;
+  providerBooked: boolean;
+  amount: number;
+  currency: string;
+  bookingType: string;
+  confirmedAt: string | null;
+  providerBookingId: string | null;
+}
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
@@ -18,9 +31,8 @@ const PaymentSuccess = () => {
   
   const [stage, setStage] = useState<BookingStage>('pending_payment');
   const [pollCount, setPollCount] = useState(0);
-  const [bookingDetails, setBookingDetails] = useState<any>(null);
+  const [bookingDetails, setBookingDetails] = useState<BookingDetails | null>(null);
   
-  const { checkBookingStatus } = useBookingFlow();
   const maxPolls = 45; // Poll for up to 6 minutes (45 * 8s)
   const pollInterval = 8000; // 8 seconds
 
@@ -42,19 +54,43 @@ const PaymentSuccess = () => {
 
   const pollBookingStatus = useCallback(async () => {
     const bookingId = getBookingId();
-    if (!bookingId) {
-      setStage('unknown');
-      return;
-    }
-
+    
     try {
-      const result = await checkBookingStatus(bookingId);
+      // Use the new session-verify endpoint
+      const queryParams = new URLSearchParams();
+      if (sessionId) queryParams.set('session_id', sessionId);
+      if (bookingId) queryParams.set('booking_id', bookingId);
+
+      const { data, error } = await supabase.functions.invoke('payments-session-verify', {
+        body: null,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      // Fallback to direct query with params
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/payments-session-verify?${queryParams.toString()}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to verify session');
+      }
+
+      const result = await response.json();
       
-      if (result.ok) {
+      if (result.bookingId) {
         setBookingDetails(result);
         
         // Check for confirmed status
-        if (result.status === 'confirmed') {
+        if (result.bookingStatus === 'confirmed' || result.providerBooked) {
           setStage('confirmed');
           sessionStorage.removeItem('pendingBooking');
           toast.success("Booking confirmed successfully!");
@@ -62,19 +98,14 @@ const PaymentSuccess = () => {
         }
         
         // Check for failed/cancelled status  
-        if (result.status === 'cancelled' || result.status === 'refunded') {
+        if (result.bookingStatus === 'cancelled' || result.bookingStatus === 'refunded') {
           setStage('failed');
           toast.error("Booking was cancelled or refunded");
           return true; // Stop polling
         }
         
         // Payment succeeded but booking not yet confirmed
-        if (result.paymentStatus === 'succeeded' || result.paymentStatus === 'paid' || result.paymentStatus === 'checkout_pending') {
-          setStage('processing_provider');
-        }
-        
-        // Payment complete from Stripe session
-        if (result.stage === 'payment_complete') {
+        if (result.paymentVerified || result.stripePaymentStatus === 'paid') {
           setStage('processing_provider');
         }
       }
@@ -83,7 +114,7 @@ const PaymentSuccess = () => {
     }
     
     return false; // Continue polling
-  }, [getBookingId, checkBookingStatus]);
+  }, [getBookingId, sessionId]);
 
   useEffect(() => {
     // Initial toast
@@ -179,10 +210,27 @@ const PaymentSuccess = () => {
     switch (stage) {
       case 'confirmed':
         return (
-          <p className="text-muted-foreground">
-            Your booking has been confirmed! A confirmation email has been sent to your email address.
-            Redirecting to your bookings...
-          </p>
+          <div className="space-y-3">
+            <p className="text-muted-foreground">
+              Your booking has been confirmed! A confirmation email has been sent to your email address.
+            </p>
+            {bookingDetails?.providerBookingId && (
+              <div className="bg-muted/50 rounded-lg p-3">
+                <p className="text-sm font-medium flex items-center gap-2">
+                  <Ticket className="w-4 h-4" />
+                  Confirmation: {bookingDetails.providerBookingId}
+                </p>
+              </div>
+            )}
+            {bookingDetails?.amount && (
+              <p className="text-lg font-semibold">
+                Total Paid: ${bookingDetails.amount.toLocaleString()} {bookingDetails.currency || 'USD'}
+              </p>
+            )}
+            <p className="text-sm text-muted-foreground">
+              Redirecting to your bookings...
+            </p>
+          </div>
         );
       
       case 'processing_provider':
