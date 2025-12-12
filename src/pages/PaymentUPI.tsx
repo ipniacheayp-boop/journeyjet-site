@@ -1,298 +1,50 @@
-import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Smartphone, Loader2, AlertTriangle } from "lucide-react";
-import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { AlertCircle, CreditCard } from "lucide-react";
 
-declare global {
-  interface Window {
-    Razorpay: any;
-  }
-}
-
+/**
+ * PaymentUPI - Information page explaining UPI is not available for USD payments
+ * 
+ * UPI payments are only available for INR transactions.
+ * All Stripe payments are processed in USD only.
+ */
 const PaymentUPI = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [bookingDetails, setBookingDetails] = useState<any>(null);
-  const [convertedAmount, setConvertedAmount] = useState<number | null>(null);
-  const [razorpayLoaded, setRazorpayLoaded] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Load Razorpay script
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.async = true;
-    script.onload = () => setRazorpayLoaded(true);
-    document.body.appendChild(script);
-
-    const storedBooking = sessionStorage.getItem('pendingBooking');
-    if (storedBooking) {
-      const booking = JSON.parse(storedBooking);
-      setBookingDetails(booking);
-      
-      // Convert currency from USD to INR
-      convertCurrency(parseFloat(booking.amount));
-    } else {
-      setError("Session expired. Please search again.");
-    }
-
-    return () => {
-      const existingScript = document.querySelector('script[src="https://checkout.razorpay.com/v1/checkout.js"]');
-      if (existingScript) {
-        document.body.removeChild(existingScript);
-      }
-    };
-  }, []);
-
-  const convertCurrency = async (usdAmount: number) => {
-    try {
-      const { data, error } = await supabase.functions.invoke('payments-convert', {
-        body: { from: 'USD', to: 'INR', amount: usdAmount },
-      });
-
-      if (error) throw error;
-      setConvertedAmount(data.convertedAmount);
-    } catch (error) {
-      console.error("Currency conversion error:", error);
-      // Fallback rate USD to INR
-      setConvertedAmount(usdAmount * 83);
-    }
-  };
-
-  const handlePayment = async () => {
-    if (!razorpayLoaded) {
-      toast.error("Payment system is loading. Please wait...");
-      return;
-    }
-
-    if (!convertedAmount) {
-      toast.error("Amount conversion failed. Please try again.");
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      // Create Razorpay order
-      const { data, error } = await supabase.functions.invoke('payments-razorpay-create-order', {
-        body: {
-          bookingId: bookingDetails.bookingId,
-          amount: convertedAmount,
-          currency: 'INR',
-        },
-      });
-
-      if (error) throw error;
-
-      console.log('[PaymentUPI] Opening Razorpay checkout with order ID:', data.orderId);
-
-      // Open Razorpay checkout
-      const options = {
-        key: data.keyId,
-        amount: data.amount,
-        currency: data.currency,
-        name: 'CheapFlights',
-        description: `Booking #${bookingDetails.bookingId.slice(0, 8)}`,
-        order_id: data.orderId,
-        prefill: {
-          email: bookingDetails.travelerInfo?.email || bookingDetails.contact_email,
-          contact: bookingDetails.travelerInfo?.phone || bookingDetails.contact_phone || '',
-        },
-        theme: {
-          color: '#0EA5E9',
-        },
-        method: {
-          upi: true,
-          card: false,
-          netbanking: false,
-          wallet: false,
-        },
-        handler: async function (response: any) {
-          try {
-            console.log('[PaymentUPI] Payment completed, verifying:', response.razorpay_payment_id);
-            
-            // Verify payment
-            const { data: verifyData, error: verifyError } = await supabase.functions.invoke(
-              'payments-razorpay-verify',
-              {
-                body: {
-                  razorpay_order_id: response.razorpay_order_id,
-                  razorpay_payment_id: response.razorpay_payment_id,
-                  razorpay_signature: response.razorpay_signature,
-                  bookingId: bookingDetails.bookingId,
-                },
-              }
-            );
-
-            if (verifyError) {
-              console.error('[PaymentUPI] Verification failed:', verifyError);
-              throw verifyError;
-            }
-
-            if (verifyData.success) {
-              console.log('[PaymentUPI] Payment verified successfully');
-              sessionStorage.removeItem('pendingBooking');
-              toast.success("Payment successful!");
-              navigate(`/payment-success?transaction_id=${response.razorpay_payment_id}`);
-            } else {
-              throw new Error('Payment verification failed');
-            }
-          } catch (error: any) {
-            console.error("[PaymentUPI] Payment verification error:", error);
-            toast.error("Payment verification failed");
-            navigate('/payment-cancel');
-          } finally {
-            setLoading(false);
-          }
-        },
-        modal: {
-          ondismiss: function () {
-            console.log('[PaymentUPI] Payment modal dismissed');
-            setLoading(false);
-            toast.info("Payment cancelled");
-          },
-        },
-      };
-
-      const razorpay = new window.Razorpay(options);
-      razorpay.on('payment.failed', function (response: any) {
-        console.error('[PaymentUPI] Payment failed:', response.error);
-        toast.error(`Payment failed: ${response.error.description}`);
-        setLoading(false);
-        navigate('/payment-cancel');
-      });
-      
-      razorpay.open();
-    } catch (error: any) {
-      console.error("[PaymentUPI] Payment error:", error);
-      toast.error(error.message || "Payment failed. Please try again.");
-      setLoading(false);
-    }
-  };
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1 pt-24 pb-16 flex items-center justify-center">
-          <Card className="max-w-md">
-            <CardContent className="pt-6 text-center">
-              <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
-              <h2 className="text-xl font-semibold mb-2">Session Expired</h2>
-              <p className="text-muted-foreground mb-4">{error}</p>
-              <Button onClick={() => navigate('/')}>
-                Return to Search
-              </Button>
-            </CardContent>
-          </Card>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
-  if (!bookingDetails) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Header />
-        <main className="flex-1 pt-24 pb-16 flex items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </main>
-        <Footer />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="flex-1 pt-24 pb-16 bg-secondary">
-        <div className="container mx-auto px-4 max-w-2xl">
-          <div className="text-center mb-8">
-            <div className="mx-auto w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-              <Smartphone className="w-10 h-10 text-primary" />
+      <main className="flex-1 pt-24 pb-16 flex items-center justify-center bg-secondary">
+        <Card className="max-w-md w-full mx-4">
+          <CardHeader className="text-center">
+            <div className="mx-auto w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4">
+              <AlertCircle className="h-8 w-8 text-amber-600" />
             </div>
-            <h1 className="text-4xl font-bold mb-2">Pay Using UPI</h1>
+            <CardTitle className="text-xl">UPI Not Available</CardTitle>
+          </CardHeader>
+          <CardContent className="text-center space-y-4">
             <p className="text-muted-foreground">
-              Complete your payment securely via UPI
+              UPI payments are only available for INR transactions. 
+              All international bookings are processed in USD via Stripe.
             </p>
-          </div>
-
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle>Payment Details</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex justify-between p-4 bg-primary/5 rounded-lg border border-primary/20">
-                <span className="font-medium">Amount to Pay</span>
-                <span className="text-2xl font-bold text-primary">
-                  ₹{convertedAmount ? convertedAmount.toFixed(2) : '...'}
-                </span>
-              </div>
-              
-              {bookingDetails && convertedAmount && (
-                <p className="text-sm text-muted-foreground text-center">
-                  (Original: ${parseFloat(bookingDetails.amount).toFixed(2)} USD)
-                </p>
-              )}
-
-              <div className="bg-secondary/50 border rounded-lg p-4 text-sm">
-                <p className="font-medium mb-2">How it works:</p>
-                <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
-                  <li>Click "Pay with UPI" button</li>
-                  <li>Choose your UPI app (GPay, PhonePe, Paytm, etc.)</li>
-                  <li>Complete payment securely in your UPI app</li>
-                  <li>Get instant confirmation</li>
-                </ol>
-              </div>
-
-              <Button 
-                onClick={handlePayment} 
-                disabled={loading || !convertedAmount || !razorpayLoaded}
-                className="w-full"
-                size="lg"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processing...
-                  </>
-                ) : !razorpayLoaded ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Loading Payment System...
-                  </>
-                ) : (
-                  `Pay ₹${convertedAmount ? convertedAmount.toFixed(2) : '...'} with UPI`
-                )}
-              </Button>
-
-              <Button 
-                variant="outline" 
-                onClick={() => navigate('/payment-options')}
-                className="w-full"
-                disabled={loading}
-              >
-                Choose Another Method
-              </Button>
-            </CardContent>
-          </Card>
-
-          <div className="text-center text-sm text-muted-foreground space-y-2">
-            <p className="flex items-center justify-center gap-2">
-              <span className="text-green-600">✓</span> Secure Payment via Razorpay
+            <p className="text-sm text-muted-foreground">
+              Please use the card payment option to complete your booking.
             </p>
-            <p className="text-xs">UPI • Instant confirmation • 100% Secure</p>
-          </div>
-        </div>
+            <div className="space-y-2 pt-4">
+              <Button onClick={() => navigate('/payment-options')} className="w-full">
+                <CreditCard className="mr-2 h-4 w-4" />
+                Pay with Card (USD)
+              </Button>
+              <Button variant="outline" onClick={() => navigate(-1)} className="w-full">
+                Go Back
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </main>
 
       <Footer />
