@@ -4,17 +4,9 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Smartphone, QrCode, Loader2, AlertCircle, Info } from "lucide-react";
+import { CreditCard, Smartphone, QrCode, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 
 const PaymentOptions = () => {
   const navigate = useNavigate();
@@ -22,8 +14,6 @@ const PaymentOptions = () => {
   const { user } = useRequireAuth();
   const [loading, setLoading] = useState(false);
   const [bookingDetails, setBookingDetails] = useState<any>(null);
-  const [paymentError, setPaymentError] = useState<string | null>(null);
-  const [showUpiModal, setShowUpiModal] = useState(false);
 
   useEffect(() => {
     const bookingId = searchParams.get('bookingId');
@@ -36,7 +26,8 @@ const PaymentOptions = () => {
       console.log('[PaymentOptions] Parsed booking:', { 
         bookingId: parsed.bookingId, 
         hasCheckoutUrl: !!parsed.checkoutUrl,
-        checkoutUrl: parsed.checkoutUrl?.substring(0, 50) + '...'
+        amount: parsed.amount,
+        currency: parsed.currency
       });
       
       // Verify bookingId matches if provided in URL
@@ -46,61 +37,51 @@ const PaymentOptions = () => {
         return;
       }
       
-      // Validate checkoutUrl exists
-      if (!parsed.checkoutUrl) {
-        setPaymentError("Payment session not created. Please go back and try again.");
-        setBookingDetails(parsed);
-        return;
-      }
-      
       setBookingDetails(parsed);
     } else {
-      toast.error("No booking found. Please start a new booking.");
+      toast.error("Session expired. Please search again.");
       navigate('/');
     }
   }, [navigate, searchParams]);
 
-  const handlePaymentMethod = async (method: string) => {
+  const handlePaymentMethod = (method: string) => {
     console.log('[PaymentOptions] Payment method selected:', method);
     
     if (!bookingDetails?.bookingId) {
-      toast.error("Booking not found. Please go back and try again.");
-      return;
-    }
-
-    // For UPI and QR, show info modal (INR only)
-    if (method === 'upi' || method === 'stripe-upi' || method === 'scanner') {
-      setShowUpiModal(true);
+      toast.error("Session expired. Please search again.");
+      navigate('/');
       return;
     }
 
     setLoading(true);
-    setPaymentError(null);
     
-    try {
-      // For card payments, redirect directly to Stripe Checkout
-      if (bookingDetails.checkoutUrl) {
-        console.log('[PaymentOptions] Redirecting to Stripe Checkout:', bookingDetails.checkoutUrl);
-        toast.success("Redirecting to secure payment...");
-        // Use window.location.href for full page redirect to Stripe
-        window.location.href = bookingDetails.checkoutUrl;
-        return;
-      } else {
-        // No checkout URL available
-        setPaymentError("Payment session expired. Please go back and try again.");
-        toast.error("Payment session not available. Please try again.");
-      }
-    } catch (error: any) {
-      console.error("[PaymentOptions] Payment method error:", error);
-      toast.error("Failed to process payment. Please try again.");
-      setPaymentError(error.message || "Payment error");
-    } finally {
-      setLoading(false);
+    // Navigate to the appropriate payment page
+    switch (method) {
+      case 'card':
+        // For card payments, redirect to Stripe Checkout URL if available
+        if (bookingDetails.checkoutUrl) {
+          console.log('[PaymentOptions] Redirecting to Stripe Checkout:', bookingDetails.checkoutUrl);
+          toast.success("Redirecting to secure payment...");
+          window.location.href = bookingDetails.checkoutUrl;
+        } else {
+          // Fallback to card page for manual payment
+          navigate('/payment/card');
+        }
+        break;
+      case 'upi':
+      case 'stripe-upi':
+        navigate('/payment/upi');
+        break;
+      case 'scanner':
+        navigate('/payment/qr');
+        break;
+      default:
+        toast.error("Unknown payment method");
+        setLoading(false);
     }
   };
 
   const handleGoBack = () => {
-    // Clear pending booking and go back to traveler form
     sessionStorage.removeItem('pendingBooking');
     navigate(-1);
   };
@@ -118,43 +99,11 @@ const PaymentOptions = () => {
   }
 
   const { amount, bookingType } = bookingDetails;
-  const currency = 'USD'; // Always use USD
+  const currency = 'USD';
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      
-      {/* UPI Info Modal */}
-      <Dialog open={showUpiModal} onOpenChange={setShowUpiModal}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Info className="h-5 w-5 text-primary" />
-              UPI Payments Not Available
-            </DialogTitle>
-            <DialogDescription className="pt-4 space-y-3">
-              <p>
-                UPI payments are only supported for transactions in <strong>INR (Indian Rupees)</strong>.
-              </p>
-              <p>
-                Your booking amount is in <strong>USD</strong>. Please use the <strong>Credit/Debit Card</strong> option to complete your payment securely via Stripe.
-              </p>
-              <div className="pt-4">
-                <Button 
-                  onClick={() => {
-                    setShowUpiModal(false);
-                    handlePaymentMethod('card');
-                  }}
-                  className="w-full"
-                >
-                  <CreditCard className="mr-2 h-4 w-4" />
-                  Pay with Card (USD)
-                </Button>
-              </div>
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
       
       <main className="flex-1 pt-24 pb-16 bg-secondary">
         <div className="container mx-auto px-4 max-w-4xl">
@@ -164,23 +113,6 @@ const PaymentOptions = () => {
               Complete your {bookingType} booking securely
             </p>
           </div>
-
-          {/* Error Alert */}
-          {paymentError && (
-            <Alert variant="destructive" className="mb-6">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription className="ml-2">
-                {paymentError}
-                <Button 
-                  variant="link" 
-                  className="p-0 h-auto ml-2 text-destructive-foreground underline"
-                  onClick={handleGoBack}
-                >
-                  Go back and try again
-                </Button>
-              </AlertDescription>
-            </Alert>
-          )}
 
           {/* Recommended: Card Payment */}
           <div className="mb-6">
@@ -210,10 +142,10 @@ const PaymentOptions = () => {
             </Card>
           </div>
 
-          {/* Other Payment Methods */}
-          <div className={`grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 ${paymentError || loading ? 'opacity-50 pointer-events-none' : ''}`}>
+          {/* Other Payment Methods (INR only) */}
+          <div className={`grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 ${loading ? 'opacity-50 pointer-events-none' : ''}`}>
             <Card 
-              className="cursor-pointer hover:shadow-lg transition-all hover:border-muted-foreground/50 group opacity-60"
+              className="cursor-pointer hover:shadow-lg transition-all hover:border-muted-foreground/50 group"
               onClick={() => handlePaymentMethod('upi')}
             >
               <CardHeader className="text-center pb-2">
@@ -224,13 +156,13 @@ const PaymentOptions = () => {
               </CardHeader>
               <CardContent className="text-center pt-0">
                 <p className="text-xs text-muted-foreground">
-                  INR only • Not available for USD
+                  Pay via Razorpay (INR)
                 </p>
               </CardContent>
             </Card>
 
             <Card 
-              className="cursor-pointer hover:shadow-lg transition-all hover:border-muted-foreground/50 group opacity-60"
+              className="cursor-pointer hover:shadow-lg transition-all hover:border-muted-foreground/50 group"
               onClick={() => handlePaymentMethod('stripe-upi')}
             >
               <CardHeader className="text-center pb-2">
@@ -241,13 +173,13 @@ const PaymentOptions = () => {
               </CardHeader>
               <CardContent className="text-center pt-0">
                 <p className="text-xs text-muted-foreground">
-                  INR only • Not available for USD
+                  Pay via Stripe UPI (INR)
                 </p>
               </CardContent>
             </Card>
 
             <Card 
-              className="cursor-pointer hover:shadow-lg transition-all hover:border-muted-foreground/50 group opacity-60"
+              className="cursor-pointer hover:shadow-lg transition-all hover:border-muted-foreground/50 group"
               onClick={() => handlePaymentMethod('scanner')}
             >
               <CardHeader className="text-center pb-2">
@@ -258,7 +190,7 @@ const PaymentOptions = () => {
               </CardHeader>
               <CardContent className="text-center pt-0">
                 <p className="text-xs text-muted-foreground">
-                  INR only • Not available for USD
+                  Scan QR to pay (INR)
                 </p>
               </CardContent>
             </Card>
