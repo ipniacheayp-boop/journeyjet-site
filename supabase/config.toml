@@ -6,6 +6,9 @@ verify_jwt = false
 [functions.payments-checkout-status]
 verify_jwt = false
 
+[functions.payments-session-verify]
+verify_jwt = false
+
 [functions.admin-bookings]
 verify_jwt = true
 
