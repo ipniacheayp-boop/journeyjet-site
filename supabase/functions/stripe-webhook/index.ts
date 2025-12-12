@@ -23,6 +23,113 @@ const logStep = (step: string, details?: any) => {
   console.log(`[STRIPE-WEBHOOK] ${step}${detailsStr}`);
 };
 
+// Finalize booking with provider (with retry logic)
+async function finalizeBookingWithProvider(
+  supabaseClient: any,
+  booking: any,
+  maxRetries: number = 3
+): Promise<{ success: boolean; providerBookingId?: string; error?: string }> {
+  const bookingType = booking.booking_type;
+  const bookingId = booking.id;
+  
+  logStep('Starting provider finalization', { bookingId, bookingType });
+  
+  // Skip if already finalized
+  if (booking.amadeus_pnr || booking.amadeus_order_id || booking.booking_details?.providerConfirmationId) {
+    logStep('Booking already finalized with provider', { bookingId });
+    return { 
+      success: true, 
+      providerBookingId: booking.amadeus_pnr || booking.amadeus_order_id || booking.booking_details?.providerConfirmationId 
+    };
+  }
+  
+  const generateProviderRef = (type: string): string => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const prefix = type === 'flight' ? 'PNR' : type === 'hotel' ? 'HTL' : 'CAR';
+    let result = `${prefix}-`;
+    for (let i = 0; i < 6; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  };
+  
+  const getRetryDelay = (attempt: number): number => {
+    return Math.min(1000 * Math.pow(2, attempt), 30000);
+  };
+  
+  let lastError = '';
+  
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      logStep(`Provider finalization attempt ${attempt + 1}/${maxRetries}`, { bookingId });
+      
+      // Simulate provider API call (in production, call actual provider APIs)
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // Simulate 95% success rate
+      if (Math.random() < 0.05) {
+        throw new Error('Provider temporarily unavailable');
+      }
+      
+      const providerBookingId = generateProviderRef(bookingType);
+      
+      // Update booking with provider reference
+      const updateData: any = {
+        ticket_issued_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      
+      if (bookingType === 'flight') {
+        updateData.amadeus_pnr = providerBookingId;
+        updateData.amadeus_order_id = `ORD-${Date.now()}`;
+      } else {
+        updateData.booking_details = {
+          ...booking.booking_details,
+          providerConfirmationId: providerBookingId,
+          providerConfirmedAt: new Date().toISOString(),
+        };
+      }
+      
+      await supabaseClient
+        .from('bookings')
+        .update(updateData)
+        .eq('id', bookingId);
+      
+      logStep('Provider finalization successful', { bookingId, providerBookingId });
+      
+      return { success: true, providerBookingId };
+      
+    } catch (error) {
+      lastError = error instanceof Error ? error.message : 'Unknown error';
+      logStep(`Provider finalization attempt failed`, { bookingId, attempt, error: lastError });
+      
+      if (attempt < maxRetries - 1) {
+        const delay = getRetryDelay(attempt);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  }
+  
+  // All retries failed - mark for admin review
+  logStep('All provider finalization attempts failed', { bookingId, error: lastError });
+  
+  await supabaseClient
+    .from('bookings')
+    .update({
+      payment_status: 'provider_pending',
+      updated_at: new Date().toISOString(),
+      booking_details: {
+        ...booking.booking_details,
+        providerError: lastError,
+        providerFailedAt: new Date().toISOString(),
+        requiresAdminReview: true,
+      },
+    })
+    .eq('id', bookingId);
+  
+  return { success: false, error: lastError };
+}
+
 serve(async (req) => {
   logStep("Webhook received", { headers: Object.fromEntries(req.headers.entries()) });
   
@@ -155,6 +262,7 @@ serve(async (req) => {
         .from('bookings')
         .update({
           status: 'confirmed',
+          payment_status: 'succeeded',
           stripe_payment_intent_id: session.payment_intent as string,
           confirmed_at: new Date().toISOString(),
         })
@@ -195,6 +303,26 @@ serve(async (req) => {
           logStep("Commission recorded", { agentId: booking.agent_id, amount: commissionAmount });
         }
       }
+
+      // Trigger provider finalization in background with retry logic
+      logStep('Starting provider finalization', { bookingId, bookingType });
+      
+      const providerResult = await finalizeBookingWithProvider(supabaseClient, booking, 3);
+      
+      if (providerResult.success) {
+        logStep('Provider finalization completed', { 
+          bookingId, 
+          providerBookingId: providerResult.providerBookingId 
+        });
+      } else {
+        logStep('Provider finalization failed - marked for admin review', { 
+          bookingId, 
+          error: providerResult.error 
+        });
+        // Payment was successful, but provider booking failed
+        // Booking is marked as provider_pending for admin review
+        // Do NOT refund automatically - let admin handle it
+      }
     }
 
     // Handle direct PaymentIntent success/failure (Elements flow)
@@ -203,9 +331,10 @@ serve(async (req) => {
       logStep('Processing payment_intent.succeeded', { id: pi.id, metadata: pi.metadata });
 
       const bookingId = (pi.metadata as any)?.bookingId;
+      let targetBookingId = bookingId;
 
       if (bookingId) {
-        await supabaseClient
+        const { data: booking } = await supabaseClient
           .from('bookings')
           .update({
             status: 'confirmed',
@@ -215,16 +344,25 @@ serve(async (req) => {
             confirmed_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           })
-          .eq('id', bookingId);
+          .eq('id', bookingId)
+          .select()
+          .single();
 
         logStep('Booking updated from PI metadata', { bookingId });
+        
+        // Trigger provider finalization
+        if (booking) {
+          const providerResult = await finalizeBookingWithProvider(supabaseClient, booking, 3);
+          logStep('Provider finalization result', { bookingId, success: providerResult.success });
+        }
       } else {
         // Fallback: find by stored payment_intent_id
         const { data: found } = await supabaseClient
           .from('bookings')
-          .select('id')
+          .select('*')
           .eq('stripe_payment_intent_id', pi.id)
           .maybeSingle();
+          
         if (found?.id) {
           await supabaseClient
             .from('bookings')
@@ -237,6 +375,10 @@ serve(async (req) => {
             })
             .eq('id', found.id);
           logStep('Booking updated by PI id', { bookingId: found.id });
+          
+          // Trigger provider finalization
+          const providerResult = await finalizeBookingWithProvider(supabaseClient, found, 3);
+          logStep('Provider finalization result', { bookingId: found.id, success: providerResult.success });
         }
       }
     }
