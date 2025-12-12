@@ -96,15 +96,9 @@ const PaymentStripeUPI = () => {
         }
         const baseBooking = JSON.parse(storedBooking);
 
-        // Load Stripe publishable key
-        const { data: keyData, error: keyError } = await supabase.functions.invoke(
-          "payments-stripe-publishable-key"
-        );
-        if (keyError || !keyData?.publishableKey) {
-          toast.error("Stripe is not configured");
-          return;
-        }
-        setStripePromise(loadStripe(keyData.publishableKey));
+        // Load Stripe with publishable key (public key, safe for frontend)
+        const stripePublishableKey = "pk_live_51SCf0hRZ1oiw5xMj93coxIRQh0ahJ0sCGdwUo7AdrlH3qnPbHM3GtwVLaDwooEq6P158m4zHkYlXfxIkEZplD3P700BU9V0kRY";
+        setStripePromise(loadStripe(stripePublishableKey));
 
         // Convert USD -> INR if needed
         let amountInINR = baseBooking.amount;
