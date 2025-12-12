@@ -156,8 +156,9 @@ export const useBookingFlow = () => {
   // Step 3: Poll booking status after payment
   const checkBookingStatus = useCallback(async (bookingId: string): Promise<BookingStatusResult> => {
     try {
+      // First try the new payments-checkout-status endpoint
       const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/bookings-status?bookingId=${bookingId}`,
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/payments-checkout-status?booking_id=${bookingId}`,
         {
           method: 'GET',
           headers: {
@@ -169,17 +170,41 @@ export const useBookingFlow = () => {
 
       if (!response.ok) {
         console.error('Booking status check failed:', response.status);
-        return { ok: false };
+        // Fallback to bookings-status endpoint
+        const fallbackResponse = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/bookings-status?bookingId=${bookingId}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            },
+          }
+        );
+        
+        if (!fallbackResponse.ok) {
+          return { ok: false };
+        }
+        
+        const fallbackData = await fallbackResponse.json();
+        return {
+          ok: true,
+          bookingId: fallbackData.id,
+          status: fallbackData.status,
+          paymentStatus: fallbackData.payment_status,
+          stage: fallbackData.stage,
+          confirmedAt: fallbackData.confirmed_at,
+        };
       }
 
       const data = await response.json();
       return {
         ok: true,
-        bookingId: data.id,
+        bookingId: data.bookingId,
         status: data.status,
-        paymentStatus: data.payment_status,
-        stage: data.stage,
-        confirmedAt: data.confirmed_at,
+        paymentStatus: data.paymentStatus,
+        stage: data.stripeSessionStatus === 'complete' ? 'payment_complete' : 'pending',
+        confirmedAt: data.confirmedAt,
       };
     } catch (err: any) {
       console.error('Error checking booking status:', err);
