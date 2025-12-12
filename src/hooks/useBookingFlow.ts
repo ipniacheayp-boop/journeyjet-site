@@ -156,12 +156,6 @@ export const useBookingFlow = () => {
   // Step 3: Poll booking status after payment
   const checkBookingStatus = useCallback(async (bookingId: string): Promise<BookingStatusResult> => {
     try {
-      const { data, error: fnError } = await supabase.functions.invoke('bookings-status', {
-        body: null,
-        headers: {},
-      });
-
-      // Use query params approach
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/bookings-status?bookingId=${bookingId}`,
         {
@@ -173,9 +167,22 @@ export const useBookingFlow = () => {
         }
       );
 
-      const data2 = await response.json();
-      return data2;
+      if (!response.ok) {
+        console.error('Booking status check failed:', response.status);
+        return { ok: false };
+      }
+
+      const data = await response.json();
+      return {
+        ok: true,
+        bookingId: data.id,
+        status: data.status,
+        paymentStatus: data.payment_status,
+        stage: data.stage,
+        confirmedAt: data.confirmed_at,
+      };
     } catch (err: any) {
+      console.error('Error checking booking status:', err);
       return { ok: false };
     }
   }, []);

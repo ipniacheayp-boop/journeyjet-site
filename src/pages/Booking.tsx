@@ -69,6 +69,57 @@ const Booking = () => {
     }
   }, [priceChangeData]);
 
+  // Extract pricing info based on booking type - moved before hooks to ensure consistent hook ordering
+  const getPrice = (offerData: any) => {
+    if (!offerData) return "0";
+    if (bookingType === "flights") {
+      return offerData.price?.total || offerData.price?.grandTotal || "0";
+    } else if (bookingType === "hotels") {
+      return offerData.offers?.[0]?.price?.total || offerData.price?.total || "0";
+    } else if (bookingType === "cars") {
+      return offerData.price?.total || "0";
+    }
+    return "0";
+  };
+
+  const getCurrency = (offerData: any) => {
+    if (!offerData) return "USD";
+    if (bookingType === "flights") {
+      return offerData.price?.currency || "USD";
+    } else if (bookingType === "hotels") {
+      return offerData.offers?.[0]?.price?.currency || offerData.price?.currency || "USD";
+    } else if (bookingType === "cars") {
+      return offerData.price?.currency || "USD";
+    }
+    return "USD";
+  };
+
+  // Calculate values that don't depend on offer being present
+  const price = validatedPrice || parseFloat(getPrice(offer));
+  const currency = validatedCurrency || getCurrency(offer);
+  const taxes = price * 0.15; // 15% estimated taxes
+  const total = price + taxes;
+
+  // FX-SmartSave calculation - MUST be called unconditionally (React hooks rule)
+  const normalizedBookingType = (bookingType === 'flights' ? 'flight' : bookingType === 'hotels' ? 'hotel' : bookingType === 'cars' ? 'car' : 'flight') as 'flight' | 'hotel' | 'car';
+  
+  const { data: fxData } = useFxSmartSave({
+    productType: normalizedBookingType,
+    prices: [
+      { currency: 'USD', amount: total || 0 },
+      { currency: 'EUR', amount: (total || 0) * 0.92 },
+      { currency: 'GBP', amount: (total || 0) * 0.79 },
+    ],
+    travelDate: offer?.itineraries?.[0]?.segments?.[0]?.departure?.at?.split('T')[0],
+    enabled: !!offer && total > 0, // Only enable when we have valid data
+  });
+
+  const handleCurrencySelect = (useRecommended: boolean, curr: string) => {
+    setSelectedCurrency(curr);
+  };
+
+  const isProcessing = loading || validating;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -115,7 +166,7 @@ const Booking = () => {
     // Step 2: Create provisional booking
     await proceedToCheckout(
       validationResult.validatedOffer || offer,
-      validationResult.price || parseFloat(getPrice()),
+      validationResult.price || parseFloat(getPrice(offer)),
       validationResult.currency || 'USD',
       validationResult.expiresAt
     );
@@ -123,18 +174,18 @@ const Booking = () => {
 
   const proceedToCheckout = async (
     offerToBook: any,
-    price: number,
-    currency: string,
+    checkoutPrice: number,
+    checkoutCurrency: string,
     expires?: string
   ) => {
-    const productType = bookingType as string;
+    const productTypeName = bookingType as string;
     
     const result = await createProvisionalBooking(
-      productType,
+      productTypeName,
       offer,
       offerToBook,
-      price,
-      currency,
+      checkoutPrice,
+      checkoutCurrency,
       clientRequestIdRef.current,
       {
         ...formData,
@@ -156,8 +207,8 @@ const Booking = () => {
       sessionStorage.setItem('pendingBooking', JSON.stringify({
         bookingId: result.bookingId,
         checkoutUrl: result.checkoutUrl,
-        amount: price.toFixed(2),
-        currency,
+        amount: checkoutPrice.toFixed(2),
+        currency: checkoutCurrency,
         bookingType,
         agentId,
       }));
@@ -199,6 +250,7 @@ const Booking = () => {
     toast.info("Booking cancelled. You can search for new options.");
   };
 
+  // Early return AFTER all hooks are called
   if (!offer) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -221,51 +273,6 @@ const Booking = () => {
       </div>
     );
   }
-
-  // Extract pricing info based on booking type
-  const getPrice = () => {
-    if (bookingType === "flights") {
-      return offer.price?.total || offer.price?.grandTotal || "0";
-    } else if (bookingType === "hotels") {
-      return offer.offers?.[0]?.price?.total || offer.price?.total || "0";
-    } else if (bookingType === "cars") {
-      return offer.price?.total || "0";
-    }
-    return "0";
-  };
-
-  const getCurrency = () => {
-    if (bookingType === "flights") {
-      return offer.price?.currency || "USD";
-    } else if (bookingType === "hotels") {
-      return offer.offers?.[0]?.price?.currency || offer.price?.currency || "USD";
-    } else if (bookingType === "cars") {
-      return offer.price?.currency || "USD";
-    }
-    return "USD";
-  };
-
-  const price = validatedPrice || parseFloat(getPrice());
-  const currency = validatedCurrency || getCurrency();
-  const taxes = price * 0.15; // 15% estimated taxes
-  const total = price + taxes;
-
-  // FX-SmartSave calculation
-  const { data: fxData } = useFxSmartSave({
-    productType: bookingType as 'flight' | 'hotel' | 'car',
-    prices: [
-      { currency: 'USD', amount: total },
-      { currency: 'EUR', amount: total * 0.92 },
-      { currency: 'GBP', amount: total * 0.79 },
-    ],
-    travelDate: offer?.itineraries?.[0]?.segments?.[0]?.departure?.at?.split('T')[0],
-  });
-
-  const handleCurrencySelect = (useRecommended: boolean, curr: string) => {
-    setSelectedCurrency(curr);
-  };
-
-  const isProcessing = loading || validating;
 
   return (
     <div className="min-h-screen flex flex-col">

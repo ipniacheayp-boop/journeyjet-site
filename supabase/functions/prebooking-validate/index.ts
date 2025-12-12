@@ -225,6 +225,26 @@ serve(async (req) => {
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
 
+    } else if (productType === 'car') {
+      // For cars, validate the offer is still available
+      // Return the offer as-is with validation timestamp
+      
+      const price = parseFloat(offer.price?.total || '0');
+      const currency = offer.price?.currency || 'USD';
+
+      logStep('Car offer validated', { price, currency });
+
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          price,
+          currency,
+          validatedOffer: offer,
+          expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString(), // 30 min hold for cars
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+
     } else {
       return new Response(
         JSON.stringify({
