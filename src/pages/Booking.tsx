@@ -202,24 +202,36 @@ const Booking = () => {
       return;
     }
 
-    if (result.checkoutUrl) {
-      // Store booking details for status polling after payment
-      sessionStorage.setItem('pendingBooking', JSON.stringify({
-        bookingId: result.bookingId,
-        checkoutUrl: result.checkoutUrl,
-        amount: checkoutPrice.toFixed(2),
-        currency: checkoutCurrency,
-        bookingType,
-        agentId,
-      }));
+    // Store booking details for payment options page
+    const pendingBookingData = {
+      bookingId: result.bookingId,
+      checkoutUrl: result.checkoutUrl || null,
+      amount: checkoutPrice.toFixed(2),
+      currency: checkoutCurrency,
+      bookingType,
+      agentId,
+      bookingReference: result.bookingReference,
+      travelerInfo: {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+      },
+    };
 
-      toast.success("Redirecting to secure payment...");
-      
-      // Redirect to Stripe Checkout
-      window.location.href = result.checkoutUrl;
-    } else {
-      toast.error("Failed to create checkout session");
+    sessionStorage.setItem('pendingBooking', JSON.stringify(pendingBookingData));
+
+    if (!result.checkoutUrl) {
+      toast.error("Payment session not created. Please try again.");
+      // Generate new clientRequestId for retry
+      clientRequestIdRef.current = generateClientRequestId();
+      return;
     }
+
+    toast.success("Redirecting to payment options...");
+    
+    // Navigate to payment options page
+    navigate(`/payment-options?bookingId=${result.bookingId}`);
   };
 
   const handlePriceChangeConfirm = async () => {

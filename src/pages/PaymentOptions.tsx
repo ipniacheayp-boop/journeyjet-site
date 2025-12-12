@@ -4,9 +4,10 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Smartphone, QrCode, Loader2 } from "lucide-react";
+import { CreditCard, Smartphone, QrCode, Loader2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const PaymentOptions = () => {
   const navigate = useNavigate();
@@ -14,35 +15,61 @@ const PaymentOptions = () => {
   const { user } = useRequireAuth();
   const [loading, setLoading] = useState(false);
   const [bookingDetails, setBookingDetails] = useState<any>(null);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
 
   useEffect(() => {
+    const bookingId = searchParams.get('bookingId');
     const storedBooking = sessionStorage.getItem('pendingBooking');
+    
     if (storedBooking) {
-      setBookingDetails(JSON.parse(storedBooking));
+      const parsed = JSON.parse(storedBooking);
+      
+      // Verify bookingId matches if provided in URL
+      if (bookingId && parsed.bookingId !== bookingId) {
+        toast.error("Booking mismatch. Please try again.");
+        navigate('/');
+        return;
+      }
+      
+      // Validate checkoutUrl exists
+      if (!parsed.checkoutUrl) {
+        setPaymentError("Payment session not created. Please go back and try again.");
+        setBookingDetails(parsed);
+        return;
+      }
+      
+      setBookingDetails(parsed);
     } else {
-      toast.error("No booking found");
+      toast.error("No booking found. Please start a new booking.");
       navigate('/');
     }
-  }, [navigate]);
+  }, [navigate, searchParams]);
 
   const handlePaymentMethod = async (method: string) => {
+    if (!bookingDetails?.checkoutUrl) {
+      toast.error("Payment session not available. Please go back and try again.");
+      setPaymentError("Payment session not created. Please go back and try again.");
+      return;
+    }
+
     setLoading(true);
     
     try {
-      if (method === 'card') {
-        navigate('/payment/card');
-      } else if (method === 'upi') {
-        navigate('/payment/upi');
-      } else if (method === 'stripe-upi') {
-        navigate('/payment/stripe-upi');
-      } else if (method === 'scanner') {
-        navigate('/payment/qr');
+      // All methods redirect to Stripe Checkout
+      if (method === 'card' || method === 'upi' || method === 'stripe-upi' || method === 'scanner') {
+        // Redirect to Stripe Checkout
+        window.location.href = bookingDetails.checkoutUrl;
       }
     } catch (error) {
       toast.error("Failed to process payment method");
-    } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoBack = () => {
+    // Clear pending booking and go back to traveler form
+    sessionStorage.removeItem('pendingBooking');
+    navigate(-1);
   };
 
   if (!bookingDetails) {
@@ -72,7 +99,24 @@ const PaymentOptions = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          {/* Error Alert */}
+          {paymentError && (
+            <Alert variant="destructive" className="mb-6">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription className="ml-2">
+                {paymentError}
+                <Button 
+                  variant="link" 
+                  className="p-0 h-auto ml-2 text-destructive-foreground underline"
+                  onClick={handleGoBack}
+                >
+                  Go back and try again
+                </Button>
+              </AlertDescription>
+            </Alert>
+          )}
+
+          <div className={`grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 ${paymentError || loading ? 'opacity-50 pointer-events-none' : ''}`}>
             <Card 
               className="cursor-pointer hover:shadow-lg transition-all hover:border-primary group"
               onClick={() => handlePaymentMethod('card')}
@@ -179,10 +223,18 @@ const PaymentOptions = () => {
               <div className="mt-6 text-center">
                 <Button 
                   variant="outline" 
-                  onClick={() => navigate(-1)}
+                  onClick={handleGoBack}
                   className="w-full"
+                  disabled={loading}
                 >
-                  Go Back
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    'Go Back'
+                  )}
                 </Button>
               </div>
             </CardContent>
