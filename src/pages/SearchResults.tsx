@@ -3,17 +3,17 @@ import { useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
 import { useFlightSearch } from "@/hooks/useFlightSearch";
 import { useHotelSearch } from "@/hooks/useHotelSearch";
 import { useCarSearch } from "@/hooks/useCarSearch";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
+import FlightResultCard from "@/components/FlightResultCard";
+import HotelResultCard from "@/components/HotelResultCard";
+import CarResultCard from "@/components/CarResultCard";
 import { toast } from "sonner";
-import { Plane, Hotel as HotelIcon, Car, MapPin, Calendar, Users, Clock } from "lucide-react";
-import { formatCurrency } from "@/lib/utils";
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
@@ -134,214 +134,6 @@ const SearchResults = () => {
     window.location.href = `/booking/${type}`;
   };
 
-  const renderFlightCard = (flight: any, index: number) => {
-    const firstSegment = flight.itineraries?.[0]?.segments?.[0];
-    const lastSegment = flight.itineraries?.[0]?.segments?.slice(-1)[0];
-    const price = flight.price?.total || flight.price?.grandTotal || "N/A";
-    const currency = flight.price?.currency || "USD";
-    const duration = flight.itineraries?.[0]?.duration || "";
-
-    return (
-      <Card key={index} className="hover:shadow-lg transition-shadow">
-        <CardHeader>
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                <Plane className="w-6 h-6 text-primary" />
-              </div>
-              <div>
-                <CardTitle className="text-lg">
-                  {firstSegment?.departure?.iataCode} → {lastSegment?.arrival?.iataCode}
-                </CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  {firstSegment?.carrierCode} {firstSegment?.number}
-                </p>
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="flex items-center gap-2 justify-end mb-1">
-                <Badge variant="default" className="bg-green-600 hover:bg-green-700 text-white">
-                  🟢 Lowest Price Guaranteed
-                </Badge>
-              </div>
-              <div className="text-2xl font-bold text-primary">{formatCurrency(price, currency)}</div>
-              <p className="text-sm text-muted-foreground">{currency}</p>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 text-sm">
-              <Calendar className="w-4 h-4 text-muted-foreground" />
-              <span>
-                {firstSegment?.departure?.at ? new Date(firstSegment.departure.at).toLocaleString() : "N/A"}
-              </span>
-            </div>
-            {duration && (
-              <div className="flex items-center gap-2 text-sm">
-                <Clock className="w-4 h-4 text-muted-foreground" />
-                <span>Duration: {duration.replace('PT', '').replace('H', 'h ').replace('M', 'm')}</span>
-              </div>
-            )}
-            <div className="flex items-center gap-2">
-              <Badge variant="outline">{flight.itineraries?.[0]?.segments?.length || 1} stop(s)</Badge>
-              <Badge variant="outline">{flight.travelerPricings?.[0]?.fareDetailsBySegment?.[0]?.cabin || "Economy"}</Badge>
-            </div>
-            <Button onClick={() => handleBook(flight)} className="w-full">
-              Book Now
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  };
-
-  const renderHotelCard = (hotel: any, index: number) => {
-    const offer = hotel.offers?.[0] || hotel;
-    const price = offer.price?.total || "N/A";
-    const currency = offer.price?.currency || "USD";
-
-    return (
-      <Card key={index} className="hover:shadow-lg transition-shadow">
-        <CardHeader>
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                <HotelIcon className="w-6 h-6 text-primary" />
-              </div>
-              <div>
-                <CardTitle className="text-lg">{hotel.hotel?.name || "Hotel"}</CardTitle>
-                <p className="text-sm text-muted-foreground flex items-center gap-1">
-                  <MapPin className="w-3 h-3" />
-                  {hotel.hotel?.cityCode || "N/A"}
-                </p>
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="flex items-center gap-2 justify-end mb-1">
-                <Badge variant="default" className="bg-green-600 hover:bg-green-700 text-white">
-                  🟢 Lowest Price Guaranteed
-                </Badge>
-              </div>
-              <div className="text-2xl font-bold text-primary">{formatCurrency(price, currency)}</div>
-              <p className="text-sm text-muted-foreground">{currency}</p>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {offer.room && (
-              <div className="text-sm">
-                <span className="font-medium">Room: </span>
-                {offer.room.description?.text || offer.room.typeEstimated?.category || "Standard"}
-              </div>
-            )}
-            {offer.policies && (
-              <div className="text-sm text-muted-foreground">
-                Cancellation: {offer.policies.cancellation?.type || "Check policy"}
-              </div>
-            )}
-            <Button onClick={() => handleBook(hotel)} className="w-full">
-              Book Now
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  };
-
-  const renderCarCard = (car: any, index: number) => {
-    const vehicle = car.vehicle || {};
-    const price = car.price?.total || "N/A";
-    const currency = car.price?.currency || "USD";
-    const provider = car.provider || {};
-
-    // Build vehicle name
-    const vehicleName = vehicle.make && vehicle.model 
-      ? `${vehicle.make} ${vehicle.model}` 
-      : vehicle.category || "Car Rental";
-
-    return (
-      <Card key={index} className="hover:shadow-lg transition-shadow">
-        <CardHeader>
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3">
-              {vehicle.imageUrl ? (
-                <img 
-                  src={vehicle.imageUrl} 
-                  alt={vehicleName}
-                  className="w-16 h-12 object-contain rounded-lg bg-muted"
-                />
-              ) : (
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <Car className="w-6 h-6 text-primary" />
-                </div>
-              )}
-              <div>
-                <CardTitle className="text-lg">{vehicleName}</CardTitle>
-                <p className="text-sm text-muted-foreground">{vehicle.category || "Standard"}</p>
-                {provider.name && (
-                  <p className="text-xs text-muted-foreground mt-1">by {provider.name}</p>
-                )}
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="flex items-center gap-2 justify-end mb-1">
-                <Badge variant="default" className="bg-green-600 hover:bg-green-700 text-white text-xs">
-                  🟢 Best Price
-                </Badge>
-              </div>
-              <div className="text-2xl font-bold text-primary">{formatCurrency(price, currency)}</div>
-              <p className="text-xs text-muted-foreground">total</p>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {/* Vehicle Features */}
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <div className="flex items-center gap-2">
-                <Users className="w-4 h-4 text-muted-foreground" />
-                <span>{vehicle.seats || 5} seats</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-4 h-4 text-muted-foreground">🚪</span>
-                <span>{vehicle.doors || 4} doors</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-4 h-4 text-muted-foreground">🧳</span>
-                <span>{vehicle.bags || 2} bags</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-4 h-4 text-muted-foreground">⚙️</span>
-                <span>{vehicle.transmission || "Auto"}</span>
-              </div>
-            </div>
-
-            {/* Feature badges */}
-            <div className="flex flex-wrap gap-2">
-              {vehicle.hasAC !== false && (
-                <Badge variant="outline" className="text-xs">❄️ AC</Badge>
-              )}
-              {vehicle.transmission && (
-                <Badge variant="outline" className="text-xs">{vehicle.transmission}</Badge>
-              )}
-              {vehicle.fuelType && (
-                <Badge variant="outline" className="text-xs">{vehicle.fuelType}</Badge>
-              )}
-              {vehicle.acrissCode && (
-                <Badge variant="secondary" className="text-xs">{vehicle.acrissCode}</Badge>
-              )}
-            </div>
-
-            <Button onClick={() => handleBook(car)} className="w-full">
-              Book Now
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -412,9 +204,15 @@ const SearchResults = () => {
             </Card>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {type === "flights" && results.map((flight, i) => renderFlightCard(flight, i))}
-              {type === "hotels" && results.map((hotel, i) => renderHotelCard(hotel, i))}
-              {type === "cars" && results.map((car, i) => renderCarCard(car, i))}
+              {type === "flights" && results.map((flight, i) => (
+                <FlightResultCard key={i} flight={flight} onBook={handleBook} />
+              ))}
+              {type === "hotels" && results.map((hotel, i) => (
+                <HotelResultCard key={i} hotel={hotel} onBook={handleBook} />
+              ))}
+              {type === "cars" && results.map((car, i) => (
+                <CarResultCard key={i} car={car} onBook={handleBook} />
+              ))}
             </div>
           )}
         </div>
