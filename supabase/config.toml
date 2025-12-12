@@ -1,5 +1,11 @@
 project_id = "qgmhqhejoilexhgwdujl"
 
+[functions.payments-create-checkout-session]
+verify_jwt = false
+
+[functions.payments-checkout-status]
+verify_jwt = false
+
 [functions.admin-bookings]
 verify_jwt = true
 

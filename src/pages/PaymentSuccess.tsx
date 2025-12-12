@@ -53,17 +53,28 @@ const PaymentSuccess = () => {
       if (result.ok) {
         setBookingDetails(result);
         
+        // Check for confirmed status
         if (result.status === 'confirmed') {
           setStage('confirmed');
-          // Clear pending booking from session storage
           sessionStorage.removeItem('pendingBooking');
           toast.success("Booking confirmed successfully!");
           return true; // Stop polling
-        } else if (result.status === 'cancelled' || result.status === 'refunded') {
+        }
+        
+        // Check for failed/cancelled status  
+        if (result.status === 'cancelled' || result.status === 'refunded') {
           setStage('failed');
           toast.error("Booking was cancelled or refunded");
           return true; // Stop polling
-        } else if (result.paymentStatus === 'succeeded' || result.paymentStatus === 'paid') {
+        }
+        
+        // Payment succeeded but booking not yet confirmed
+        if (result.paymentStatus === 'succeeded' || result.paymentStatus === 'paid' || result.paymentStatus === 'checkout_pending') {
+          setStage('processing_provider');
+        }
+        
+        // Payment complete from Stripe session
+        if (result.stage === 'payment_complete') {
           setStage('processing_provider');
         }
       }

@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Loader2, Shield, CheckCircle, AlertCircle } from "lucide-react";
+import { CreditCard, Loader2, Shield, CheckCircle, AlertCircle, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 interface BookingDetails {
   bookingId: string;
@@ -28,6 +29,7 @@ const PaymentOptions = () => {
   const [searchParams] = useSearchParams();
   const { user } = useRequireAuth();
   const [loading, setLoading] = useState(false);
+  const [creatingSession, setCreatingSession] = useState(false);
   const [bookingDetails, setBookingDetails] = useState<BookingDetails | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -66,7 +68,61 @@ const PaymentOptions = () => {
     }
   }, [searchParams]);
 
-  const handleStripePayment = () => {
+  // Create or retrieve Stripe checkout session
+  const createCheckoutSession = useCallback(async (bookingId: string) => {
+    setCreatingSession(true);
+    
+    try {
+      console.log('[PaymentOptions] Creating checkout session for booking:', bookingId);
+      
+      const idempotencyKey = crypto.randomUUID();
+      const origin = window.location.origin;
+      
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/payments-create-checkout-session`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+          body: JSON.stringify({
+            booking_temp_id: bookingId,
+            idempotency_key: idempotencyKey,
+            return_url: `${origin}/payment-success?session_id={CHECKOUT_SESSION_ID}&booking_id=${bookingId}`,
+            cancel_url: `${origin}/payment-cancel?booking_id=${bookingId}`,
+          }),
+        }
+      );
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        if (response.status === 409 && data.error === 'price_changed') {
+          toast.error("Price has changed. Please search again for updated pricing.");
+          sessionStorage.removeItem('pendingBooking');
+          navigate('/');
+          return null;
+        }
+        throw new Error(data.message || data.error || 'Failed to create checkout session');
+      }
+
+      console.log('[PaymentOptions] Checkout session created:', { 
+        hasUrl: !!data.checkoutUrl, 
+        amount: data.amountUSD 
+      });
+      
+      return data.checkoutUrl;
+    } catch (err: any) {
+      console.error('[PaymentOptions] Error creating checkout session:', err);
+      toast.error(err.message || 'Failed to create payment session. Please try again.');
+      return null;
+    } finally {
+      setCreatingSession(false);
+    }
+  }, [navigate]);
+
+  const handleStripePayment = async () => {
     console.log('[PaymentOptions] Stripe payment initiated');
     
     if (!bookingDetails?.bookingId) {
@@ -75,17 +131,29 @@ const PaymentOptions = () => {
       return;
     }
 
-    if (!bookingDetails.checkoutUrl) {
-      toast.error("Payment session not available. Please try again.");
-      navigate('/');
+    setLoading(true);
+
+    // If we already have a checkoutUrl, use it directly
+    if (bookingDetails.checkoutUrl) {
+      console.log('[PaymentOptions] Using existing checkout URL');
+      toast.success("Redirecting to secure Stripe checkout...");
+      window.location.href = bookingDetails.checkoutUrl;
       return;
     }
 
-    setLoading(true);
-    toast.success("Redirecting to secure Stripe checkout...");
+    // Otherwise, create a new checkout session
+    const checkoutUrl = await createCheckoutSession(bookingDetails.bookingId);
     
-    // Redirect to Stripe Checkout
-    window.location.href = bookingDetails.checkoutUrl;
+    if (checkoutUrl) {
+      // Update stored booking with new checkout URL
+      const updatedBooking = { ...bookingDetails, checkoutUrl };
+      sessionStorage.setItem('pendingBooking', JSON.stringify(updatedBooking));
+      
+      toast.success("Redirecting to secure Stripe checkout...");
+      window.location.href = checkoutUrl;
+    } else {
+      setLoading(false);
+    }
   };
 
   const handleGoBack = () => {
@@ -134,6 +202,7 @@ const PaymentOptions = () => {
   }
 
   const { amount, bookingType } = bookingDetails;
+  const isProcessing = loading || creatingSession;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -150,7 +219,7 @@ const PaymentOptions = () => {
 
           {/* Stripe Payment Option - Only Option */}
           <Card 
-            className={`cursor-pointer hover:shadow-xl transition-all border-2 border-primary bg-primary/5 mb-6 ${loading ? 'opacity-50 pointer-events-none' : ''}`}
+            className={`cursor-pointer hover:shadow-xl transition-all border-2 border-primary bg-primary/5 mb-6 ${isProcessing ? 'opacity-50 pointer-events-none' : ''}`}
             onClick={handleStripePayment}
           >
             <CardContent className="p-8">
@@ -178,11 +247,11 @@ const PaymentOptions = () => {
                     </div>
                   </div>
                 </div>
-                <Button size="lg" disabled={loading} className="px-8">
-                  {loading ? (
+                <Button size="lg" disabled={isProcessing} className="px-8">
+                  {isProcessing ? (
                     <>
                       <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      Redirecting...
+                      {creatingSession ? 'Creating Session...' : 'Redirecting...'}
                     </>
                   ) : (
                     'Pay Now'
@@ -216,17 +285,17 @@ const PaymentOptions = () => {
                 <div className="border-t pt-3 flex justify-between">
                   <span className="font-bold">Total Amount</span>
                   <span className="text-2xl font-bold text-primary">
-                    USD {parseFloat(amount).toFixed(2)}
+                    ${parseFloat(amount).toFixed(2)} USD
                   </span>
                 </div>
               </div>
 
-              <div className="mt-6">
+              <div className="mt-6 space-y-3">
                 <Button 
                   variant="outline" 
                   onClick={handleGoBack}
                   className="w-full"
-                  disabled={loading}
+                  disabled={isProcessing}
                 >
                   Go Back
                 </Button>
