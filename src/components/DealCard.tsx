@@ -5,6 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import type { Deal } from "@/data/mockDeals";
 import { motion } from "framer-motion";
+import { useFxSmartSave } from "@/hooks/useFxSmartSave";
+import FxSmartSaveBadge from "@/components/FxSmartSaveBadge";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 interface DealCardProps {
   deal: Deal;
@@ -15,6 +18,19 @@ const DealCard = ({ deal, onClick }: DealCardProps) => {
   const discountPercent = Math.round(
     ((deal.originalPrice - deal.price) / deal.originalPrice) * 100
   );
+
+  // FX-SmartSave calculation for this deal
+  const { data: fxData } = useFxSmartSave({
+    productType: 'flight',
+    prices: [
+      { currency: 'USD', amount: deal.price },
+      { currency: 'EUR', amount: deal.price * 0.92 },
+      { currency: 'GBP', amount: deal.price * 0.79 },
+    ],
+    origin: deal.origin,
+    destination: deal.destination,
+    travelDate: deal.departDate,
+  });
 
   // Determine ribbon type based on discount or other criteria
   const getRibbonConfig = () => {
@@ -141,6 +157,21 @@ const DealCard = ({ deal, onClick }: DealCardProps) => {
               Save ${deal.originalPrice - deal.price}
             </span>
           </div>
+          
+          {/* FX-SmartSave Badge */}
+          {fxData && fxData.savingsUSD >= 10 && (
+            <TooltipProvider>
+              <div className="mt-2">
+                <FxSmartSaveBadge
+                  savingsUSD={fxData.savingsUSD}
+                  recommendedCurrency={fxData.recommendedCurrency}
+                  recommendedAmountLocal={fxData.recommendedAmountLocal}
+                  recommendedAmountUSD={fxData.recommendedAmountUSD}
+                  breakdown={fxData.breakdown}
+                />
+              </div>
+            </TooltipProvider>
+          )}
         </div>
 
         <Button 
