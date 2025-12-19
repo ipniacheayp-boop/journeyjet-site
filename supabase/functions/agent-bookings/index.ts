@@ -12,23 +12,48 @@ serve(async (req) => {
   }
 
   try {
+    const authHeader = req.headers.get('Authorization');
+    
+    // Check if Authorization header exists
+    if (!authHeader) {
+      console.error('[agent-bookings] No Authorization header provided');
+      return new Response(JSON.stringify({ error: 'No authorization header' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 401,
+      });
+    }
+
+    console.log('[agent-bookings] Auth header present, creating client...');
+
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
       {
         global: {
-          headers: { Authorization: req.headers.get('Authorization')! },
+          headers: { Authorization: authHeader },
         },
       }
     );
 
     const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
-    if (authError || !user) {
+    
+    if (authError) {
+      console.error('[agent-bookings] Auth error:', authError.message);
+      return new Response(JSON.stringify({ error: 'Unauthorized', details: authError.message }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 401,
+      });
+    }
+
+    if (!user) {
+      console.error('[agent-bookings] No user found');
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 401,
       });
     }
+
+    console.log('[agent-bookings] User authenticated:', user.id);
 
     // Get agent profile
     const { data: agentProfile, error: profileError } = await supabaseClient
@@ -38,11 +63,14 @@ serve(async (req) => {
       .single();
 
     if (profileError || !agentProfile) {
+      console.error('[agent-bookings] Agent profile not found:', profileError?.message);
       return new Response(JSON.stringify({ error: 'Agent profile not found' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 404,
       });
     }
+
+    console.log('[agent-bookings] Agent profile found:', agentProfile.id);
 
     // Fetch bookings with commission data
     const { data: bookings, error: bookingsError } = await supabaseClient
@@ -65,8 +93,11 @@ serve(async (req) => {
       .order('created_at', { ascending: false });
 
     if (bookingsError) {
+      console.error('[agent-bookings] Error fetching bookings:', bookingsError.message);
       throw bookingsError;
     }
+
+    console.log('[agent-bookings] Found', bookings?.length || 0, 'bookings');
 
     const formattedBookings = bookings?.map(booking => ({
       booking_reference: booking.id.slice(0, 8),
@@ -91,7 +122,7 @@ serve(async (req) => {
       }
     );
   } catch (error) {
-    console.error('Error in agent-bookings:', error);
+    console.error('[agent-bookings] Unexpected error:', error);
     return new Response(JSON.stringify({ error: String(error) }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,
