@@ -4,10 +4,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Loader2, Shield, CheckCircle, AlertCircle, RefreshCw } from "lucide-react";
+import { CreditCard, Loader2, Shield, CheckCircle, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
-import { useRequireAuth } from "@/hooks/useRequireAuth";
-import { supabase } from "@/integrations/supabase/client";
 
 interface BookingDetails {
   bookingId: string;
@@ -27,7 +25,6 @@ interface BookingDetails {
 const PaymentOptions = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { user } = useRequireAuth();
   const [loading, setLoading] = useState(false);
   const [creatingSession, setCreatingSession] = useState(false);
   const [bookingDetails, setBookingDetails] = useState<BookingDetails | null>(null);
