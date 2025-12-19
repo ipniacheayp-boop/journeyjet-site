@@ -29,9 +29,23 @@ const AgentBookings = ({ agentId }: AgentBookingsProps) => {
 
   const fetchBookings = async () => {
     try {
+      // Ensure we have a valid session before calling the edge function
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !session) {
+        console.error('[AgentBookings] No valid session:', sessionError?.message);
+        setLoading(false);
+        return;
+      }
+
+      console.log('[AgentBookings] Fetching bookings with valid session...');
+      
       const { data, error } = await supabase.functions.invoke('agent-bookings');
 
-      if (error) throw error;
+      if (error) {
+        console.error('[AgentBookings] Edge function error:', error);
+        throw error;
+      }
 
       // Transform API response to match component expectations
       const transformedBookings = data.bookings?.map((booking: any) => ({
@@ -50,7 +64,7 @@ const AgentBookings = ({ agentId }: AgentBookingsProps) => {
       setBookings(transformedBookings);
       setFilteredBookings(transformedBookings);
     } catch (error) {
-      console.error('Error fetching bookings:', error);
+      console.error('[AgentBookings] Error fetching bookings:', error);
     } finally {
       setLoading(false);
     }
