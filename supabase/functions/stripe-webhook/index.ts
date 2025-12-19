@@ -323,6 +323,35 @@ serve(async (req) => {
         // Booking is marked as provider_pending for admin review
         // Do NOT refund automatically - let admin handle it
       }
+
+      // Send confirmation email (fire and forget - don't fail webhook if email fails)
+      try {
+        logStep('Sending confirmation email', { bookingId });
+        const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+        const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+        
+        const emailResponse = await fetch(`${supabaseUrl}/functions/v1/send-booking-confirmation`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${serviceKey}`,
+          },
+          body: JSON.stringify({ bookingId }),
+        });
+        
+        if (emailResponse.ok) {
+          logStep('Confirmation email sent', { bookingId });
+        } else {
+          const emailError = await emailResponse.text();
+          logStep('Failed to send confirmation email', { bookingId, error: emailError });
+        }
+      } catch (emailErr) {
+        logStep('Error sending confirmation email', { 
+          bookingId, 
+          error: emailErr instanceof Error ? emailErr.message : 'Unknown error' 
+        });
+        // Don't throw - email failure shouldn't fail the webhook
+      }
     }
 
     // Handle direct PaymentIntent success/failure (Elements flow)

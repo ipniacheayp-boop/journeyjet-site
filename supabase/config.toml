@@ -199,13 +199,16 @@ verify_jwt = false
 verify_jwt = true
 
 [functions.prebooking-validate]
-verify_jwt = true
+verify_jwt = false
 
 [functions.bookings-provisional]
-verify_jwt = true
+verify_jwt = false
 
 [functions.bookings-status]
 verify_jwt = false
 
 [functions.provider-finalize-booking]
+verify_jwt = false
+
+[functions.send-booking-confirmation]
 verify_jwt = false
