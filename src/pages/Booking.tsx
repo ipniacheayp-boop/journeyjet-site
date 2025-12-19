@@ -10,7 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useBookingFlow } from "@/hooks/useBookingFlow";
 import { toast } from "sonner";
 import { Loader2, CheckCircle } from "lucide-react";
-import { useRequireAuth } from "@/hooks/useRequireAuth";
+import { useAuth } from "@/contexts/AuthContext";
 import { useFxSmartSave } from "@/hooks/useFxSmartSave";
 import FxSmartSaveCheckout from "@/components/FxSmartSaveCheckout";
 import PriceChangeModal from "@/components/PriceChangeModal";
@@ -18,7 +18,7 @@ import PriceChangeModal from "@/components/PriceChangeModal";
 const Booking = () => {
   const { id: bookingType } = useParams();
   const navigate = useNavigate();
-  const { user } = useRequireAuth();
+  const { user } = useAuth(); // Optional - guest checkout allowed
   const [offer, setOffer] = useState<any>(null);
   const [agentId, setAgentId] = useState<string | undefined>(undefined);
   const [acceptedTerms, setAcceptedTerms] = useState(false);

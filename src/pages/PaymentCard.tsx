@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, CreditCard, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
-import { useRequireAuth } from "@/hooks/useRequireAuth";
 
 /**
  * PaymentCard - Redirects to Stripe Checkout
@@ -16,7 +15,6 @@ import { useRequireAuth } from "@/hooks/useRequireAuth";
  */
 const PaymentCard = () => {
   const navigate = useNavigate();
-  const { user } = useRequireAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

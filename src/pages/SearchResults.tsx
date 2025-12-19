@@ -9,7 +9,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useFlightSearch } from "@/hooks/useFlightSearch";
 import { useHotelSearch } from "@/hooks/useHotelSearch";
 import { useCarSearch } from "@/hooks/useCarSearch";
-import { useRequireAuth } from "@/hooks/useRequireAuth";
 import FlightResultCard from "@/components/FlightResultCard";
 import HotelResultCard from "@/components/HotelResultCard";
 import CarResultCard from "@/components/CarResultCard";
@@ -19,7 +18,6 @@ const SearchResults = () => {
   const [searchParams] = useSearchParams();
   const type = searchParams.get("type") || "flights";
   const agentId = searchParams.get("agentId") || undefined;
-  const { user } = useRequireAuth();
   
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
