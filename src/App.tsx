@@ -28,6 +28,7 @@ import PaymentOptions from "./pages/PaymentOptions";
 import PaymentCard from "./pages/PaymentCard";
 import PaymentProcessing from "./pages/PaymentProcessing";
 import BookingConfirmation from "./pages/BookingConfirmation";
+import AgentWillConnect from "./pages/AgentWillConnect";
 import ErrorPage from "./pages/ErrorPage";
 import NotFound from "./pages/NotFound";
 import SiteReviews from "./pages/SiteReviews";
@@ -86,6 +87,7 @@ const App = () => (
                 <Route path="/payment-cancel" element={<PaymentCancel />} />
                 <Route path="/payment/cancel" element={<PaymentCancel />} />
                 <Route path="/booking-confirmation" element={<BookingConfirmation />} />
+                <Route path="/agent-will-connect" element={<AgentWillConnect />} />
                 <Route path="/agent-connect" element={<AgentConnect />} />
                 <Route path="/agent/wallet" element={<AgentWallet />} />
                 <Route path="/agent/login" element={<AgentLogin />} />
