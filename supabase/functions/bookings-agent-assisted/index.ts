@@ -8,7 +8,7 @@ const corsHeaders = {
 
 const logStep = (step: string, details?: any) => {
   const safeDetails = details ? { ...details } : undefined;
-  if (safeDetails?.email) safeDetails.email = '***@***';
+  if (safeDetails?.email) safeDetails.email = '***';
   if (safeDetails?.phone) safeDetails.phone = '***';
   console.log(`[BOOKINGS-AGENT-ASSISTED] ${step}`, safeDetails ? JSON.stringify(safeDetails) : '');
 };
@@ -134,23 +134,18 @@ serve(async (req) => {
 
     logStep('Agent-assisted booking created', { bookingId: booking.id });
 
-    // Send confirmation email
+    // Send confirmation email using Gemini AI + SMTP
     let emailSent = false;
-    let emailError = null;
-    
     try {
-      const emailResult = await sendConfirmationEmail(
+      emailSent = await sendConfirmationEmail(
         booking,
         userDetails,
         bookingType,
         validatedOffer || offer
       );
-      emailSent = emailResult.success;
-      emailError = emailResult.error;
-      logStep('Confirmation email result', { success: emailSent, error: emailError });
-    } catch (err) {
-      emailError = String(err);
-      logStep('Failed to send confirmation email', { error: emailError });
+      logStep('Confirmation email result', { success: emailSent });
+    } catch (emailError) {
+      logStep('Failed to send confirmation email', { error: String(emailError) });
       // Don't fail the booking if email fails
     }
 
@@ -161,7 +156,6 @@ serve(async (req) => {
         bookingReference: booking.id.slice(0, 8).toUpperCase(),
         status: 'confirmed_pending_payment',
         emailSent,
-        emailError: emailSent ? null : 'Email may be delayed. Check your inbox shortly.',
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
@@ -186,25 +180,23 @@ async function sendConfirmationEmail(
   userDetails: any,
   bookingType: string,
   offer: any
-): Promise<{ success: boolean; error?: string }> {
+): Promise<boolean> {
   const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-  const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
+  const SMTP_HOST = Deno.env.get('SMTP_HOST');
+  const SMTP_PORT = Deno.env.get('SMTP_PORT');
+  const SMTP_USERNAME = Deno.env.get('SMTP_USERNAME');
+  const SMTP_PASSWORD = Deno.env.get('SMTP_PASSWORD');
   const SMTP_FROM_NAME = Deno.env.get('SMTP_FROM_NAME') || 'CheapFlights';
-  const SMTP_FROM_EMAIL = Deno.env.get('SMTP_FROM_EMAIL') || 'onboarding@resend.dev';
+  const SMTP_FROM_EMAIL = Deno.env.get('SMTP_FROM_EMAIL');
 
   console.log('[EMAIL] Starting email send process');
-  console.log('[EMAIL] Config:', { 
-    hasResendKey: !!RESEND_API_KEY, 
-    hasLovableKey: !!LOVABLE_API_KEY,
-    fromEmail: SMTP_FROM_EMAIL,
-    fromName: SMTP_FROM_NAME,
-    toEmail: userDetails.email?.substring(0, 3) + '***'
+  console.log('[EMAIL] SMTP Config:', { 
+    host: SMTP_HOST, 
+    port: SMTP_PORT, 
+    hasUsername: !!SMTP_USERNAME, 
+    hasPassword: !!SMTP_PASSWORD,
+    fromEmail: SMTP_FROM_EMAIL 
   });
-
-  if (!RESEND_API_KEY) {
-    console.log('[EMAIL] No RESEND_API_KEY configured');
-    return { success: false, error: 'Email service not configured' };
-  }
 
   // Build booking details for email
   let bookingDetails = '';
@@ -214,9 +206,6 @@ async function sendConfirmationEmail(
     bookingDetails = `Flight from ${firstSeg?.departure?.iataCode || 'Origin'} to ${lastSeg?.arrival?.iataCode || 'Destination'}`;
     if (firstSeg?.departure?.at) {
       bookingDetails += `\nDeparture: ${new Date(firstSeg.departure.at).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`;
-    }
-    if (firstSeg?.carrierCode) {
-      bookingDetails += `\nAirline: ${firstSeg.carrierCode} ${firstSeg.number || ''}`;
     }
   } else if (bookingType === 'hotel') {
     bookingDetails = `Hotel: ${offer?.hotel?.name || 'Hotel Booking'}`;
@@ -230,12 +219,9 @@ async function sendConfirmationEmail(
     }
   }
 
-  const customerName = `${userDetails.firstName || ''} ${userDetails.lastName || ''}`.trim() || 'Valued Customer';
-  const bookingReference = booking.id.slice(0, 8).toUpperCase();
-
   // Generate email content using Gemini AI via Lovable AI Gateway
   let emailBody = '';
-  let emailSubject = `Booking Confirmed - Reference: ${bookingReference}`;
+  let emailSubject = `Booking Confirmed - Reference: ${booking.id.slice(0, 8).toUpperCase()}`;
   
   if (LOVABLE_API_KEY) {
     try {
@@ -243,22 +229,22 @@ async function sendConfirmationEmail(
       const prompt = `Generate a professional travel booking confirmation email for a US customer.
 
 Booking Details:
-- Reference: ${bookingReference}
+- Reference: ${booking.id.slice(0, 8).toUpperCase()}
 - Type: ${bookingType.charAt(0).toUpperCase() + bookingType.slice(1)}
 - ${bookingDetails}
 - Amount: $${booking.amount} ${booking.currency}
-- Customer Name: ${customerName}
+- Customer Name: ${userDetails.firstName || ''} ${userDetails.lastName || ''}
 
 Requirements:
 - Tone: polite, reassuring, US-market professional
 - Include a warm greeting and thank you
 - Clearly show the booking reference prominently
-- Include all booking details provided
+- Include all booking details
 - Add this important message: "Your booking is confirmed. Our travel agent will contact you shortly to assist with payment."
 - Include support contact info: Phone +1 (800) 555-0123, Email support@cheapflights.travel
 - Keep it concise but friendly
 - Do NOT use any HTML tags or markdown, just plain text with line breaks
-- Start with "Dear ${customerName}," greeting`;
+- Start with "Dear [Name]," greeting`;
 
       const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
         method: 'POST',
@@ -279,25 +265,26 @@ Requirements:
         emailBody = aiData.choices?.[0]?.message?.content || '';
         console.log('[EMAIL] Generated email with Gemini AI successfully');
       } else {
-        const errorText = await aiResponse.text();
-        console.log('[EMAIL] AI response not ok:', aiResponse.status, errorText);
+        console.log('[EMAIL] AI response not ok:', aiResponse.status);
       }
     } catch (e) {
       console.log('[EMAIL] AI generation failed:', e);
     }
+  } else {
+    console.log('[EMAIL] LOVABLE_API_KEY not available');
   }
 
   // Fallback template if AI fails
   if (!emailBody) {
     console.log('[EMAIL] Using fallback template');
-    emailBody = `Dear ${customerName},
+    emailBody = `Dear ${userDetails.firstName || 'Valued Customer'},
 
 Thank you for booking with CheapFlights!
 
 Your booking has been confirmed.
 
 ========================================
-BOOKING REFERENCE: ${bookingReference}
+BOOKING REFERENCE: ${booking.id.slice(0, 8).toUpperCase()}
 ========================================
 
 Booking Details:
@@ -305,7 +292,7 @@ Booking Details:
 - ${bookingDetails}
 - Amount: $${booking.amount} ${booking.currency}
 
-IMPORTANT - NEXT STEPS:
+IMPORTANT - PAYMENT PENDING:
 Your booking is confirmed. Our travel agent will contact you shortly to assist with payment. No action is needed from your side right now.
 
 If you have any questions, please contact us:
@@ -318,61 +305,162 @@ Best regards,
 The CheapFlights Team`;
   }
 
-  // Send email using Resend API
-  console.log('[EMAIL] Sending via Resend API...');
-  
-  try {
-    const resendResponse = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${RESEND_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: `${SMTP_FROM_NAME} <${SMTP_FROM_EMAIL}>`,
-        to: [userDetails.email],
-        subject: emailSubject,
-        text: emailBody,
-      }),
-    });
+  // Send email using SMTP if configured
+  if (SMTP_HOST && SMTP_PORT && SMTP_USERNAME && SMTP_PASSWORD && SMTP_FROM_EMAIL) {
+    const port = parseInt(SMTP_PORT);
+    
+    // Try sending with Resend API first (if it's Resend SMTP)
+    if (SMTP_HOST.includes('resend') || SMTP_HOST.includes('smtp.resend.com')) {
+      console.log('[EMAIL] Detected Resend, using API instead of SMTP');
+      try {
+        const resendResponse = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${SMTP_PASSWORD}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: `${SMTP_FROM_NAME} <${SMTP_FROM_EMAIL}>`,
+            to: [userDetails.email],
+            subject: emailSubject,
+            text: emailBody,
+          }),
+        });
 
-    if (resendResponse.ok) {
-      const resendData = await resendResponse.json();
-      console.log('[EMAIL] Sent via Resend successfully:', resendData.id);
-      return { success: true };
-    } else {
-      const errorText = await resendResponse.text();
-      console.log('[EMAIL] Resend API failed:', resendResponse.status, errorText);
-      
-      // Retry once
-      console.log('[EMAIL] Retrying...');
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const retryResponse = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${RESEND_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          from: `${SMTP_FROM_NAME} <${SMTP_FROM_EMAIL}>`,
-          to: [userDetails.email],
-          subject: emailSubject,
-          text: emailBody,
-        }),
-      });
-      
-      if (retryResponse.ok) {
-        const retryData = await retryResponse.json();
-        console.log('[EMAIL] Sent via Resend on retry:', retryData.id);
-        return { success: true };
+        if (resendResponse.ok) {
+          const resendData = await resendResponse.json();
+          console.log('[EMAIL] Sent via Resend API successfully:', resendData.id);
+          return true;
+        } else {
+          const errorText = await resendResponse.text();
+          console.log('[EMAIL] Resend API failed:', resendResponse.status, errorText);
+        }
+      } catch (e) {
+        console.log('[EMAIL] Resend API error:', e);
       }
-      
-      const retryError = await retryResponse.text();
-      return { success: false, error: `Resend API error: ${retryError}` };
     }
-  } catch (e) {
-    console.log('[EMAIL] Resend API error:', e);
-    return { success: false, error: String(e) };
+
+    // Try raw SMTP with different TLS configurations
+    try {
+      console.log('[EMAIL] Attempting SMTP send...');
+      
+      // For port 587, use STARTTLS (tls: false initially, then upgrade)
+      // For port 465, use implicit TLS (tls: true)
+      const useImplicitTls = port === 465;
+      
+      // Use Deno's built-in SMTP via direct TCP connection
+      const encoder = new TextEncoder();
+      const decoder = new TextDecoder();
+      
+      let conn: Deno.Conn;
+      
+      if (useImplicitTls) {
+        conn = await Deno.connectTls({
+          hostname: SMTP_HOST,
+          port: port,
+        });
+      } else {
+        conn = await Deno.connect({
+          hostname: SMTP_HOST,
+          port: port,
+        });
+      }
+
+      const readResponse = async (): Promise<string> => {
+        const buffer = new Uint8Array(1024);
+        const n = await conn.read(buffer);
+        if (n === null) return '';
+        return decoder.decode(buffer.subarray(0, n));
+      };
+
+      const sendCommand = async (cmd: string): Promise<string> => {
+        await conn.write(encoder.encode(cmd + '\r\n'));
+        return await readResponse();
+      };
+
+      // Initial greeting
+      let response = await readResponse();
+      console.log('[SMTP] Server greeting:', response.trim());
+
+      // EHLO
+      response = await sendCommand(`EHLO localhost`);
+      console.log('[SMTP] EHLO response:', response.substring(0, 100));
+
+      // STARTTLS for port 587
+      if (!useImplicitTls && response.includes('STARTTLS')) {
+        response = await sendCommand('STARTTLS');
+        console.log('[SMTP] STARTTLS response:', response.trim());
+        
+        // Upgrade to TLS
+        conn = await Deno.startTls(conn as Deno.TcpConn, { hostname: SMTP_HOST });
+        
+        // Re-send EHLO after TLS
+        response = await sendCommand(`EHLO localhost`);
+        console.log('[SMTP] EHLO after TLS:', response.substring(0, 100));
+      }
+
+      // AUTH LOGIN
+      response = await sendCommand('AUTH LOGIN');
+      console.log('[SMTP] AUTH response:', response.trim());
+      
+      // Send username (base64)
+      response = await sendCommand(btoa(SMTP_USERNAME));
+      console.log('[SMTP] Username response:', response.trim());
+      
+      // Send password (base64)
+      response = await sendCommand(btoa(SMTP_PASSWORD));
+      console.log('[SMTP] Password response:', response.trim());
+
+      if (!response.startsWith('235')) {
+        console.log('[SMTP] Authentication failed');
+        conn.close();
+        return false;
+      }
+
+      // MAIL FROM
+      response = await sendCommand(`MAIL FROM:<${SMTP_FROM_EMAIL}>`);
+      console.log('[SMTP] MAIL FROM response:', response.trim());
+
+      // RCPT TO
+      response = await sendCommand(`RCPT TO:<${userDetails.email}>`);
+      console.log('[SMTP] RCPT TO response:', response.trim());
+
+      // DATA
+      response = await sendCommand('DATA');
+      console.log('[SMTP] DATA response:', response.trim());
+
+      // Send email content
+      const emailContent = `From: ${SMTP_FROM_NAME} <${SMTP_FROM_EMAIL}>\r\n` +
+        `To: ${userDetails.email}\r\n` +
+        `Subject: ${emailSubject}\r\n` +
+        `Content-Type: text/plain; charset=utf-8\r\n` +
+        `\r\n` +
+        emailBody.replace(/\n/g, '\r\n') +
+        `\r\n.\r\n`;
+
+      await conn.write(encoder.encode(emailContent));
+      response = await readResponse();
+      console.log('[SMTP] Email send response:', response.trim());
+
+      // QUIT
+      await sendCommand('QUIT');
+      conn.close();
+
+      if (response.startsWith('250')) {
+        console.log('[EMAIL] Sent via SMTP successfully');
+        return true;
+      }
+    } catch (e) {
+      console.log('[EMAIL] SMTP error:', e);
+    }
+  } else {
+    console.log('[EMAIL] SMTP not fully configured');
   }
+
+  // Log the email content for debugging
+  console.log('[EMAIL] Email not sent. Would send to:', userDetails.email);
+  console.log('[EMAIL] Subject:', emailSubject);
+  console.log('[EMAIL] Body preview:', emailBody.substring(0, 200) + '...');
+
+  return false;
 }
