@@ -11,6 +11,7 @@ import { useBookingFlow } from "@/hooks/useBookingFlow";
 import { toast } from "sonner";
 import { Loader2, CheckCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { useFxSmartSave } from "@/hooks/useFxSmartSave";
 import FxSmartSaveCheckout from "@/components/FxSmartSaveCheckout";
 import PriceChangeModal from "@/components/PriceChangeModal";
@@ -180,62 +181,66 @@ const Booking = () => {
   ) => {
     const productTypeName = bookingType as string;
     
-    // ALWAYS use USD for Stripe payments
+    // ALWAYS use USD
     const finalCurrency = 'USD';
     const finalPrice = checkoutPrice;
     
-    const result = await createProvisionalBooking(
-      productTypeName,
-      offer,
-      offerToBook,
-      finalPrice,
-      finalCurrency,
-      clientRequestIdRef.current,
-      {
-        ...formData,
-        acceptedTerms,
-      },
-      agentId,
-      expires
-    );
+    // Use agent-assisted booking (no Stripe payment required)
+    try {
+      const { data, error: fnError } = await supabase.functions.invoke('bookings-agent-assisted', {
+        body: {
+          productType: productTypeName,
+          offer,
+          validatedOffer: offerToBook,
+          price: finalPrice,
+          currency: finalCurrency,
+          clientRequestId: clientRequestIdRef.current,
+          userDetails: {
+            ...formData,
+            name: `${formData.firstName} ${formData.lastName}`.trim(),
+            acceptedTerms,
+          },
+          agentId,
+          expiresAt: expires,
+        },
+      });
 
-    if (!result.ok) {
-      toast.error(result.message || 'Failed to create booking');
+      if (fnError) {
+        throw new Error(fnError.message || 'Failed to create booking');
+      }
+
+      if (!data.ok) {
+        throw new Error(data.message || 'Booking creation failed');
+      }
+
+      // Store booking details for confirmation page
+      const pendingBookingData = {
+        bookingId: data.bookingId,
+        checkoutUrl: null, // No Stripe checkout
+        amount: finalPrice.toFixed(2),
+        currency: finalCurrency,
+        bookingType,
+        agentId,
+        bookingReference: data.bookingReference,
+        travelerInfo: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+        },
+      };
+
+      sessionStorage.setItem('pendingBooking', JSON.stringify(pendingBookingData));
+
+      toast.success("Booking confirmed! Our agent will contact you shortly.");
+      
+      // Navigate to agent-will-connect page
+      navigate(`/agent-will-connect?booking_id=${data.bookingId}`);
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to create booking');
       // Generate new clientRequestId for retry
       clientRequestIdRef.current = generateClientRequestId();
-      return;
     }
-
-    // Store booking details for payment options page - ALWAYS USD
-    const pendingBookingData = {
-      bookingId: result.bookingId,
-      checkoutUrl: result.checkoutUrl || null,
-      amount: finalPrice.toFixed(2),
-      currency: finalCurrency,
-      bookingType,
-      agentId,
-      bookingReference: result.bookingReference,
-      travelerInfo: {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        phone: formData.phone,
-      },
-    };
-
-    sessionStorage.setItem('pendingBooking', JSON.stringify(pendingBookingData));
-
-    if (!result.checkoutUrl) {
-      toast.error("Payment session not created. Please try again.");
-      // Generate new clientRequestId for retry
-      clientRequestIdRef.current = generateClientRequestId();
-      return;
-    }
-
-    toast.success("Redirecting to payment...");
-    
-    // Navigate to payment options page
-    navigate(`/payment-options?bookingId=${result.bookingId}`);
   };
 
   const handlePriceChangeConfirm = async () => {
@@ -416,10 +421,10 @@ const Booking = () => {
                       {isProcessing ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          {validating ? "Validating Price..." : "Creating Booking..."}
+                          {validating ? "Validating Price..." : "Confirming Booking..."}
                         </>
                       ) : (
-                        "Proceed to Payment"
+                        "Confirm Booking"
                       )}
                     </Button>
 
