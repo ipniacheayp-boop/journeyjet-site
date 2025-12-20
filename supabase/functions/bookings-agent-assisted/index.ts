@@ -1,6 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
-import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -136,14 +135,15 @@ serve(async (req) => {
     logStep('Agent-assisted booking created', { bookingId: booking.id });
 
     // Send confirmation email using Gemini AI + SMTP
+    let emailSent = false;
     try {
-      const emailResult = await sendConfirmationEmail(
+      emailSent = await sendConfirmationEmail(
         booking,
         userDetails,
         bookingType,
         validatedOffer || offer
       );
-      logStep('Confirmation email sent', { success: emailResult });
+      logStep('Confirmation email result', { success: emailSent });
     } catch (emailError) {
       logStep('Failed to send confirmation email', { error: String(emailError) });
       // Don't fail the booking if email fails
@@ -155,6 +155,7 @@ serve(async (req) => {
         bookingId: booking.id,
         bookingReference: booking.id.slice(0, 8).toUpperCase(),
         status: 'confirmed_pending_payment',
+        emailSent,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
@@ -188,6 +189,15 @@ async function sendConfirmationEmail(
   const SMTP_FROM_NAME = Deno.env.get('SMTP_FROM_NAME') || 'CheapFlights';
   const SMTP_FROM_EMAIL = Deno.env.get('SMTP_FROM_EMAIL');
 
+  console.log('[EMAIL] Starting email send process');
+  console.log('[EMAIL] SMTP Config:', { 
+    host: SMTP_HOST, 
+    port: SMTP_PORT, 
+    hasUsername: !!SMTP_USERNAME, 
+    hasPassword: !!SMTP_PASSWORD,
+    fromEmail: SMTP_FROM_EMAIL 
+  });
+
   // Build booking details for email
   let bookingDetails = '';
   if (bookingType === 'flight') {
@@ -211,8 +221,11 @@ async function sendConfirmationEmail(
 
   // Generate email content using Gemini AI via Lovable AI Gateway
   let emailBody = '';
+  let emailSubject = `Booking Confirmed - Reference: ${booking.id.slice(0, 8).toUpperCase()}`;
+  
   if (LOVABLE_API_KEY) {
     try {
+      console.log('[EMAIL] Generating content with Gemini AI...');
       const prompt = `Generate a professional travel booking confirmation email for a US customer.
 
 Booking Details:
@@ -220,7 +233,7 @@ Booking Details:
 - Type: ${bookingType.charAt(0).toUpperCase() + bookingType.slice(1)}
 - ${bookingDetails}
 - Amount: $${booking.amount} ${booking.currency}
-- Customer Name: ${userDetails.firstName} ${userDetails.lastName}
+- Customer Name: ${userDetails.firstName || ''} ${userDetails.lastName || ''}
 
 Requirements:
 - Tone: polite, reassuring, US-market professional
@@ -230,7 +243,8 @@ Requirements:
 - Add this important message: "Your booking is confirmed. Our travel agent will contact you shortly to assist with payment."
 - Include support contact info: Phone +1 (800) 555-0123, Email support@cheapflights.travel
 - Keep it concise but friendly
-- Do NOT use HTML tags, just plain text with line breaks`;
+- Do NOT use any HTML tags or markdown, just plain text with line breaks
+- Start with "Dear [Name]," greeting`;
 
       const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
         method: 'POST',
@@ -249,24 +263,29 @@ Requirements:
       if (aiResponse.ok) {
         const aiData = await aiResponse.json();
         emailBody = aiData.choices?.[0]?.message?.content || '';
-        console.log('[EMAIL] Generated email with Gemini AI');
+        console.log('[EMAIL] Generated email with Gemini AI successfully');
+      } else {
+        console.log('[EMAIL] AI response not ok:', aiResponse.status);
       }
     } catch (e) {
-      console.log('[EMAIL] AI generation failed, using template', e);
+      console.log('[EMAIL] AI generation failed:', e);
     }
+  } else {
+    console.log('[EMAIL] LOVABLE_API_KEY not available');
   }
 
   // Fallback template if AI fails
   if (!emailBody) {
-    emailBody = `Dear ${userDetails.firstName},
+    console.log('[EMAIL] Using fallback template');
+    emailBody = `Dear ${userDetails.firstName || 'Valued Customer'},
 
 Thank you for booking with CheapFlights!
 
 Your booking has been confirmed.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+========================================
 BOOKING REFERENCE: ${booking.id.slice(0, 8).toUpperCase()}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+========================================
 
 Booking Details:
 - Type: ${bookingType.charAt(0).toUpperCase() + bookingType.slice(1)}
@@ -277,8 +296,8 @@ IMPORTANT - PAYMENT PENDING:
 Your booking is confirmed. Our travel agent will contact you shortly to assist with payment. No action is needed from your side right now.
 
 If you have any questions, please contact us:
-📞 Phone: +1 (800) 555-0123
-✉️ Email: support@cheapflights.travel
+Phone: +1 (800) 555-0123
+Email: support@cheapflights.travel
 
 Thank you for choosing CheapFlights!
 
@@ -288,40 +307,160 @@ The CheapFlights Team`;
 
   // Send email using SMTP if configured
   if (SMTP_HOST && SMTP_PORT && SMTP_USERNAME && SMTP_PASSWORD && SMTP_FROM_EMAIL) {
-    try {
-      const client = new SMTPClient({
-        connection: {
-          hostname: SMTP_HOST,
-          port: parseInt(SMTP_PORT),
-          tls: true,
-          auth: {
-            username: SMTP_USERNAME,
-            password: SMTP_PASSWORD,
+    const port = parseInt(SMTP_PORT);
+    
+    // Try sending with Resend API first (if it's Resend SMTP)
+    if (SMTP_HOST.includes('resend') || SMTP_HOST.includes('smtp.resend.com')) {
+      console.log('[EMAIL] Detected Resend, using API instead of SMTP');
+      try {
+        const resendResponse = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${SMTP_PASSWORD}`,
+            'Content-Type': 'application/json',
           },
-        },
-      });
+          body: JSON.stringify({
+            from: `${SMTP_FROM_NAME} <${SMTP_FROM_EMAIL}>`,
+            to: [userDetails.email],
+            subject: emailSubject,
+            text: emailBody,
+          }),
+        });
 
-      await client.send({
-        from: `${SMTP_FROM_NAME} <${SMTP_FROM_EMAIL}>`,
-        to: userDetails.email,
-        subject: `✈️ Booking Confirmed - Reference: ${booking.id.slice(0, 8).toUpperCase()}`,
-        content: emailBody,
-      });
+        if (resendResponse.ok) {
+          const resendData = await resendResponse.json();
+          console.log('[EMAIL] Sent via Resend API successfully:', resendData.id);
+          return true;
+        } else {
+          const errorText = await resendResponse.text();
+          console.log('[EMAIL] Resend API failed:', resendResponse.status, errorText);
+        }
+      } catch (e) {
+        console.log('[EMAIL] Resend API error:', e);
+      }
+    }
 
-      await client.close();
-      console.log('[EMAIL] Sent via SMTP successfully');
-      return true;
+    // Try raw SMTP with different TLS configurations
+    try {
+      console.log('[EMAIL] Attempting SMTP send...');
+      
+      // For port 587, use STARTTLS (tls: false initially, then upgrade)
+      // For port 465, use implicit TLS (tls: true)
+      const useImplicitTls = port === 465;
+      
+      // Use Deno's built-in SMTP via direct TCP connection
+      const encoder = new TextEncoder();
+      const decoder = new TextDecoder();
+      
+      let conn: Deno.Conn;
+      
+      if (useImplicitTls) {
+        conn = await Deno.connectTls({
+          hostname: SMTP_HOST,
+          port: port,
+        });
+      } else {
+        conn = await Deno.connect({
+          hostname: SMTP_HOST,
+          port: port,
+        });
+      }
+
+      const readResponse = async (): Promise<string> => {
+        const buffer = new Uint8Array(1024);
+        const n = await conn.read(buffer);
+        if (n === null) return '';
+        return decoder.decode(buffer.subarray(0, n));
+      };
+
+      const sendCommand = async (cmd: string): Promise<string> => {
+        await conn.write(encoder.encode(cmd + '\r\n'));
+        return await readResponse();
+      };
+
+      // Initial greeting
+      let response = await readResponse();
+      console.log('[SMTP] Server greeting:', response.trim());
+
+      // EHLO
+      response = await sendCommand(`EHLO localhost`);
+      console.log('[SMTP] EHLO response:', response.substring(0, 100));
+
+      // STARTTLS for port 587
+      if (!useImplicitTls && response.includes('STARTTLS')) {
+        response = await sendCommand('STARTTLS');
+        console.log('[SMTP] STARTTLS response:', response.trim());
+        
+        // Upgrade to TLS
+        conn = await Deno.startTls(conn as Deno.TcpConn, { hostname: SMTP_HOST });
+        
+        // Re-send EHLO after TLS
+        response = await sendCommand(`EHLO localhost`);
+        console.log('[SMTP] EHLO after TLS:', response.substring(0, 100));
+      }
+
+      // AUTH LOGIN
+      response = await sendCommand('AUTH LOGIN');
+      console.log('[SMTP] AUTH response:', response.trim());
+      
+      // Send username (base64)
+      response = await sendCommand(btoa(SMTP_USERNAME));
+      console.log('[SMTP] Username response:', response.trim());
+      
+      // Send password (base64)
+      response = await sendCommand(btoa(SMTP_PASSWORD));
+      console.log('[SMTP] Password response:', response.trim());
+
+      if (!response.startsWith('235')) {
+        console.log('[SMTP] Authentication failed');
+        conn.close();
+        return false;
+      }
+
+      // MAIL FROM
+      response = await sendCommand(`MAIL FROM:<${SMTP_FROM_EMAIL}>`);
+      console.log('[SMTP] MAIL FROM response:', response.trim());
+
+      // RCPT TO
+      response = await sendCommand(`RCPT TO:<${userDetails.email}>`);
+      console.log('[SMTP] RCPT TO response:', response.trim());
+
+      // DATA
+      response = await sendCommand('DATA');
+      console.log('[SMTP] DATA response:', response.trim());
+
+      // Send email content
+      const emailContent = `From: ${SMTP_FROM_NAME} <${SMTP_FROM_EMAIL}>\r\n` +
+        `To: ${userDetails.email}\r\n` +
+        `Subject: ${emailSubject}\r\n` +
+        `Content-Type: text/plain; charset=utf-8\r\n` +
+        `\r\n` +
+        emailBody.replace(/\n/g, '\r\n') +
+        `\r\n.\r\n`;
+
+      await conn.write(encoder.encode(emailContent));
+      response = await readResponse();
+      console.log('[SMTP] Email send response:', response.trim());
+
+      // QUIT
+      await sendCommand('QUIT');
+      conn.close();
+
+      if (response.startsWith('250')) {
+        console.log('[EMAIL] Sent via SMTP successfully');
+        return true;
+      }
     } catch (e) {
-      console.log('[EMAIL] SMTP failed:', e);
+      console.log('[EMAIL] SMTP error:', e);
     }
   } else {
-    console.log('[EMAIL] SMTP not fully configured, missing credentials');
+    console.log('[EMAIL] SMTP not fully configured');
   }
 
   // Log the email content for debugging
-  console.log('[EMAIL] Would send email to:', userDetails.email);
-  console.log('[EMAIL] Subject: Booking Confirmed');
-  console.log('[EMAIL] Body preview:', emailBody.substring(0, 300) + '...');
+  console.log('[EMAIL] Email not sent. Would send to:', userDetails.email);
+  console.log('[EMAIL] Subject:', emailSubject);
+  console.log('[EMAIL] Body preview:', emailBody.substring(0, 200) + '...');
 
   return false;
 }
