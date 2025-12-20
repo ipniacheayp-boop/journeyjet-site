@@ -105,7 +105,7 @@ serve(async (req) => {
     };
     const bookingType = bookingTypeMap[productType] || productType;
 
-    // Create booking with confirmed status but payment pending
+    // Create booking with confirmed status (payment will be handled by agent)
     const { data: booking, error: bookingError } = await supabaseClient
       .from('bookings')
       .insert({
@@ -113,7 +113,7 @@ serve(async (req) => {
         agent_id: agentId || null,
         booking_type: bookingType,
         status: 'confirmed',
-        payment_status: 'pending_agent',
+        payment_status: null, // Agent will update after collecting payment
         booking_details: validatedOffer || offer,
         amount: price,
         currency: currency || 'USD',
