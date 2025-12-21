@@ -20,7 +20,10 @@ import {
   Activity,
   LogOut,
   Radio,
-  Star
+  Star,
+  Edit,
+  Eye,
+  Phone
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -39,6 +42,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Skeleton } from '@/components/ui/skeleton';
 import { ReviewsSection } from '@/components/ReviewsSection';
 import { SiteReviewsAdmin } from '@/components/SiteReviewsAdmin';
 import { StripeHealthCheck } from '@/components/StripeHealthCheck';
@@ -48,11 +62,17 @@ interface Booking {
   id: string;
   booking_type: string;
   status: string;
+  payment_status: string | null;
+  payment_method: string | null;
   amount: number;
   currency: string;
   contact_email: string;
-  contact_name: string;
+  contact_name: string | null;
+  contact_phone: string | null;
   created_at: string;
+  updated_at: string;
+  booking_details: any;
+  transaction_id: string | null;
 }
 
 interface Payment {
@@ -93,6 +113,19 @@ const Admin = () => {
   const [loadingData, setLoadingData] = useState(false);
   const [filterType, setFilterType] = useState<string>('all');
   const [filterStatus, setFilterStatus] = useState<string>('all');
+  
+  // Edit modal state
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+  const [editStatus, setEditStatus] = useState<string>('');
+  const [editPaymentStatus, setEditPaymentStatus] = useState<string>('');
+  const [editPaymentMethod, setEditPaymentMethod] = useState<string>('');
+  const [editNotes, setEditNotes] = useState<string>('');
+  const [updating, setUpdating] = useState(false);
+
+  // View modal state
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [viewBooking, setViewBooking] = useState<Booking | null>(null);
 
   useEffect(() => {
     if (isAdmin) {
@@ -115,10 +148,10 @@ const Admin = () => {
         )
         .subscribe();
 
-      // Auto-refresh every 5 seconds
+      // Auto-refresh every 30 seconds (reduced from 5 to avoid console spam)
       const interval = setInterval(() => {
         fetchStats();
-      }, 5000);
+      }, 30000);
 
       return () => {
         supabase.removeChannel(channel);
@@ -173,11 +206,7 @@ const Admin = () => {
       setPayments(data.payments || []);
     } catch (error: any) {
       console.error('Error fetching payments:', error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch payments",
-        variant: "destructive",
-      });
+      // Silent fail for payments - not critical
     }
   };
 
@@ -188,11 +217,7 @@ const Admin = () => {
       setUsers(data.users || []);
     } catch (error: any) {
       console.error('Error fetching users:', error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch users",
-        variant: "destructive",
-      });
+      // Silent fail for users - not critical
     }
   };
 
@@ -203,11 +228,7 @@ const Admin = () => {
       setStats(data);
     } catch (error: any) {
       console.error('Error fetching stats:', error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch statistics",
-        variant: "destructive",
-      });
+      // Silent fail for stats - not critical
     }
   };
 
@@ -237,13 +258,65 @@ const Admin = () => {
     }
   };
 
+  const openEditModal = (booking: Booking) => {
+    setSelectedBooking(booking);
+    setEditStatus(booking.status);
+    setEditPaymentStatus(booking.payment_status || 'pending');
+    setEditPaymentMethod(booking.payment_method || 'agent');
+    setEditNotes(booking.booking_details?.admin_notes || '');
+    setEditModalOpen(true);
+  };
+
+  const openViewModal = (booking: Booking) => {
+    setViewBooking(booking);
+    setViewModalOpen(true);
+  };
+
+  const handleUpdateBooking = async () => {
+    if (!selectedBooking) return;
+
+    setUpdating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('admin-booking-update', {
+        body: {
+          booking_id: selectedBooking.id,
+          status: editStatus,
+          payment_status: editPaymentStatus,
+          payment_method: editPaymentMethod,
+          notes: editNotes
+        },
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Booking updated successfully",
+      });
+
+      setEditModalOpen(false);
+      fetchBookings();
+    } catch (error: any) {
+      console.error('Error updating booking:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update booking",
+        variant: "destructive",
+      });
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'confirmed':
       case 'succeeded':
+      case 'paid':
         return 'bg-green-500';
       case 'pending_payment':
       case 'processing':
+      case 'pending':
         return 'bg-yellow-500';
       case 'cancelled':
       case 'failed':
@@ -252,6 +325,23 @@ const Admin = () => {
         return 'bg-gray-500';
       default:
         return 'bg-blue-500';
+    }
+  };
+
+  const getPaymentStatusColor = (status: string | null) => {
+    switch (status) {
+      case 'paid':
+      case 'completed':
+        return 'bg-green-500';
+      case 'pending':
+      case 'processing':
+        return 'bg-yellow-500';
+      case 'failed':
+        return 'bg-red-500';
+      case 'refunded':
+        return 'bg-gray-500';
+      default:
+        return 'bg-yellow-500';
     }
   };
 
@@ -342,7 +432,7 @@ const Admin = () => {
                   <FileText className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{stats?.totalBookings || 0}</div>
+                  <div className="text-2xl font-bold">{stats?.totalBookings || bookings.length}</div>
                   <p className="text-xs text-muted-foreground">
                     {stats?.recentBookingsCount || 0} in last 30 days
                   </p>
@@ -424,7 +514,7 @@ const Admin = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle>Bookings Management</CardTitle>
-                    <CardDescription>View and manage all bookings</CardDescription>
+                    <CardDescription>View and manage all bookings ({bookings.length} total)</CardDescription>
                   </div>
                   <div className="flex gap-2">
                     <Select value={filterType} onValueChange={setFilterType}>
@@ -458,60 +548,109 @@ const Admin = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>ID</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Contact</TableHead>
-                      <TableHead>Amount</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {bookings.map((booking) => (
-                      <TableRow key={booking.id}>
-                        <TableCell className="font-mono text-xs">{booking.id.slice(0, 8)}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="capitalize">
-                            {booking.booking_type}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="text-sm">
-                            <div className="font-medium">{booking.contact_name || 'N/A'}</div>
-                            <div className="text-muted-foreground">{booking.contact_email}</div>
-                          </div>
-                        </TableCell>
-                        <TableCell className="font-semibold">
-                          {booking.currency} {booking.amount.toFixed(2)}
-                        </TableCell>
-                        <TableCell>
-                          <Badge className={getStatusColor(booking.status)}>
-                            {booking.status.replace('_', ' ')}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-sm">
-                          {new Date(booking.created_at).toLocaleDateString()}
-                        </TableCell>
-                        <TableCell>
-                          {booking.status === 'confirmed' && (
-                            <Button
-                              size="sm"
-                              variant="destructive"
-                              onClick={() => handleRefund(booking.id)}
-                            >
-                              Refund
-                            </Button>
-                          )}
-                        </TableCell>
-                      </TableRow>
+                {loadingData ? (
+                  <div className="space-y-3">
+                    {[...Array(5)].map((_, i) => (
+                      <Skeleton key={i} className="h-16 w-full" />
                     ))}
-                  </TableBody>
-                </Table>
-                {bookings.length === 0 && (
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>ID</TableHead>
+                          <TableHead>Type</TableHead>
+                          <TableHead>Customer</TableHead>
+                          <TableHead>Phone</TableHead>
+                          <TableHead>Amount</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Payment</TableHead>
+                          <TableHead>Method</TableHead>
+                          <TableHead>Date</TableHead>
+                          <TableHead>Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {bookings.map((booking) => (
+                          <TableRow key={booking.id}>
+                            <TableCell className="font-mono text-xs">{booking.id.slice(0, 8)}</TableCell>
+                            <TableCell>
+                              <Badge variant="outline" className="capitalize">
+                                {booking.booking_type}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <div className="text-sm">
+                                <div className="font-medium">{booking.contact_name || 'N/A'}</div>
+                                <div className="text-muted-foreground text-xs">{booking.contact_email}</div>
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-sm">
+                              {booking.contact_phone ? (
+                                <span className="flex items-center gap-1">
+                                  <Phone className="h-3 w-3" />
+                                  {booking.contact_phone}
+                                </span>
+                              ) : (
+                                <span className="text-muted-foreground">N/A</span>
+                              )}
+                            </TableCell>
+                            <TableCell className="font-semibold">
+                              {booking.currency} {booking.amount.toFixed(2)}
+                            </TableCell>
+                            <TableCell>
+                              <Badge className={getStatusColor(booking.status)}>
+                                {booking.status.replace(/_/g, ' ')}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Badge className={getPaymentStatusColor(booking.payment_status)}>
+                                {booking.payment_status || 'pending'}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-sm capitalize">
+                              {booking.payment_method || 'N/A'}
+                            </TableCell>
+                            <TableCell className="text-sm">
+                              {new Date(booking.created_at).toLocaleDateString()}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex gap-1">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => openViewModal(booking)}
+                                  title="View Details"
+                                >
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => openEditModal(booking)}
+                                  title="Edit Booking"
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                {booking.status === 'confirmed' && booking.payment_status === 'paid' && (
+                                  <Button
+                                    size="sm"
+                                    variant="destructive"
+                                    onClick={() => handleRefund(booking.id)}
+                                  >
+                                    Refund
+                                  </Button>
+                                )}
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+                {!loadingData && bookings.length === 0 && (
                   <div className="text-center py-8 text-muted-foreground">
                     No bookings found
                   </div>
@@ -680,6 +819,194 @@ const Admin = () => {
           </TabsContent>
         </Tabs>
       </main>
+
+      {/* Edit Booking Modal */}
+      <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit Booking</DialogTitle>
+            <DialogDescription>
+              Update booking status and payment information
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedBooking && (
+            <div className="space-y-4">
+              <div className="text-sm text-muted-foreground">
+                <strong>Booking ID:</strong> {selectedBooking.id.slice(0, 8)}...
+              </div>
+              <div className="text-sm text-muted-foreground">
+                <strong>Customer:</strong> {selectedBooking.contact_name} ({selectedBooking.contact_email})
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Booking Status</Label>
+                <Select value={editStatus} onValueChange={setEditStatus}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pending_payment">Pending Payment</SelectItem>
+                    <SelectItem value="confirmed">Confirmed</SelectItem>
+                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                    <SelectItem value="refunded">Refunded</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Payment Status</Label>
+                <Select value={editPaymentStatus} onValueChange={setEditPaymentStatus}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="paid">Paid</SelectItem>
+                    <SelectItem value="failed">Failed</SelectItem>
+                    <SelectItem value="refunded">Refunded</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Payment Method</Label>
+                <Select value={editPaymentMethod} onValueChange={setEditPaymentMethod}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="stripe">Stripe</SelectItem>
+                    <SelectItem value="agent">Agent (Offline)</SelectItem>
+                    <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
+                    <SelectItem value="cash">Cash</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Admin Notes</Label>
+                <Textarea
+                  value={editNotes}
+                  onChange={(e) => setEditNotes(e.target.value)}
+                  placeholder="Add internal notes..."
+                  rows={3}
+                />
+              </div>
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleUpdateBooking} disabled={updating}>
+              {updating ? (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                'Save Changes'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* View Booking Modal */}
+      <Dialog open={viewModalOpen} onOpenChange={setViewModalOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Booking Details</DialogTitle>
+            <DialogDescription>
+              Full booking information
+            </DialogDescription>
+          </DialogHeader>
+          
+          {viewBooking && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-muted-foreground">Booking ID</Label>
+                  <p className="font-mono text-sm">{viewBooking.id}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Transaction ID</Label>
+                  <p className="font-mono text-sm">{viewBooking.transaction_id || 'N/A'}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Type</Label>
+                  <Badge variant="outline" className="capitalize">{viewBooking.booking_type}</Badge>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Status</Label>
+                  <Badge className={getStatusColor(viewBooking.status)}>
+                    {viewBooking.status.replace(/_/g, ' ')}
+                  </Badge>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Payment Status</Label>
+                  <Badge className={getPaymentStatusColor(viewBooking.payment_status)}>
+                    {viewBooking.payment_status || 'pending'}
+                  </Badge>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Payment Method</Label>
+                  <p className="capitalize">{viewBooking.payment_method || 'N/A'}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Amount</Label>
+                  <p className="font-semibold">{viewBooking.currency} {viewBooking.amount.toFixed(2)}</p>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Created</Label>
+                  <p className="text-sm">{new Date(viewBooking.created_at).toLocaleString()}</p>
+                </div>
+              </div>
+
+              <div className="border-t pt-4">
+                <h4 className="font-semibold mb-2">Customer Information</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-muted-foreground">Name</Label>
+                    <p>{viewBooking.contact_name || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <Label className="text-muted-foreground">Email</Label>
+                    <p>{viewBooking.contact_email}</p>
+                  </div>
+                  <div>
+                    <Label className="text-muted-foreground">Phone</Label>
+                    <p>{viewBooking.contact_phone || 'N/A'}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t pt-4">
+                <h4 className="font-semibold mb-2">Booking Details</h4>
+                <pre className="bg-muted p-4 rounded-lg text-xs overflow-x-auto max-h-48">
+                  {JSON.stringify(viewBooking.booking_details, null, 2)}
+                </pre>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setViewModalOpen(false)}>
+              Close
+            </Button>
+            <Button onClick={() => {
+              setViewModalOpen(false);
+              if (viewBooking) openEditModal(viewBooking);
+            }}>
+              <Edit className="h-4 w-4 mr-2" />
+              Edit
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Footer />
     </div>
