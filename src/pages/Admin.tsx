@@ -140,19 +140,29 @@ const Admin = () => {
 
   const fetchBookings = async () => {
     try {
+      console.log('[Admin] Fetching bookings with filters:', { filterType, filterStatus });
       const { data, error } = await supabase.functions.invoke('admin-bookings', {
-        body: { type: filterType !== 'all' ? filterType : undefined, status: filterStatus !== 'all' ? filterStatus : undefined },
+        body: { 
+          type: filterType !== 'all' ? filterType : undefined, 
+          status: filterStatus !== 'all' ? filterStatus : undefined 
+        },
       });
 
-      if (error) throw error;
-      setBookings(data.bookings || []);
+      if (error) {
+        console.error('[Admin] Edge function error:', error);
+        throw error;
+      }
+      
+      console.log('[Admin] Received bookings:', data?.bookings?.length || 0);
+      setBookings(data?.bookings || []);
     } catch (error: any) {
       console.error('Error fetching bookings:', error);
       toast({
         title: "Error",
-        description: "Failed to fetch bookings",
+        description: error.message || "Failed to fetch bookings",
         variant: "destructive",
       });
+      setBookings([]);
     }
   };
 
