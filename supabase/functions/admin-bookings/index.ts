@@ -41,9 +41,20 @@ serve(async (req) => {
 
     console.log('[admin-bookings] User authenticated:', user.id);
 
-    // Verify admin role using the is_admin RPC function
-    const { data: isAdmin, error: roleError } = await supabaseClient
-      .rpc('is_admin');
+    // Verify admin role using the is_admin RPC function with user context
+    const userClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      {
+        global: {
+          headers: {
+            Authorization: authHeader
+          }
+        }
+      }
+    );
+
+    const { data: isAdmin, error: roleError } = await userClient.rpc('is_admin');
 
     if (roleError) {
       console.error('[admin-bookings] Error checking admin role:', roleError.message);
@@ -63,22 +74,39 @@ serve(async (req) => {
 
     console.log('[admin-bookings] Admin access verified for user:', user.id);
 
+    // Parse filters from both URL params and request body
     const url = new URL(req.url);
-    const bookingType = url.searchParams.get('type');
-    const status = url.searchParams.get('status');
-    const startDate = url.searchParams.get('startDate');
-    const endDate = url.searchParams.get('endDate');
+    let bookingType = url.searchParams.get('type');
+    let status = url.searchParams.get('status');
+    let startDate = url.searchParams.get('startDate');
+    let endDate = url.searchParams.get('endDate');
 
+    // Also check request body for POST requests
+    if (req.method === 'POST') {
+      try {
+        const body = await req.json();
+        bookingType = body.type || bookingType;
+        status = body.status || status;
+        startDate = body.startDate || startDate;
+        endDate = body.endDate || endDate;
+      } catch (e) {
+        // Body parsing failed, use URL params only
+      }
+    }
+
+    console.log('[admin-bookings] Filters:', { bookingType, status, startDate, endDate });
+
+    // Use service role client to bypass RLS and get all bookings
     let query = supabaseClient
       .from('bookings')
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (bookingType) {
+    if (bookingType && bookingType !== 'all') {
       query = query.eq('booking_type', bookingType);
     }
 
-    if (status) {
+    if (status && status !== 'all') {
       query = query.eq('status', status);
     }
 
@@ -100,7 +128,7 @@ serve(async (req) => {
     console.log('[admin-bookings] Successfully retrieved', bookings?.length ?? 0, 'bookings');
 
     return new Response(
-      JSON.stringify({ bookings }),
+      JSON.stringify({ bookings: bookings || [] }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
