@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Phone, User, Menu, X, LogOut, BookOpen, Globe, Moon, Sun } from "lucide-react";
-import flybotLogo from "@/assets/flybot-logo.png";
+import chyeapFlightsLogo from "@/assets/chyeap-flights-logo.png";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -64,8 +64,8 @@ const Header = () => {
               className="h-10 w-auto"
             >
               <img 
-                src={flybotLogo} 
-                alt="CheapFlights" 
+                src={chyeapFlightsLogo} 
+                alt="ChyeapFlights" 
                 className="h-10 w-auto object-contain"
               />
             </motion.div>
