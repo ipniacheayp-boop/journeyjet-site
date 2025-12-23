@@ -9,13 +9,13 @@ import DealModal from "@/components/DealModal";
 import TailoredDealCard from "@/components/TailoredDealCard";
 import TrustBadges from "@/components/TrustBadges";
 import FlyBot from "@/components/FlyBot";
-
+import { ReviewsHighlight } from "@/components/ReviewsHighlight";
 import FeatureHighlights from "@/components/FeatureHighlights";
 import ForTravelPros from "@/components/ForTravelPros";
 import PartnerLogos from "@/components/PartnerLogos";
 import AppDownload from "@/components/AppDownload";
 import PopularFlights from "@/components/PopularFlights";
-
+import CustomerReviewsDark from "@/components/CustomerReviewsDark";
 import { mockDeals, type Deal } from "@/data/mockDeals";
 import heroBlackFriday from "@/assets/hero-black-friday.jpg";
 import dealLastMinute from "@/assets/deal-last-minute.jpg";
@@ -324,6 +324,10 @@ const Index = () => {
         onOpenChange={setIsModalOpen}
       />
 
+      <ReviewsHighlight />
+
+      {/* Customer Reviews Dark Section */}
+      <CustomerReviewsDark />
 
       {/* Tailored Travel Deals */}
       <section className="py-20 bg-muted/30">
