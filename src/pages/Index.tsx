@@ -14,6 +14,7 @@ import FeatureHighlights from "@/components/FeatureHighlights";
 import ForTravelPros from "@/components/ForTravelPros";
 import PartnerLogos from "@/components/PartnerLogos";
 import AppDownload from "@/components/AppDownload";
+import PopularFlights from "@/components/PopularFlights";
 import CustomerReviewsDark from "@/components/CustomerReviewsDark";
 import { mockDeals, type Deal } from "@/data/mockDeals";
 import heroBlackFriday from "@/assets/hero-black-friday.jpg";
@@ -197,6 +198,9 @@ const Index = () => {
 
       {/* Feature Highlights Strip - Three Columns */}
       <FeatureHighlights />
+
+      {/* Popular Flights Section */}
+      <PopularFlights />
 
       {/* For Travel Pros Section */}
       <ForTravelPros />
