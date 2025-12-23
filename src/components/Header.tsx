@@ -70,7 +70,7 @@ const Header = () => {
               />
             </motion.div>
             <span className="text-xl font-bold text-foreground tracking-tight">
-              CheapFlights
+              ChyeapFlights
             </span>
           </Link>
 

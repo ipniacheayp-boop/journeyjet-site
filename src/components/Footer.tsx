@@ -43,7 +43,7 @@ const Footer = () => {
       ],
     },
     {
-      title: "About CheapFlights",
+      title: "About ChyeapFlights",
       links: [
         { label: "About Us", href: "/about" },
         { label: "Contact Us", href: "/support#contact" },
@@ -132,7 +132,7 @@ const Footer = () => {
           {/* Copyright & Legal Links */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
             <p className="text-xs text-white/50">
-              © {new Date().getFullYear()} CheapFlights. All rights reserved.
+              © {new Date().getFullYear()} ChyeapFlights. All rights reserved.
             </p>
             <div className="flex items-center gap-3 text-xs text-white/50">
               <Link 

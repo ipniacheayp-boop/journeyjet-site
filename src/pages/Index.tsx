@@ -11,6 +11,10 @@ import TrustBadges from "@/components/TrustBadges";
 import FlyBot from "@/components/FlyBot";
 import { ReviewsHighlight } from "@/components/ReviewsHighlight";
 import FeatureHighlights from "@/components/FeatureHighlights";
+import ForTravelPros from "@/components/ForTravelPros";
+import PartnerLogos from "@/components/PartnerLogos";
+import AppDownload from "@/components/AppDownload";
+import CustomerReviewsDark from "@/components/CustomerReviewsDark";
 import { mockDeals, type Deal } from "@/data/mockDeals";
 import heroBlackFriday from "@/assets/hero-black-friday.jpg";
 import dealLastMinute from "@/assets/deal-last-minute.jpg";
@@ -141,7 +145,7 @@ const Index = () => {
               transition={{ delay: 0.3, duration: 0.6 }}
               className="font-display text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight"
             >
-              <span className="block text-2xl md:text-3xl lg:text-4xl font-semibold text-cyan-300 mb-2">CheapFlights</span>
+              <span className="block text-2xl md:text-3xl lg:text-4xl font-semibold text-cyan-300 mb-2">ChyeapFlights</span>
               Discover Your Next
               <span className="block bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
                 Adventure
@@ -195,6 +199,12 @@ const Index = () => {
       {/* Feature Highlights Strip - Three Columns */}
       <FeatureHighlights />
 
+      {/* For Travel Pros Section */}
+      <ForTravelPros />
+
+      {/* Partner Logos Strip */}
+      <PartnerLogos />
+
       {/* Why Choose Us Section - Colorful */}
       <section className="py-20 bg-gradient-to-b from-background via-blue-50/30 to-background dark:from-background dark:via-blue-950/20 dark:to-background">
         <div className="container mx-auto px-4">
@@ -209,7 +219,7 @@ const Index = () => {
               variants={fadeInUp}
               className="font-display text-3xl md:text-4xl font-bold mb-4"
             >
-              Why Travelers Choose <span className="text-gradient-vibrant">CheapFlights</span>
+              Why Travelers Choose <span className="text-gradient-vibrant">ChyeapFlights</span>
             </motion.h2>
             <motion.p 
               variants={fadeInUp}
@@ -312,6 +322,9 @@ const Index = () => {
       />
 
       <ReviewsHighlight />
+
+      {/* Customer Reviews Dark Section */}
+      <CustomerReviewsDark />
 
       {/* Tailored Travel Deals */}
       <section className="py-20 bg-muted/30">
@@ -438,6 +451,9 @@ const Index = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* App Download Section */}
+      <AppDownload />
 
       <Footer />
       <FlyBot />
