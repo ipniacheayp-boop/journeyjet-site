@@ -145,7 +145,6 @@ const Index = () => {
               transition={{ delay: 0.3, duration: 0.6 }}
               className="font-display text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight"
             >
-              <span className="block text-2xl md:text-3xl lg:text-4xl font-semibold text-cyan-300 mb-2">ChyeapFlights</span>
               Discover Your Next
               <span className="block bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto]">
                 Adventure
