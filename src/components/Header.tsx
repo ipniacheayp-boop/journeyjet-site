@@ -58,20 +58,17 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 group">
+          <Link to="/" className="flex items-center group">
             <motion.div 
               whileHover={{ scale: 1.05 }}
-              className="h-10 w-auto"
+              className="h-14 md:h-16 lg:h-18 w-auto"
             >
               <img 
                 src={chyeapFlightsLogo} 
                 alt="ChyeapFlights" 
-                className="h-10 w-auto object-contain"
+                className="h-14 md:h-16 lg:h-18 w-auto object-contain"
               />
             </motion.div>
-            <span className="text-xl font-bold text-foreground tracking-tight">
-              ChyeapFlights
-            </span>
           </Link>
 
           {/* Desktop Navigation */}
