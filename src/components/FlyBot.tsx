@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import chyeapFlightsLogo from "@/assets/Flybot-logo.png";
+import chyeapFlightsLogo from "@/assets/FlyBot-logo.png";
 
 interface Message {
   role: "user" | "bot";
