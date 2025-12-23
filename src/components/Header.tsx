@@ -61,12 +61,12 @@ const Header = () => {
           <Link to="/" className="flex items-center group">
             <motion.div 
               whileHover={{ scale: 1.05 }}
-              className="h-14 md:h-16 lg:h-18 w-auto"
+              className="h-[3.5rem] md:h-[4.5rem] lg:h-[5.5rem] w-auto"
             >
               <img 
                 src={chyeapFlightsLogo} 
                 alt="ChyeapFlights" 
-                className="h-14 md:h-16 lg:h-18 w-auto object-contain"
+                className="h-[3.5rem] md:h-[4.5rem] lg:h-[5.5rem] w-auto object-contain"
               />
             </motion.div>
           </Link>
