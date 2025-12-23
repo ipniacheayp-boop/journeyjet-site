@@ -9,7 +9,7 @@ import DealModal from "@/components/DealModal";
 import TailoredDealCard from "@/components/TailoredDealCard";
 import TrustBadges from "@/components/TrustBadges";
 import FlyBot from "@/components/FlyBot";
-import { ReviewsHighlight } from "@/components/ReviewsHighlight";
+
 import FeatureHighlights from "@/components/FeatureHighlights";
 import ForTravelPros from "@/components/ForTravelPros";
 import PartnerLogos from "@/components/PartnerLogos";
@@ -323,8 +323,6 @@ const Index = () => {
         open={isModalOpen}
         onOpenChange={setIsModalOpen}
       />
-
-      <ReviewsHighlight />
 
       {/* Customer Reviews Dark Section */}
       <CustomerReviewsDark />
