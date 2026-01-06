@@ -17,13 +17,13 @@ const TrustPartners = () => {
   const partners = [
     {
       name: "IATA",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/IATA_logo.svg/512px-IATA_logo.svg.png",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/f/f7/IATAlogo.svg",
       alt: "IATA - International Air Transport Association",
       href: "https://www.iata.org/",
     },
     {
       name: "ASTA",
-      logo: "https://www.asta.org/Portals/0/Images/asta-member-logo.png",
+      logo: "https://amanitours.com/wp-content/uploads/2020/02/ASTA-logo.png",
       alt: "ASTA - American Society of Travel Advisors Member",
       href: "https://www.asta.org/",
     },
@@ -35,7 +35,7 @@ const TrustPartners = () => {
     },
     {
       name: "TRUE",
-      logo: "https://trueaccreditation.org/wp-content/uploads/2021/06/TRUE-Logo-2021.png",
+      logo: "https://har-production-assets.s3.amazonaws.com/variants/zPpfDEQ2CZXZe97GoPVADe8s/bf15e1fa2ab7bef67faf07c8849cb6ba2ac42e07828cd811c90f37bb92a2e91e.png",
       alt: "TRUE - Travel Retailer Universal Enumeration Accredited",
       href: "https://trueaccreditation.org/",
     },
@@ -47,7 +47,7 @@ const TrustPartners = () => {
     },
     {
       name: "FlexPay",
-      logo: "https://uploads-ssl.webflow.com/60d7c0c8c02e60d31a8c3f3f/60d7c0c8c02e602a578c4040_flexpay-logo.svg",
+      logo: "https://cdn.document360.io/ff52d920-99b4-4c2b-9b32-5d5fe9700cb0/Images/Documentation/FlexpayLogo-FullColor-V(1).png",
       alt: "FlexPay - Buy Now Pay Later",
       href: "#",
     },
@@ -97,8 +97,8 @@ const TrustPartners = () => {
     >
       <div className="container mx-auto px-4">
         {/* Section Title */}
-        <h2 
-          id="trust-partners-heading" 
+        <h2
+          id="trust-partners-heading"
           className="text-center text-lg md:text-xl font-semibold text-foreground tracking-wide mb-6"
         >
           TrustPartners
@@ -121,9 +121,9 @@ const TrustPartners = () => {
               target="_blank"
               rel="noopener noreferrer"
               variants={itemVariants}
-              whileHover={{ 
+              whileHover={{
                 scale: 1.05,
-                boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)"
+                boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
               }}
               whileTap={{ scale: 0.98 }}
               className="flex items-center justify-center p-2 md:p-3 rounded-lg bg-white dark:bg-slate-800/80 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
