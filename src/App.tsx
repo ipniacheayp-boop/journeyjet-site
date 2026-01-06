@@ -40,6 +40,7 @@ import AgentLogin from "./pages/AgentLogin";
 import AgentDashboard from "./pages/AgentDashboard";
 import DealsManagement from "./pages/DealsManagement";
 import FxSavingsDashboard from "./pages/FxSavingsDashboard";
+import Sitemap from "./pages/Sitemap";
 
 const FlybotWrapper = () => {
   const location = useLocation();
@@ -99,6 +100,7 @@ const App = () => (
                 <Route path="/error" element={<ErrorPage />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/sitemap" element={<Sitemap />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <FlybotWrapper />
