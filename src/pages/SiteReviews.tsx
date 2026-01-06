@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import { Button } from '@/components/ui/button';
-import { StarRating } from '@/components/StarRating';
-import { SiteReviewCard } from '@/components/SiteReviewCard';
-import { useSiteReviews, SiteReview } from '@/hooks/useSiteReviews';
+import { useState } from "react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { Button } from "@/components/ui/button";
+import { StarRating } from "@/components/StarRating";
+import { SiteReviewCard } from "@/components/SiteReviewCard";
+import { useSiteReviews, SiteReview } from "@/hooks/useSiteReviews";
 import {
   Dialog,
   DialogContent,
@@ -12,57 +12,49 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAuth } from '@/contexts/AuthContext';
-import { toast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
 
 export default function SiteReviews() {
   const { user } = useAuth();
-  const [filter, setFilter] = useState('recent');
+  const [filter, setFilter] = useState("recent");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingReview, setEditingReview] = useState<SiteReview | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  
+
   // Show only real reviews (demo=false) by default
-  const { 
-    reviews, 
-    loading, 
-    averageRating, 
-    totalReviews, 
-    ratingDistribution,
-    createReview,
-    updateReview,
-    markHelpful,
-  } = useSiteReviews(filter, false);
+  const { reviews, loading, averageRating, totalReviews, ratingDistribution, createReview, updateReview, markHelpful } =
+    useSiteReviews(filter, false);
 
   const [formData, setFormData] = useState({
     rating: 5,
-    title: '',
-    body: '',
+    title: "",
+    body: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!user) {
       toast({
-        title: 'Error',
-        description: 'You must be logged in to submit a review',
-        variant: 'destructive',
+        title: "Error",
+        description: "You must be logged in to submit a review",
+        variant: "destructive",
       });
       return;
     }
 
     if (formData.body.length < 20) {
       toast({
-        title: 'Error',
-        description: 'Review must be at least 20 characters long',
-        variant: 'destructive',
+        title: "Error",
+        description: "Review must be at least 20 characters long",
+        variant: "destructive",
       });
       return;
     }
@@ -75,7 +67,7 @@ export default function SiteReviews() {
         await createReview(formData);
       }
       setIsDialogOpen(false);
-      setFormData({ rating: 5, title: '', body: '' });
+      setFormData({ rating: 5, title: "", body: "" });
       setEditingReview(null);
     } catch (error) {
       // Error already handled in hook
@@ -88,48 +80,44 @@ export default function SiteReviews() {
     setEditingReview(review);
     setFormData({
       rating: review.rating,
-      title: review.title || '',
+      title: review.title || "",
       body: review.body,
     });
     setIsDialogOpen(true);
   };
 
   const handleDelete = async (reviewId: string) => {
-    if (confirm('Are you sure you want to delete this review?')) {
+    if (confirm("Are you sure you want to delete this review?")) {
       await updateReview(reviewId, { isDeleted: true });
     }
   };
 
-  const ratingPercentages = Object.entries(ratingDistribution).map(([rating, count]) => ({
-    rating: parseInt(rating),
-    count,
-    percentage: totalReviews > 0 ? (count / totalReviews) * 100 : 0,
-  })).reverse();
+  const ratingPercentages = Object.entries(ratingDistribution)
+    .map(([rating, count]) => ({
+      rating: parseInt(rating),
+      count,
+      percentage: totalReviews > 0 ? (count / totalReviews) * 100 : 0,
+    }))
+    .reverse();
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col pt-10 pb-20">
       <Header />
-      
+
       <main className="flex-grow bg-background">
         {/* Hero Section */}
         <section className="bg-gradient-to-br from-primary/10 via-background to-background py-16">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center space-y-6">
-              <h1 className="text-4xl md:text-5xl font-bold text-foreground">
-                Customer Reviews
-              </h1>
-              <p className="text-xl text-muted-foreground">
-                See what travelers are saying about our service
-              </p>
-              
+              <h1 className="text-4xl md:text-5xl font-bold text-foreground">Customer Reviews</h1>
+              <p className="text-xl text-muted-foreground">See what travelers are saying about our service</p>
+
               <div className="flex flex-col items-center gap-4 py-8">
                 <div className="flex items-center gap-4">
                   <span className="text-5xl font-bold text-foreground">{averageRating.toFixed(1)}</span>
                   <div>
                     <StarRating rating={averageRating} readonly size="lg" />
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Based on {totalReviews} reviews
-                    </p>
+                    <p className="text-sm text-muted-foreground mt-1">Based on {totalReviews} reviews</p>
                   </div>
                 </div>
 
@@ -139,10 +127,7 @@ export default function SiteReviews() {
                     <div key={rating} className="flex items-center gap-3">
                       <span className="text-sm text-muted-foreground w-8">{rating}★</span>
                       <div className="flex-1 h-3 bg-muted rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-accent"
-                          style={{ width: `${percentage}%` }}
-                        />
+                        <div className="h-full bg-accent" style={{ width: `${percentage}%` }} />
                       </div>
                       <span className="text-sm text-muted-foreground w-12 text-right">{count}</span>
                     </div>
@@ -153,17 +138,13 @@ export default function SiteReviews() {
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
                   <Button size="lg" className="mt-4" disabled={!user}>
-                    {user ? 'Write a Review' : 'Login to Write a Review'}
+                    {user ? "Write a Review" : "Login to Write a Review"}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[600px]">
                   <DialogHeader>
-                    <DialogTitle>
-                      {editingReview ? 'Edit Your Review' : 'Write a Review'}
-                    </DialogTitle>
-                    <DialogDescription>
-                      Share your experience with our travel booking service
-                    </DialogDescription>
+                    <DialogTitle>{editingReview ? "Edit Your Review" : "Write a Review"}</DialogTitle>
+                    <DialogDescription>Share your experience with our travel booking service</DialogDescription>
                   </DialogHeader>
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="space-y-2">
@@ -197,9 +178,7 @@ export default function SiteReviews() {
                         maxLength={1000}
                         required
                       />
-                      <p className="text-xs text-muted-foreground">
-                        {formData.body.length}/1000 characters
-                      </p>
+                      <p className="text-xs text-muted-foreground">{formData.body.length}/1000 characters</p>
                     </div>
 
                     <div className="flex gap-3 justify-end">
@@ -208,7 +187,7 @@ export default function SiteReviews() {
                         variant="outline"
                         onClick={() => {
                           setIsDialogOpen(false);
-                          setFormData({ rating: 5, title: '', body: '' });
+                          setFormData({ rating: 5, title: "", body: "" });
                           setEditingReview(null);
                         }}
                         disabled={submitting}
@@ -217,7 +196,7 @@ export default function SiteReviews() {
                       </Button>
                       <Button type="submit" disabled={submitting}>
                         {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        {editingReview ? 'Update Review' : 'Submit Review'}
+                        {editingReview ? "Update Review" : "Submit Review"}
                       </Button>
                     </div>
                   </form>
