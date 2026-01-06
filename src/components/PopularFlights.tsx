@@ -1,35 +1,35 @@
 import { motion } from "framer-motion";
 
 const airlines = [
-  { 
-    name: "Virgin Atlantic", 
-    logo: "https://logos-world.net/wp-content/uploads/2021/08/Virgin-Atlantic-Logo.png",
-    bgColor: "bg-white"
+  {
+    name: "Virgin Atlantic",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/f/f4/Virgin_Atlantic_logo.svg",
+    bgColor: "bg-white",
   },
-  { 
-    name: "Gulf Air", 
+  {
+    name: "Gulf Air",
     logo: "https://logos-world.net/wp-content/uploads/2023/01/Gulf-Air-Logo.png",
-    bgColor: "bg-white"
+    bgColor: "bg-white",
   },
-  { 
-    name: "Oman Air", 
+  {
+    name: "Oman Air",
     logo: "https://logos-world.net/wp-content/uploads/2023/01/Oman-Air-Logo.png",
-    bgColor: "bg-white"
+    bgColor: "bg-white",
   },
-  { 
-    name: "American Airlines", 
-    logo: "https://logos-world.net/wp-content/uploads/2021/08/American-Airlines-Logo.png",
-    bgColor: "bg-white"
+  {
+    name: "American Airlines",
+    logo: "https://s202.q4cdn.com/986123435/files/doc_downloads/logos/american-airlines/THUMB-aa_aa__ahz_4cp_grd_pos-(1).png",
+    bgColor: "bg-white",
   },
-  { 
-    name: "Delta Air Lines", 
-    logo: "https://logos-world.net/wp-content/uploads/2021/08/Delta-Air-Lines-Logo.png",
-    bgColor: "bg-white"
+  {
+    name: "Delta Air Lines",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/d/d1/Delta_logo.svg",
+    bgColor: "bg-white",
   },
-  { 
-    name: "British Airways", 
-    logo: "https://logos-world.net/wp-content/uploads/2021/08/British-Airways-Logo.png",
-    bgColor: "bg-white"
+  {
+    name: "British Airways",
+    logo: "https://mediacentre.britishairways.com/contents/archives/216/86/images/thumb1280x1683_width/britishairways_216861253015751_thumb.jpg",
+    bgColor: "bg-white",
   },
 ];
 
@@ -58,12 +58,8 @@ const PopularFlights = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-10"
         >
-          <h2 className="font-display text-2xl md:text-3xl font-bold mb-2">
-            Popular Flights
-          </h2>
-          <p className="text-muted-foreground">
-            Fly with the world's leading airlines
-          </p>
+          <h2 className="font-display text-2xl md:text-3xl font-bold mb-2">Popular Flights</h2>
+          <p className="text-muted-foreground">Fly with the world's leading airlines</p>
         </motion.div>
 
         <motion.div
@@ -89,7 +85,7 @@ const PopularFlights = () => {
                 onError={(e) => {
                   // Fallback to text if image fails
                   const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
+                  target.style.display = "none";
                   target.parentElement!.innerHTML = `<span class="text-sm font-semibold text-gray-700 text-center">${airline.name}</span>`;
                 }}
               />
