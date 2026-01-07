@@ -36,27 +36,27 @@ const adaptMinPriceDeal = (deal: MinPriceDeal): Deal => ({
 // Get image based on destination
 const getDestinationImage = (destCode: string): string => {
   const imageMap: Record<string, string> = {
-    'LAX': '/deal-beach.jpg',
-    'SFO': '/deal-nyc.jpg',
-    'MIA': '/deal-beach.jpg',
-    'LAS': '/deal-tokyo.jpg',
-    'DEN': '/deal-nyc.jpg',
-    'PHX': '/deal-beach.jpg',
-    'ORD': '/deal-nyc.jpg',
-    'LHR': '/deal-paris.jpg',
-    'NRT': '/deal-tokyo.jpg',
-    'CDG': '/deal-paris.jpg',
-    'CUN': '/deal-beach.jpg',
-    'FCO': '/deal-paris.jpg',
-    'HNL': '/deal-beach.jpg',
-    'MEX': '/deal-tokyo.jpg',
-    'SJU': '/deal-beach.jpg',
-    'ANC': '/deal-nyc.jpg',
-    'DUB': '/deal-paris.jpg',
-    'BCN': '/deal-paris.jpg',
-    'SYD': '/deal-beach.jpg',
+    LAX: "/deal-beach.jpg",
+    SFO: "/deal-nyc.jpg",
+    MIA: "/deal-beach.jpg",
+    LAS: "/deal-tokyo.jpg",
+    DEN: "/deal-nyc.jpg",
+    PHX: "/deal-beach.jpg",
+    ORD: "/deal-nyc.jpg",
+    LHR: "/deal-paris.jpg",
+    NRT: "/deal-tokyo.jpg",
+    CDG: "/deal-paris.jpg",
+    CUN: "/deal-beach.jpg",
+    FCO: "/deal-paris.jpg",
+    HNL: "/deal-beach.jpg",
+    MEX: "/deal-tokyo.jpg",
+    SJU: "/deal-beach.jpg",
+    ANC: "/deal-nyc.jpg",
+    DUB: "/deal-paris.jpg",
+    BCN: "/deal-paris.jpg",
+    SYD: "/deal-beach.jpg",
   };
-  return imageMap[destCode] || '/deal-beach.jpg';
+  return imageMap[destCode] || "/deal-beach.jpg";
 };
 
 const Deals = () => {
@@ -68,7 +68,7 @@ const Deals = () => {
   const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
   const [page, setPage] = useState(1);
-  const [sort, setSort] = useState('price_asc'); // Default to lowest price first
+  const [sort, setSort] = useState("price_asc"); // Default to lowest price first
   const [showFilters, setShowFilters] = useState(false);
 
   // Fetch minimum price deals from API with React Query caching (guaranteed 50+ deals)
@@ -76,34 +76,35 @@ const Deals = () => {
 
   // Hook guarantees 50+ deals by combining API + fallback deals
   // Only show fallback notice if error occurred and deals are all fallback
-  const usingFallback = error !== null && minPriceDeals.every(d => d.id.startsWith('fallback-'));
-  
+  const usingFallback = error !== null && minPriceDeals.every((d) => d.id.startsWith("fallback-"));
+
   // Always use minPriceDeals (hook guarantees 50+ deals with fallback)
-  const rawDeals: Deal[] = minPriceDeals.length > 0 
-    ? minPriceDeals.map(adaptMinPriceDeal)
-    : mockDeals;
+  const rawDeals: Deal[] = minPriceDeals.length > 0 ? minPriceDeals.map(adaptMinPriceDeal) : mockDeals;
 
   // Apply client-side filtering
-  let filteredDeals = rawDeals.filter(deal => {
+  let filteredDeals = rawDeals.filter((deal) => {
     const priceMatch = deal.price >= priceRange[0] && deal.price <= priceRange[1];
     const airlineMatch = selectedAirline === "all" || deal.airline === selectedAirline;
-    const destMatch = selectedDestination === "all" || deal.destination.toLowerCase().includes(selectedDestination.toLowerCase());
+    const destMatch =
+      selectedDestination === "all" || deal.destination.toLowerCase().includes(selectedDestination.toLowerCase());
     return priceMatch && airlineMatch && destMatch;
   });
 
   // Apply client-side sorting
   switch (sort) {
-    case 'price_asc':
+    case "price_asc":
       filteredDeals = [...filteredDeals].sort((a, b) => a.price - b.price);
       break;
-    case 'price_desc':
+    case "price_desc":
       filteredDeals = [...filteredDeals].sort((a, b) => b.price - a.price);
       break;
-    case 'popularity':
-      filteredDeals = [...filteredDeals].sort((a, b) => (b.originalPrice - b.price) - (a.originalPrice - a.price));
+    case "popularity":
+      filteredDeals = [...filteredDeals].sort((a, b) => b.originalPrice - b.price - (a.originalPrice - a.price));
       break;
-    case 'date':
-      filteredDeals = [...filteredDeals].sort((a, b) => new Date(a.departDate).getTime() - new Date(b.departDate).getTime());
+    case "date":
+      filteredDeals = [...filteredDeals].sort(
+        (a, b) => new Date(a.departDate).getTime() - new Date(b.departDate).getTime(),
+      );
       break;
     default:
       // Featured - keep original order (already sorted by price from API)
@@ -115,13 +116,19 @@ const Deals = () => {
   const paginatedDeals = filteredDeals.slice((page - 1) * itemsPerPage, page * itemsPerPage);
   const displayTotal = filteredDeals.length;
   const displayTotalPages = Math.ceil(filteredDeals.length / itemsPerPage);
-  
+
   // Get unique airlines and destinations for filters
-  const airlines: string[] = [...new Set(rawDeals.map(deal => deal.airline))].filter(Boolean).sort();
-  const destinations: string[] = [...new Set(rawDeals.map(deal => {
-    const match = deal.destination.match(/^([^(]+)/);
-    return match ? match[1].trim() : deal.destination;
-  }))].filter(Boolean).sort();
+  const airlines: string[] = [...new Set(rawDeals.map((deal) => deal.airline))].filter(Boolean).sort();
+  const destinations: string[] = [
+    ...new Set(
+      rawDeals.map((deal) => {
+        const match = deal.destination.match(/^([^(]+)/);
+        return match ? match[1].trim() : deal.destination;
+      }),
+    ),
+  ]
+    .filter(Boolean)
+    .sort();
 
   const handleQuickView = (deal: Deal) => {
     setSelectedDeal(deal);
@@ -152,10 +159,19 @@ const Deals = () => {
     <div className="min-h-screen flex flex-col relative overflow-hidden bg-background pt-16 pb-20">
       <Helmet>
         <title>Exclusive Flight Deals & Travel Offers | CheapFlights USA</title>
-        <meta name="description" content="Discover exclusive flight deals and travel offers across the USA. Save up to 50% on roundtrip flights with CheapFlights' best price guarantee." />
-        <meta name="keywords" content="flight deals USA, cheap airline tickets, travel offers, discounted flights, last minute deals, best flight prices" />
+        <meta
+          name="description"
+          content="Discover exclusive flight deals and travel offers across the USA. Save up to 50% on roundtrip flights with CheapFlights' best price guarantee."
+        />
+        <meta
+          name="keywords"
+          content="flight deals USA, cheap airline tickets, travel offers, discounted flights, last minute deals, best flight prices"
+        />
         <meta property="og:title" content="Exclusive Flight Deals & Travel Offers | CheapFlights" />
-        <meta property="og:description" content="Discover exclusive travel deals on flights across the USA. Save up to 50% on roundtrip flights." />
+        <meta
+          property="og:description"
+          content="Discover exclusive travel deals on flights across the USA. Save up to 50% on roundtrip flights."
+        />
         <link rel="canonical" href="https://cheapflights.com/deals" />
       </Helmet>
 
@@ -188,7 +204,7 @@ const Deals = () => {
       </div>
 
       <Header />
-      
+
       <main className="flex-1 container mx-auto px-4 py-8 relative z-10">
         {/* Hero Section */}
         <motion.div
@@ -215,13 +231,14 @@ const Deals = () => {
               {displayTotal}+ Live Deals
             </Badge>
           </div>
-          
+
           <h1 className="text-4xl md:text-6xl font-black bg-gradient-to-r from-foreground via-foreground/80 to-foreground bg-clip-text text-transparent font-display">
             Today's Best Flight Deals
           </h1>
-          
+
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Exclusive offers handpicked for you. Save up to <span className="text-primary font-bold">50%</span> on flights worldwide
+            Exclusive offers handpicked for you. Save up to <span className="text-primary font-bold">50%</span> on
+            flights worldwide
           </p>
         </motion.div>
 
@@ -252,17 +269,12 @@ const Deals = () => {
                 <Filter className="w-5 h-5 text-muted-foreground" />
                 <h2 className="font-bold text-lg">Filter Deals</h2>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowFilters(!showFilters)}
-                className="lg:hidden"
-              >
+              <Button variant="ghost" size="sm" onClick={() => setShowFilters(!showFilters)} className="lg:hidden">
                 {showFilters ? "Hide" : "Show"}
               </Button>
             </div>
 
-            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 ${!showFilters && 'hidden lg:grid'}`}>
+            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 ${!showFilters && "hidden lg:grid"}`}>
               {/* Price Range */}
               <div className="space-y-3">
                 <Label className="text-sm font-semibold flex items-center gap-2">
@@ -338,11 +350,7 @@ const Deals = () => {
 
               {/* Reset */}
               <div className="flex items-end">
-                <Button
-                  variant="outline"
-                  onClick={resetFilters}
-                  className="w-full"
-                >
+                <Button variant="outline" onClick={resetFilters} className="w-full">
                   Reset Filters
                 </Button>
               </div>
@@ -366,13 +374,11 @@ const Deals = () => {
                   Updating...
                 </span>
               )}
-              {fromCache && !isFetching && (
-                <span className="text-xs text-muted-foreground/70">(cached)</span>
-              )}
+              {fromCache && !isFetching && <span className="text-xs text-muted-foreground/70">(cached)</span>}
             </p>
             {!usingFallback && (
               <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching} className="gap-2">
-                <RefreshCw className={`w-4 h-4 ${isFetching ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`w-4 h-4 ${isFetching ? "animate-spin" : ""}`} />
                 Refresh Prices
               </Button>
             )}
@@ -391,7 +397,7 @@ const Deals = () => {
           </div>
         ) : (
           <>
-            <motion.div 
+            <motion.div
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8"
               initial="hidden"
               animate="visible"
@@ -400,9 +406,9 @@ const Deals = () => {
                 visible: {
                   opacity: 1,
                   transition: {
-                    staggerChildren: 0.05
-                  }
-                }
+                    staggerChildren: 0.05,
+                  },
+                },
               }}
             >
               {paginatedDeals.map((deal, index) => (
@@ -410,7 +416,7 @@ const Deals = () => {
                   key={deal.id}
                   variants={{
                     hidden: { opacity: 0, y: 20 },
-                    visible: { opacity: 1, y: 0 }
+                    visible: { opacity: 1, y: 0 },
                   }}
                 >
                   <DealCardEnhanced
@@ -430,14 +436,10 @@ const Deals = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="flex items-center justify-center gap-2 mt-12"
               >
-                <Button
-                  variant="outline"
-                  onClick={() => setPage(p => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                >
+                <Button variant="outline" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
                   Previous
                 </Button>
-                
+
                 <div className="flex items-center gap-2">
                   {[...Array(Math.min(5, displayTotalPages))].map((_, i) => {
                     const pageNum = i + 1;
@@ -456,7 +458,7 @@ const Deals = () => {
 
                 <Button
                   variant="outline"
-                  onClick={() => setPage(p => Math.min(displayTotalPages, p + 1))}
+                  onClick={() => setPage((p) => Math.min(displayTotalPages, p + 1))}
                   disabled={page === displayTotalPages}
                 >
                   Next

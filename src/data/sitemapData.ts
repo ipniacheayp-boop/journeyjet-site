@@ -13,7 +13,7 @@ import {
 export const siteMapData = [
   {
     title: "Domestic Flight Cities",
-    links: [
+    links: [ 
       "Cheap Flights to Abilene",
       "Cheap Flights to Akron Canton",
       "Cheap Flights to Alamosa",

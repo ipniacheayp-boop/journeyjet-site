@@ -6,15 +6,15 @@ const airlines = [
     logo: "https://upload.wikimedia.org/wikipedia/commons/f/f4/Virgin_Atlantic_logo.svg",
     bgColor: "bg-white"
   },
-  { 
-    name: "Gulf Air", 
+  {
+    name: "Gulf Air",
     logo: "https://logos-world.net/wp-content/uploads/2023/01/Gulf-Air-Logo.png",
-    bgColor: "bg-white"
+    bgColor: "bg-white",
   },
-  { 
-    name: "Oman Air", 
+  {
+    name: "Oman Air",
     logo: "https://logos-world.net/wp-content/uploads/2023/01/Oman-Air-Logo.png",
-    bgColor: "bg-white"
+    bgColor: "bg-white",
   },
   { 
     name: "American Airlines", 
@@ -58,12 +58,8 @@ const PopularFlights = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-10"
         >
-          <h2 className="font-display text-2xl md:text-3xl font-bold mb-2">
-            Popular Flights
-          </h2>
-          <p className="text-muted-foreground">
-            Fly with the world's leading airlines
-          </p>
+          <h2 className="font-display text-2xl md:text-3xl font-bold mb-2">Popular Flights</h2>
+          <p className="text-muted-foreground">Fly with the world's leading airlines</p>
         </motion.div>
 
         <motion.div
@@ -89,7 +85,7 @@ const PopularFlights = () => {
                 onError={(e) => {
                   // Fallback to text if image fails
                   const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
+                  target.style.display = "none";
                   target.parentElement!.innerHTML = `<span class="text-sm font-semibold text-gray-700 text-center">${airline.name}</span>`;
                 }}
               />
