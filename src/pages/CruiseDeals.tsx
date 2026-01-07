@@ -267,7 +267,7 @@ const CruiseDeals = () => {
           <p className="text-xl md:text-2xl text-white/90 mb-8">
             Up to 25% off on Major Cruise Lines
           </p>
-          <a href="tel:+1-315-625-6865">
+          <Link to="/contact-us">
             <Button 
               size="lg" 
               className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white text-lg px-8 py-6 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
@@ -275,7 +275,7 @@ const CruiseDeals = () => {
               <Phone className="w-5 h-5 mr-2 animate-pulse" />
               Call Now
             </Button>
-          </a>
+          </Link>
         </div>
       </section>
 
@@ -355,12 +355,12 @@ const CruiseDeals = () => {
                     ))}
                   </ul>
                   
-                  <a href="tel:+1-315-625-6865" className="block">
+                  <Link to="/contact-us" className="block">
                     <Button className="w-full bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 text-white">
                       <Phone className="w-4 h-4 mr-2" />
                       Call to Book
                     </Button>
-                  </a>
+                  </Link>
                 </div>
               </div>
             ))}

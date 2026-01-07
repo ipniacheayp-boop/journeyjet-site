@@ -87,13 +87,13 @@ const Header = () => {
 
           {/* Right Side Actions */}
           <div className="flex items-center gap-2">
-            <a
-              href="tel:+18001234567"
+            <Link
+              to="/contact-us"
               className="hidden md:flex items-center gap-2 px-3 py-2 text-sm font-medium text-foreground/70 hover:text-foreground transition-colors rounded-lg hover:bg-muted/50"
             >
               <Phone className="w-4 h-4" />
               <span>1-800-123-4567</span>
-            </a>
+            </Link>
 
             {/* Dark Mode Toggle */}
             <Button

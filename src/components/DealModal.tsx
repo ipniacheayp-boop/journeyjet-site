@@ -163,8 +163,8 @@ const DealModal = ({ deal, open, onOpenChange }: DealModalProps) => {
                 </a>
 
                 {/* Phone */}
-                <a
-                  href="tel:1-800-123-4567"
+                <Link
+                  to="/contact-us"
                   onClick={handleContactCall}
                   className="flex items-center gap-3 p-3 rounded-lg hover:bg-background transition-colors group"
                 >
@@ -175,7 +175,7 @@ const DealModal = ({ deal, open, onOpenChange }: DealModalProps) => {
                     <div className="font-medium">Call Us</div>
                     <div className="text-sm text-muted-foreground">1-800-123-4567</div>
                   </div>
-                </a>
+                </Link>
 
                 {/* Live Chat */}
                 <button
