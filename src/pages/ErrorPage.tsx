@@ -1,4 +1,5 @@
 import { Phone, Mail } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const ErrorPage = () => {
   return (
@@ -9,9 +10,9 @@ const ErrorPage = () => {
       <div className="flex flex-col items-center gap-2 text-gray-700">
         <div className="flex items-center gap-2">
           <Phone className="w-5 h-5 text-primary" />
-          <a href="tel:+18001234567" className="hover:underline">
+          <Link to="/contact-us" className="hover:underline">
             +1 800 123 4567
-          </a>
+          </Link>
         </div>
         <div className="flex items-center gap-2">
           <Mail className="w-5 h-5 text-primary" />
