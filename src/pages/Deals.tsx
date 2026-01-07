@@ -149,7 +149,7 @@ const Deals = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col relative overflow-hidden bg-background">
+    <div className="min-h-screen flex flex-col relative overflow-hidden bg-background pt-16 pb-20">
       <Helmet>
         <title>Exclusive Flight Deals & Travel Offers | CheapFlights USA</title>
         <meta name="description" content="Discover exclusive flight deals and travel offers across the USA. Save up to 50% on roundtrip flights with CheapFlights' best price guarantee." />

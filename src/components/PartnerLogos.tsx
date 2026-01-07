@@ -2,17 +2,47 @@ import { motion } from "framer-motion";
 
 const PartnerLogos = () => {
   const partners = [
-    { name: "Booking.com", color: "#003580" },
-    { name: "KAYAK", color: "#FF690F" },
-    { name: "Priceline", color: "#0068EF" },
-    { name: "Agoda", color: "#5392F9" },
-    { name: "OpenTable", color: "#DA3743" },
-    { name: "Expedia", color: "#FFCC00" },
-    { name: "Hotels.com", color: "#D32F2F" },
-    { name: "Trivago", color: "#007FAD" },
-    { name: "Skyscanner", color: "#00D1C1" },
-    { name: "Momondo", color: "#FF6600" },
-  ];
+  {
+    name: "Booking.com",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/b/be/Booking.com_logo.svg",
+  },
+  {
+    name: "KAYAK",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/c/cb/Kayak_Logo.svg",
+  },
+  {
+    name: "Priceline",
+    logo: "https://press.priceline.com/wp-content/uploads/2019/10/logo-media.jpg",
+  },
+  {
+    name: "Agoda",
+    logo: "https://logos-world.net/wp-content/uploads/2024/07/Agoda-Logo.png",
+  },
+  {
+    name: "OpenTable",
+    logo: "https://seekvectorlogo.com/wp-content/uploads/2018/01/opentable-vector-logo.png",
+  },
+  {
+    name: "Expedia",
+    logo: "https://e7.pngegg.com/pngimages/351/440/png-clipart-expedia-full-logo-tech-companies.png",
+  },
+  {
+    name: "Hotels.com",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/1/16/Hotels.com_Logo_2023.svg",
+  },
+  {
+    name: "Trivago",
+    logo: "https://cdn.freebiesupply.com/logos/large/2x/trivago-logo-png-transparent.png",
+  },
+  {
+    name: "Skyscanner",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/9/94/Skyscanner_Logo_LockupHorizontal_SkyBlue_RGB.svg",
+  },
+  {
+    name: "Momondo",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/c/c2/Press-logo-momondo_colour.png",
+  },
+];
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -61,14 +91,13 @@ const PartnerLogos = () => {
             <motion.div
               key={partner.name}
               variants={itemVariants}
-              className="flex items-center justify-center px-4 py-2 opacity-60 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0"
+              className="flex items-center justify-center px-4 py-2 opacity-60 hover:opacity-100 transition-opacity duration-300 "
             >
-              <span 
-                className="text-lg md:text-xl font-bold tracking-tight"
-                style={{ color: partner.color }}
-              >
-                {partner.name}
-              </span>
+              <img
+  src={partner.logo}
+  alt={partner.name}
+  className="h-6 md:h-8 w-auto object-contain"
+/>
             </motion.div>
           ))}
         </motion.div>

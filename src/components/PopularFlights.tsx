@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 const airlines = [
   { 
     name: "Virgin Atlantic", 
-    logo: "https://logos-world.net/wp-content/uploads/2021/08/Virgin-Atlantic-Logo.png",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/f/f4/Virgin_Atlantic_logo.svg",
     bgColor: "bg-white"
   },
   { 
@@ -18,17 +18,17 @@ const airlines = [
   },
   { 
     name: "American Airlines", 
-    logo: "https://logos-world.net/wp-content/uploads/2021/08/American-Airlines-Logo.png",
+    logo: "https://s202.q4cdn.com/986123435/files/doc_downloads/logos/american-airlines/THUMB-aa_aa__ahz_4cp_grd_pos-(1).png",
     bgColor: "bg-white"
   },
   { 
     name: "Delta Air Lines", 
-    logo: "https://logos-world.net/wp-content/uploads/2021/08/Delta-Air-Lines-Logo.png",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/d/d1/Delta_logo.svg",
     bgColor: "bg-white"
   },
   { 
     name: "British Airways", 
-    logo: "https://logos-world.net/wp-content/uploads/2021/08/British-Airways-Logo.png",
+    logo: "https://mediacentre.britishairways.com/contents/archives/216/86/images/thumb1280x1683_width/britishairways_216861253015751_thumb.jpg",
     bgColor: "bg-white"
   },
 ];
