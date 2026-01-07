@@ -18,9 +18,9 @@ const TaxesFees = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <SEOHead
-        title="Airline Taxes, Fees & Post-Ticketing Charges | CheapFlights"
+        title="Airline Taxes, Fees & Post-Ticketing Charges | ChyeapFlights"
         description="Understand airline taxes, service fees, and post-ticketing charges including changes, cancellations, and refunds."
-        canonicalUrl="https://cheapflights.com/taxes-fees"
+        canonicalUrl="https://chyeapflights.com/taxes-fees"
         keywords="airline taxes, flight fees, post-ticketing fees, cancellation fees, change fees, baggage fees, refund policy"
       />
       <Header />
@@ -53,7 +53,7 @@ const TaxesFees = () => {
               Taxes & Fees
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl">
-              Post-Ticketing Fees and Airline Charges
+              Post-Ticketing Charges & Airline Fees
             </p>
           </div>
         </section>
@@ -135,14 +135,33 @@ const TaxesFees = () => {
                 <li>Additional fees to reinstate or rebook your travel</li>
               </ul>
               <p className="text-sm text-muted-foreground italic">
-                Always contact the airline or your booking agent if you cannot make your flight to 
-                explore available options.
-              </p>
+              Always contact the airline or your booking agent if you cannot make your flight to 
+              explore available options.
+            </p>
+          </div>
+
+          {/* Name Correction Fees */}
+          <div className="mb-8">
+            <h3 className="text-xl font-semibold text-foreground mb-3">Name Correction Fees</h3>
+            <p className="text-muted-foreground leading-relaxed mb-2">
+              If there is an error in the passenger name on your ticket, airlines may charge a fee 
+              to make corrections. The policy varies significantly:
+            </p>
+            <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4 mb-2">
+              <li>Minor spelling corrections may be allowed at no charge</li>
+              <li>Name changes (different person) are generally not permitted</li>
+              <li>Some airlines charge a flat fee for any name correction</li>
+              <li>International tickets may have stricter name policies</li>
+            </ul>
+            <p className="text-sm text-muted-foreground italic">
+              Fees vary by airline and fare rules. Always verify the name exactly as it appears 
+              on your government-issued ID before completing your booking.
+            </p>
             </div>
 
-            {/* Seat Assignment Fees */}
+            {/* Seat Selection Fees */}
             <div className="mb-8">
-              <h3 className="text-xl font-semibold text-foreground mb-3">Seat Assignment Fees</h3>
+              <h3 className="text-xl font-semibold text-foreground mb-3">Seat Selection Fees</h3>
               <p className="text-muted-foreground leading-relaxed mb-2">
                 Many airlines now charge fees for advance seat selection, especially for preferred 
                 seats such as:
@@ -154,8 +173,8 @@ const TaxesFees = () => {
                 <li>Seats near the front of the cabin</li>
               </ul>
               <p className="text-sm text-muted-foreground italic">
-                These fees are airline-dependent and may be charged at the time of booking or during 
-                online check-in.
+                Fees vary by airline and fare rules. These charges may be applied at the time of 
+                booking or during online check-in.
               </p>
             </div>
 
@@ -177,14 +196,22 @@ const TaxesFees = () => {
               </p>
             </div>
 
-            {/* Airline-Specific Penalties */}
+            {/* Airline-Imposed Penalties */}
             <div className="mb-8">
-              <h3 className="text-xl font-semibold text-foreground mb-3">Airline-Specific Penalties</h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <h3 className="text-xl font-semibold text-foreground mb-3">Airline-Imposed Penalties</h3>
+              <p className="text-muted-foreground leading-relaxed mb-2">
                 Each airline has its own set of rules and penalties that may apply to your booking. 
-                These can include fees for name corrections, reissue charges, and other administrative 
-                costs. We strongly recommend reviewing your specific airline's policies before making 
-                any changes to your reservation.
+                These can include:
+              </p>
+              <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4 mb-2">
+                <li>Reissue fees for ticket modifications</li>
+                <li>Administrative charges for processing requests</li>
+                <li>Penalties for fare rule violations</li>
+                <li>Charges for missed connections due to passenger delays</li>
+              </ul>
+              <p className="text-sm text-muted-foreground italic">
+                Fees vary by airline and fare rules. We strongly recommend reviewing your specific 
+                airline's policies before making any changes to your reservation.
               </p>
             </div>
           </section>
@@ -207,7 +234,7 @@ const TaxesFees = () => {
             </ul>
             <p className="text-muted-foreground leading-relaxed">
               <strong>Important:</strong> Government taxes and fees are generally non-refundable in most 
-              cases, as they are collected by CheapFlights on behalf of the relevant authorities and 
+              cases, as they are collected by ChyeapFlights on behalf of the relevant authorities and 
               remitted accordingly.
             </p>
           </section>
@@ -218,7 +245,7 @@ const TaxesFees = () => {
               Service Fees (Agency Fees)
             </h2>
             <p className="text-muted-foreground leading-relaxed mb-4">
-              CheapFlights charges service fees for processing your booking and providing customer 
+              ChyeapFlights charges service fees for processing your booking and providing customer 
               support. These fees are separate from airline charges and government taxes.
             </p>
             <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4 mb-4">
@@ -228,7 +255,7 @@ const TaxesFees = () => {
             </ul>
             <p className="text-muted-foreground leading-relaxed">
               <strong>Understanding the difference:</strong> Airline fees are set and collected by the 
-              airline, while agency service fees are charged by CheapFlights for facilitating your 
+              airline, while agency service fees are charged by ChyeapFlights for facilitating your 
               booking. Both may apply depending on the action taken on your reservation.
             </p>
           </section>
@@ -271,7 +298,7 @@ const TaxesFees = () => {
             <div className="mb-6">
               <h3 className="text-xl font-semibold text-foreground mb-3">Airline Approval Dependency</h3>
               <p className="text-muted-foreground leading-relaxed">
-                All refund requests are subject to airline approval. CheapFlights acts as an intermediary 
+                All refund requests are subject to airline approval. ChyeapFlights acts as an intermediary 
                 and cannot guarantee refund approval. The final decision rests with the airline based on 
                 their fare rules and policies.
               </p>
@@ -300,8 +327,8 @@ const TaxesFees = () => {
                 <h3 className="font-semibold text-lg mb-3">Important Disclaimers</h3>
                 <ul className="space-y-2 text-muted-foreground">
                   <li>• All fees and charges are subject to change without prior notice</li>
-                  <li>• Airlines control all fare rules, and CheapFlights has no authority to modify them</li>
-                  <li>• CheapFlights acts solely as a booking intermediary between you and the airline</li>
+                  <li>• Airlines control all fare rules, and ChyeapFlights has no authority to modify them</li>
+                  <li>• ChyeapFlights acts solely as a booking intermediary between you and the airline</li>
                   <li>• Customers are responsible for reviewing fare rules and conditions before completing a purchase</li>
                   <li>• The information provided on this page is for general guidance only and may not reflect the most current policies</li>
                 </ul>
