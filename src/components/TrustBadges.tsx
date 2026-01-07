@@ -53,21 +53,14 @@ const TrustBadges = () => {
   };
 
   return (
-    <section
-      className="py-12 md:py-16 bg-secondary"
-      aria-labelledby="trust-badges-title"
-    >
+    <section className="py-12 md:py-16 bg-secondary" aria-labelledby="trust-badges-title">
       <div className="container mx-auto px-4">
         <div className="text-center mb-10 md:mb-12">
-          <h2
-            id="trust-badges-title"
-            className="text-2xl md:text-3xl font-bold mb-3"
-          >
+          <h2 id="trust-badges-title" className="text-2xl md:text-3xl font-bold mb-3">
             Trusted by Millions Worldwide
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            We're committed to providing you with the best travel booking
-            experience
+            We're committed to providing you with the best travel booking experience
           </p>
         </div>
 
@@ -79,22 +72,13 @@ const TrustBadges = () => {
           viewport={{ once: true, margin: "-50px" }}
         >
           {stats.map((stat) => (
-            <motion.div
-              key={stat.label}
-              className="text-center"
-              variants={itemVariants}
-            >
+            <motion.div key={stat.label} className="text-center" variants={itemVariants}>
               <div
                 className={`inline-flex items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-full bg-card shadow-md mb-4 ${stat.color}`}
               >
-                <stat.icon
-                  className="w-7 h-7 md:w-8 md:h-8"
-                  aria-hidden="true"
-                />
+                <stat.icon className="w-7 h-7 md:w-8 md:h-8" aria-hidden="true" />
               </div>
-              <div className="text-2xl md:text-3xl font-bold mb-1">
-                {stat.value}
-              </div>
+              <div className="text-2xl md:text-3xl font-bold mb-1">{stat.value}</div>
               <div className="text-sm text-muted-foreground">{stat.label}</div>
             </motion.div>
           ))}
