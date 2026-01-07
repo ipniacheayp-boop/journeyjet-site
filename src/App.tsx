@@ -41,6 +41,7 @@ import AgentDashboard from "./pages/AgentDashboard";
 import DealsManagement from "./pages/DealsManagement";
 import FxSavingsDashboard from "./pages/FxSavingsDashboard";
 import Sitemap from "./pages/Sitemap";
+import TaxesFees from "./pages/TaxesFees";
 
 const FlybotWrapper = () => {
   const location = useLocation();
@@ -101,6 +102,7 @@ const App = () => (
                 <Route path="/about" element={<About />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/sitemap" element={<Sitemap />} />
+                <Route path="/taxes-fees" element={<TaxesFees />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <FlybotWrapper />
