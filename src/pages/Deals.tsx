@@ -156,7 +156,7 @@ const Deals = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col relative overflow-hidden bg-background pt-16 pb-20">
+    <div className="min-h-screen flex flex-col relative overflow-hidden bg-background pt-16 ">
       <Helmet>
         <title>Exclusive Flight Deals & Travel Offers | CheapFlights USA</title>
         <meta

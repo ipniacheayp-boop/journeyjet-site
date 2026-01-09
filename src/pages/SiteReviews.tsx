@@ -101,7 +101,7 @@ export default function SiteReviews() {
     .reverse();
 
   return (
-    <div className="min-h-screen flex flex-col pt-10 pb-20">
+    <div className="min-h-screen flex flex-col pt-10 ">
       <Header />
 
       <main className="flex-grow bg-background">
