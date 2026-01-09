@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { Plane } from 'lucide-react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { Plane } from "lucide-react";
 
 interface Airport {
   iataCode: string;
@@ -21,16 +21,20 @@ const AirportDropdown = React.memo(({ value, onChange, placeholder, className }:
   const [inputValue, setInputValue] = useState(value);
   const [showDropdown, setShowDropdown] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
-  const [debouncedValue, setDebouncedValue] = useState('');
+  const [debouncedValue, setDebouncedValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    setInputValue(value);
+  }, [value]);
+
   // Load airports data
   useEffect(() => {
-    fetch('/data/airports.json')
-      .then(res => res.json())
-      .then(data => setAirports(data))
-      .catch(err => console.error('Failed to load airports:', err));
+    fetch("/data/airports.json")
+      .then((res) => res.json())
+      .then((data) => setAirports(data))
+      .catch((err) => console.error("Failed to load airports:", err));
   }, []);
 
   // Debounce input
@@ -49,14 +53,14 @@ const AirportDropdown = React.memo(({ value, onChange, placeholder, className }:
     }
 
     const searchTerm = debouncedValue.toLowerCase().trim();
-    
+
     return airports
-      .filter(airport => {
+      .filter((airport) => {
         const nameMatch = airport.airportName.toLowerCase().includes(searchTerm);
         const cityMatch = airport.city.toLowerCase().includes(searchTerm);
         const iataMatch = airport.iataCode.toLowerCase().includes(searchTerm);
         const countryMatch = airport.country.toLowerCase().includes(searchTerm);
-        
+
         return nameMatch || cityMatch || iataMatch || countryMatch;
       })
       .slice(0, 10);
@@ -77,41 +81,42 @@ const AirportDropdown = React.memo(({ value, onChange, placeholder, className }:
   };
 
   // Handle airport selection
-  const handleSelect = useCallback((airport: Airport) => {
-    const displayValue = airport.iataCode;
-    setInputValue(displayValue);
-    onChange(displayValue, airport.iataCode);
-    setShowDropdown(false);
-    setHighlightedIndex(-1);
-  }, [onChange]);
+  const handleSelect = useCallback(
+    (airport: Airport) => {
+      const displayValue = airport.iataCode;
+      setInputValue(displayValue);
+      onChange(displayValue, airport.iataCode);
+      setShowDropdown(false);
+      setHighlightedIndex(-1);
+    },
+    [onChange],
+  );
 
   // Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!showDropdown || filteredAirports.length === 0) {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         setShowDropdown(false);
       }
       return;
     }
 
     switch (e.key) {
-      case 'ArrowDown':
+      case "ArrowDown":
         e.preventDefault();
-        setHighlightedIndex(prev => 
-          prev < filteredAirports.length - 1 ? prev + 1 : prev
-        );
+        setHighlightedIndex((prev) => (prev < filteredAirports.length - 1 ? prev + 1 : prev));
         break;
-      case 'ArrowUp':
+      case "ArrowUp":
         e.preventDefault();
-        setHighlightedIndex(prev => prev > 0 ? prev - 1 : -1);
+        setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : -1));
         break;
-      case 'Enter':
+      case "Enter":
         e.preventDefault();
         if (highlightedIndex >= 0 && highlightedIndex < filteredAirports.length) {
           handleSelect(filteredAirports[highlightedIndex]);
         }
         break;
-      case 'Escape':
+      case "Escape":
         e.preventDefault();
         setShowDropdown(false);
         setHighlightedIndex(-1);
@@ -124,7 +129,7 @@ const AirportDropdown = React.memo(({ value, onChange, placeholder, className }:
     if (highlightedIndex >= 0 && dropdownRef.current) {
       const highlightedElement = dropdownRef.current.children[highlightedIndex] as HTMLElement;
       if (highlightedElement) {
-        highlightedElement.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        highlightedElement.scrollIntoView({ block: "nearest", behavior: "smooth" });
       }
     }
   }, [highlightedIndex]);
@@ -142,8 +147,8 @@ const AirportDropdown = React.memo(({ value, onChange, placeholder, className }:
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   // Show dropdown when there are results
@@ -183,23 +188,17 @@ const AirportDropdown = React.memo(({ value, onChange, placeholder, className }:
               key={`${airport.iataCode}-${index}`}
               onClick={() => handleSelect(airport)}
               className={`px-4 py-3 cursor-pointer transition-colors border-b border-border last:border-b-0 ${
-                index === highlightedIndex
-                  ? 'bg-primary/10'
-                  : 'hover:bg-muted'
+                index === highlightedIndex ? "bg-primary/10" : "hover:bg-muted"
               }`}
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium text-foreground truncate">
-                    {airport.airportName}
-                  </div>
+                  <div className="font-medium text-foreground truncate">{airport.airportName}</div>
                   <div className="text-sm text-muted-foreground">
                     {airport.city}, {airport.country}
                   </div>
                 </div>
-                <div className="flex-shrink-0 font-semibold text-primary">
-                  {airport.iataCode}
-                </div>
+                <div className="flex-shrink-0 font-semibold text-primary">{airport.iataCode}</div>
               </div>
             </div>
           ))}
@@ -209,6 +208,6 @@ const AirportDropdown = React.memo(({ value, onChange, placeholder, className }:
   );
 });
 
-AirportDropdown.displayName = 'AirportDropdown';
+AirportDropdown.displayName = "AirportDropdown";
 
 export default AirportDropdown;
