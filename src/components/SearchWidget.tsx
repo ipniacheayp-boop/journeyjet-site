@@ -8,6 +8,26 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useNavigate } from "react-router-dom";
 import AirportDropdown from "@/components/AirportDropdown";
+import { useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
+
+const airportMap: Record<string, string> = {
+  ATL: "ATL",
+  LAS: "LAS",
+  LAX: "LAX",
+  ORD: "ORD",
+  YYC: "YYC",
+  YXX: "YXX",
+  FLL: "FLL",
+  PHX: "PHX",
+  YWG: "YWG",
+  YYZ: "YYZ",
+  YVR: "YVR",
+  CLE: "CLE",
+  COS: "COS",
+  DFW: "DFW",
+  MCO: "MCO",
+};
 
 interface SearchWidgetProps {
   defaultTab?: string;
@@ -16,9 +36,10 @@ interface SearchWidgetProps {
 }
 
 const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId }: SearchWidgetProps) => {
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [searchType, setSearchType] = useState(defaultTab);
-  
+
   // Flight state
   const [tripType, setTripType] = useState("round-trip");
   const [flightOrigin, setFlightOrigin] = useState("");
@@ -156,8 +177,47 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
     navigate("/deals");
   };
 
+  useEffect(() => {
+    const type = searchParams.get("type");
+
+    // Switch tab
+    if (type === "hotels") setSearchType("hotels");
+    if (type === "flights") setSearchType("flights");
+
+    // Hotels → autofill city only
+    const city = searchParams.get("city") || searchParams.get("cityCode");
+    if (city) {
+      setCityCode(city);
+      setCityCodeIATA(city);
+      setCheckInDate("");
+      setCheckOutDate("");
+    }
+
+    // Flights → autofill from & to only
+    const origin = searchParams.get("originLocationCode");
+    const destination = searchParams.get("destinationLocationCode");
+
+    if (origin) {
+      setFlightOrigin(airportMap[origin] || origin);
+      setFlightOriginCode(origin);
+      setDepartDate("");
+      setReturnDate("");
+    }
+
+    if (destination) {
+      setFlightDestination(airportMap[destination] || destination);
+      setFlightDestinationCode(destination);
+    }
+    // Auto scroll to widget
+    if (type === "hotels" || type === "flights") {
+      setTimeout(() => {
+        document.getElementById("search-widget")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 100);
+    }
+  }, [searchParams]);
+
   return (
-    <div className="w-full max-w-6xl mx-auto bg-white rounded-2xl shadow-xl p-3 md:p-4">
+    <div id="search-widget" className="w-full max-w-6xl mx-auto bg-white rounded-2xl shadow-xl p-3 md:p-4">
       <Tabs value={searchType} onValueChange={setSearchType} className="w-full">
         {/* Minimal Search Bar */}
         <div className="mb-4">
@@ -195,18 +255,24 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
           <RadioGroup value={tripType} onValueChange={setTripType} className="flex gap-3">
             <div className="flex items-center space-x-1.5">
               <RadioGroupItem value="round-trip" id="round-trip" className="h-4 w-4" />
-              <Label htmlFor="round-trip" className="cursor-pointer text-sm">Round Trip</Label>
+              <Label htmlFor="round-trip" className="cursor-pointer text-sm">
+                Round Trip
+              </Label>
             </div>
             <div className="flex items-center space-x-1.5">
               <RadioGroupItem value="one-way" id="one-way" className="h-4 w-4" />
-              <Label htmlFor="one-way" className="cursor-pointer text-sm">One Way</Label>
+              <Label htmlFor="one-way" className="cursor-pointer text-sm">
+                One Way
+              </Label>
             </div>
           </RadioGroup>
 
           <form onSubmit={handleFlightSearch}>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
               <div className="space-y-1">
-                <Label htmlFor="flight-origin" className="text-sm">From</Label>
+                <Label htmlFor="flight-origin" className="text-sm">
+                  From
+                </Label>
                 <AirportDropdown
                   value={flightOrigin}
                   onChange={(value, iataCode) => {
@@ -214,13 +280,15 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     setFlightOriginCode(iataCode);
                   }}
                   placeholder="City or Airport"
-                  className={`pl-10 ${errors.origin ? 'border-destructive' : ''}`}
+                  className={`pl-10 ${errors.origin ? "border-destructive" : ""}`}
                 />
                 {errors.origin && <p className="text-sm text-destructive">{errors.origin}</p>}
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="flight-destination" className="text-sm">To</Label>
+                <Label htmlFor="flight-destination" className="text-sm">
+                  To
+                </Label>
                 <AirportDropdown
                   value={flightDestination}
                   onChange={(value, iataCode) => {
@@ -228,13 +296,15 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     setFlightDestinationCode(iataCode);
                   }}
                   placeholder="City or Airport"
-                  className={`pl-10 ${errors.destination ? 'border-destructive' : ''}`}
+                  className={`pl-10 ${errors.destination ? "border-destructive" : ""}`}
                 />
                 {errors.destination && <p className="text-sm text-destructive">{errors.destination}</p>}
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="depart-date" className="text-sm">Depart</Label>
+                <Label htmlFor="depart-date" className="text-sm">
+                  Depart
+                </Label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
@@ -242,8 +312,8 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     type="date"
                     value={departDate}
                     onChange={(e) => setDepartDate(e.target.value)}
-                    className={`pl-10 h-9 ${errors.departDate ? 'border-destructive' : ''}`}
-                    min={new Date().toISOString().split('T')[0]}
+                    className={`pl-10 h-9 ${errors.departDate ? "border-destructive" : ""}`}
+                    min={new Date().toISOString().split("T")[0]}
                   />
                 </div>
                 {errors.departDate && <p className="text-sm text-destructive">{errors.departDate}</p>}
@@ -251,7 +321,9 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
 
               {tripType === "round-trip" && (
                 <div className="space-y-1">
-                  <Label htmlFor="return-date" className="text-sm">Return</Label>
+                  <Label htmlFor="return-date" className="text-sm">
+                    Return
+                  </Label>
                   <div className="relative">
                     <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
@@ -259,8 +331,8 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                       type="date"
                       value={returnDate}
                       onChange={(e) => setReturnDate(e.target.value)}
-                      className={`pl-10 h-9 ${errors.returnDate ? 'border-destructive' : ''}`}
-                      min={departDate || new Date().toISOString().split('T')[0]}
+                      className={`pl-10 h-9 ${errors.returnDate ? "border-destructive" : ""}`}
+                      min={departDate || new Date().toISOString().split("T")[0]}
                     />
                   </div>
                   {errors.returnDate && <p className="text-sm text-destructive">{errors.returnDate}</p>}
@@ -270,7 +342,9 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
               <div className="space-y-1">
-                <Label htmlFor="passengers" className="text-sm">Passengers</Label>
+                <Label htmlFor="passengers" className="text-sm">
+                  Passengers
+                </Label>
                 <div className="relative">
                   <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <select
@@ -278,9 +352,12 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     value={passengers}
                     onChange={(e) => setPassengers(e.target.value)}
                     className="w-full pl-10 pr-10 h-9 rounded-md border border-input bg-background"
+                    aria-label="Number of passengers"
                   >
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
-                      <option key={num} value={num}>{num} {num === 1 ? 'Passenger' : 'Passengers'}</option>
+                      <option key={num} value={num}>
+                        {num} {num === 1 ? "Passenger" : "Passengers"}
+                      </option>
                     ))}
                   </select>
                   <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" />
@@ -288,13 +365,16 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="cabin-class" className="text-sm">Cabin Class</Label>
+                <Label htmlFor="cabin-class" className="text-sm">
+                  Cabin Class
+                </Label>
                 <div className="relative">
                   <select
                     id="cabin-class"
                     value={cabinClass}
                     onChange={(e) => setCabinClass(e.target.value)}
                     className="w-full px-3 pr-10 h-9 rounded-md border border-input bg-background"
+                    aria-label="Cabin class"
                   >
                     <option value="ECONOMY">Economy</option>
                     <option value="PREMIUM_ECONOMY">Premium Economy</option>
@@ -320,7 +400,9 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
           <form onSubmit={handleHotelSearch}>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
               <div className="space-y-1">
-                <Label htmlFor="city-code" className="text-sm">City</Label>
+                <Label htmlFor="city-code" className="text-sm">
+                  City
+                </Label>
                 <AirportDropdown
                   value={cityCode}
                   onChange={(value, iataCode) => {
@@ -328,13 +410,15 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     setCityCodeIATA(iataCode);
                   }}
                   placeholder="City or Airport"
-                  className={`pl-10 ${errors.cityCode ? 'border-destructive' : ''}`}
+                  className={`pl-10 ${errors.cityCode ? "border-destructive" : ""}`}
                 />
                 {errors.cityCode && <p className="text-sm text-destructive">{errors.cityCode}</p>}
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="check-in" className="text-sm">Check-in</Label>
+                <Label htmlFor="check-in" className="text-sm">
+                  Check-in
+                </Label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
@@ -342,15 +426,17 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     type="date"
                     value={checkInDate}
                     onChange={(e) => setCheckInDate(e.target.value)}
-                    className={`pl-10 h-9 ${errors.checkInDate ? 'border-destructive' : ''}`}
-                    min={new Date().toISOString().split('T')[0]}
+                    className={`pl-10 h-9 ${errors.checkInDate ? "border-destructive" : ""}`}
+                    min={new Date().toISOString().split("T")[0]}
                   />
                 </div>
                 {errors.checkInDate && <p className="text-sm text-destructive">{errors.checkInDate}</p>}
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="check-out" className="text-sm">Check-out</Label>
+                <Label htmlFor="check-out" className="text-sm">
+                  Check-out
+                </Label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
@@ -358,25 +444,30 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     type="date"
                     value={checkOutDate}
                     onChange={(e) => setCheckOutDate(e.target.value)}
-                    className={`pl-10 h-9 ${errors.checkOutDate ? 'border-destructive' : ''}`}
-                    min={checkInDate || new Date().toISOString().split('T')[0]}
+                    className={`pl-10 h-9 ${errors.checkOutDate ? "border-destructive" : ""}`}
+                    min={checkInDate || new Date().toISOString().split("T")[0]}
                   />
                 </div>
                 {errors.checkOutDate && <p className="text-sm text-destructive">{errors.checkOutDate}</p>}
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="hotel-guests" className="text-sm">Guests</Label>
+                <Label htmlFor="hotel-guests" className="text-sm">
+                  Guests
+                </Label>
                 <div className="relative">
                   <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <select
                     id="hotel-guests"
                     value={hotelGuests}
+                    aria-label="Number of guests"
                     onChange={(e) => setHotelGuests(e.target.value)}
                     className="w-full pl-10 pr-10 h-9 rounded-md border border-input bg-background"
                   >
                     {[1, 2, 3, 4, 5, 6].map((num) => (
-                      <option key={num} value={num}>{num} {num === 1 ? 'Guest' : 'Guests'}</option>
+                      <option key={num} value={num}>
+                        {num} {num === 1 ? "Guest" : "Guests"}
+                      </option>
                     ))}
                   </select>
                   <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" />
@@ -386,16 +477,21 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
               <div className="space-y-1">
-                <Label htmlFor="rooms" className="text-sm">Rooms</Label>
+                <Label htmlFor="rooms" className="text-sm">
+                  Rooms
+                </Label>
                 <div className="relative">
                   <select
                     id="rooms"
                     value={rooms}
+                    aria-label="Number of rooms"
                     onChange={(e) => setRooms(e.target.value)}
                     className="w-full px-3 pr-10 h-9 rounded-md border border-input bg-background"
                   >
                     {[1, 2, 3, 4, 5].map((num) => (
-                      <option key={num} value={num}>{num} {num === 1 ? 'Room' : 'Rooms'}</option>
+                      <option key={num} value={num}>
+                        {num} {num === 1 ? "Room" : "Rooms"}
+                      </option>
                     ))}
                   </select>
                   <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" />
@@ -417,7 +513,9 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
           <form onSubmit={handleCarSearch}>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
               <div className="space-y-1">
-                <Label htmlFor="pickup-location" className="text-sm">Pick-up Location</Label>
+                <Label htmlFor="pickup-location" className="text-sm">
+                  Pick-up Location
+                </Label>
                 <AirportDropdown
                   value={pickUpLocation}
                   onChange={(value, iataCode) => {
@@ -425,13 +523,15 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     setPickUpLocationCode(iataCode);
                   }}
                   placeholder="Airport or City"
-                  className={`pl-10 ${errors.pickUpLocation ? 'border-destructive' : ''}`}
+                  className={`pl-10 ${errors.pickUpLocation ? "border-destructive" : ""}`}
                 />
                 {errors.pickUpLocation && <p className="text-sm text-destructive">{errors.pickUpLocation}</p>}
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="pickup-date" className="text-sm">Pick-up Date</Label>
+                <Label htmlFor="pickup-date" className="text-sm">
+                  Pick-up Date
+                </Label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
@@ -439,15 +539,17 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     type="date"
                     value={pickUpDate}
                     onChange={(e) => setPickUpDate(e.target.value)}
-                    className={`pl-10 h-9 ${errors.pickUpDate ? 'border-destructive' : ''}`}
-                    min={new Date().toISOString().split('T')[0]}
+                    className={`pl-10 h-9 ${errors.pickUpDate ? "border-destructive" : ""}`}
+                    min={new Date().toISOString().split("T")[0]}
                   />
                 </div>
                 {errors.pickUpDate && <p className="text-sm text-destructive">{errors.pickUpDate}</p>}
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="dropoff-date" className="text-sm">Drop-off Date</Label>
+                <Label htmlFor="dropoff-date" className="text-sm">
+                  Drop-off Date
+                </Label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
@@ -455,15 +557,17 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     type="date"
                     value={dropOffDate}
                     onChange={(e) => setDropOffDate(e.target.value)}
-                    className={`pl-10 h-9 ${errors.dropOffDate ? 'border-destructive' : ''}`}
-                    min={pickUpDate || new Date().toISOString().split('T')[0]}
+                    className={`pl-10 h-9 ${errors.dropOffDate ? "border-destructive" : ""}`}
+                    min={pickUpDate || new Date().toISOString().split("T")[0]}
                   />
                 </div>
                 {errors.dropOffDate && <p className="text-sm text-destructive">{errors.dropOffDate}</p>}
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="driver-age" className="text-sm">Driver Age</Label>
+                <Label htmlFor="driver-age" className="text-sm">
+                  Driver Age
+                </Label>
                 <div className="relative">
                   <Input
                     id="driver-age"
@@ -492,7 +596,9 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
           <form onSubmit={handleCruiseSearch}>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
               <div className="space-y-1">
-                <Label htmlFor="cruise-origin" className="text-sm">Departure Port</Label>
+                <Label htmlFor="cruise-origin" className="text-sm">
+                  Departure Port
+                </Label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
@@ -506,7 +612,9 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="cruise-destination" className="text-sm">Destination</Label>
+                <Label htmlFor="cruise-destination" className="text-sm">
+                  Destination
+                </Label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
@@ -520,7 +628,9 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="cruise-date" className="text-sm">Departure Date</Label>
+                <Label htmlFor="cruise-date" className="text-sm">
+                  Departure Date
+                </Label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
@@ -529,13 +639,15 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     value={cruiseDate}
                     onChange={(e) => setCruiseDate(e.target.value)}
                     className="pl-10 h-9"
-                    min={new Date().toISOString().split('T')[0]}
+                    min={new Date().toISOString().split("T")[0]}
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <Label htmlFor="cruise-passengers" className="text-sm">Passengers</Label>
+                <Label htmlFor="cruise-passengers" className="text-sm">
+                  Passengers
+                </Label>
                 <div className="relative">
                   <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <select
@@ -543,9 +655,12 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     value={cruisePassengers}
                     onChange={(e) => setCruisePassengers(e.target.value)}
                     className="w-full pl-10 pr-10 h-9 rounded-md border border-input bg-background"
+                    aria-label="Number of passengers"
                   >
                     {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
-                      <option key={num} value={num}>{num} {num === 1 ? 'Passenger' : 'Passengers'}</option>
+                      <option key={num} value={num}>
+                        {num} {num === 1 ? "Passenger" : "Passengers"}
+                      </option>
                     ))}
                   </select>
                   <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" />
