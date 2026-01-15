@@ -464,4 +464,18 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  /* Continuous upward scroll animation for reviews */
+  @keyframes scroll-up {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-50%);
+    }
+  }
+
+  .animate-scroll-up {
+    animation: scroll-up 30s linear infinite;
+  }
 }

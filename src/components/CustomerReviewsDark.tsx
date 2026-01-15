@@ -1,15 +1,11 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Star, ChevronLeft, ChevronRight, Quote } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Star, Quote, BadgeCheck } from "lucide-react";
 
 const CustomerReviewsDark = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-
   const reviews = [
     {
       id: 1,
       name: "Sarah M.",
+      location: "New York, USA",
       timeAgo: "2 days ago",
       rating: 5,
       text: "Absolutely amazing experience! Found flights 40% cheaper than anywhere else. The booking process was seamless and customer support was incredibly helpful.",
@@ -17,6 +13,7 @@ const CustomerReviewsDark = () => {
     {
       id: 2,
       name: "James K.",
+      location: "London, UK",
       timeAgo: "1 week ago",
       rating: 5,
       text: "Best travel booking site I've ever used. Price alerts saved me $300 on my trip to Europe. Highly recommend to everyone!",
@@ -24,6 +21,7 @@ const CustomerReviewsDark = () => {
     {
       id: 3,
       name: "Emily R.",
+      location: "Toronto, Canada",
       timeAgo: "3 days ago",
       rating: 4,
       text: "Great deals and easy to use interface. Booked my family vacation in minutes. The flight tracker feature is incredibly useful.",
@@ -31,6 +29,7 @@ const CustomerReviewsDark = () => {
     {
       id: 4,
       name: "Michael T.",
+      location: "Sydney, Australia",
       timeAgo: "5 days ago",
       rating: 5,
       text: "I've been using ChyeapFlights for years now. Never disappointed! Their customer service team goes above and beyond every time.",
@@ -38,22 +37,36 @@ const CustomerReviewsDark = () => {
     {
       id: 5,
       name: "Lisa C.",
+      location: "Miami, USA",
       timeAgo: "1 day ago",
       rating: 5,
       text: "Found an incredible last-minute deal for my anniversary trip. The mobile app notifications are a game changer!",
     },
+    {
+      id: 6,
+      name: "David P.",
+      location: "Berlin, Germany",
+      timeAgo: "4 days ago",
+      rating: 5,
+      text: "Exceptional service from start to finish. The price comparison tool helped me save over €200 on my business trip.",
+    },
+    {
+      id: 7,
+      name: "Maria G.",
+      location: "Madrid, Spain",
+      timeAgo: "6 days ago",
+      rating: 5,
+      text: "Very impressed with the customer support. They helped me change my booking at the last minute with no hassle.",
+    },
+    {
+      id: 8,
+      name: "Robert L.",
+      location: "Chicago, USA",
+      timeAgo: "2 weeks ago",
+      rating: 4,
+      text: "Great platform for finding deals. The interface is intuitive and the booking confirmation was instant.",
+    },
   ];
-
-  const visibleReviews = 3;
-  const maxIndex = Math.max(0, reviews.length - visibleReviews);
-
-  const nextSlide = () => {
-    setCurrentIndex((prev) => Math.min(prev + 1, maxIndex));
-  };
-
-  const prevSlide = () => {
-    setCurrentIndex((prev) => Math.max(prev - 1, 0));
-  };
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -64,20 +77,17 @@ const CustomerReviewsDark = () => {
     ));
   };
 
+  // Duplicate reviews for seamless infinite scroll
+  const duplicatedReviews = [...reviews, ...reviews];
+
   return (
     <section 
-      className="py-16 md:py-24 bg-gradient-to-br from-teal-900 via-emerald-900 to-green-900"
+      className="py-16 md:py-24 bg-gradient-to-br from-teal-900 via-emerald-900 to-green-900 overflow-hidden"
       aria-labelledby="reviews-dark-title"
     >
       <div className="container mx-auto px-4">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-12"
-        >
+        <div className="text-center mb-12">
           <h2 
             id="reviews-dark-title" 
             className="text-2xl md:text-4xl font-bold text-white mb-4 uppercase tracking-wider"
@@ -96,53 +106,31 @@ const CustomerReviewsDark = () => {
           <p className="text-white/70 text-sm">
             Based on 50,000+ verified reviews
           </p>
-        </motion.div>
+        </div>
 
-        {/* Reviews Carousel */}
+        {/* Continuous Scrolling Reviews */}
         <div className="relative max-w-6xl mx-auto">
-          {/* Navigation Arrows */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={prevSlide}
-            disabled={currentIndex === 0}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white/10 hover:bg-white/20 text-white rounded-full disabled:opacity-30 hidden md:flex"
-            aria-label="Previous reviews"
+          <div 
+            className="h-[400px] md:h-[450px] overflow-hidden relative group"
           >
-            <ChevronLeft className="w-6 h-6" />
-          </Button>
-
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={nextSlide}
-            disabled={currentIndex === maxIndex}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-white/10 hover:bg-white/20 text-white rounded-full disabled:opacity-30 hidden md:flex"
-            aria-label="Next reviews"
-          >
-            <ChevronRight className="w-6 h-6" />
-          </Button>
-
-          {/* Reviews Grid */}
-          <div className="overflow-hidden">
-            <motion.div
-              className="flex gap-6"
-              animate={{ x: `-${currentIndex * (100 / visibleReviews + 2)}%` }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            {/* Gradient overlays for smooth fade effect */}
+            <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-teal-900 to-transparent z-10 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-emerald-900 to-transparent z-10 pointer-events-none" />
+            
+            {/* Scrolling container */}
+            <div 
+              className="animate-scroll-up group-hover:[animation-play-state:paused] flex flex-col gap-4"
             >
-              {reviews.map((review) => (
-                <motion.div
-                  key={review.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  className="flex-shrink-0 w-full md:w-[calc(33.333%-16px)] bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300"
+              {duplicatedReviews.map((review, index) => (
+                <div
+                  key={`${review.id}-${index}`}
+                  className="flex-shrink-0 bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300 mx-2"
                 >
                   {/* Quote Icon */}
-                  <Quote className="w-8 h-8 text-teal-400/50 mb-4" aria-hidden="true" />
+                  <Quote className="w-6 h-6 text-teal-400/50 mb-3" aria-hidden="true" />
 
                   {/* Review Text */}
-                  <p className="text-white/90 text-sm leading-relaxed mb-4 min-h-[80px]">
+                  <p className="text-white/90 text-sm leading-relaxed mb-4">
                     "{review.text}"
                   </p>
 
@@ -153,26 +141,18 @@ const CustomerReviewsDark = () => {
 
                   {/* Reviewer Info */}
                   <div className="flex items-center justify-between">
-                    <span className="text-white font-semibold">{review.name}</span>
-                    <span className="text-white/50 text-xs">{review.timeAgo}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-white font-semibold">{review.name}</span>
+                      <BadgeCheck className="w-4 h-4 text-teal-400" aria-label="Verified" />
+                    </div>
+                    <div className="text-right">
+                      <span className="text-white/50 text-xs block">{review.location}</span>
+                      <span className="text-white/40 text-xs">{review.timeAgo}</span>
+                    </div>
                   </div>
-                </motion.div>
+                </div>
               ))}
-            </motion.div>
-          </div>
-
-          {/* Mobile Navigation Dots */}
-          <div className="flex justify-center gap-2 mt-6 md:hidden">
-            {Array.from({ length: reviews.length }).map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentIndex(Math.min(i, maxIndex))}
-                className={`w-2 h-2 rounded-full transition-all ${
-                  i === currentIndex ? "bg-white w-6" : "bg-white/30"
-                }`}
-                aria-label={`Go to review ${i + 1}`}
-              />
-            ))}
+            </div>
           </div>
         </div>
       </div>
