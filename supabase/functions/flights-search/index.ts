@@ -29,7 +29,7 @@ async function getAmadeusToken(): Promise<string> {
     throw new Error('Amadeus API credentials not configured');
   }
 
-  console.log(`🔑 Authenticating with Amadeus (${USE_PROD_APIS ? 'PRODUCTION' : 'TEST'} mode)`);
+  console.log(`🔑 Authenticating with Amadeus (${USE_PROD_APIS  'PRODUCTION' : 'TEST'} mode)`);
   const authResponse = await fetch(`${AMADEUS_BASE_URL}/v1/security/oauth2/token`, {
     method: 'POST',
     headers: {
