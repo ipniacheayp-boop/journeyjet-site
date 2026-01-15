@@ -189,12 +189,16 @@ const Index = () => {
             className="text-center max-w-4xl"
           >
             <motion.span
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.5 }}
-              className="inline-block px-5 py-2.5 bg-gradient-to-r from-coral via-rose-500 to-orange-500 text-white text-sm font-bold rounded-full mb-6 shadow-lg shadow-coral/30 animate-bounce-subtle"
+              className="inline-flex items-center gap-2 px-10 py-2 border border-coral/20 bg-coral/10 backdrop-blur-md text-coral text-base font-black uppercase tracking-widest rounded-md mb-6"
             >
-              ✈️ BIGGEST SALE OF THE YEAR
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-coral opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-coral"></span>
+              </span>{" "}
+              Biggest Sale of the Year
             </motion.span>
 
             <motion.h1
