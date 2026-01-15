@@ -1,21 +1,22 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, lazy, Suspense } from "react";
 import { Helmet } from "react-helmet";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SearchWidget from "@/components/SearchWidget";
 import DealCard from "@/components/DealCard";
-import DealModal from "@/components/DealModal";
-import TailoredDealCard from "@/components/TailoredDealCard";
-import TrustBadges from "@/components/TrustBadges";
-import FlyBot from "@/components/FlyBot";
 
-import FeatureHighlights from "@/components/FeatureHighlights";
-import ForTravelPros from "@/components/ForTravelPros";
-import PartnerLogos from "@/components/PartnerLogos";
-import AppDownload from "@/components/AppDownload";
-import PopularFlights from "@/components/PopularFlights";
-import CustomerReviewsDark from "@/components/CustomerReviewsDark";
+// Lazy load below-the-fold components for better TTI
+const DealModal = lazy(() => import("@/components/DealModal"));
+const TailoredDealCard = lazy(() => import("@/components/TailoredDealCard"));
+const TrustBadges = lazy(() => import("@/components/TrustBadges"));
+const FlyBot = lazy(() => import("@/components/FlyBot"));
+const FeatureHighlights = lazy(() => import("@/components/FeatureHighlights"));
+const ForTravelPros = lazy(() => import("@/components/ForTravelPros"));
+const PartnerLogos = lazy(() => import("@/components/PartnerLogos"));
+const AppDownload = lazy(() => import("@/components/AppDownload"));
+const PopularFlights = lazy(() => import("@/components/PopularFlights"));
+const CustomerReviewsDark = lazy(() => import("@/components/CustomerReviewsDark"));
 import { mockDeals, type Deal } from "@/data/mockDeals";
 import heroBlackFriday from "@/assets/hero-black-friday.jpg";
 import dealLastMinute from "@/assets/deal-last-minute.jpg";
@@ -256,16 +257,24 @@ const Index = () => {
       </div>
 
       {/* Feature Highlights Strip - Three Columns */}
-      <FeatureHighlights />
+      <Suspense fallback={<div className="py-12" />}>
+        <FeatureHighlights />
+      </Suspense>
 
       {/* Popular Flights Section */}
-      <PopularFlights />
+      <Suspense fallback={<div className="py-20" />}>
+        <PopularFlights />
+      </Suspense>
 
       {/* For Travel Pros Section */}
-      <ForTravelPros />
+      <Suspense fallback={<div className="py-20" />}>
+        <ForTravelPros />
+      </Suspense>
 
       {/* Partner Logos Strip */}
-      <PartnerLogos />
+      <Suspense fallback={<div className="py-12" />}>
+        <PartnerLogos />
+      </Suspense>
 
       {/* Why Choose Us Section - Colorful */}
       <section className="py-20 bg-gradient-to-b from-background via-blue-50/30 to-background dark:from-background dark:via-blue-950/20 dark:to-background">
@@ -369,10 +378,14 @@ const Index = () => {
         </div>
       </section>
 
-      <DealModal deal={selectedDeal} open={isModalOpen} onOpenChange={setIsModalOpen} />
+      <Suspense fallback={null}>
+        <DealModal deal={selectedDeal} open={isModalOpen} onOpenChange={setIsModalOpen} />
+      </Suspense>
 
       {/* Customer Reviews Dark Section */}
-      <CustomerReviewsDark />
+      <Suspense fallback={<div className="py-20" />}>
+        <CustomerReviewsDark />
+      </Suspense>
 
       {/* Tailored Travel Deals */}
       <section className="py-20 bg-muted/30">
@@ -400,14 +413,18 @@ const Index = () => {
           >
             {tailoredDeals.map((deal, index) => (
               <motion.div key={deal.id} variants={fadeInUp}>
-                <TailoredDealCard deal={deal} />
+                <Suspense fallback={<div className="h-48 bg-muted/50 rounded-xl animate-pulse" />}>
+                  <TailoredDealCard deal={deal} />
+                </Suspense>
               </motion.div>
             ))}
           </motion.div>
         </div>
       </section>
 
-      <TrustBadges />
+      <Suspense fallback={<div className="py-12" />}>
+        <TrustBadges />
+      </Suspense>
 
       {/* Premium Rewards Section */}
       <section className="py-20 bg-background">
@@ -504,10 +521,14 @@ const Index = () => {
       </section>
 
       {/* App Download Section */}
-      <AppDownload />
+      <Suspense fallback={<div className="py-20" />}>
+        <AppDownload />
+      </Suspense>
 
       <Footer />
-      <FlyBot />
+      <Suspense fallback={null}>
+        <FlyBot />
+      </Suspense>
     </div>
   );
 };
