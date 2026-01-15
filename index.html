@@ -10,9 +10,17 @@
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="googlebot" content="index, follow" />
     <meta name="bingbot" content="index, follow" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Preconnect to external origins for faster loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://logos-world.net" crossorigin />
+    <link rel="preconnect" href="https://upload.wikimedia.org" crossorigin />
+    <link rel="dns-prefetch" href="https://cdn.freebiesupply.com" />
+    <link rel="dns-prefetch" href="https://press.priceline.com" />
+    <link rel="dns-prefetch" href="https://mediacentre.britishairways.com" />
+    
+    <!-- Fonts with display=swap for faster text rendering -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />

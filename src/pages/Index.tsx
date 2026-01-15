@@ -154,10 +154,14 @@ const Index = () => {
 
       {/* Premium Hero Section - Vibrant & Colorful */}
       <section className="relative min-h-[600px] md:min-h-[700px] w-full overflow-hidden">
-        {/* Background Image with Parallax Effect */}
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
-          style={{ backgroundImage: `url(${heroBlackFriday})` }}
+        {/* Background Image with high priority loading for LCP */}
+        <img
+          src={heroBlackFriday}
+          alt=""
+          fetchPriority="high"
+          decoding="async"
+          className="absolute inset-0 w-full h-full object-cover object-center scale-105"
+          aria-hidden="true"
         />
 
         {/* Vibrant Gradient Overlay */}
