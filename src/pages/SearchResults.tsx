@@ -13,22 +13,35 @@ import FlightResultCard from "@/components/FlightResultCard";
 import HotelResultCard from "@/components/HotelResultCard";
 import CarResultCard from "@/components/CarResultCard";
 import { toast } from "sonner";
+import CallSupportPopup from "@/components/CallSupportPopup";
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
   const type = searchParams.get("type") || "flights";
   const agentId = searchParams.get("agentId") || undefined;
-  
+
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   const { searchFlights } = useFlightSearch();
   const { searchHotels } = useHotelSearch();
   const { searchCars } = useCarSearch();
+  const [showCallPopup, setShowCallPopup] = useState(false);
 
   useEffect(() => {
     performSearch();
   }, [searchParams]);
+
+  useEffect(() => {
+    if (sessionStorage.getItem("callPopupShown")) return;
+
+    const timer = setTimeout(() => {
+      sessionStorage.setItem("callPopupShown", "true");
+      setShowCallPopup(true);
+    }, 6000); // 6 seconds after results page loads
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const performSearch = async () => {
     setLoading(true);
@@ -59,14 +72,14 @@ const SearchResults = () => {
           currencyCode: "USD",
         });
 
-        console.log('🔍 Search environment:', data?.meta?.environment || 'unknown');
-        console.log('📊 Results received:', data?.data?.length || 0);
-        
+        console.log("🔍 Search environment:", data?.meta?.environment || "unknown");
+        console.log("📊 Results received:", data?.data?.length || 0);
+
         setResults(data?.data || []);
-        
+
         // Store environment info for UI
         if (data?.meta?.environment) {
-          sessionStorage.setItem('flight_search_env', data.meta.environment);
+          sessionStorage.setItem("flight_search_env", data.meta.environment);
         }
       } else if (type === "hotels") {
         const cityCode = searchParams.get("cityCode") || "";
@@ -118,7 +131,7 @@ const SearchResults = () => {
       }
     } catch (error: any) {
       const errorMessage = error.message || `Failed to search ${type}`;
-      console.error('❌ Search failed:', errorMessage);
+      console.error("❌ Search failed:", errorMessage);
       toast.error(errorMessage, { duration: 5000 });
       setResults([]);
     } finally {
@@ -128,20 +141,22 @@ const SearchResults = () => {
 
   const handleBook = (offer: any) => {
     // Store the offer and agentId in sessionStorage and navigate to booking
-    sessionStorage.setItem('selectedOffer', JSON.stringify({ type, offer, agentId }));
+    sessionStorage.setItem("selectedOffer", JSON.stringify({ type, offer, agentId }));
     window.location.href = `/booking/${type}`;
   };
-
 
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
         <title>Search Results | CheapFlights - Find the Best Deals</title>
-        <meta name="description" content="Compare and book the best travel deals on CheapFlights. Find cheap flights, hotels, and car rentals across the USA." />
+        <meta
+          name="description"
+          content="Compare and book the best travel deals on CheapFlights. Find cheap flights, hotels, and car rentals across the USA."
+        />
         <meta name="robots" content="noindex, follow" />
       </Helmet>
       <Header />
-      
+
       <main className="flex-1 pt-24 pb-16 bg-secondary">
         <div className="container mx-auto px-4">
           <div className="mb-8">
@@ -170,15 +185,15 @@ const SearchResults = () => {
                 <div className="max-w-lg mx-auto">
                   <p className="text-lg font-semibold mb-2">No results found</p>
                   <p className="text-muted-foreground mb-4">
-                    {type === 'flights' 
-                      ? sessionStorage.getItem('flight_search_env') === 'test'
-                        ? 'No flights found. The test environment has limited route availability.'
-                        : 'No flights available for this route and dates. Try different dates or check nearby airports.'
-                      : type === 'hotels'
-                      ? 'No hotels found for the selected city and dates. Try different dates or locations.'
-                      : 'No vehicles found for the selected location and dates. Try different dates or locations.'}
+                    {type === "flights"
+                      ? sessionStorage.getItem("flight_search_env") === "test"
+                        ? "No flights found. The test environment has limited route availability."
+                        : "No flights available for this route and dates. Try different dates or check nearby airports."
+                      : type === "hotels"
+                        ? "No hotels found for the selected city and dates. Try different dates or locations."
+                        : "No vehicles found for the selected location and dates. Try different dates or locations."}
                   </p>
-                  {type === 'flights' && sessionStorage.getItem('flight_search_env') === 'test' && (
+                  {type === "flights" && sessionStorage.getItem("flight_search_env") === "test" && (
                     <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mb-6 text-left">
                       <p className="font-medium mb-2 text-sm text-amber-900 dark:text-amber-100">
                         ⚠️ Test Environment - Limited Data
@@ -194,7 +209,7 @@ const SearchResults = () => {
                       </ul>
                     </div>
                   )}
-                  <Button onClick={() => window.location.href = "/"} size="lg">
+                  <Button onClick={() => (window.location.href = "/")} size="lg">
                     Start a New Search
                   </Button>
                 </div>
@@ -202,19 +217,17 @@ const SearchResults = () => {
             </Card>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {type === "flights" && results.map((flight, i) => (
-                <FlightResultCard key={i} flight={flight} onBook={handleBook} />
-              ))}
-              {type === "hotels" && results.map((hotel, i) => (
-                <HotelResultCard key={i} hotel={hotel} onBook={handleBook} />
-              ))}
-              {type === "cars" && results.map((car, i) => (
-                <CarResultCard key={i} car={car} onBook={handleBook} />
-              ))}
+              {type === "flights" &&
+                results.map((flight, i) => <FlightResultCard key={i} flight={flight} onBook={handleBook} />)}
+              {type === "hotels" &&
+                results.map((hotel, i) => <HotelResultCard key={i} hotel={hotel} onBook={handleBook} />)}
+              {type === "cars" && results.map((car, i) => <CarResultCard key={i} car={car} onBook={handleBook} />)}
             </div>
           )}
         </div>
       </main>
+
+      {showCallPopup && <CallSupportPopup onClose={() => setShowCallPopup(false)} />}
 
       <Footer />
     </div>
