@@ -2,13 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Premium Travel OTA Design System - Vibrant & Modern
+/* Professional Travel OTA Design System - Clean & Restrained
    All colors MUST be HSL for theme consistency.
+   Primary: Blue (#0b69ff) - CTAs, active states, key highlights
+   Secondary: Slate - Secondary buttons, icons
+   Accent: Coral - Pricing highlights, limited promotions only
 */
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
+    --background: 0 0% 100%;
     --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
@@ -17,40 +20,41 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    /* American Blue - Primary Brand Color */
-    --primary: 216 100% 52%;
+    /* Primary Blue - #0b69ff equivalent */
+    --primary: 217 98% 52%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 216 100% 45%;
+    --primary-hover: 217 98% 45%;
 
-    /* Secondary - Soft Blue Gray */
-    --secondary: 215 25% 95%;
-    --secondary-foreground: 222 47% 11%;
+    /* Secondary - Soft Slate (#64748b) */
+    --secondary: 215 16% 47%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%;
+    /* Muted - Light backgrounds */
+    --muted: 210 20% 98%;
+    --muted-foreground: 215 16% 47%;
 
-    /* Coral Red - Secondary Brand Color */
-    --coral: 0 100% 71%;
+    /* Accent Coral - For pricing/promotions only */
+    --coral: 16 100% 60%;
     --coral-foreground: 0 0% 100%;
 
-    /* Golden Yellow Accent */
-    --gold: 45 93% 58%;
-    --gold-foreground: 222 47% 11%;
+    /* Gold - Subtle accent */
+    --gold: 45 93% 47%;
+    --gold-foreground: 0 0% 100%;
 
-    /* Sky Blue Accent */
-    --accent: 195 100% 50%;
-    --accent-foreground: 0 0% 100%;
+    /* Accent - Subdued */
+    --accent: 210 20% 96%;
+    --accent-foreground: 222 47% 11%;
 
-    /* Success Green */
+    /* Success Green - Confirmations */
     --success: 160 84% 39%;
     --success-foreground: 0 0% 100%;
 
-    /* Purple for special features */
-    --purple: 265 83% 57%;
+    /* Purple - Minimal use */
+    --purple: 265 60% 55%;
     --purple-foreground: 0 0% 100%;
 
-    /* Cyan for highlights */
-    --cyan: 195 100% 50%;
+    /* Cyan - Minimal use */
+    --cyan: 195 85% 45%;
     --cyan-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
@@ -58,88 +62,88 @@
 
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 216 100% 52%;
+    --ring: 217 98% 52%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
 
-    /* Premium shadows */
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    /* Refined shadows - Subtle and professional */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.08);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.06);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.06);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.04);
 
     /* Support page colors */
-    --support-sky: 212 100% 50%;
-    --support-sunrise: 42 100% 70%;
-    --support-green: 164 95% 43%;
-    --support-bg-light: 210 60% 98%;
+    --support-sky: 217 98% 52%;
+    --support-sunrise: 45 93% 47%;
+    --support-green: 160 84% 39%;
+    --support-bg-light: 210 20% 98%;
     
     /* Sidebar */
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 222 47% 11%;
-    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary: 217 98% 52%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 14% 96%;
+    --sidebar-accent: 210 20% 96%;
     --sidebar-accent-foreground: 222 47% 11%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-ring: 217 98% 52%;
   }
 
   .dark {
-    --background: 0 0% 4%;
+    --background: 222 47% 6%;
     --foreground: 210 40% 98%;
 
-    --card: 0 0% 7%;
+    --card: 222 47% 8%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 0 0% 7%;
+    --popover: 222 47% 8%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 216 100% 55%;
+    --primary: 217 98% 55%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 216 100% 65%;
+    --primary-hover: 217 98% 60%;
 
-    --secondary: 217 33% 17%;
+    --secondary: 215 20% 35%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 217 33% 15%;
+    --muted-foreground: 215 20% 60%;
 
-    --coral: 0 100% 68%;
+    --coral: 16 100% 60%;
     --coral-foreground: 0 0% 100%;
 
-    --gold: 45 93% 58%;
+    --gold: 45 93% 50%;
     --gold-foreground: 222 47% 11%;
 
-    --accent: 195 100% 55%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 217 33% 15%;
+    --accent-foreground: 210 40% 98%;
 
-    --success: 160 84% 45%;
+    --success: 160 84% 42%;
     --success-foreground: 0 0% 100%;
 
-    --purple: 265 83% 65%;
+    --purple: 265 60% 60%;
     --purple-foreground: 0 0% 100%;
 
-    --cyan: 195 100% 55%;
+    --cyan: 195 85% 50%;
     --cyan-foreground: 222 47% 11%;
 
     --destructive: 0 63% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 217 33% 20%;
-    --input: 217 33% 20%;
-    --ring: 216 100% 55%;
+    --border: 217 33% 18%;
+    --input: 217 33% 18%;
+    --ring: 217 98% 55%;
 
     /* Dark mode sidebar */
-    --sidebar-background: 0 0% 7%;
+    --sidebar-background: 222 47% 8%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 216 100% 55%;
+    --sidebar-primary: 217 98% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 217 33% 17%;
+    --sidebar-accent: 217 33% 15%;
     --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217 33% 22%;
-    --sidebar-ring: 216 100% 55%;
+    --sidebar-border: 217 33% 20%;
+    --sidebar-ring: 217 98% 55%;
   }
 }
 
@@ -157,247 +161,134 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
+  /* Typography - Consistent heading styles */
   h1, h2, h3 {
-    @apply font-display tracking-tight;
+    @apply font-semibold tracking-tight text-foreground;
+  }
+  
+  h1 {
+    @apply text-3xl md:text-4xl lg:text-5xl;
+  }
+  
+  h2 {
+    @apply text-2xl md:text-3xl;
+  }
+  
+  h3 {
+    @apply text-xl md:text-2xl;
   }
 }
 
 @layer components {
-  /* Glassmorphism - Enhanced */
-  .glass {
-    @apply bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/20 dark:border-slate-700/50;
+  /* Card - Unified styling */
+  .card-unified {
+    @apply bg-card rounded-2xl shadow-md border border-border/50 p-6 transition-all duration-200;
   }
 
-  .glass-card {
-    @apply bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-white/30 dark:border-slate-700/50 shadow-glass rounded-2xl;
+  .card-unified:hover {
+    @apply shadow-lg;
   }
 
-  .glass-vibrant {
-    @apply bg-gradient-to-br from-white/90 via-white/80 to-blue-50/80 dark:from-slate-900/90 dark:via-slate-800/80 dark:to-blue-950/80 backdrop-blur-xl border border-white/40 dark:border-blue-500/20 shadow-xl;
-  }
-
-  .glass-dark {
-    @apply bg-slate-900/80 backdrop-blur-xl border border-slate-700/50;
-  }
-
-  /* Neon glow effects for dark mode */
-  .neon-blue {
-    @apply shadow-[0_0_30px_rgba(59,130,246,0.5)] dark:shadow-[0_0_40px_rgba(59,130,246,0.6)];
-  }
-
-  .neon-cyan {
-    @apply shadow-[0_0_30px_rgba(6,182,212,0.5)] dark:shadow-[0_0_40px_rgba(6,182,212,0.6)];
-  }
-
-  .neon-purple {
-    @apply shadow-[0_0_30px_rgba(139,92,246,0.5)] dark:shadow-[0_0_40px_rgba(139,92,246,0.6)];
-  }
-
-  .neon-coral {
-    @apply shadow-[0_0_30px_rgba(255,107,107,0.5)] dark:shadow-[0_0_40px_rgba(255,107,107,0.6)];
-  }
-
-  /* Premium card styles */
+  /* Premium card - Subtle elevation */
   .card-premium {
-    @apply bg-card rounded-2xl shadow-lg border border-border/50 transition-all duration-300;
+    @apply bg-card rounded-2xl shadow-md border border-border/50 transition-all duration-200;
   }
 
   .card-premium:hover {
-    @apply shadow-card-hover -translate-y-1;
+    @apply shadow-lg -translate-y-0.5;
   }
 
-  .card-colorful {
-    @apply bg-gradient-to-br from-white via-blue-50/50 to-cyan-50/50 dark:from-slate-800 dark:via-blue-950/50 dark:to-cyan-950/50 rounded-2xl shadow-lg border border-blue-100/50 dark:border-blue-500/20 transition-all duration-300;
+  /* Glass effect - Simplified */
+  .glass {
+    @apply bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-border/50;
   }
 
-  .card-colorful:hover {
-    @apply shadow-xl border-blue-200 dark:border-blue-400/30 -translate-y-1;
-  }
-
-  /* Gradient text - Enhanced */
-  .text-gradient {
-    @apply bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-500 bg-clip-text text-transparent;
-  }
-
-  .text-gradient-vibrant {
-    @apply bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 bg-clip-text text-transparent;
-  }
-
-  .text-gradient-coral {
-    @apply bg-gradient-to-r from-coral to-orange-500 bg-clip-text text-transparent;
-  }
-
-  .text-gradient-gold {
-    @apply bg-gradient-to-r from-amber-500 via-yellow-500 to-orange-400 bg-clip-text text-transparent;
-  }
-
-  .text-gradient-cyan {
-    @apply bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent;
-  }
-
-  /* Premium buttons - Enhanced with gradients */
-  .btn-premium {
-    @apply bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-[0_10px_40px_rgba(59,130,246,0.4)] transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110;
-  }
-
-  .btn-coral {
-    @apply bg-gradient-to-r from-rose-500 via-coral to-orange-500 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-[0_10px_40px_rgba(255,107,107,0.4)] transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110;
-  }
-
-  .btn-gold {
-    @apply bg-gradient-to-r from-amber-500 via-yellow-500 to-orange-400 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-[0_10px_40px_rgba(245,158,11,0.4)] transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110;
-  }
-
-  .btn-purple {
-    @apply bg-gradient-to-r from-purple-600 via-violet-500 to-pink-500 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-[0_10px_40px_rgba(139,92,246,0.4)] transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110;
-  }
-
-  .btn-cyan {
-    @apply bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-[0_10px_40px_rgba(6,182,212,0.4)] transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110;
-  }
-
-  /* Gradient backgrounds */
-  .bg-gradient-hero {
-    @apply bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900;
-  }
-
-  .bg-gradient-vibrant {
-    @apply bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500;
-  }
-
-  .bg-gradient-ocean {
-    @apply bg-gradient-to-br from-blue-600 via-cyan-500 to-teal-400;
-  }
-
-  .bg-gradient-sunset {
-    @apply bg-gradient-to-br from-orange-500 via-rose-500 to-pink-500;
-  }
-
-  .bg-gradient-aurora {
-    @apply bg-gradient-to-br from-emerald-400 via-cyan-500 to-blue-500;
-  }
-
-  /* Hero gradient overlay - More vibrant */
-  .hero-gradient {
-    @apply bg-gradient-to-b from-black/70 via-blue-900/30 to-black/70;
-  }
-
-  .hero-gradient-vibrant {
-    @apply bg-gradient-to-br from-blue-900/80 via-purple-900/60 to-pink-900/50;
+  .glass-card {
+    @apply bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-border/50 shadow-md rounded-2xl;
   }
 
   /* Sticky header styles */
   .header-scrolled {
-    @apply shadow-lg bg-background/95 backdrop-blur-xl border-b border-primary/10;
+    @apply shadow-md bg-background/98 backdrop-blur-md border-b border-border/50;
   }
 
-  /* Deal ribbons - Colorful */
+  /* Badges - Simplified */
+  .badge-price {
+    @apply bg-coral text-coral-foreground px-3 py-1 rounded-full text-xs font-semibold;
+  }
+
+  .badge-success {
+    @apply bg-success text-success-foreground px-3 py-1 rounded-full text-xs font-semibold;
+  }
+
+  .badge-info {
+    @apply bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-semibold;
+  }
+
+  .badge-neutral {
+    @apply bg-muted text-muted-foreground px-3 py-1 rounded-full text-xs font-medium;
+  }
+
+  /* Deal ribbons - Subtle */
   .ribbon {
-    @apply absolute -top-1 -right-1 px-3 py-1 text-xs font-bold text-white rounded-bl-lg rounded-tr-xl shadow-lg;
+    @apply absolute -top-1 -right-1 px-3 py-1 text-xs font-semibold text-white rounded-bl-lg rounded-tr-xl shadow-sm;
   }
 
   .ribbon-hot {
-    @apply bg-gradient-to-r from-red-500 via-rose-500 to-orange-500;
+    @apply bg-coral;
   }
 
   .ribbon-popular {
-    @apply bg-gradient-to-r from-purple-500 via-violet-500 to-pink-500;
+    @apply bg-primary;
   }
 
   .ribbon-best {
-    @apply bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500;
+    @apply bg-success;
   }
 
-  .ribbon-flash {
-    @apply bg-gradient-to-r from-amber-500 via-yellow-500 to-orange-400;
+  /* Text gradients - Minimal use */
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary to-cyan bg-clip-text text-transparent;
   }
 
-  .ribbon-top {
-    @apply bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500;
+  .text-gradient-coral {
+    @apply bg-gradient-to-r from-coral to-gold bg-clip-text text-transparent;
   }
 
-  /* Colorful badges */
-  .badge-hot {
-    @apply bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold;
+  /* Buttons - Premium styling (simplified) */
+  .btn-premium {
+    @apply bg-primary text-primary-foreground font-medium px-6 py-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary/90;
   }
 
-  .badge-popular {
-    @apply bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-xs font-bold;
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground font-medium px-6 py-3 rounded-xl transition-all duration-200 hover:bg-secondary/80;
   }
 
-  .badge-best {
-    @apply bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-3 py-1 rounded-full text-xs font-bold;
+  .btn-outline {
+    @apply border-2 border-primary text-primary bg-transparent font-medium px-6 py-3 rounded-xl transition-all duration-200 hover:bg-primary/5;
   }
 
-  .badge-flash {
-    @apply bg-gradient-to-r from-amber-500 to-yellow-500 text-white px-3 py-1 rounded-full text-xs font-bold;
-  }
-
-  .badge-recommended {
-    @apply bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-3 py-1 rounded-full text-xs font-bold;
-  }
-
-  .badge-limited {
-    @apply bg-gradient-to-r from-rose-500 to-pink-500 text-white px-3 py-1 rounded-full text-xs font-bold;
-  }
-
-  /* Section headers with gradients */
-  .section-header-gradient {
-    @apply bg-gradient-to-r from-blue-600 via-purple-500 to-pink-500 bg-clip-text text-transparent;
-  }
-
-  /* Glowing border effect */
-  .glow-border {
-    @apply relative;
-  }
-
-  .glow-border::before {
-    content: '';
-    @apply absolute -inset-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-2xl opacity-0 blur transition-opacity duration-300;
-  }
-
-  .glow-border:hover::before {
-    @apply opacity-75;
-  }
-
-  /* Shimmer effect */
-  .shimmer {
-    @apply relative overflow-hidden;
-  }
-
-  .shimmer::after {
-    content: '';
-    @apply absolute inset-0 -translate-x-full;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.3),
-      transparent
-    );
-    animation: shimmer 2s infinite;
-  }
-
-  /* Price highlight */
-  .price-highlight {
-    @apply relative inline-block;
-  }
-
-  .price-highlight::after {
-    content: '';
-    @apply absolute bottom-0 left-0 right-0 h-3 bg-gradient-to-r from-yellow-300/50 to-orange-300/50 -z-10 rounded;
-  }
-
-  /* Category tabs - Colorful pills */
+  /* Tab pills - Simplified */
   .tab-pill {
-    @apply px-5 py-2.5 rounded-full font-semibold text-sm transition-all duration-300;
+    @apply px-5 py-2.5 rounded-full font-medium text-sm transition-all duration-200;
   }
 
   .tab-pill-active {
-    @apply bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg;
+    @apply bg-primary text-primary-foreground shadow-sm;
   }
 
   .tab-pill-inactive {
-    @apply bg-white/80 dark:bg-slate-800/80 text-muted-foreground hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-primary;
+    @apply bg-muted text-muted-foreground hover:bg-accent hover:text-foreground;
+  }
+
+  /* Hero gradient - Subdued */
+  .hero-gradient {
+    @apply bg-gradient-to-b from-black/60 via-black/40 to-black/60;
+  }
+
+  /* Price highlight - Subtle */
+  .price-highlight {
+    @apply text-coral font-semibold;
   }
 
   /* Animation delays */
@@ -407,45 +298,22 @@
   .delay-400 { animation-delay: 400ms; }
   .delay-500 { animation-delay: 500ms; }
 
-  /* Hover effects */
+  /* Hover effects - Subtle */
   .hover-scale {
-    @apply transition-transform duration-300 hover:scale-105;
+    @apply transition-transform duration-200 hover:scale-[1.02];
   }
 
   .hover-lift {
-    @apply transition-all duration-300 hover:-translate-y-2 hover:shadow-xl;
+    @apply transition-all duration-200 hover:-translate-y-1 hover:shadow-lg;
   }
 
-  .hover-glow-blue {
-    @apply transition-all duration-300 hover:shadow-[0_0_30px_rgba(59,130,246,0.4)];
+  /* Section spacing */
+  .section-padding {
+    @apply py-16 md:py-20 lg:py-24;
   }
 
-  .hover-glow-coral {
-    @apply transition-all duration-300 hover:shadow-[0_0_30px_rgba(255,107,107,0.4)];
-  }
-
-  .hover-glow-purple {
-    @apply transition-all duration-300 hover:shadow-[0_0_30px_rgba(139,92,246,0.4)];
-  }
-
-  /* Border gradients */
-  .border-gradient {
-    @apply relative rounded-2xl;
-    background: linear-gradient(var(--background), var(--background)) padding-box,
-                linear-gradient(135deg, hsl(217 91% 60%), hsl(265 83% 57%), hsl(0 84% 71%)) border-box;
-    border: 2px solid transparent;
-  }
-
-  /* Animated gradient background */
-  .animate-gradient {
-    background-size: 200% 200%;
-    animation: gradient-shift 5s ease infinite;
-  }
-
-  @keyframes gradient-shift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+  .section-padding-sm {
+    @apply py-12 md:py-16;
   }
 }
 
