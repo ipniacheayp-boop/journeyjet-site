@@ -70,10 +70,7 @@ const CustomerReviewsDark = () => {
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
-      <Star
-        key={i}
-        className={`w-4 h-4 ${i < rating ? "text-yellow-400 fill-yellow-400" : "text-gray-500"}`}
-      />
+      <Star key={i} className={`w-4 h-4 ${i < rating ? "text-yellow-400 fill-yellow-400" : "text-gray-500"}`} />
     ));
   };
 
@@ -81,20 +78,20 @@ const CustomerReviewsDark = () => {
   const duplicatedReviews = [...reviews, ...reviews];
 
   return (
-    <section 
+    <section
       className="py-16 md:py-24 bg-gradient-to-br from-teal-900 via-emerald-900 to-green-900 overflow-hidden"
       aria-labelledby="reviews-dark-title"
     >
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
-          <h2 
-            id="reviews-dark-title" 
+          <h2
+            id="reviews-dark-title"
             className="text-2xl md:text-4xl font-bold text-white mb-4 uppercase tracking-wider"
           >
             Customer Reviews That Speak for Themselves
           </h2>
-          
+
           {/* Rating Summary */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-2">
             <div className="flex items-center gap-2">
@@ -103,24 +100,18 @@ const CustomerReviewsDark = () => {
               <span className="text-xl font-semibold text-yellow-400">4.8</span>
             </div>
           </div>
-          <p className="text-white/70 text-sm">
-            Based on 50,000+ verified reviews
-          </p>
+          <p className="text-white/70 text-sm">Based on 8000+ verified reviews</p>
         </div>
 
         {/* Continuous Scrolling Reviews */}
         <div className="relative max-w-6xl mx-auto">
-          <div 
-            className="h-[400px] md:h-[450px] overflow-hidden relative group"
-          >
+          <div className="h-[400px] md:h-[450px] overflow-hidden relative group">
             {/* Gradient overlays for smooth fade effect */}
             <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-teal-900 to-transparent z-10 pointer-events-none" />
             <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-emerald-900 to-transparent z-10 pointer-events-none" />
-            
+
             {/* Scrolling container */}
-            <div 
-              className="animate-scroll-up group-hover:[animation-play-state:paused] flex flex-col gap-4"
-            >
+            <div className="animate-scroll-up group-hover:[animation-play-state:paused] flex flex-col gap-4">
               {duplicatedReviews.map((review, index) => (
                 <div
                   key={`${review.id}-${index}`}
@@ -130,14 +121,10 @@ const CustomerReviewsDark = () => {
                   <Quote className="w-6 h-6 text-teal-400/50 mb-3" aria-hidden="true" />
 
                   {/* Review Text */}
-                  <p className="text-white/90 text-sm leading-relaxed mb-4">
-                    "{review.text}"
-                  </p>
+                  <p className="text-white/90 text-sm leading-relaxed mb-4">"{review.text}"</p>
 
                   {/* Rating */}
-                  <div className="flex items-center gap-1 mb-3">
-                    {renderStars(review.rating)}
-                  </div>
+                  <div className="flex items-center gap-1 mb-3">{renderStars(review.rating)}</div>
 
                   {/* Reviewer Info */}
                   <div className="flex items-center justify-between">
