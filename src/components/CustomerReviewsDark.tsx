@@ -94,13 +94,11 @@ const CustomerReviewsDark = () => {
 
           {/* Rating Summary */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-2">
-            <div className="flex items-center gap-2">
-              <span className="text-2xl font-bold text-white">Excellent</span>
-              <div className="flex">{renderStars(5)}</div>
-              <span className="text-xl font-semibold text-yellow-400">4.8</span>
+            <div className="flex items-center justify-center">
+              <img src="src/assets/trustpilot.jpeg" alt="Trustpilot rating" className="h-20 md:h-24 object-contain" />
             </div>
           </div>
-          <p className="text-white/70 text-sm">Based on 8000+ verified reviews</p>
+          <p className="text-white/70 text-sm">Based on 9865+ verified reviews</p>
         </div>
 
         {/* Continuous Scrolling Reviews */}
