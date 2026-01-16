@@ -37,11 +37,11 @@ const Header = () => {
   };
 
   const navLinks = [
-    { label: t('navigation.home'), href: "/" },
-    { label: t('navigation.deals'), href: "/deals" },
-    { label: t('navigation.reviews'), href: "/reviews" },
-    { label: t('navigation.support'), href: "/support" },
-    { label: t('navigation.about'), href: "/about" },
+    { label: t("navigation.home"), href: "/" },
+    { label: t("navigation.deals"), href: "/deals" },
+    { label: t("navigation.reviews"), href: "/reviews" },
+    { label: t("navigation.support"), href: "/support" },
+    { label: t("navigation.about"), href: "/about" },
   ];
 
   return (
@@ -50,8 +50,8 @@ const Header = () => {
       animate={{ y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled 
-          ? "bg-background/95 backdrop-blur-xl shadow-lg border-b border-border/50" 
+        isScrolled
+          ? "bg-background/95 backdrop-blur-xl shadow-lg border-b border-border/50"
           : "bg-background/80 backdrop-blur-sm"
       }`}
     >
@@ -59,13 +59,10 @@ const Header = () => {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center group">
-            <motion.div 
-              whileHover={{ scale: 1.05 }}
-              className="h-[3.5rem] md:h-[4.5rem] lg:h-[5.5rem] w-auto"
-            >
-              <img 
-                src={chyeapFlightsLogo} 
-                alt="ChyeapFlights" 
+            <motion.div whileHover={{ scale: 1.05 }} className="h-[3.5rem] md:h-[4.5rem] lg:h-[5.5rem] w-auto">
+              <img
+                src={chyeapFlightsLogo}
+                alt="ChyeapFlights"
                 className="h-[3.5rem] md:h-[4.5rem] lg:h-[5.5rem] w-auto object-contain"
               />
             </motion.div>
@@ -92,7 +89,7 @@ const Header = () => {
               className="hidden md:flex items-center gap-2 px-3 py-2 text-sm font-medium text-foreground/70 hover:text-foreground transition-colors rounded-lg hover:bg-muted/50"
             >
               <Phone className="w-4 h-4" />
-              <span>1-800-123-4567</span>
+              <span>1-800-221-5246</span>
             </Link>
 
             {/* Dark Mode Toggle */}
@@ -112,14 +109,14 @@ const Header = () => {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="gap-2 hidden md:flex rounded-xl hover:bg-muted/50">
                   <Globe className="w-4 h-4" />
-                  {language === 'en' ? '🇺🇸' : '🇪🇸'}
+                  {language === "en" ? "🇺🇸" : "🇪🇸"}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur-xl border-border/50 z-[60]">
-                <DropdownMenuItem onClick={() => toggleLanguage('en')} className="cursor-pointer">
+                <DropdownMenuItem onClick={() => toggleLanguage("en")} className="cursor-pointer">
                   🇺🇸 English
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => toggleLanguage('es')} className="cursor-pointer">
+                <DropdownMenuItem onClick={() => toggleLanguage("es")} className="cursor-pointer">
                   🇪🇸 Español
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -131,28 +128,32 @@ const Header = () => {
                   <Button variant="outline" size="sm" className="gap-2 rounded-xl border-border/50 hover:bg-muted/50">
                     <User className="w-4 h-4" />
                     <span className="hidden sm:inline">
-                      {userRole === 'admin' ? t('navigation.admin') : userRole === 'agent' ? t('navigation.agent') : t('navigation.account')}
+                      {userRole === "admin"
+                        ? t("navigation.admin")
+                        : userRole === "agent"
+                          ? t("navigation.agent")
+                          : t("navigation.account")}
                     </span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="z-[60] bg-background/95 backdrop-blur-xl border-border/50">
-                  {userRole === 'admin' && (
+                  {userRole === "admin" && (
                     <>
                       <DropdownMenuItem asChild>
                         <Link to="/admin" className="flex items-center gap-2 w-full cursor-pointer">
                           <BookOpen className="w-4 h-4" />
-                          {t('navigation.admin')}
+                          {t("navigation.admin")}
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                     </>
                   )}
-                  {userRole === 'agent' && (
+                  {userRole === "agent" && (
                     <>
                       <DropdownMenuItem asChild>
                         <Link to="/agent/dashboard" className="flex items-center gap-2 w-full cursor-pointer">
                           <BookOpen className="w-4 h-4" />
-                          {t('navigation.agent')}
+                          {t("navigation.agent")}
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
@@ -161,13 +162,13 @@ const Header = () => {
                   <DropdownMenuItem asChild>
                     <Link to="/account" className="flex items-center gap-2 w-full cursor-pointer">
                       <User className="w-4 h-4" />
-                      {t('navigation.account')}
+                      {t("navigation.account")}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link to="/my-bookings" className="flex items-center gap-2 w-full cursor-pointer">
                       <BookOpen className="w-4 h-4" />
-                      {t('navigation.myBookings')}
+                      {t("navigation.myBookings")}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -176,13 +177,17 @@ const Header = () => {
                     className="flex items-center gap-2 text-destructive cursor-pointer"
                   >
                     <LogOut className="w-4 h-4" />
-                    {t('navigation.signOut')}
+                    {t("navigation.signOut")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button size="sm" asChild className="rounded-xl bg-gradient-to-r from-primary to-blue-600 hover:opacity-90 shadow-lg shadow-primary/25">
-                <Link to="/login">{t('navigation.signIn')}</Link>
+              <Button
+                size="sm"
+                asChild
+                className="rounded-xl bg-gradient-to-r from-primary to-blue-600 hover:opacity-90 shadow-lg shadow-primary/25"
+              >
+                <Link to="/login">{t("navigation.signIn")}</Link>
               </Button>
             )}
 
@@ -224,7 +229,7 @@ const Header = () => {
                     </Link>
                   </motion.div>
                 ))}
-                
+
                 {/* Mobile Language & Theme */}
                 <div className="px-4 py-4 border-t border-border/50 mt-2 space-y-4">
                   <div className="flex items-center justify-between">
@@ -240,13 +245,13 @@ const Header = () => {
                     </Button>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-muted-foreground">{t('common.language')}</span>
+                    <span className="text-sm font-medium text-muted-foreground">{t("common.language")}</span>
                     <div className="flex gap-2">
                       <Button
-                        variant={language === 'en' ? 'default' : 'outline'}
+                        variant={language === "en" ? "default" : "outline"}
                         size="sm"
                         onClick={() => {
-                          toggleLanguage('en');
+                          toggleLanguage("en");
                           setIsMobileMenuOpen(false);
                         }}
                         className="rounded-xl"
@@ -254,10 +259,10 @@ const Header = () => {
                         🇺🇸
                       </Button>
                       <Button
-                        variant={language === 'es' ? 'default' : 'outline'}
+                        variant={language === "es" ? "default" : "outline"}
                         size="sm"
                         onClick={() => {
-                          toggleLanguage('es');
+                          toggleLanguage("es");
                           setIsMobileMenuOpen(false);
                         }}
                         className="rounded-xl"
