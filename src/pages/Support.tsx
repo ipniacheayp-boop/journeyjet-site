@@ -9,13 +9,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { 
-  Plane, 
-  FileText, 
-  DollarSign, 
-  Ticket, 
-  RefreshCw, 
-  XCircle, 
+import {
+  Plane,
+  FileText,
+  DollarSign,
+  Ticket,
+  RefreshCw,
+  XCircle,
   Heart,
   Shield,
   CheckSquare,
@@ -28,7 +28,7 @@ import {
   MessageCircle,
   Phone,
   Mail,
-  Cloud
+  Cloud,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -73,16 +73,20 @@ const Support = () => {
     <div className="min-h-screen flex flex-col font-poppins">
       <Helmet>
         <title>Customer Support | CheapFlights - 24/7 Travel Assistance</title>
-        <meta name="description" content="Get 24/7 customer support for your travel bookings. Contact CheapFlights for help with flights, hotels, car rentals, refunds, and more." />
+        <meta
+          name="description"
+          content="Get 24/7 customer support for your travel bookings. Contact CheapFlights for help with flights, hotels, car rentals, refunds, and more."
+        />
         <link rel="canonical" href="https://cheapflights.com/support" />
       </Helmet>
       <Header />
-      
+
       {/* Hero Section */}
-      <div 
+      <div
         className="relative h-[400px] bg-cover bg-center"
         style={{
-          backgroundImage: "linear-gradient(180deg, rgba(0, 0, 0, 0.35), transparent), url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1600&h=400&fit=crop')",
+          backgroundImage:
+            "linear-gradient(180deg, rgba(0, 0, 0, 0.35), transparent), url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1600&h=400&fit=crop')",
         }}
       >
         <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4">
@@ -99,20 +103,20 @@ const Support = () => {
           {/* Main Assistance Grid */}
           <div className="mb-20">
             <h2 className="text-4xl font-bold text-center mb-4 text-foreground">How Can We Assist You?</h2>
-            <p className="text-center text-muted-foreground mb-12 text-lg">
-              Select a service below to get started
-            </p>
-            
+            <p className="text-center text-muted-foreground mb-12 text-lg">Select a service below to get started</p>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {assistanceServices.map((service, index) => (
-                <Card 
+                <Card
                   key={index}
                   className="cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-0 overflow-hidden group"
                   onClick={() => handleServiceClick(service.title)}
                 >
                   <div className={`h-2 bg-gradient-to-r ${service.color}`} />
                   <CardHeader className="text-center pb-4">
-                    <div className={`w-16 h-16 bg-gradient-to-br ${service.color} rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:rotate-12 transition-transform duration-300 shadow-lg`}>
+                    <div
+                      className={`w-16 h-16 bg-gradient-to-br ${service.color} rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:rotate-12 transition-transform duration-300 shadow-lg`}
+                    >
                       <service.icon className="w-8 h-8 text-white" />
                     </div>
                     <CardTitle className="text-lg">{service.title}</CardTitle>
@@ -125,13 +129,11 @@ const Support = () => {
           {/* Enhance Your Booking Section */}
           <div className="mb-20">
             <h2 className="text-4xl font-bold text-center mb-4 text-foreground">Enhance Your Booking</h2>
-            <p className="text-center text-muted-foreground mb-12 text-lg">
-              Add more value to your travel experience
-            </p>
-            
+            <p className="text-center text-muted-foreground mb-12 text-lg">Add more value to your travel experience</p>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {enhanceServices.map((service, index) => (
-                <Card 
+                <Card
                   key={index}
                   className="transition-all duration-300 hover:scale-105 hover:shadow-xl border-0 bg-white"
                 >
@@ -143,7 +145,7 @@ const Support = () => {
                     <CardDescription>{service.description}</CardDescription>
                   </CardHeader>
                   <CardContent className="text-center pb-6">
-                    <Button 
+                    <Button
                       className="bg-support-green hover:bg-support-green/90 text-white rounded-full px-6"
                       onClick={() => toast.info(`${service.title} feature coming soon!`)}
                     >
@@ -169,29 +171,37 @@ const Support = () => {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="name" className="text-base">Your Name</Label>
+                      <Label htmlFor="name" className="text-base">
+                        Your Name
+                      </Label>
                       <Input id="name" required className="h-12 rounded-xl" />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="text-base">Email Address</Label>
+                      <Label htmlFor="email" className="text-base">
+                        Email Address
+                      </Label>
                       <Input id="email" type="email" required className="h-12 rounded-xl" />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="subject" className="text-base">Subject</Label>
+                    <Label htmlFor="subject" className="text-base">
+                      Subject
+                    </Label>
                     <Input id="subject" required className="h-12 rounded-xl" />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="message" className="text-base">Message</Label>
+                    <Label htmlFor="message" className="text-base">
+                      Message
+                    </Label>
                     <Textarea id="message" rows={6} required className="rounded-xl" />
                   </div>
 
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     className="w-full h-14 text-lg font-semibold rounded-xl shadow-lg"
-                    style={{ background: 'linear-gradient(135deg, hsl(212 100% 50%), hsl(180 100% 50%))' }}
+                    style={{ background: "linear-gradient(135deg, hsl(212 100% 50%), hsl(180 100% 50%))" }}
                   >
                     Send Message
                   </Button>
@@ -208,26 +218,23 @@ const Support = () => {
                       help@chyeap.com
                     </a>
                   </div>
-                  
+
                   <div className="flex flex-col items-center gap-2">
                     <div className="w-12 h-12 bg-support-green/10 rounded-full flex items-center justify-center">
                       <Phone className="w-6 h-6 text-support-green" />
                     </div>
                     <p className="text-sm font-medium">Call Us</p>
                     <a href="tel:+18001234567" className="text-support-green hover:underline text-sm">
-                      1-800-123-4567
+                      1-800-221-5246
                     </a>
                   </div>
-                  
+
                   <div className="flex flex-col items-center gap-2">
                     <div className="w-12 h-12 bg-support-sunrise/10 rounded-full flex items-center justify-center">
                       <MessageCircle className="w-6 h-6 text-support-sunrise" />
                     </div>
                     <p className="text-sm font-medium">Live Chat</p>
-                    <button 
-                      onClick={() => setShowChat(true)}
-                      className="text-support-sunrise hover:underline text-sm"
-                    >
+                    <button onClick={() => setShowChat(true)} className="text-support-sunrise hover:underline text-sm">
                       Chat with us instantly
                     </button>
                   </div>
@@ -243,9 +250,7 @@ const Support = () => {
         <DialogContent className="sm:max-w-[500px] rounded-2xl">
           <DialogHeader>
             <DialogTitle className="text-2xl">Get Help with {selectedService}</DialogTitle>
-            <DialogDescription>
-              Tell us more about how we can assist you
-            </DialogDescription>
+            <DialogDescription>Tell us more about how we can assist you</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4 mt-4">
             <div className="space-y-2">
@@ -261,19 +266,14 @@ const Support = () => {
               <Textarea id="dialog-message" rows={5} required className="rounded-xl" />
             </div>
             <div className="flex gap-3">
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="flex-1 rounded-xl"
-                style={{ background: 'linear-gradient(135deg, hsl(212 100% 50%), hsl(180 100% 50%))' }}
+                style={{ background: "linear-gradient(135deg, hsl(212 100% 50%), hsl(180 100% 50%))" }}
               >
                 Send Message
               </Button>
-              <Button 
-                type="button"
-                variant="outline"
-                className="flex-1 rounded-xl"
-                onClick={() => setShowChat(true)}
-              >
+              <Button type="button" variant="outline" className="flex-1 rounded-xl" onClick={() => setShowChat(true)}>
                 <MessageCircle className="w-4 h-4 mr-2" />
                 Live Chat
               </Button>
@@ -290,7 +290,7 @@ const Support = () => {
       >
         <MessageCircle className="w-7 h-7 group-hover:scale-110 transition-transform" />
         <span className="absolute -top-1 -right-1 w-4 h-4 bg-support-green rounded-full animate-pulse" />
-        
+
         {/* Tooltip */}
         <span className="absolute bottom-full mb-2 right-0 bg-gray-900 text-white text-sm px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
           Chat with us instantly!
