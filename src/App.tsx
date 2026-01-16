@@ -43,6 +43,9 @@ import FxSavingsDashboard from "./pages/FxSavingsDashboard";
 import Sitemap from "./pages/Sitemap";
 import TaxesFees from "./pages/TaxesFees";
 import CruiseDeals from "./pages/CruiseDeals";
+import FlightRoutePage from "./pages/seo/FlightRoutePage";
+import HotelCityPage from "./pages/seo/HotelCityPage";
+import CarRentalCityPage from "./pages/seo/CarRentalCityPage";
 
 const FlybotWrapper = () => {
   const location = useLocation();
@@ -105,6 +108,10 @@ const App = () => (
                 <Route path="/sitemap" element={<Sitemap />} />
                 <Route path="/taxes-fees" element={<TaxesFees />} />
                 <Route path="/cruise-deals" element={<CruiseDeals />} />
+                {/* SEO Route Pages */}
+                <Route path="/cheap-flights-from-:slug" element={<FlightRoutePage />} />
+                <Route path="/cheap-hotels-in-:slug" element={<HotelCityPage />} />
+                <Route path="/cheap-car-rentals-in-:slug" element={<CarRentalCityPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <FlybotWrapper />
