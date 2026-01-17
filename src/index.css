@@ -362,17 +362,17 @@
   }
 
   /* Horizontal auto-scroll for testimonials (premium) */
-  @keyframes scroll-x {
+  @keyframes marquee {
     0% {
       transform: translateX(0);
     }
     100% {
-      transform: translateX(-100%);
+      transform: translateX(-50%);
     }
   }
 
-  .animate-scroll-x {
-    animation: scroll-x 45s linear infinite;
+  .animate-marquee {
+    animation: marquee 45s linear infinite;
     will-change: transform;
   }
 }
