@@ -103,8 +103,8 @@ const CustomerReviewsDark = () => {
         <div className="relative max-w-6xl mx-auto">
           <div className="h-[400px] md:h-[450px] overflow-hidden relative group">
             {/* Gradient overlays for smooth fade effect */}
-            <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-teal-900 to-transparent z-10 pointer-events-none" />
-            <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-emerald-900 to-transparent z-10 pointer-events-none" />
+            <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-[#013f3f] to-transparent z-10 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#013f3f] to-transparent z-10 pointer-events-none" />
 
             {/* Scrolling container */}
             <div className="animate-scroll-up group-hover:[animation-play-state:paused] flex flex-col gap-4">
