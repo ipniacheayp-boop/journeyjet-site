@@ -85,9 +85,7 @@ const TrustBadges = () => {
         </motion.div>
 
         <div className="mt-12 border-t border-border pt-8">
-          <p className="text-center text-sm text-muted-foreground mb-6 uppercase tracking-wide">
-            Independent review platforms
-          </p>
+          <p className="text-center text-sm mb-6 uppercase tracking-wide">Independent review platforms</p>
 
           <div className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto">
             {[
