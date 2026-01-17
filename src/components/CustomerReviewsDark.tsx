@@ -79,10 +79,7 @@ const CustomerReviewsDark = () => {
   const duplicatedReviews = [...reviews, ...reviews];
 
   return (
-    <section
-      className="py-16 md:py-24 bg-gradient-to-br from-teal-900 via-emerald-900 to-green-900 overflow-hidden"
-      aria-labelledby="reviews-dark-title"
-    >
+    <section className="py-16 md:py-24 bg-[#013f3f] overflow-hidden" aria-labelledby="reviews-dark-title">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
