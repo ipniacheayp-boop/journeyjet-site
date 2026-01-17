@@ -97,7 +97,7 @@ const CustomerReviewsDark = () => {
         </div>
 
         {/* Horizontal Scrolling Reviews */}
-        <div className="relative overflow-hidden group">
+        <div className="relative overflow-x-auto scrollbar-hide lg:overflow-hidden group">
           <div className="flex w-max gap-4 animate-marquee group-hover:[animation-play-state:paused]">
             {duplicatedReviews.map((review, index) => (
               <div
