@@ -97,14 +97,15 @@ const CustomerReviewsDark = () => {
         </div>
 
         {/* Horizontal Scrolling Reviews */}
+        {/* Horizontal Scrolling Reviews */}
         <div className="relative overflow-hidden group">
-          <div className="flex w-max gap-4 animate-scroll-x group-hover:[animation-play-state:paused]">
-            {duplicatedReviews.map((review, index) => (
+          <div className="flex w-max gap-4 animate-marquee group-hover:[animation-play-state:paused]">
+            {[...reviews, ...reviews].map((review, index) => (
               <div
                 key={`${review.id}-${index}`}
                 className="w-[320px] flex-shrink-0 bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300"
               >
-                <Quote className="w-6 h-6 text-white/40 mb-3" aria-hidden="true" />
+                <Quote className="w-6 h-6 text-white/40 mb-3" />
 
                 <p className="text-white/90 text-sm leading-relaxed mb-4">“{review.text}”</p>
 
@@ -113,7 +114,7 @@ const CustomerReviewsDark = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="text-white font-semibold">{review.name}</span>
-                    <BadgeCheck className="w-4 h-4 text-white/60" aria-label="Verified" />
+                    <BadgeCheck className="w-4 h-4 text-white/60" />
                   </div>
                   <div className="text-right">
                     <span className="text-white/50 text-xs block">{review.location}</span>
