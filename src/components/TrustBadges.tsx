@@ -84,12 +84,87 @@ const TrustBadges = () => {
           ))}
         </motion.div>
 
-        <div className="mt-10 md:mt-12 flex justify-center">
-          <img
-            src={reviewsImage}
-            alt="Customer reviews from Trustpilot, Google, Facebook, Sitejabber"
-            className="max-w-full h-auto"
-          />
+        <div className="mt-12 border-t border-border pt-8">
+          <p className="text-center text-sm text-muted-foreground mb-6 uppercase tracking-wide">
+            Independent review platforms
+          </p>
+
+          <div className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto">
+            {[
+              {
+                name: "Trustpilot",
+                rating: "4.4",
+                reviews: "9,865 reviews",
+                stars: "★★★★★",
+                note: "Verified customer reviews",
+                color: "text-green-600",
+              },
+              {
+                name: "Google",
+                rating: "4.1",
+                reviews: "1,605 reviews",
+                stars: "★★★★☆",
+                note: "Public Google user ratings",
+                color: "text-yellow-500",
+              },
+              {
+                name: "Sitejabber",
+                rating: "4.7",
+                reviews: "22,801 reviews",
+                stars: "★★★★★",
+                note: "Independent consumer review site",
+                color: "text-orange-500",
+              },
+              {
+                name: "Reviews.io",
+                rating: "4.1",
+                reviews: "4,585 reviews",
+                stars: "★★★★☆",
+                note: "Verified purchase reviews",
+                color: "text-gray-900",
+              },
+              {
+                name: "Facebook",
+                rating: "4.4",
+                reviews: "483 reviews",
+                stars: "★★★★☆",
+                note: "Customer feedback on Facebook",
+                color: "text-blue-600",
+              },
+              {
+                name: "ResellerRatings",
+                rating: "4.6",
+                reviews: "18,200 reviews",
+                stars: "★★★★★",
+                note: "Retail & service review authority",
+                color: "text-purple-600",
+              },
+            ].map((item) => (
+              <div key={item.name} className="relative group">
+                {/* Visible card */}
+                <div className="px-6 py-4 rounded-xl bg-card shadow-sm border border-border cursor-default transition-transform duration-200 group-hover:-translate-y-1">
+                  <div className={`text-base font-semibold ${item.color}`}>{item.name}</div>
+                  <div className="text-sm text-muted-foreground mt-1">{item.reviews}</div>
+                  <div className="text-sm text-muted-foreground mt-1">{item.rating} / 5</div>
+                </div>
+
+                {/* Hover detail card */}
+                <div className="absolute left-1/2 -translate-x-1/2 top-full mt-3 w-72 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-20 pointer-events-none">
+                  <div className="bg-background border border-border shadow-lg rounded-xl p-4 text-sm">
+                    <div className={`font-semibold mb-1 ${item.color}`}>{item.name}</div>
+                    <div className="text-yellow-500 mb-2 text-base">{item.stars}</div>
+                    <div className="text-muted-foreground mb-1">
+                      Rating: <span className="font-medium">{item.rating}</span> / 5
+                    </div>
+                    <div className="text-muted-foreground mb-1">
+                      Reviews: <span className="font-medium">{item.reviews}</span>
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-2">{item.note}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
