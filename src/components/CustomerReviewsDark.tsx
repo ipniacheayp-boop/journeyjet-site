@@ -1,5 +1,5 @@
 import { Star, Quote, BadgeCheck } from "lucide-react";
-import trustPilotImage from "@/assets/trustpilot.jpeg";
+import trustPilotImage from "@/assets/label.png";
 
 const CustomerReviewsDark = () => {
   const reviews = [
@@ -93,7 +93,7 @@ const CustomerReviewsDark = () => {
           {/* Rating Summary */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-2">
             <div className="flex items-center justify-center">
-              <img src={trustPilotImage} alt="Trustpilot rating" className="h-20 md:h-24 object-contain" />
+              <img src={trustPilotImage} alt="Trustpilot rating" className="h-25 md:h-30 object-contain" />
             </div>
           </div>
           <p className="text-white/70 text-sm">Based on 9865+ verified reviews</p>
