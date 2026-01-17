@@ -87,7 +87,7 @@ const TrustBadges = () => {
         <div className="mt-12 border-t border-border pt-8">
           <p className="text-center text-sm mb-6 uppercase tracking-wide">Independent review platforms</p>
 
-          <div className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 max-w-6xl mx-auto">
             {[
               {
                 name: "Trustpilot",
@@ -140,8 +140,12 @@ const TrustBadges = () => {
             ].map((item) => (
               <div key={item.name} className="relative group">
                 {/* Visible card */}
-                <div className="px-6 py-4 rounded-xl bg-card shadow-sm border border-border cursor-default transition-transform duration-200 group-hover:-translate-y-1">
-                  <div className={`text-base font-semibold ${item.color}`}>{item.name}</div>
+                <div
+                  className="px-4 py-4 rounded-xl bg-card shadow-sm border border-border cursor-default
+                transition-transform duration-200 group-hover:-translate-y-1
+                w-full min-w-0 text-center"
+                >
+                  <div className={`text-sm font-semibold ${item.color} truncate`}>{item.name}</div>
                   <div className="text-sm text-muted-foreground mt-1">{item.reviews}</div>
                   <div className="text-sm text-muted-foreground mt-1">{item.rating} / 5</div>
                 </div>
