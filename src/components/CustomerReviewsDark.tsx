@@ -98,7 +98,7 @@ const CustomerReviewsDark = () => {
 
         {/* Horizontal Scrolling Reviews */}
         <div className="relative overflow-hidden group">
-          <div className="flex gap-4 animate-scroll-x group-hover:[animation-play-state:paused]">
+          <div className="flex w-max gap-4 animate-scroll-x group-hover:[animation-play-state:paused]">
             {duplicatedReviews.map((review, index) => (
               <div
                 key={`${review.id}-${index}`}
