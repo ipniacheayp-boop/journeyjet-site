@@ -69,13 +69,12 @@ const CustomerReviewsDark = () => {
     },
   ];
 
-  const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }, (_, i) => (
+  const renderStars = (rating: number) =>
+    Array.from({ length: 5 }, (_, i) => (
       <Star key={i} className={`w-4 h-4 ${i < rating ? "text-yellow-400 fill-yellow-400" : "text-gray-500"}`} />
     ));
-  };
 
-  // Duplicate reviews for seamless infinite scroll
+  // Duplicate for infinite horizontal scroll
   const duplicatedReviews = [...reviews, ...reviews];
 
   return (
@@ -90,52 +89,39 @@ const CustomerReviewsDark = () => {
             Customer Reviews That Speak for Themselves
           </h2>
 
-          {/* Rating Summary */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-2">
-            <div className="flex items-center justify-center">
-              <img src={trustPilotImage} alt="Trustpilot rating" className="h-25 md:h-30 object-contain" />
-            </div>
+          <div className="flex justify-center mb-2">
+            <img src={trustPilotImage} alt="Trustpilot rating" className="h-24 object-contain" />
           </div>
+
           <p className="text-white/70 text-sm">Based on 9865+ verified reviews</p>
         </div>
 
-        {/* Continuous Scrolling Reviews */}
-        <div className="relative max-w-6xl mx-auto">
-          <div className="h-[400px] md:h-[450px] overflow-hidden relative group">
-            {/* Gradient overlays for smooth fade effect */}
-            <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-[#013f3f] to-transparent z-10 pointer-events-none" />
-            <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#013f3f] to-transparent z-10 pointer-events-none" />
+        {/* Horizontal Scrolling Reviews */}
+        <div className="relative overflow-hidden">
+          <div className="flex gap-4 animate-scroll-x group-hover:[animation-play-state:paused]">
+            {duplicatedReviews.map((review, index) => (
+              <div
+                key={`${review.id}-${index}`}
+                className="w-[320px] flex-shrink-0 bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300"
+              >
+                <Quote className="w-6 h-6 text-white/40 mb-3" aria-hidden="true" />
 
-            {/* Scrolling container */}
-            <div className="animate-scroll-up group-hover:[animation-play-state:paused] flex flex-col gap-4">
-              {duplicatedReviews.map((review, index) => (
-                <div
-                  key={`${review.id}-${index}`}
-                  className="flex-shrink-0 bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300 mx-2"
-                >
-                  {/* Quote Icon */}
-                  <Quote className="w-6 h-6 text-teal-400/50 mb-3" aria-hidden="true" />
+                <p className="text-white/90 text-sm leading-relaxed mb-4">“{review.text}”</p>
 
-                  {/* Review Text */}
-                  <p className="text-white/90 text-sm leading-relaxed mb-4">"{review.text}"</p>
+                <div className="flex items-center gap-1 mb-3">{renderStars(review.rating)}</div>
 
-                  {/* Rating */}
-                  <div className="flex items-center gap-1 mb-3">{renderStars(review.rating)}</div>
-
-                  {/* Reviewer Info */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="text-white font-semibold">{review.name}</span>
-                      <BadgeCheck className="w-4 h-4 text-teal-400" aria-label="Verified" />
-                    </div>
-                    <div className="text-right">
-                      <span className="text-white/50 text-xs block">{review.location}</span>
-                      <span className="text-white/40 text-xs">{review.timeAgo}</span>
-                    </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-white font-semibold">{review.name}</span>
+                    <BadgeCheck className="w-4 h-4 text-white/60" aria-label="Verified" />
+                  </div>
+                  <div className="text-right">
+                    <span className="text-white/50 text-xs block">{review.location}</span>
+                    <span className="text-white/40 text-xs">{review.timeAgo}</span>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
