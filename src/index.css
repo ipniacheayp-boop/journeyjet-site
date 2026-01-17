@@ -371,8 +371,19 @@
     }
   }
 
-  .animate-marquee {
-    animation: marquee 45s linear infinite;
-    will-change: transform;
+  /* Desktop-only marquee animation */
+  @media (min-width: 1024px) {
+    .animate-marquee {
+      animation: marquee 45s linear infinite;
+      will-change: transform;
+    }
+  }
+
+  /* Disable animation on mobile & tablet */
+  @media (max-width: 1023px) {
+    .animate-marquee {
+      animation: none;
+      transform: translateX(0);
+    }
   }
 }
