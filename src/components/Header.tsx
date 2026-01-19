@@ -87,7 +87,7 @@ const Header = () => {
             <div className="flex items-center gap-2">
               {/* Desktop Call CTA */}
               <a
-                href="tel:+18001234567"
+                href="tel:+1-800-221-5246"
                 className="hidden xl:flex items-center gap-3 px-3 py-2 rounded-xl
              bg-background/95 backdrop-blur-xl
              border border-primary/30
@@ -129,7 +129,7 @@ const Header = () => {
               </a>
               {/* Tablet Call CTA – Mini with content */}
               <a
-                href="tel:+18001234567"
+                href="tel:+1-800-221-5246"
                 className="hidden md:flex xl:hidden
              items-center gap-3 px-4 py-2.5
              rounded-2xl
@@ -351,7 +351,7 @@ const Header = () => {
 
       {/* 🔹 MOBILE CALL BAR (outside header) */}
       <a
-        href="tel:+18001234567"
+        href="tel:+1-800-221-5246"
         className="fixed md:hidden bottom-4 left-4 right-4 z-50
              flex items-center justify-between
              px-4 py-3 rounded-2xl
@@ -360,7 +360,7 @@ const Header = () => {
       >
         <div>
           <p className="text-sm font-semibold">Call & get best deals</p>
-          <p className="text-xs opacity-90">+1-800-123-4567</p>
+          <p className="text-xs opacity-90">+1-800-221-5246</p>
         </div>
 
         <Phone className="w-5 h-5" />
