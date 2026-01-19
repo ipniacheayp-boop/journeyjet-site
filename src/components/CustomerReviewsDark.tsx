@@ -1,5 +1,6 @@
 import { Star, Quote, BadgeCheck } from "lucide-react";
 import trustPilotImage from "@/assets/trustpilot1.png";
+import TrustpilotSlider from "@/components/ReviewSlider";
 
 const CustomerReviewsDark = () => {
   const reviews = [
@@ -100,8 +101,8 @@ const CustomerReviewsDark = () => {
           <div className="flex justify-center mb-2">
             <img src={trustPilotImage} alt="Trustpilot rating" className="h-32 md:h-36 object-contain" />
           </div>
-
-          <p className="text-white/70 text-sm">Based on 9865+ verified reviews</p>
+          <TrustpilotSlider />
+          <p className="text-white/70 mt-6 text-sm">Based on 9865+ verified reviews</p>
         </div>
 
         {/* Horizontal Scrolling Reviews */}
