@@ -217,7 +217,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
   }, [searchParams]);
 
   return (
-    <div id="search-widget" className="w-full max-w-6xl mx-auto bg-white rounded-2xl shadow-xl p-4 md:p-6">
+    <div id="search-widget" className="w-full max-w-7xl mx-auto bg-white rounded-2xl shadow-xl p-4 md:p-6">
       <Tabs value={searchType} onValueChange={setSearchType} className="w-full">
         {/* Minimal Search Bar */}
         {/* <div className="mb-4">
