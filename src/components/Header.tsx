@@ -99,7 +99,7 @@ const Header = () => {
                 {/* Avatar */}
                 <div className="relative">
                   <img
-                    src="female-agent.png"
+                    src="src/assets/female-agent.png"
                     alt="Agent"
                     className="w-8 h-8 rounded-full border border-success object-cover"
                   />
