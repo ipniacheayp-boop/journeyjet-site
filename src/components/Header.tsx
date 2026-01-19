@@ -84,14 +84,13 @@ const Header = () => {
 
           {/* Right Side Actions */}
           <div className="flex items-center gap-2">
-            {/* Call CTA (Desktop only – polished) */}
+            {/* Desktop Call CTA */}
             <a
-              href="tel:+12163022732"
+              href="tel:+18001234567"
               className="hidden xl:flex items-center gap-3 px-3 py-2 rounded-xl
              bg-background/95 backdrop-blur-xl
              border border-primary/30
-             shadow-sm
-             transition-all duration-300
+             shadow-sm transition-all duration-300
              hover:border-primary/60
              hover:bg-muted/60
              hover:shadow-md"
@@ -111,16 +110,13 @@ const Header = () => {
 
               {/* Text */}
               <div className="leading-tight">
-                <p
-                  className="text-sm font-semibold text-foreground transition-colors
-                  hover:text-primary"
-                >
+                <p className="text-sm font-semibold text-foreground hover:text-primary transition-colors">
                   +1-800-123-4567
                 </p>
                 <p className="text-[10px] text-muted-foreground">Save time & get best deals</p>
               </div>
 
-              {/* Call Icon Button */}
+              {/* Call Button */}
               <div
                 className="flex items-center justify-center w-8 h-8 rounded-full
                bg-success shadow-sm
@@ -128,6 +124,37 @@ const Header = () => {
                hover:scale-105 hover:brightness-110"
               >
                 <Phone className="w-4 h-4 text-success-foreground" />
+              </div>
+            </a>
+            {/* Tablet Call CTA – Mini with content */}
+            <a
+              href="tel:+18001234567"
+              className="hidden md:flex xl:hidden
+             items-center gap-3 px-4 py-2.5
+             rounded-2xl
+             bg-background/95 backdrop-blur-xl
+             border border-primary/30
+             shadow-lg
+             transition-all duration-300
+             hover:border-primary/60
+             hover:bg-muted/60
+             hover:shadow-xl"
+            >
+              {/* Call Button */}
+              <div
+                className="flex items-center justify-center
+               w-10 h-10 rounded-xl
+               bg-success
+               transition-all duration-300
+               hover:scale-105"
+              >
+                <Phone className="w-5 h-5 text-success-foreground" />
+              </div>
+
+              {/* Text */}
+              <div className="leading-tight">
+                <p className="text-sm font-semibold text-foreground hover:text-primary transition-colors">Call us</p>
+                <p className="text-[11px] text-muted-foreground">Best deals faster</p>
               </div>
             </a>
 
