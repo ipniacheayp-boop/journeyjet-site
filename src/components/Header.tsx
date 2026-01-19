@@ -84,13 +84,52 @@ const Header = () => {
 
           {/* Right Side Actions */}
           <div className="flex items-center gap-2">
-            <Link
-              to="/contact-us"
-              className="hidden md:flex items-center gap-2 px-3 py-2 text-sm font-medium text-foreground/70 hover:text-foreground transition-colors rounded-lg hover:bg-muted/50"
+            {/* Call CTA (Desktop only – polished) */}
+            <a
+              href="tel:+12163022732"
+              className="hidden xl:flex items-center gap-3 px-3 py-2 rounded-xl
+             bg-background/95 backdrop-blur-xl
+             border border-primary/30
+             shadow-sm
+             transition-all duration-300
+             hover:border-primary/60
+             hover:bg-muted/60
+             hover:shadow-md"
             >
-              <Phone className="w-4 h-4" />
-              <span>1-800-221-5246</span>
-            </Link>
+              {/* Avatar */}
+              <div className="relative">
+                <img
+                  src="src/assets/female-agent.png"
+                  alt="Agent"
+                  className="w-8 h-8 rounded-full border border-success object-cover"
+                />
+                <span
+                  className="absolute bottom-0 right-0 w-2 h-2
+                     bg-success border border-background rounded-full"
+                />
+              </div>
+
+              {/* Text */}
+              <div className="leading-tight">
+                <p
+                  className="text-sm font-semibold text-foreground transition-colors
+                  hover:text-primary"
+                >
+                  +1-800-123-4567
+                </p>
+                <p className="text-[10px] text-muted-foreground">Save time & get best deals</p>
+              </div>
+
+              {/* Call Icon Button */}
+              <div
+                className="flex items-center justify-center w-8 h-8 rounded-full
+               bg-success shadow-sm
+               transition-all duration-300
+               hover:scale-105 hover:brightness-110"
+              >
+                <Phone className="w-4 h-4 text-success-foreground" />
+              </div>
+            </a>
 
             {/* Dark Mode Toggle */}
             <Button
