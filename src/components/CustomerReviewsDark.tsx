@@ -5,7 +5,7 @@ const CustomerReviewsDark = () => {
   const reviews = [
     {
       id: 1,
-      name: "Sarah M.",
+      name: "James K.",
       location: "New York, USA",
       timeAgo: "2 days ago",
       rating: 5,
@@ -14,7 +14,7 @@ const CustomerReviewsDark = () => {
     },
     {
       id: 2,
-      name: "James K.",
+      name: "Sarah W.",
       location: "London, UK",
       timeAgo: "1 week ago",
       rating: 5,
@@ -23,7 +23,7 @@ const CustomerReviewsDark = () => {
     },
     {
       id: 3,
-      name: "Emily R.",
+      name: "Michael T.",
       location: "Toronto, Canada",
       timeAgo: "3 days ago",
       rating: 4,
@@ -32,7 +32,7 @@ const CustomerReviewsDark = () => {
     },
     {
       id: 4,
-      name: "Michael T.",
+      name: "Emily R.",
       location: "Sydney, Australia",
       timeAgo: "5 days ago",
       rating: 5,
@@ -41,8 +41,8 @@ const CustomerReviewsDark = () => {
     },
     {
       id: 5,
-      name: "Lisa C.",
-      location: "Miami, USA",
+      name: "Raunak S.",
+      location: "Delhi, India",
       timeAgo: "1 day ago",
       rating: 5,
       image: "avatars/5.png",
@@ -50,7 +50,7 @@ const CustomerReviewsDark = () => {
     },
     {
       id: 6,
-      name: "David P.",
+      name: "Maria G.",
       location: "Berlin, Germany",
       timeAgo: "4 days ago",
       rating: 5,
@@ -59,7 +59,7 @@ const CustomerReviewsDark = () => {
     },
     {
       id: 7,
-      name: "Maria G.",
+      name: "David P.",
       location: "Madrid, Spain",
       timeAgo: "6 days ago",
       rating: 5,
@@ -68,7 +68,7 @@ const CustomerReviewsDark = () => {
     },
     {
       id: 8,
-      name: "Robert L.",
+      name: "Linda C.",
       location: "Chicago, USA",
       timeAgo: "2 weeks ago",
       rating: 4,
