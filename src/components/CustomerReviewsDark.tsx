@@ -9,7 +9,7 @@ const CustomerReviewsDark = () => {
       location: "New York, USA",
       timeAgo: "2 days ago",
       rating: 5,
-      image: "public/avatars/1.png",
+      image: "avatars/1.png",
       text: "Absolutely amazing experience! Found flights 40% cheaper than anywhere else. The booking process was seamless and customer support was incredibly helpful.",
     },
     {
