@@ -18,7 +18,7 @@ const CustomerReviewsDark = () => {
       location: "London, UK",
       timeAgo: "1 week ago",
       rating: 5,
-      image: "public/avatars/2.png",
+      image: "avatars/2.png",
       text: "Best travel booking site I've ever used. Price alerts saved me $300 on my trip to Europe. Highly recommend to everyone!",
     },
     {
@@ -27,7 +27,7 @@ const CustomerReviewsDark = () => {
       location: "Toronto, Canada",
       timeAgo: "3 days ago",
       rating: 4,
-      image: "public/avatars/3.png",
+      image: "avatars/3.png",
       text: "Great deals and easy to use interface. Booked my family vacation in minutes. The flight tracker feature is incredibly useful.",
     },
     {
@@ -36,7 +36,7 @@ const CustomerReviewsDark = () => {
       location: "Sydney, Australia",
       timeAgo: "5 days ago",
       rating: 5,
-      image: "public/avatars/4.png",
+      image: "avatars/4.png",
       text: "I've been using ChyeapFlights for years now. Never disappointed! Their customer service team goes above and beyond every time.",
     },
     {
@@ -45,7 +45,7 @@ const CustomerReviewsDark = () => {
       location: "Miami, USA",
       timeAgo: "1 day ago",
       rating: 5,
-      image: "public/avatars/5.png",
+      image: "avatars/5.png",
       text: "Found an incredible last-minute deal for my anniversary trip. The mobile app notifications are a game changer!",
     },
     {
@@ -54,7 +54,7 @@ const CustomerReviewsDark = () => {
       location: "Berlin, Germany",
       timeAgo: "4 days ago",
       rating: 5,
-      image: "public/avatars/6.png",
+      image: "avatars/6.png",
       text: "Exceptional service from start to finish. The price comparison tool helped me save over €200 on my business trip.",
     },
     {
@@ -63,7 +63,7 @@ const CustomerReviewsDark = () => {
       location: "Madrid, Spain",
       timeAgo: "6 days ago",
       rating: 5,
-      image: "public/avatars/7.png",
+      image: "avatars/7.png",
       text: "Very impressed with the customer support. They helped me change my booking at the last minute with no hassle.",
     },
     {
@@ -72,7 +72,7 @@ const CustomerReviewsDark = () => {
       location: "Chicago, USA",
       timeAgo: "2 weeks ago",
       rating: 4,
-      image: "public/avatars/8.png",
+      image: "avatars/8.png",
       text: "Great platform for finding deals. The interface is intuitive and the booking confirmation was instant.",
     },
   ];
