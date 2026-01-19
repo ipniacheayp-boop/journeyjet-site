@@ -1,5 +1,5 @@
 import { Star, Quote, BadgeCheck } from "lucide-react";
-import trustPilotImage from "@/assets/label.png";
+import trustPilotImage from "@/assets/trustpilot1.png";
 
 const CustomerReviewsDark = () => {
   const reviews = [
