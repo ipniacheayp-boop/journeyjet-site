@@ -100,8 +100,8 @@ const CustomerReviewsDark = () => {
 
           <div className="flex justify-center mb-2">
             <img src={trustPilotImage} alt="Trustpilot rating" className="h-32 md:h-36 object-contain" />
+            <TrustpilotSlider />
           </div>
-          <TrustpilotSlider />
           <p className="text-white/70 mt-6 text-sm">Based on 9865+ verified reviews</p>
         </div>
 
