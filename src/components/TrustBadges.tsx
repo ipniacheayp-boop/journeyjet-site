@@ -37,6 +37,7 @@ const TrustBadges = () => {
       stars: "★★★★★",
       note: "Verified customer reviews",
       color: "text-green-600",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/7/78/Trustpilot_Logo_%282022%29.svg",
     },
     {
       name: "Google",
@@ -45,6 +46,7 @@ const TrustBadges = () => {
       stars: "★★★★☆",
       note: "Public Google user ratings",
       color: "text-yellow-500",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg",
     },
     {
       name: "Sitejabber",
@@ -53,6 +55,7 @@ const TrustBadges = () => {
       stars: "★★★★★",
       note: "Independent consumer review site",
       color: "text-orange-500",
+      logo: "https://m.bbb.org/prod/ProfileImages/2023/ee858f63-8ffb-4758-94f1-80cd0b3c2fbc.png?tx=c_limit,h_51,w_65,dpr_2.0",
     },
     {
       name: "Reviews.io",
@@ -61,6 +64,7 @@ const TrustBadges = () => {
       stars: "★★★★☆",
       note: "Verified purchase reviews",
       color: "text-gray-900 dark:text-gray-200",
+      logo: "https://cdn.prod.website-files.com/642419dd2be643c50e400f66/66e00d77b400163fc0d831d0_4d3b0b51312903ee62e3ff7df64fc4af_reviewsio-logo.svg",
     },
     {
       name: "Facebook",
@@ -69,6 +73,7 @@ const TrustBadges = () => {
       stars: "★★★★☆",
       note: "Customer feedback on Facebook",
       color: "text-blue-600",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/9/93/Facebook_logo_%282023%29.svg",
     },
     {
       name: "ResellerRatings",
@@ -77,6 +82,7 @@ const TrustBadges = () => {
       stars: "★★★★★",
       note: "Retail & service review authority",
       color: "text-purple-600",
+      logo: "https://www.hubspot.com/hubfs/Reseller%20Ratings-2.svg",
     },
   ];
 
@@ -103,7 +109,7 @@ const TrustBadges = () => {
   };
 
   return (
-    <section className="py-16 md:py-20 bg-background/50 border-y border-border/40" aria-labelledby="trust-badges-title">
+    <section className="py-16 md:py-20 bg-background border-y border-border/40" aria-labelledby="trust-badges-title">
       <div className="container mx-auto px-4">
         {/* Heading */}
         <div className="text-center mb-12">
@@ -152,11 +158,18 @@ const TrustBadges = () => {
                 {/* Base card */}
                 <div
                   className="rounded-xl bg-card border border-border/60
-                  px-4 py-4 text-center shadow-sm
-                  transition-all duration-300
-                  hover:-translate-y-1 hover:shadow-md"
+            px-4 py-4 text-center shadow-sm
+            transition-all duration-300
+            hover:-translate-y-1 hover:shadow-md"
                 >
-                  <div className={`font-semibold text-sm ${item.color}`}>{item.name}</div>
+                  {/* Logo */}
+                  <div className="flex justify-center mb-2">
+                    <img src={item.logo} alt={`${item.name} logo`} className="h-6 object-contain" />
+                  </div>
+
+                  {/* <div className={`font-semibold text-sm ${item.color}`}>
+                    {item.name}
+                  </div> */}
                   <div className="text-xs text-muted-foreground mt-1">{item.reviews}</div>
                   <div className="text-xs text-muted-foreground mt-1">{item.rating} / 5</div>
                 </div>
@@ -164,13 +177,20 @@ const TrustBadges = () => {
                 {/* Hover detail */}
                 <div
                   className="absolute left-1/2 -translate-x-1/2 top-full mt-3 w-72
-                  opacity-0 group-hover:opacity-100
-                  transition-opacity duration-200
-                  pointer-events-none z-30"
+            opacity-0 group-hover:opacity-100
+           transition-opacity duration-200
+           pointer-events-none z-30"
                 >
                   <div className="glass-card p-4 text-sm">
-                    <div className={`font-semibold mb-1 ${item.color}`}>{item.name}</div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <img src={item.logo} alt="" className="h-5 object-contain" />
+                      {/* <span className={`font-semibold ${item.color}`}>
+                        {item.name}
+                      </span> */}
+                    </div>
+
                     <div className="text-yellow-500 text-base mb-2">{item.stars}</div>
+
                     <p className="text-muted-foreground">
                       Rating: <span className="font-medium">{item.rating}</span> / 5
                     </p>
