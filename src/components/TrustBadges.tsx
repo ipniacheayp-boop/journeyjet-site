@@ -19,7 +19,7 @@ const TrustBadges = () => {
       icon: Shield,
       value: "100%",
       label: "Secure Booking",
-      color: "text-success",
+      color: "text-accent-foreground",
     },
     {
       icon: Award,
