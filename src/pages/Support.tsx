@@ -1,4 +1,4 @@
-import { useState } from "react";
+52import { useState } from "react";
 import { Helmet } from "react-helmet";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -224,8 +224,8 @@ const Support = () => {
                       <Phone className="w-6 h-6 text-support-green" />
                     </div>
                     <p className="text-sm font-medium">Call Us</p>
-                    <a href="tel:+18001234567" className="text-support-green hover:underline text-sm">
-                      1-800-221-5246
+                    <a href="tel:+18002215246" className="text-support-green hover:underline text-sm">
+                      +1-800-221-5246
                     </a>
                   </div>
 
