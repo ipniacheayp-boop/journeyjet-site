@@ -98,7 +98,7 @@ const CustomerReviewsDark = () => {
             Customer Reviews That Speak for Themselves
           </h2>
 
-          <div className="flex justify-center mb-2">
+          <div className="flex justify-center items-center gap-6 mb-2">
             <img src={trustPilotImage} alt="Trustpilot rating" className="h-32 md:h-36 object-contain" />
             <TrustpilotSlider />
           </div>
