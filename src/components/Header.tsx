@@ -111,7 +111,7 @@ const Header = () => {
               {/* Text */}
               <div className="leading-tight">
                 <p className="text-sm font-semibold text-foreground hover:text-primary transition-colors">
-                  +1-800-123-4567
+                  +1-800-221-5246
                 </p>
                 <p className="text-[10px] text-muted-foreground">Save time & get best deals</p>
               </div>
