@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { motion, AnimatePresence } from "framer-motion";
+import female-agent from "@/assets/female-agent.png";
 
 const Header = () => {
   const { user, signOut, isAdmin, userRole } = useAuth();
@@ -99,7 +100,7 @@ const Header = () => {
                 {/* Avatar */}
                 <div className="relative">
                   <img
-                    src="@/assets/female-agent.png"
+                    src={female-agent}
                     alt="Agent"
                     className="w-8 h-8 rounded-full border border-success object-cover"
                   />
