@@ -9,6 +9,7 @@ const CustomerReviewsDark = () => {
       location: "New York, USA",
       timeAgo: "2 days ago",
       rating: 5,
+      image: "public/avatars/1.png",
       text: "Absolutely amazing experience! Found flights 40% cheaper than anywhere else. The booking process was seamless and customer support was incredibly helpful.",
     },
     {
@@ -17,6 +18,7 @@ const CustomerReviewsDark = () => {
       location: "London, UK",
       timeAgo: "1 week ago",
       rating: 5,
+      image: "public/avatars/2.png",
       text: "Best travel booking site I've ever used. Price alerts saved me $300 on my trip to Europe. Highly recommend to everyone!",
     },
     {
@@ -25,6 +27,7 @@ const CustomerReviewsDark = () => {
       location: "Toronto, Canada",
       timeAgo: "3 days ago",
       rating: 4,
+      image: "public/avatars/3.png",
       text: "Great deals and easy to use interface. Booked my family vacation in minutes. The flight tracker feature is incredibly useful.",
     },
     {
@@ -33,6 +36,7 @@ const CustomerReviewsDark = () => {
       location: "Sydney, Australia",
       timeAgo: "5 days ago",
       rating: 5,
+      image: "public/avatars/4.png",
       text: "I've been using ChyeapFlights for years now. Never disappointed! Their customer service team goes above and beyond every time.",
     },
     {
@@ -41,6 +45,7 @@ const CustomerReviewsDark = () => {
       location: "Miami, USA",
       timeAgo: "1 day ago",
       rating: 5,
+      image: "public/avatars/5.png",
       text: "Found an incredible last-minute deal for my anniversary trip. The mobile app notifications are a game changer!",
     },
     {
@@ -49,6 +54,7 @@ const CustomerReviewsDark = () => {
       location: "Berlin, Germany",
       timeAgo: "4 days ago",
       rating: 5,
+      image: "public/avatars/6.png",
       text: "Exceptional service from start to finish. The price comparison tool helped me save over €200 on my business trip.",
     },
     {
@@ -57,6 +63,7 @@ const CustomerReviewsDark = () => {
       location: "Madrid, Spain",
       timeAgo: "6 days ago",
       rating: 5,
+      image: "public/avatars/7.png",
       text: "Very impressed with the customer support. They helped me change my booking at the last minute with no hassle.",
     },
     {
@@ -65,6 +72,7 @@ const CustomerReviewsDark = () => {
       location: "Chicago, USA",
       timeAgo: "2 weeks ago",
       rating: 4,
+      image: "public/avatars/8.png",
       text: "Great platform for finding deals. The interface is intuitive and the booking confirmation was instant.",
     },
   ];
@@ -104,7 +112,17 @@ const CustomerReviewsDark = () => {
                 key={`${review.id}-${index}`}
                 className="w-[320px] flex-shrink-0 bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300"
               >
-                <Quote className="w-6 h-6 text-white/40 mb-3" aria-hidden="true" />
+                <div className="flex items-center gap-3 mb-3">
+                  {/* Avatar */}
+                  <img
+                    src={review.image}
+                    alt={review.name}
+                    className="w-14 h-14 rounded-full object-cover border border-white/20"
+                  />
+
+                  {/* Quote Icon */}
+                  <Quote className="w-6 h-6 text-white/40" aria-hidden="true" />
+                </div>
 
                 <p className="text-white/90 text-sm leading-relaxed mb-4">“{review.text}”</p>
 
