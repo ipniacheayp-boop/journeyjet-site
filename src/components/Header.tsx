@@ -45,91 +45,92 @@ const Header = () => {
   ];
 
   return (
-    <motion.header
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled
-          ? "bg-background/95 backdrop-blur-xl shadow-lg border-b border-border/50"
-          : "bg-background/80 backdrop-blur-sm"
-      }`}
-    >
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-20">
-          {/* Logo */}
-          <Link to="/" className="flex items-center group">
-            <motion.div whileHover={{ scale: 1.05 }} className="h-[3.5rem] md:h-[4.5rem] lg:h-[5.5rem] w-auto">
-              <img
-                src={chyeapFlightsLogo}
-                alt="ChyeapFlights"
-                className="h-[3.5rem] md:h-[4.5rem] lg:h-[5.5rem] w-auto object-contain"
-              />
-            </motion.div>
-          </Link>
+    <>
+      <motion.header
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+          isScrolled
+            ? "bg-background/95 backdrop-blur-xl shadow-lg border-b border-border/50"
+            : "bg-background/80 backdrop-blur-sm"
+        }`}
+      >
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-20">
+            {/* Logo */}
+            <Link to="/" className="flex items-center group">
+              <motion.div whileHover={{ scale: 1.05 }} className="h-[3.5rem] md:h-[4.5rem] lg:h-[5.5rem] w-auto">
+                <img
+                  src={chyeapFlightsLogo}
+                  alt="ChyeapFlights"
+                  className="h-[3.5rem] md:h-[4.5rem] lg:h-[5.5rem] w-auto object-contain"
+                />
+              </motion.div>
+            </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                to={link.href}
-                className="relative px-4 py-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors rounded-lg hover:bg-muted/50 group"
-              >
-                {link.label}
-                <span className="absolute bottom-1 left-4 right-4 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform origin-left rounded-full" />
-              </Link>
-            ))}
-          </nav>
+            {/* Desktop Navigation */}
+            <nav className="hidden lg:flex items-center gap-1">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className="relative px-4 py-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors rounded-lg hover:bg-muted/50 group"
+                >
+                  {link.label}
+                  <span className="absolute bottom-1 left-4 right-4 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform origin-left rounded-full" />
+                </Link>
+              ))}
+            </nav>
 
-          {/* Right Side Actions */}
-          <div className="flex items-center gap-2">
-            {/* Desktop Call CTA */}
-            <a
-              href="tel:+18001234567"
-              className="hidden xl:flex items-center gap-3 px-3 py-2 rounded-xl
+            {/* Right Side Actions */}
+            <div className="flex items-center gap-2">
+              {/* Desktop Call CTA */}
+              <a
+                href="tel:+18001234567"
+                className="hidden xl:flex items-center gap-3 px-3 py-2 rounded-xl
              bg-background/95 backdrop-blur-xl
              border border-primary/30
              shadow-sm transition-all duration-300
              hover:border-primary/60
              hover:bg-muted/60
              hover:shadow-md"
-            >
-              {/* Avatar */}
-              <div className="relative">
-                <img
-                  src="src/assets/female-agent.png"
-                  alt="Agent"
-                  className="w-8 h-8 rounded-full border border-success object-cover"
-                />
-                <span
-                  className="absolute bottom-0 right-0 w-2 h-2
+              >
+                {/* Avatar */}
+                <div className="relative">
+                  <img
+                    src="src/assets/female-agent.png"
+                    alt="Agent"
+                    className="w-8 h-8 rounded-full border border-success object-cover"
+                  />
+                  <span
+                    className="absolute bottom-0 right-0 w-2 h-2
                      bg-success border border-background rounded-full"
-                />
-              </div>
+                  />
+                </div>
 
-              {/* Text */}
-              <div className="leading-tight">
-                <p className="text-sm font-semibold text-foreground hover:text-primary transition-colors">
-                  +1-800-221-5246
-                </p>
-                <p className="text-[10px] text-muted-foreground">Save time & get best deals</p>
-              </div>
+                {/* Text */}
+                <div className="leading-tight">
+                  <p className="text-sm font-semibold text-foreground hover:text-primary transition-colors">
+                    +1-800-221-5246
+                  </p>
+                  <p className="text-[10px] text-muted-foreground">Save time & get best deals</p>
+                </div>
 
-              {/* Call Button */}
-              <div
-                className="flex items-center justify-center w-8 h-8 rounded-full
+                {/* Call Button */}
+                <div
+                  className="flex items-center justify-center w-8 h-8 rounded-full
                bg-success shadow-sm
                transition-all duration-300
                hover:scale-105 hover:brightness-110"
-              >
-                <Phone className="w-4 h-4 text-success-foreground" />
-              </div>
-            </a>
-            {/* Tablet Call CTA – Mini with content */}
-            <a
-              href="tel:+18001234567"
-              className="hidden md:flex xl:hidden
+                >
+                  <Phone className="w-4 h-4 text-success-foreground" />
+                </div>
+              </a>
+              {/* Tablet Call CTA – Mini with content */}
+              <a
+                href="tel:+18001234567"
+                className="hidden md:flex xl:hidden
              items-center gap-3 px-4 py-2.5
              rounded-2xl
              bg-background/95 backdrop-blur-xl
@@ -139,211 +140,232 @@ const Header = () => {
              hover:border-primary/60
              hover:bg-muted/60
              hover:shadow-xl"
-            >
-              {/* Call Button */}
-              <div
-                className="flex items-center justify-center
+              >
+                {/* Call Button */}
+                <div
+                  className="flex items-center justify-center
                w-10 h-10 rounded-xl
                bg-success
                transition-all duration-300
                hover:scale-105"
+                >
+                  <Phone className="w-5 h-5 text-success-foreground" />
+                </div>
+
+                {/* Text */}
+                <div className="leading-tight">
+                  <p className="text-sm font-semibold text-foreground hover:text-primary transition-colors">Call us</p>
+                  <p className="text-[11px] text-muted-foreground">Best deals faster</p>
+                </div>
+              </a>
+
+              {/* Dark Mode Toggle */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="rounded-xl hover:bg-muted/50"
               >
-                <Phone className="w-5 h-5 text-success-foreground" />
-              </div>
+                <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                <span className="sr-only">Toggle theme</span>
+              </Button>
 
-              {/* Text */}
-              <div className="leading-tight">
-                <p className="text-sm font-semibold text-foreground hover:text-primary transition-colors">Call us</p>
-                <p className="text-[11px] text-muted-foreground">Best deals faster</p>
-              </div>
-            </a>
-
-            {/* Dark Mode Toggle */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="rounded-xl hover:bg-muted/50"
-            >
-              <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-              <span className="sr-only">Toggle theme</span>
-            </Button>
-
-            {/* Language Switcher */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="gap-2 hidden md:flex rounded-xl hover:bg-muted/50">
-                  <Globe className="w-4 h-4" />
-                  {language === "en" ? "🇺🇸" : "🇪🇸"}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur-xl border-border/50 z-[60]">
-                <DropdownMenuItem onClick={() => toggleLanguage("en")} className="cursor-pointer">
-                  🇺🇸 English
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => toggleLanguage("es")} className="cursor-pointer">
-                  🇪🇸 Español
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {user ? (
+              {/* Language Switcher */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-2 rounded-xl border-border/50 hover:bg-muted/50">
-                    <User className="w-4 h-4" />
-                    <span className="hidden sm:inline">
-                      {userRole === "admin"
-                        ? t("navigation.admin")
-                        : userRole === "agent"
-                          ? t("navigation.agent")
-                          : t("navigation.account")}
-                    </span>
+                  <Button variant="ghost" size="sm" className="gap-2 hidden md:flex rounded-xl hover:bg-muted/50">
+                    <Globe className="w-4 h-4" />
+                    {language === "en" ? "🇺🇸" : "🇪🇸"}
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="z-[60] bg-background/95 backdrop-blur-xl border-border/50">
-                  {userRole === "admin" && (
-                    <>
-                      <DropdownMenuItem asChild>
-                        <Link to="/admin" className="flex items-center gap-2 w-full cursor-pointer">
-                          <BookOpen className="w-4 h-4" />
-                          {t("navigation.admin")}
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                    </>
-                  )}
-                  {userRole === "agent" && (
-                    <>
-                      <DropdownMenuItem asChild>
-                        <Link to="/agent/dashboard" className="flex items-center gap-2 w-full cursor-pointer">
-                          <BookOpen className="w-4 h-4" />
-                          {t("navigation.agent")}
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                    </>
-                  )}
-                  <DropdownMenuItem asChild>
-                    <Link to="/account" className="flex items-center gap-2 w-full cursor-pointer">
-                      <User className="w-4 h-4" />
-                      {t("navigation.account")}
-                    </Link>
+                <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur-xl border-border/50 z-[60]">
+                  <DropdownMenuItem onClick={() => toggleLanguage("en")} className="cursor-pointer">
+                    🇺🇸 English
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/my-bookings" className="flex items-center gap-2 w-full cursor-pointer">
-                      <BookOpen className="w-4 h-4" />
-                      {t("navigation.myBookings")}
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={handleSignOut}
-                    className="flex items-center gap-2 text-destructive cursor-pointer"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    {t("navigation.signOut")}
+                  <DropdownMenuItem onClick={() => toggleLanguage("es")} className="cursor-pointer">
+                    🇪🇸 Español
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : (
-              <Button
-                size="sm"
-                asChild
-                className="rounded-xl bg-gradient-to-r from-primary to-blue-600 hover:opacity-90 shadow-lg shadow-primary/25"
-              >
-                <Link to="/login">{t("navigation.signIn")}</Link>
-              </Button>
-            )}
 
-            {/* Mobile Menu Toggle */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="lg:hidden rounded-xl"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </Button>
-          </div>
-        </div>
-
-        {/* Mobile Navigation */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="lg:hidden border-t border-border/50 overflow-hidden"
-            >
-              <nav className="flex flex-col gap-1 py-4">
-                {navLinks.map((link, index) => (
-                  <motion.div
-                    key={link.href}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    <Link
-                      to={link.href}
-                      className="px-4 py-3 text-sm font-medium text-foreground hover:bg-muted/50 rounded-xl transition-colors block"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      {link.label}
-                    </Link>
-                  </motion.div>
-                ))}
-
-                {/* Mobile Language & Theme */}
-                <div className="px-4 py-4 border-t border-border/50 mt-2 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-muted-foreground">Theme</span>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                      className="gap-2 rounded-xl"
-                    >
-                      {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                      {theme === "dark" ? "Light" : "Dark"}
+              {user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="gap-2 rounded-xl border-border/50 hover:bg-muted/50">
+                      <User className="w-4 h-4" />
+                      <span className="hidden sm:inline">
+                        {userRole === "admin"
+                          ? t("navigation.admin")
+                          : userRole === "agent"
+                            ? t("navigation.agent")
+                            : t("navigation.account")}
+                      </span>
                     </Button>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-muted-foreground">{t("common.language")}</span>
-                    <div className="flex gap-2">
-                      <Button
-                        variant={language === "en" ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => {
-                          toggleLanguage("en");
-                          setIsMobileMenuOpen(false);
-                        }}
-                        className="rounded-xl"
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="end"
+                    className="z-[60] bg-background/95 backdrop-blur-xl border-border/50"
+                  >
+                    {userRole === "admin" && (
+                      <>
+                        <DropdownMenuItem asChild>
+                          <Link to="/admin" className="flex items-center gap-2 w-full cursor-pointer">
+                            <BookOpen className="w-4 h-4" />
+                            {t("navigation.admin")}
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                      </>
+                    )}
+                    {userRole === "agent" && (
+                      <>
+                        <DropdownMenuItem asChild>
+                          <Link to="/agent/dashboard" className="flex items-center gap-2 w-full cursor-pointer">
+                            <BookOpen className="w-4 h-4" />
+                            {t("navigation.agent")}
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                      </>
+                    )}
+                    <DropdownMenuItem asChild>
+                      <Link to="/account" className="flex items-center gap-2 w-full cursor-pointer">
+                        <User className="w-4 h-4" />
+                        {t("navigation.account")}
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/my-bookings" className="flex items-center gap-2 w-full cursor-pointer">
+                        <BookOpen className="w-4 h-4" />
+                        {t("navigation.myBookings")}
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={handleSignOut}
+                      className="flex items-center gap-2 text-destructive cursor-pointer"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      {t("navigation.signOut")}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button
+                  size="sm"
+                  asChild
+                  className="rounded-xl bg-gradient-to-r from-primary to-blue-600 hover:opacity-90 shadow-lg shadow-primary/25"
+                >
+                  <Link to="/login">{t("navigation.signIn")}</Link>
+                </Button>
+              )}
+
+              {/* Mobile Menu Toggle */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="lg:hidden rounded-xl"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              >
+                {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </Button>
+            </div>
+          </div>
+
+          {/* Mobile Navigation */}
+          <AnimatePresence>
+            {isMobileMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="lg:hidden border-t border-border/50 overflow-hidden"
+              >
+                <nav className="flex flex-col gap-1 py-4">
+                  {navLinks.map((link, index) => (
+                    <motion.div
+                      key={link.href}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      <Link
+                        to={link.href}
+                        className="px-4 py-3 text-sm font-medium text-foreground hover:bg-muted/50 rounded-xl transition-colors block"
+                        onClick={() => setIsMobileMenuOpen(false)}
                       >
-                        🇺🇸
-                      </Button>
+                        {link.label}
+                      </Link>
+                    </motion.div>
+                  ))}
+
+                  {/* Mobile Language & Theme */}
+                  <div className="px-4 py-4 border-t border-border/50 mt-2 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-muted-foreground">Theme</span>
                       <Button
-                        variant={language === "es" ? "default" : "outline"}
+                        variant="outline"
                         size="sm"
-                        onClick={() => {
-                          toggleLanguage("es");
-                          setIsMobileMenuOpen(false);
-                        }}
-                        className="rounded-xl"
+                        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                        className="gap-2 rounded-xl"
                       >
-                        🇪🇸
+                        {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                        {theme === "dark" ? "Light" : "Dark"}
                       </Button>
                     </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-muted-foreground">{t("common.language")}</span>
+                      <div className="flex gap-2">
+                        <Button
+                          variant={language === "en" ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => {
+                            toggleLanguage("en");
+                            setIsMobileMenuOpen(false);
+                          }}
+                          className="rounded-xl"
+                        >
+                          🇺🇸
+                        </Button>
+                        <Button
+                          variant={language === "es" ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => {
+                            toggleLanguage("es");
+                            setIsMobileMenuOpen(false);
+                          }}
+                          className="rounded-xl"
+                        >
+                          🇪🇸
+                        </Button>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </nav>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </motion.header>
+                </nav>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </motion.header>
+
+      {/* 🔹 MOBILE CALL BAR (outside header) */}
+      <a
+        href="tel:+18001234567"
+        className="fixed md:hidden bottom-4 left-4 right-4 z-50
+             flex items-center justify-between
+             px-4 py-3 rounded-2xl
+             bg-success text-success-foreground
+             shadow-xl"
+      >
+        <div>
+          <p className="text-sm font-semibold">Call & get best deals</p>
+          <p className="text-xs opacity-90">+1-800-123-4567</p>
+        </div>
+
+        <Phone className="w-5 h-5" />
+      </a>
+    </>
   );
 };
 
