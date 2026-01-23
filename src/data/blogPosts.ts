@@ -20,18 +20,20 @@ export const blogPosts: BlogPost[] = [
   {
     id: "1",
     slug: "best-time-to-book-cheap-flights",
-    title: "The Best Time to Book Cheap Flights in 2024",
-    excerpt: "Discover the optimal booking windows and secret strategies that can save you hundreds on your next flight. Learn when airlines drop their prices and how to take advantage.",
+    title: "Smart International Travel: Proven Tips to Find Cheap International Flights",
+    excerpt:
+      "Discover smart, proven tips to book cheap international flights and plan budget-friendly international travel.",
     content: `
 # The Best Time to Book Cheap Flights in 2024
 
 Finding cheap flights isn't just about luck—it's about timing. After analyzing millions of flight prices, we've uncovered the patterns that can save you serious money on your next trip.
 
-## The 6-Week Sweet Spot
+## Introduction
 
-Our research shows that booking domestic flights **6 weeks before departure** typically yields the best prices. For international flights, extend that window to **8-12 weeks** for optimal savings.
+Traveling abroad doesn’t have to be expensive. With a few smart strategies, you can find cheap international flights and enjoy your trips without breaking the bank. At chyeapflight we help travelers plan budget-friendly adventures with ease.
 
-## Best Days to Book
+
+## Why Most Travelers Overpay for International Flights:-
 
 Contrary to popular belief, Tuesday isn't always the cheapest day to book. Our data reveals:
 
@@ -73,7 +75,8 @@ The key to finding cheap flights is patience and flexibility. Start your search 
     id: "2",
     slug: "hidden-gems-europe-2024",
     title: "10 Hidden Gems in Europe You Need to Visit in 2024",
-    excerpt: "Skip the tourist crowds and explore these lesser-known European destinations that offer authentic experiences, stunning scenery, and incredible value.",
+    excerpt:
+      "Skip the tourist crowds and explore these lesser-known European destinations that offer authentic experiences, stunning scenery, and incredible value.",
     content: `
 # 10 Hidden Gems in Europe You Need to Visit in 2024
 
@@ -136,7 +139,8 @@ Each of these destinations offers something unique that you simply won't find in
     id: "3",
     slug: "travel-insurance-guide",
     title: "Complete Guide to Travel Insurance: What You Really Need",
-    excerpt: "Not all travel insurance is created equal. Learn what coverage actually matters, what's often overlooked, and how to choose the right policy for your trip.",
+    excerpt:
+      "Not all travel insurance is created equal. Learn what coverage actually matters, what's often overlooked, and how to choose the right policy for your trip.",
     content: `
 # Complete Guide to Travel Insurance: What You Really Need
 
@@ -196,7 +200,8 @@ Protect your investment and your health—the right travel insurance gives you p
     id: "4",
     slug: "packing-carry-on-only",
     title: "Master the Art of Carry-On Only Travel",
-    excerpt: "Learn how to pack light without sacrificing comfort. Our complete guide to carry-on only travel will transform how you explore the world.",
+    excerpt:
+      "Learn how to pack light without sacrificing comfort. Our complete guide to carry-on only travel will transform how you explore the world.",
     content: `
 # Master the Art of Carry-On Only Travel
 
@@ -269,7 +274,8 @@ Start small with a weekend trip, then gradually extend. Soon you'll wonder why y
     id: "5",
     slug: "best-travel-credit-cards-2024",
     title: "Best Travel Credit Cards for 2024: Maximize Your Rewards",
-    excerpt: "From sign-up bonuses to ongoing perks, we break down the top travel credit cards that will help you earn free flights and hotel stays.",
+    excerpt:
+      "From sign-up bonuses to ongoing perks, we break down the top travel credit cards that will help you earn free flights and hotel stays.",
     content: `
 # Best Travel Credit Cards for 2024: Maximize Your Rewards
 
@@ -336,7 +342,8 @@ Choose the card that matches your travel patterns and start earning your way to 
     id: "6",
     slug: "solo-travel-safety-tips",
     title: "Solo Travel Safety: Essential Tips for Independent Explorers",
-    excerpt: "Traveling alone is one of life's greatest adventures. Stay safe and confident with these practical safety tips from experienced solo travelers.",
+    excerpt:
+      "Traveling alone is one of life's greatest adventures. Stay safe and confident with these practical safety tips from experienced solo travelers.",
     content: `
 # Solo Travel Safety: Essential Tips for Independent Explorers
 
@@ -424,10 +431,7 @@ export const getRelatedPosts = (currentSlug: string, limit: number = 3): BlogPos
 
   return blogPosts
     .filter((post) => post.slug !== currentSlug)
-    .filter((post) => 
-      post.category === currentPost.category || 
-      post.tags.some((tag) => currentPost.tags.includes(tag))
-    )
+    .filter((post) => post.category === currentPost.category || post.tags.some((tag) => currentPost.tags.includes(tag)))
     .slice(0, limit);
 };
 

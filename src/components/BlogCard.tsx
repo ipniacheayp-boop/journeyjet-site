@@ -40,9 +40,7 @@ const BlogCard = ({ post }: BlogCardProps) => {
         </Link>
 
         {/* Excerpt */}
-        <p className="text-muted-foreground text-sm line-clamp-3 mb-4 flex-grow">
-          {post.excerpt}
-        </p>
+        <p className="text-muted-foreground text-sm line-clamp-3 mb-4 flex-grow">{post.excerpt}</p>
 
         {/* Meta Info */}
         <div className="flex items-center gap-4 text-xs text-muted-foreground mb-4">
@@ -62,9 +60,9 @@ const BlogCard = ({ post }: BlogCardProps) => {
 
         {/* Read More Button */}
         <Link to={`/blog/${post.slug}`} className="mt-auto">
-          <Button 
-            variant="outline" 
-            size="sm" 
+          <Button
+            variant="outline"
+            size="sm"
             className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
           >
             Read More
