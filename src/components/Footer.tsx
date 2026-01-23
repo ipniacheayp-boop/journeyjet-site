@@ -37,7 +37,7 @@ const Footer = () => {
         { label: "Customer Support", href: "/support" },
         { label: "Online Check-in", href: "/support?topic=checkin" },
         { label: "Airline Baggage Fees", href: "/taxes-fees" },
-        { label: "Travel Blog", href: "/about#blog" },
+        { label: "Travel Blog", href: "/blog" },
         { label: "Customer Reviews", href: "/reviews" },
         { label: "Browser Compatibility", href: "/support?topic=browser" },
       ],
