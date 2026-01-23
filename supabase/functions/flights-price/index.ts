@@ -5,9 +5,39 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// In-memory cache for Amadeus access token (cleared on each deploy)
 let cachedToken: { token: string; expiresAt: number } | null = null;
 
-async function getAmadeusToken(): Promise<string> {
+// Determine which API endpoint to use based on environment
+const USE_PROD_APIS = Deno.env.get("USE_PROD_APIS") === "true";
+const AMADEUS_BASE_URL = USE_PROD_APIS ? "https://api.amadeus.com" : "https://test.api.amadeus.com";
+
+// Validate credentials exist and are not empty
+function validateCredentials(): { valid: boolean; error?: string } {
+  const apiKey = Deno.env.get("AMADEUS_API_KEY");
+  const apiSecret = Deno.env.get("AMADEUS_API_SECRET");
+
+  if (!apiKey || apiKey.trim() === "") {
+    return { valid: false, error: "AMADEUS_API_KEY is missing or empty" };
+  }
+  if (!apiSecret || apiSecret.trim() === "") {
+    return { valid: false, error: "AMADEUS_API_SECRET is missing or empty" };
+  }
+  
+  return { valid: true };
+}
+
+// Force clear cached token
+function invalidateToken(): void {
+  cachedToken = null;
+  console.log("🔄 Token cache invalidated");
+}
+
+async function getAmadeusToken(forceRefresh = false): Promise<string> {
+  if (forceRefresh) {
+    invalidateToken();
+  }
+  
   if (cachedToken && cachedToken.expiresAt > Date.now()) {
     return cachedToken.token;
   }
@@ -19,23 +49,31 @@ async function getAmadeusToken(): Promise<string> {
     throw new Error('Amadeus API credentials not configured');
   }
 
-  const authResponse = await fetch('https://test.api.amadeus.com/v1/security/oauth2/token', {
+  console.log(`🔑 Authenticating with Amadeus (${USE_PROD_APIS ? "PRODUCTION" : "TEST"} mode)`);
+  console.log("✓ Amadeus credentials loaded successfully");
+
+  const authResponse = await fetch(`${AMADEUS_BASE_URL}/v1/security/oauth2/token`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
-    body: `grant_type=client_credentials&client_id=${apiKey}&client_secret=${apiSecret}`,
+    body: `grant_type=client_credentials&client_id=${encodeURIComponent(apiKey)}&client_secret=${encodeURIComponent(apiSecret)}`,
   });
 
   if (!authResponse.ok) {
+    const errorText = await authResponse.text();
+    console.error("❌ Amadeus auth error:", authResponse.status, errorText);
+    invalidateToken();
     throw new Error('Failed to authenticate with Amadeus API');
   }
 
   const authData = await authResponse.json();
   cachedToken = {
     token: authData.access_token,
-    expiresAt: Date.now() + (30 * 60 * 1000),
+    expiresAt: Date.now() + (25 * 60 * 1000), // 25 minutes
   };
+
+  console.log("✅ New Amadeus OAuth token generated successfully");
 
   return authData.access_token;
 }
@@ -46,6 +84,21 @@ serve(async (req) => {
   }
 
   try {
+    // Validate credentials exist
+    const credentialCheck = validateCredentials();
+    if (!credentialCheck.valid) {
+      console.error("❌ Credential validation failed:", credentialCheck.error);
+      return new Response(
+        JSON.stringify({ 
+          error: "Flight search temporarily unavailable. Authentication misconfigured.",
+          code: "AUTH_MISCONFIGURED"
+        }),
+        { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log(`🔧 Using Amadeus ${USE_PROD_APIS ? "PRODUCTION" : "TEST"} API: ${AMADEUS_BASE_URL}`);
+
     const { flightOffer } = await req.json();
 
     if (!flightOffer) {
@@ -55,12 +108,12 @@ serve(async (req) => {
       );
     }
 
-    const token = await getAmadeusToken();
+    let token = await getAmadeusToken();
 
     console.log('Pricing flight offer');
 
-    const priceResponse = await fetch(
-      'https://test.api.amadeus.com/v1/shopping/flight-offers/pricing',
+    let priceResponse = await fetch(
+      `${AMADEUS_BASE_URL}/v1/shopping/flight-offers/pricing`,
       {
         method: 'POST',
         headers: {
@@ -75,6 +128,29 @@ serve(async (req) => {
         }),
       }
     );
+
+    // Handle 401 - token might be stale, try to refresh once
+    if (priceResponse.status === 401) {
+      console.warn("⚠️ Got 401, refreshing token and retrying...");
+      token = await getAmadeusToken(true);
+      
+      priceResponse = await fetch(
+        `${AMADEUS_BASE_URL}/v1/shopping/flight-offers/pricing`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            data: {
+              type: 'flight-offers-pricing',
+              flightOffers: [flightOffer],
+            }
+          }),
+        }
+      );
+    }
 
     if (!priceResponse.ok) {
       const error = await priceResponse.text();
