@@ -232,9 +232,6 @@ Smart travel isn’t about chasing the cheapest ticket blindly—it’s about ma
 At **ChyeapFlights**, our mission is simple: make international travel affordable, transparent, and stress-free. With smart tools, live updates, and trusted support, we help travelers focus on what truly matters—the journey itself.
 
 Your next international adventure starts with a smarter choice.
-`
-}
-
     `,
     featuredImage: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&h=500&fit=crop",
     author: {
