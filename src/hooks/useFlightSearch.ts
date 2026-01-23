@@ -37,6 +37,14 @@ export const useFlightSearch = () => {
 
       if (data?.error) {
         console.error('❌ API error:', data.error, data.details);
+        
+        // Check for rate limit error (429)
+        if (data.details?.includes('429') || data.details?.includes('Quota limit exceeded')) {
+          const rateLimitError = 'Flight search is temporarily unavailable due to high demand. Please try again in a few minutes.';
+          setError(rateLimitError);
+          return { data: [], error: rateLimitError, isRateLimited: true };
+        }
+        
         throw new Error(data.error + (data.details ? ': ' + data.details : '') + (data.hint ? ' - ' + data.hint : ''));
       }
       
@@ -46,7 +54,10 @@ export const useFlightSearch = () => {
       const errorMessage = err.message || 'Failed to search flights';
       console.error('❌ Search error:', errorMessage);
       setError(errorMessage);
-      navigate('/error');
+      // Don't navigate to error page for rate limits
+      if (!errorMessage.includes('temporarily unavailable')) {
+        navigate('/error');
+      }
       throw err;
     } finally {
       setLoading(false);
