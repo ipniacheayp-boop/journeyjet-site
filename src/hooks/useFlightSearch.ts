@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -10,6 +10,12 @@ export interface FlightSearchParams {
   adults: number;
   travelClass?: string;
   currencyCode?: string;
+}
+
+export interface RetryState {
+  isRetrying: boolean;
+  currentAttempt: number;
+  maxAttempts: number;
 }
 
 const MAX_RETRIES = 3;
@@ -27,8 +33,13 @@ export const useFlightSearch = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [retryState, setRetryState] = useState<RetryState>({
+    isRetrying: false,
+    currentAttempt: 0,
+    maxAttempts: MAX_RETRIES + 1,
+  });
 
-  const searchFlightsWithRetry = async (
+  const searchFlightsWithRetry = useCallback(async (
     params: FlightSearchParams,
     attempt: number = 0
   ): Promise<any> => {
@@ -49,11 +60,20 @@ export const useFlightSearch = () => {
       if (attempt < MAX_RETRIES) {
         const delay = INITIAL_DELAY_MS * Math.pow(2, attempt);
         console.log(`⏳ Rate limited. Retrying in ${delay}ms (attempt ${attempt + 1}/${MAX_RETRIES})`);
+        
+        // Update retry state for UI
+        setRetryState({
+          isRetrying: true,
+          currentAttempt: attempt + 2, // Next attempt number (1-indexed)
+          maxAttempts: MAX_RETRIES + 1,
+        });
+        
         await sleep(delay);
         return searchFlightsWithRetry(params, attempt + 1);
       }
       
       // All retries exhausted
+      setRetryState({ isRetrying: false, currentAttempt: 0, maxAttempts: MAX_RETRIES + 1 });
       const rateLimitError = 'Flight search is temporarily unavailable due to high demand. Please try again in a few minutes.';
       return { data: [], error: rateLimitError, isRateLimited: true };
     }
@@ -63,14 +83,17 @@ export const useFlightSearch = () => {
     }
 
     return data;
-  };
+  }, []);
 
   const searchFlights = async (params: FlightSearchParams) => {
     setLoading(true);
     setError(null);
+    setRetryState({ isRetrying: false, currentAttempt: 1, maxAttempts: MAX_RETRIES + 1 });
 
     try {
       const result = await searchFlightsWithRetry(params);
+      
+      setRetryState({ isRetrying: false, currentAttempt: 0, maxAttempts: MAX_RETRIES + 1 });
       
       if (result.isRateLimited) {
         setError(result.error);
@@ -83,6 +106,7 @@ export const useFlightSearch = () => {
       const errorMessage = err.message || 'Failed to search flights';
       console.error('❌ Search error:', errorMessage);
       setError(errorMessage);
+      setRetryState({ isRetrying: false, currentAttempt: 0, maxAttempts: MAX_RETRIES + 1 });
       if (!errorMessage.includes('temporarily unavailable')) {
         navigate('/error');
       }
@@ -92,5 +116,5 @@ export const useFlightSearch = () => {
     }
   };
 
-  return { searchFlights, loading, error };
+  return { searchFlights, loading, error, retryState };
 };

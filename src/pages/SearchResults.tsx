@@ -23,7 +23,7 @@ const SearchResults = () => {
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const { searchFlights } = useFlightSearch();
+  const { searchFlights, retryState } = useFlightSearch();
   const { searchHotels } = useHotelSearch();
   const { searchCars } = useCarSearch();
   const [showCallPopup, setShowCallPopup] = useState(false);
@@ -167,17 +167,34 @@ const SearchResults = () => {
           </div>
 
           {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <Card key={i}>
-                  <CardHeader>
-                    <Skeleton className="h-20 w-full" />
-                  </CardHeader>
-                  <CardContent>
-                    <Skeleton className="h-32 w-full" />
-                  </CardContent>
-                </Card>
-              ))}
+            <div className="space-y-6">
+              {/* Retry indicator */}
+              {type === "flights" && retryState.isRetrying && (
+                <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-700 rounded-lg p-4 flex items-center gap-3">
+                  <div className="animate-spin h-5 w-5 border-2 border-amber-500 border-t-transparent rounded-full" />
+                  <div>
+                    <p className="font-medium text-amber-900 dark:text-amber-100">
+                      Retrying... attempt {retryState.currentAttempt} of {retryState.maxAttempts}
+                    </p>
+                    <p className="text-sm text-amber-700 dark:text-amber-300">
+                      High demand detected. Please wait while we try again.
+                    </p>
+                  </div>
+                </div>
+              )}
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <Card key={i}>
+                    <CardHeader>
+                      <Skeleton className="h-20 w-full" />
+                    </CardHeader>
+                    <CardContent>
+                      <Skeleton className="h-32 w-full" />
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
           ) : results.length === 0 ? (
             <Card>
