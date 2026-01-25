@@ -48,6 +48,7 @@ import BlogDetail from "./pages/BlogDetail";
 import FlightRoutePage from "./pages/seo/FlightRoutePage";
 import HotelCityPage from "./pages/seo/HotelCityPage";
 import CarRentalCityPage from "./pages/seo/CarRentalCityPage";
+import AirportLandingPage from "./pages/seo/AirportLandingPage";
 
 const FlybotWrapper = () => {
   const location = useLocation();
@@ -113,6 +114,7 @@ const App = () => (
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/blog/:slug" element={<BlogDetail />} />
                 {/* SEO Route Pages */}
+                <Route path="/airport/:slug" element={<AirportLandingPage />} />
                 <Route path="/cheap-flights-from-:slug" element={<FlightRoutePage />} />
                 <Route path="/cheap-hotels-in-:slug" element={<HotelCityPage />} />
                 <Route path="/cheap-car-rentals-in-:slug" element={<CarRentalCityPage />} />
