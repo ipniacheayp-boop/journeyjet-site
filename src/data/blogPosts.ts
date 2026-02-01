@@ -806,7 +806,7 @@ Start today, and make your next trip cheaper, longer, and unforgettable.
   `,
     featuredImage: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&h=500&fit=crop",
     author: {
-      name: "Farhan Abid",
+      name: "Sarah Adams",
       avatar: "/avatars/6.png",
       bio: "Travel-focused writer sharing practical strategies to help people save money on flights and travel smarter.",
     },
