@@ -804,7 +804,7 @@ Cheap flights aren’t just about saving money—they’re about unlocking exper
 
 Start today, and make your next trip cheaper, longer, and unforgettable.
   `,
-    featuredImage: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&h=500&fit=crop",
+    featuredImage: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=500&fit=crop",
     author: {
       name: "Sarah Adams",
       avatar: "/avatars/6.png",
