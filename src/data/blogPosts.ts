@@ -17,12 +17,13 @@ export interface BlogPost {
 }
 
 export const blogPosts: BlogPost[] = [
-    {
-  id: "1",
-  slug: "smart-international-travel-cheap-international-flights",
-  title: "Smart International Travel: Proven Tips to Find Cheap International Flights",
-  excerpt: "Discover smart, proven strategies to find cheap international flights. Learn how timing, flexibility, and data-driven tools can help you save thousands on international travel.",
-  content: `
+  {
+    id: "1",
+    slug: "smart-international-travel-cheap-international-flights",
+    title: "Smart International Travel: Proven Tips to Find Cheap International Flights",
+    excerpt:
+      "Discover smart, proven strategies to find cheap international flights. Learn how timing, flexibility, and data-driven tools can help you save thousands on international travel.",
+    content: `
 # Smart International Travel: Proven Tips to Find Cheap International Flights
 
 International travel doesn’t have to be expensive. While flight prices often seem unpredictable, the truth is that airfare follows patterns. Travelers who understand these patterns—and use the right tools—can consistently find cheap international flights without compromising comfort or convenience.
@@ -248,7 +249,8 @@ Your next international adventure starts with a smarter choice.
     id: "2",
     slug: "hidden-gems-europe-2024",
     title: "10 Hidden Gems in Europe You Need to Visit in 2024",
-    excerpt: "Skip the tourist crowds and explore these lesser-known European destinations that offer authentic experiences, stunning scenery, and incredible value.",
+    excerpt:
+      "Skip the tourist crowds and explore these lesser-known European destinations that offer authentic experiences, stunning scenery, and incredible value.",
     content: `
 # 10 Hidden Gems in Europe You Need to Visit in 2024
 
@@ -311,7 +313,8 @@ Each of these destinations offers something unique that you simply won't find in
     id: "3",
     slug: "travel-insurance-guide",
     title: "Complete Guide to Travel Insurance: What You Really Need",
-    excerpt: "Not all travel insurance is created equal. Learn what coverage actually matters, what's often overlooked, and how to choose the right policy for your trip.",
+    excerpt:
+      "Not all travel insurance is created equal. Learn what coverage actually matters, what's often overlooked, and how to choose the right policy for your trip.",
     content: `
 # Complete Guide to Travel Insurance: What You Really Need
 
@@ -371,7 +374,8 @@ Protect your investment and your health—the right travel insurance gives you p
     id: "4",
     slug: "packing-carry-on-only",
     title: "Master the Art of Carry-On Only Travel",
-    excerpt: "Learn how to pack light without sacrificing comfort. Our complete guide to carry-on only travel will transform how you explore the world.",
+    excerpt:
+      "Learn how to pack light without sacrificing comfort. Our complete guide to carry-on only travel will transform how you explore the world.",
     content: `
 # Master the Art of Carry-On Only Travel
 
@@ -444,7 +448,8 @@ Start small with a weekend trip, then gradually extend. Soon you'll wonder why y
     id: "5",
     slug: "best-travel-credit-cards-2024",
     title: "Best Travel Credit Cards for 2024: Maximize Your Rewards",
-    excerpt: "From sign-up bonuses to ongoing perks, we break down the top travel credit cards that will help you earn free flights and hotel stays.",
+    excerpt:
+      "From sign-up bonuses to ongoing perks, we break down the top travel credit cards that will help you earn free flights and hotel stays.",
     content: `
 # Best Travel Credit Cards for 2024: Maximize Your Rewards
 
@@ -511,7 +516,8 @@ Choose the card that matches your travel patterns and start earning your way to 
     id: "6",
     slug: "solo-travel-safety-tips",
     title: "Solo Travel Safety: Essential Tips for Independent Explorers",
-    excerpt: "Traveling alone is one of life's greatest adventures. Stay safe and confident with these practical safety tips from experienced solo travelers.",
+    excerpt:
+      "Traveling alone is one of life's greatest adventures. Stay safe and confident with these practical safety tips from experienced solo travelers.",
     content: `
 # Solo Travel Safety: Essential Tips for Independent Explorers
 
@@ -576,293 +582,17 @@ Your gut feeling exists for a reason. If something feels wrong, remove yourself 
 
 Solo travel builds confidence, independence, and resilience. With smart precautions, you can explore the world on your own terms safely and confidently.
     `,
-    {
-  id: "7",
-  slug: "how-to-find-cheap-flights-2026",
-  title: "How to Find Cheap Flights in 2026: Expert Travel Booking Guide",
-  excerpt:
-    "Learn how to find cheap flights and save 30–50% on airfare with proven strategies from travel experts. Compare flight deals, use price alerts, and book smarter for your next trip.",
-  featuredImage:
-    "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&h=500&fit=crop",
-  author: {
-    name: "Farhan Abid",
-    avatar: "/avatars/6.png",
-    bio: "Budget-focused traveler sharing real-world flight booking strategies to help people travel more while spending less.",
+    featuredImage: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&h=500&fit=crop",
+    author: {
+      name: "Amanda Foster",
+      avatar: "/avatars/5.png",
+      bio: "Solo travel advocate who has explored 50+ countries independently.",
+    },
+    publishedAt: "2023-12-20",
+    category: "Travel Tips",
+    tags: ["solo travel", "safety", "tips"],
+    readTime: 7,
   },
-  publishedAt: "2026-02-01",
-  category: "Travel Tips",
-  tags: [
-    "cheap flights",
-    "flight booking",
-    "travel tips",
-    "airfare deals",
-    "budget travel",
-  ],
-  readTime: 10,
-  content: `
-# How to Find Cheap Flights in 2026: Expert Travel Booking Guide
-
-**Meta Description:** Learn how to find cheap flights and save 30–50% on airfare with proven strategies from travel experts. Compare flight deals, use price alerts, and book smarter for your next trip.
-
-Traveling doesn’t have to be expensive. With the right flight booking strategies, you can save up to **30–50% on airfare** and use that money for hotels, food, and experiences instead.
-
-Many travelers think cheap flights are just about luck, but the truth is—**there are smart tricks that travel experts use every day**. In this guide, you’ll learn proven tips to find cheap flights in 2026, avoid common booking mistakes, and travel smarter without breaking your budget.
-
----
-
-## My First Expensive Flight Booking Mistake
-
-### The Moment I Learned a Costly Lesson
-
-I still remember the excitement of my first international trip. I had been planning it for months, dreaming of white sandy beaches and sunsets over crystal-clear waters. When I finally found a **Mumbai–Bali flight priced at ₹42,000**, I didn’t hesitate—I booked it immediately.
-
-I thought, *“Flights only get more expensive. Better safe than sorry!”*
-
-One week later, I checked again… and my jaw dropped.  
-The same flight was now **₹28,000**.
-
-That’s a **₹14,000 difference**.
-
-That money could have paid for a beachfront hotel or even a scuba diving adventure.
-
-That was the moment I realized something important: **finding cheap flights isn’t luck—it’s a skill**.
-
-From that day, I made it my mission to master smart flight booking. Today, I consistently save **30–50% on airfare**, making travel more affordable and frequent. In this guide, I’ll share the exact strategies I use—so you can travel more while spending less.
-
----
-
-## Why Finding Cheap Flights Matters
-
-When planning a trip, flights often take up **40–60% of your total travel budget**. Even saving **₹20,000–₹50,000** on airfare can dramatically improve your experience.
-
-For example, I once booked a **Delhi–London flight** and saved **₹23,000** by using price alerts and flexible dates. That extra money allowed me to:
-- Upgrade my hotel
-- Enjoy a day trip to Bath
-- Eat better without worrying about my budget
-
-Cheap flights don’t just save money—they **unlock more travel opportunities**.
-
-A colleague of mine used to afford only **one international trip per year**. After learning smart flight strategies, he managed to take **three trips on the same budget**.
-
-### Example: Family Travel Savings
-
-For Indian families, these savings are even more impactful. Imagine a family of four flying from **Delhi to Singapore**:
-
-- Normal price: ₹2,00,000+  
-- With flexible dates & flight tools: ₹1,20,000  
-- **Total savings: ₹80,000**
-
-That’s enough to cover hotels, attractions, and meals for the entire trip.
-
----
-
-## What Makes a Flight Truly Cheap?
-
-Many travelers assume the cheapest ticket is always the best deal—but that’s not true.
-
-A flight with a low price but:
-- Long layovers
-- Multiple stops
-- Hidden baggage fees
-
-can end up costing more in **money, time, and energy**.
-
-Sometimes, paying slightly extra for a direct or better-timed flight is the smarter choice.
-
-**Smart travelers focus on total value—not just ticket price.**
-
----
-
-## Smart Flight Booking Tips (Proven by Travel Experts)
-
-### 1. Use Flexible Travel Dates
-
-Flying midweek—**Tuesday to Thursday**—is usually **20–40% cheaper** than weekends.
-
-Even shifting your trip by **2–3 days** can save thousands.
-
-**Example:**  
-Mumbai–Singapore  
-- Friday flight: ₹32,000  
-- Wednesday flight: ₹22,000  
-- **Savings: ₹10,000**
-
----
-
-### 2. Set Price Alerts
-
-Price alerts notify you when airfare drops.
-
-Instead of panic booking, let the prices come to you.
-
-I once booked a **Mumbai–Amsterdam flight for ₹22,000**, far below the usual average price of **₹35,000**.
-
-Waiting patiently can save **huge amounts per trip**.
-
----
-
-### 3. Explore Budget-Based Destinations
-
-Instead of choosing a destination first, try choosing based on **budget**.
-
-Affordable international destinations often include:
-- Bangkok
-- Colombo
-- Dubai
-- Kathmandu
-
-This strategy allows you to travel **more frequently** without overspending.
-
----
-
-### 4. Be Flexible With Routes
-
-Direct flights are convenient—but not always cost-effective.
-
-Connecting flights can save **₹15,000–₹30,000**.
-
-**Example:**  
-A Delhi–Paris flight via Doha was **₹18,000 cheaper** than the direct option—and I even explored Doha for a few hours.
-
----
-
-### 5. Check Nearby Airports
-
-If you live near a major city, nearby airports can offer better deals.
-
-Travelers in NCR often find cheaper flights from:
-- Jaipur
-- Amritsar
-- Lucknow
-
-Even after adding travel costs, the savings are usually worth it.
-
----
-
-## How Flight Comparison Tools Like Cheapflights Help
-
-Platforms like **Cheapflights** simplify the entire process.
-
-You can:
-- Compare hundreds of airline prices at once
-- Search using flexible date calendars
-- Set price alerts for your routes
-- Filter by stops, airlines, and total cost
-- Identify hidden fees before booking
-
-For frequent travelers, this saves **time, money, and effort**.
-
----
-
-## My 6-Step Flight Booking Strategy (Save 30–45%)
-
-Here’s the exact strategy I follow:
-
-1. **Set Price Alerts Early**  
-   Set alerts **2–4 months in advance** using tools like Google Flights or Skyscanner.
-
-2. **Use Flexible Date Search**  
-   Avoid weekends and peak travel days whenever possible.
-
-3. **Compare Direct vs Connecting Flights**  
-   A single layover can reduce prices by **30–60%**.
-
-4. **Check Multiple Booking Platforms**  
-   Never rely on just one site—compare everywhere.
-
-5. **Book Only After a Price Drop**  
-   I book only when fares drop **15–30%** below average.
-
-6. **Read Booking Site Reviews**  
-   Avoid scams and hidden charges by sticking to trusted platforms.
-
----
-
-## Common Flight Booking Mistakes
-
-Many travelers lose money by:
-- Booking last-minute
-- Ignoring budget airlines
-- Being rigid with dates
-- Not comparing routes
-- Panic booking due to “last seat available” alerts
-
-Avoiding these mistakes alone can save **thousands**.
-
----
-
-## Why Cheap Flights Are More Than Just Savings
-
-Cheap flights make travel accessible to:
-- Students
-- Families
-- Young professionals
-
-They reduce financial stress and turn travel into a **life experience**, not a luxury.
-
----
-
-## Your Action Plan to Find Cheap Flights
-
-### This Week
-- Set price alerts
-- Check flexible date calendars
-- Compare multiple airlines
-
-### This Month
-- Explore budget destinations
-- Research low-season travel
-- Join travel deal communities
-
-Consistency is the real secret.
-
----
-
-## FAQ – Cheap Flights
-
-**Q1. When is the best time to book flights?**  
-- International: 2–4 months in advance  
-- Domestic: 3–6 weeks ahead  
-
-**Q2. Are midweek flights cheaper?**  
-Yes—typically **20–40% cheaper**.
-
-**Q3. Is Cheapflights reliable?**  
-Yes. It compares multiple airlines and shows total pricing transparently.
-
-**Q4. How can I find cheap last-minute flights?**  
-Be flexible with airports, routes, and timing. Check budget airlines and deal-focused apps.
-
-**Q5. Are budget airlines safe?**  
-Yes. Always review baggage rules and fees before booking.
-
-**Q6. Online platforms vs travel agents?**  
-Online platforms usually offer better prices and transparency.
-
-**Q7. How do I avoid cancellation charges?**  
-Check airline policies carefully and consider flexible fares or travel insurance.
-
-**Q8. Does season affect flight prices?**  
-Absolutely. Shoulder and low seasons can be **20–50% cheaper**.
-
-**Q9. Do loyalty programs help?**  
-Yes—points, miles, cashback, and credit card offers add up significantly.
-
----
-
-## Conclusion: Turn Flight Booking Into a Skill
-
-Your first flight booking mistake doesn’t have to be your last.
-
-By using flexible dates, price alerts, multiple tools, and smart route comparisons, you can **travel smarter and cheaper**.
-
-Cheap flights aren’t just about saving money—they’re about unlocking experiences, adventures, and memories that would otherwise feel out of reach.
-
-Start today. Travel more. Spend less.
-  `,
-}
-
-  
 ];
 
 export const getBlogBySlug = (slug: string): BlogPost | undefined => {
@@ -875,10 +605,7 @@ export const getRelatedPosts = (currentSlug: string, limit: number = 3): BlogPos
 
   return blogPosts
     .filter((post) => post.slug !== currentSlug)
-    .filter((post) => 
-      post.category === currentPost.category || 
-      post.tags.some((tag) => currentPost.tags.includes(tag))
-    )
+    .filter((post) => post.category === currentPost.category || post.tags.some((tag) => currentPost.tags.includes(tag)))
     .slice(0, limit);
 };
 
