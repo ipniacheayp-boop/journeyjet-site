@@ -862,7 +862,7 @@ Start today. Travel more. Spend less.
   `,
 }
 
-  },
+  
 ];
 
 export const getBlogBySlug = (slug: string): BlogPost | undefined => {
