@@ -214,8 +214,8 @@ const Support = () => {
                       <Mail className="w-6 h-6 text-support-sky" />
                     </div>
                     <p className="text-sm font-medium">Email Support</p>
-                    <a href="mailto:help@chyeap.com" className="text-support-sky hover:underline text-sm">
-                      help@chyeap.com
+                    <a href="mailto:Pallav.arora@cheapflightsfares.com" className="text-support-sky hover:underline text-sm">
+                      Pallav.arora@cheapflightsfares.com
                     </a>
                   </div>
 
@@ -224,8 +224,8 @@ const Support = () => {
                       <Phone className="w-6 h-6 text-support-green" />
                     </div>
                     <p className="text-sm font-medium">Call Us</p>
-                    <a href="tel:+18002215246" className="text-support-green hover:underline text-sm">
-                      +1-800-221-5246
+                    <a href="tel:+19453169350" className="text-support-green hover:underline text-sm">
+                      +1 (945) 316-9350
                     </a>
                   </div>
 
