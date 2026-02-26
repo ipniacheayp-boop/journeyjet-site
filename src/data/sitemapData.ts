@@ -1911,6 +1911,7 @@ export const siteMapData = [
       },
       { label: "Affiliate Program", href: "/affiliate", icon: CreditCard },
       { label: "Online Check-In", href: "/online-checkin", icon: Plane },
+      { label: "Airlines Web Check-In", href: "/webcheck-in", icon: Ticket },
     ],
   },
 ];
