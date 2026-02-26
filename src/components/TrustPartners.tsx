@@ -3,11 +3,11 @@
 import { motion } from "framer-motion";
 import React from "react";
 
-import iataLogo from "@/assets/trust/iata.svg";
+import iataLogo from "@/assets/trust/iata.png";
 import astaLogo from "@/assets/trust/asta.jpg";
 import godaddyLogo from "@/assets/trust/godaddy.gif";
 import trueLogo from "@/assets/trust/true.png";
-import cloudflareLogo from "@/assets/trust/cloudflare.svg";
+import cloudflareLogo from "@/assets/trust/cloudflare.png";
 import flexpayLogo from "@/assets/trust/flexpay.png";
 import amazonpayLogo from "@/assets/trust/amazonpay.jpg";
 
