@@ -2,47 +2,47 @@ import { motion } from "framer-motion";
 
 const PartnerLogos = () => {
   const partners = [
-  {
-    name: "Booking.com",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/b/be/Booking.com_logo.svg",
-  },
-  {
-    name: "KAYAK",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/c/cb/Kayak_Logo.svg",
-  },
-  {
-    name: "Priceline",
-    logo: "https://press.priceline.com/wp-content/uploads/2019/10/logo-media.jpg",
-  },
-  {
-    name: "Agoda",
-    logo: "https://logos-world.net/wp-content/uploads/2024/07/Agoda-Logo.png",
-  },
-  {
-    name: "OpenTable",
-    logo: "https://seekvectorlogo.com/wp-content/uploads/2018/01/opentable-vector-logo.png",
-  },
-  {
-    name: "Expedia",
-    logo: "https://e7.pngegg.com/pngimages/351/440/png-clipart-expedia-full-logo-tech-companies.png",
-  },
-  {
-    name: "Hotels.com",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/1/16/Hotels.com_Logo_2023.svg",
-  },
-  {
-    name: "Trivago",
-    logo: "https://cdn.freebiesupply.com/logos/large/2x/trivago-logo-png-transparent.png",
-  },
-  {
-    name: "Skyscanner",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/9/94/Skyscanner_Logo_LockupHorizontal_SkyBlue_RGB.svg",
-  },
-  {
-    name: "Momondo",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/c/c2/Press-logo-momondo_colour.png",
-  },
-];
+    {
+      name: "Booking.com",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/b/be/Booking.com_logo.svg",
+    },
+    {
+      name: "KAYAK",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/c/cb/Kayak_Logo.svg",
+    },
+    {
+      name: "Priceline",
+      logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbsxyq5At2IeUTWbQ6zQrjtzBorWnskhnBGQ&s",
+    },
+    {
+      name: "Agoda",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Agoda_logo_2019.svg/330px-Agoda_logo_2019.svg.png",
+    },
+    {
+      name: "OpenTable",
+      logo: "https://mma.prnewswire.com/media/122496/opentable__inc__logo.jpg?w=200",
+    },
+    {
+      name: "Expedia",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Expedia_2012_logo.svg/3840px-Expedia_2012_logo.svg.png",
+    },
+    {
+      name: "Hotels.com",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/1/16/Hotels.com_Logo_2023.svg",
+    },
+    {
+      name: "Trivago",
+      logo: "https://cdn.freebiesupply.com/logos/large/2x/trivago-logo-png-transparent.png",
+    },
+    {
+      name: "Skyscanner",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/9/94/Skyscanner_Logo_LockupHorizontal_SkyBlue_RGB.svg",
+    },
+    {
+      name: "Momondo",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/c/c2/Press-logo-momondo_colour.png",
+    },
+  ];
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -93,11 +93,7 @@ const PartnerLogos = () => {
               variants={itemVariants}
               className="flex items-center justify-center px-4 py-2 opacity-60 hover:opacity-100 transition-opacity duration-300 "
             >
-              <img
-  src={partner.logo}
-  alt={partner.name}
-  className="h-6 md:h-8 w-auto object-contain"
-/>
+              <img src={partner.logo} alt={partner.name} className="h-6 md:h-8 w-auto object-contain" />
             </motion.div>
           ))}
         </motion.div>
