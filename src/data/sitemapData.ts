@@ -1,4 +1,4 @@
-import { Info, Shield, Phone, Rss, Lock, FileText, Briefcase, CreditCard, Plane } from "lucide-react";
+import { Info, Shield, Phone, Rss, Lock, FileText, Briefcase, CreditCard, Plane, Ticket } from "lucide-react";
 
 export const siteMapData = [
   {
