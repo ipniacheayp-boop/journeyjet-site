@@ -74,10 +74,22 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // Helper to extract a 3-letter IATA code from code or display value
+  const extractIATACode = (displayValue: string, codeValue: string): string => {
+    if (codeValue && /^[A-Z]{3}$/i.test(codeValue.trim())) return codeValue.trim().toUpperCase();
+    const match = displayValue.match(/\(([A-Z]{3})\)/i);
+    if (match) return match[1].toUpperCase();
+    const trimmed = displayValue.trim().toUpperCase();
+    if (/^[A-Z]{3}$/.test(trimmed)) return trimmed;
+    return "";
+  };
+
   const validateFlightForm = () => {
     const newErrors: Record<string, string> = {};
-    if (!flightOrigin.trim()) newErrors.origin = "Origin is required";
-    if (!flightDestination.trim()) newErrors.destination = "Destination is required";
+    const originCode = extractIATACode(flightOrigin, flightOriginCode);
+    const destCode = extractIATACode(flightDestination, flightDestinationCode);
+    if (!originCode) newErrors.origin = "Please select a valid airport (3-letter code)";
+    if (!destCode) newErrors.destination = "Please select a valid airport (3-letter code)";
     if (!departDate) newErrors.departDate = "Departure date is required";
     if (tripType === "round-trip" && !returnDate) newErrors.returnDate = "Return date is required";
     if (tripType === "round-trip" && departDate && returnDate && new Date(returnDate) < new Date(departDate)) {
@@ -115,8 +127,8 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
     e.preventDefault();
     if (validateFlightForm()) {
       toast.success("Searching for flights...");
-      const origin = (flightOriginCode || flightOrigin).trim().toUpperCase();
-      const destination = (flightDestinationCode || flightDestination).trim().toUpperCase();
+      const origin = extractIATACode(flightOrigin, flightOriginCode);
+      const destination = extractIATACode(flightDestination, flightDestinationCode);
       const params = new URLSearchParams({
         type: "flights",
         originLocationCode: origin,
