@@ -3,55 +3,27 @@
 import { motion } from "framer-motion";
 import React from "react";
 
-// Feature flag
+import iataLogo from "@/assets/trust/iata.svg";
+import astaLogo from "@/assets/trust/asta.jpg";
+import godaddyLogo from "@/assets/trust/godaddy.gif";
+import trueLogo from "@/assets/trust/true.png";
+import cloudflareLogo from "@/assets/trust/cloudflare.svg";
+import flexpayLogo from "@/assets/trust/flexpay.png";
+import amazonpayLogo from "@/assets/trust/amazonpay.jpg";
+
 export const FEATURE_SHOW_TRUST_BADGES = true;
 
 const TrustPartners = () => {
   if (!FEATURE_SHOW_TRUST_BADGES) return null;
 
   const partners = [
-    {
-      name: "IATA",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/f/f7/IATAlogo.svg",
-      alt: "IATA - International Air Transport Association",
-      href: "https://www.iata.org/",
-    },
-    {
-      name: "ASTA",
-      logo: "https://holidayplanners.com/wp-content/uploads/2014/12/ASTA-logo.jpg",
-      alt: "ASTA - American Society of Travel Advisors Member",
-      href: "https://www.asta.org/",
-    },
-    {
-      name: "GoDaddy Verified",
-      logo: "https://seal.godaddy.com/images/3/en/siteseal_gd_3_h_l_m.gif",
-      alt: "GoDaddy Verified & Secured",
-      href: "https://www.godaddy.com/web-security/website-security",
-    },
-    {
-      name: "TRUE",
-      logo: "https://www.ccra.com/wp-content/uploads/2020/11/TRUE-Logo-4.png",
-      alt: "TRUE - Travel Retailer Universal Enumeration Accredited",
-      href: "https://trueaccreditation.org/",
-    },
-    {
-      name: "Cloudflare",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/4/4b/Cloudflare_Logo.svg",
-      alt: "Protected by Cloudflare",
-      href: "https://www.cloudflare.com/",
-    },
-    {
-      name: "FlexPay",
-      logo: "https://cdn.document360.io/ff52d920-99b4-4c2b-9b32-5d5fe9700cb0/Images/Documentation/FlexpayLogo-FullColor-V(1).png",
-      alt: "FlexPay - Buy Now Pay Later",
-      href: "#",
-    },
-    {
-      name: "Amazon Pay",
-      logo: "https://i.pinimg.com/736x/e4/59/c4/e459c4e28958ca826d22ff37b89162ee.jpg",
-      alt: "Amazon Pay Accepted",
-      href: "https://pay.amazon.com/",
-    },
+    { name: "IATA", logo: iataLogo, alt: "IATA - International Air Transport Association", href: "https://www.iata.org/" },
+    { name: "ASTA", logo: astaLogo, alt: "ASTA - American Society of Travel Advisors Member", href: "https://www.asta.org/" },
+    { name: "GoDaddy Verified", logo: godaddyLogo, alt: "GoDaddy Verified & Secured", href: "https://www.godaddy.com/web-security/website-security" },
+    { name: "TRUE", logo: trueLogo, alt: "TRUE - Travel Retailer Universal Enumeration Accredited", href: "https://trueaccreditation.org/" },
+    { name: "Cloudflare", logo: cloudflareLogo, alt: "Protected by Cloudflare", href: "https://www.cloudflare.com/" },
+    { name: "FlexPay", logo: flexpayLogo, alt: "FlexPay - Buy Now Pay Later", href: "#" },
+    { name: "Amazon Pay", logo: amazonpayLogo, alt: "Amazon Pay Accepted", href: "https://pay.amazon.com/" },
   ];
 
   const containerVariants = {
@@ -84,19 +56,16 @@ const TrustPartners = () => {
       role="region"
     >
       <div className="container mx-auto px-4">
-        {/* Header */}
         <div className="text-center mb-10">
           <h2 id="trust-partners-heading" className="text-xl md:text-2xl font-semibold tracking-wide text-foreground">
             Trusted & Secured By
           </h2>
-
           <p className="mt-3 text-sm md:text-base text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             Accredited travel partner and protected by globally recognized aviation authorities, secure payment
             providers, and enterprise-grade security infrastructure.
           </p>
         </div>
 
-        {/* Logos */}
         <motion.div
           className="flex flex-wrap items-center justify-center gap-8 md:gap-12 lg:gap-16 opacity-80"
           variants={containerVariants}
