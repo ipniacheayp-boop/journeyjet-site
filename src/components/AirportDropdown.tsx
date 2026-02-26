@@ -73,12 +73,18 @@ const AirportDropdown = React.memo(({ value, onChange, placeholder, className }:
     setShowDropdown(true);
     setHighlightedIndex(-1);
 
-    // Always propagate value to parent so validation stays in sync
+    // Extract IATA code from typed input
     const codeCandidate = newValue.trim().toUpperCase();
     if (/^[A-Z]{3}$/.test(codeCandidate)) {
-      onChange(codeCandidate, codeCandidate);
+      onChange(newValue, codeCandidate);
     } else {
-      onChange(newValue, "");
+      // Try to extract code from "City (CODE)" format
+      const match = newValue.match(/\(([A-Z]{3})\)/);
+      if (match) {
+        onChange(newValue, match[1]);
+      } else {
+        onChange(newValue, "");
+      }
     }
   };
 
