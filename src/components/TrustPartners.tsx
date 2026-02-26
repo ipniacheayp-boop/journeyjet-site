@@ -76,16 +76,11 @@ const TrustPartners = () => {
           aria-label="Accreditation and security partners"
         >
           {partners.map((partner) => (
-            <motion.a
+            <motion.div
               key={partner.name}
-              href={partner.href}
-              target="_blank"
-              rel="noopener noreferrer"
               variants={itemVariants}
-              className="flex items-center justify-center transition duration-300"
+              className="flex items-center justify-center"
               role="listitem"
-              aria-label={partner.alt}
-              title={partner.alt}
             >
               <img
                 src={partner.logo}
@@ -94,7 +89,7 @@ const TrustPartners = () => {
                 loading="lazy"
                 decoding="async"
               />
-            </motion.a>
+            </motion.div>
           ))}
         </motion.div>
       </div>
