@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Phone, Home, Headset } from "lucide-react";
 
 const AgentConnect = () => {
-  const contactNumber = "+919876543210";
+  const contactNumber = "+18009634330";
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-secondary/20">
@@ -34,7 +34,7 @@ const AgentConnect = () => {
                   className="text-4xl font-bold text-primary hover:text-primary/80 transition-colors flex items-center justify-center gap-3 group"
                 >
                   <Phone className="w-8 h-8 group-hover:scale-110 transition-transform" />
-                  +91 98765 43210
+                  1-800-963-4330
                 </a>
                 <p className="text-xs text-muted-foreground mt-3">Tap to call instantly</p>
               </div>

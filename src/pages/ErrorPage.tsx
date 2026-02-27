@@ -11,7 +11,7 @@ const ErrorPage = () => {
         <div className="flex items-center gap-2">
           <Phone className="w-5 h-5 text-primary" />
           <Link to="/contact-us" className="hover:underline">
-            +1-800-221-5246
+            1-800-963-4330
           </Link>
         </div>
         <div className="flex items-center gap-2">

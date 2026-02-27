@@ -508,7 +508,7 @@ const Terms = () => {
                   Refunds, where applicable, will be processed within 7-14 business days to the original payment method used for booking. Service fees charged by Cheap Flights may be non-refundable regardless of the booking's refund status.
                 </p>
                 <p className="text-base leading-7 text-foreground/90 mb-4">
-                  To request a cancellation, contact our customer support at <a href="mailto:help@chyeap.com" className="text-primary hover:underline">help@chyeap.com</a> or call 1-800-123-4567. Cancellation requests must be made in accordance with the applicable cancellation policy timeframes.
+                  To request a cancellation, contact our customer support at <a href="mailto:help@chyeap.com" className="text-primary hover:underline">help@chyeap.com</a> or call 1-800-963-4330. Cancellation requests must be made in accordance with the applicable cancellation policy timeframes.
                 </p>
               </section>
 
@@ -535,7 +535,7 @@ const Terms = () => {
                   Special requests such as dietary requirements, accessibility needs, room preferences, or seat assignments are not guaranteed and are subject to availability. We will communicate your requests to service providers, but we cannot guarantee they will be fulfilled.
                 </p>
                 <p className="text-base leading-7 text-foreground/90 mb-4">
-                  If you have specific accessibility requirements, please contact us directly at <a href="mailto:help@chyeap.com" className="text-primary hover:underline">help@chyeap.com</a> or 1-800-123-4567 so we can better assist you in making appropriate arrangements.
+                  If you have specific accessibility requirements, please contact us directly at <a href="mailto:help@chyeap.com" className="text-primary hover:underline">help@chyeap.com</a> or 1-800-963-4330 so we can better assist you in making appropriate arrangements.
                 </p>
               </section>
 

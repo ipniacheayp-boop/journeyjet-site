@@ -173,7 +173,7 @@ const DealModal = ({ deal, open, onOpenChange }: DealModalProps) => {
                   </div>
                   <div>
                     <div className="font-medium">Call Us</div>
-                    <div className="text-sm text-muted-foreground">1-800-123-4567</div>
+                    <div className="text-sm text-muted-foreground">1-800-963-4330</div>
                   </div>
                 </Link>
 
