@@ -224,8 +224,8 @@ const Support = () => {
                       <Phone className="w-6 h-6 text-support-green" />
                     </div>
                     <p className="text-sm font-medium">Call Us</p>
-                    <a href="tel:+19453169350" className="text-support-green hover:underline text-sm">
-                      +1 (945) 316-9350
+                    <a href="tel:+18009634330" className="text-support-green hover:underline text-sm">
+                      1-800-963-4330
                     </a>
                   </div>
 

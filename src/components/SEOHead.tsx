@@ -38,7 +38,7 @@ const SEOHead = ({
         ],
         "contactPoint": {
           "@type": "ContactPoint",
-          "telephone": "+1-800-123-4567",
+          "telephone": "+1-800-963-4330",
           "contactType": "customer service",
           "areaServed": "US",
           "availableLanguage": ["English", "Spanish"]
