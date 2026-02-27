@@ -51,6 +51,7 @@ import CarRentalCityPage from "./pages/seo/CarRentalCityPage";
 import AirportLandingPage from "./pages/seo/AirportLandingPage";
 import WebCheckIn from "./pages/WebCheckIn";
 import FlightStatus from "./pages/FlightStatus";
+import FlightsToDestination from "./pages/FlightsToDestination";
 
 const FlybotWrapper = () => {
   const location = useLocation();
@@ -122,6 +123,8 @@ const App = () => (
                 <Route path="/cheap-car-rentals-in-:slug" element={<CarRentalCityPage />} />
                 <Route path="/webcheck-in" element={<WebCheckIn />} />
                 <Route path="/flight-status" element={<FlightStatus />} />
+                <Route path="/flights-to-:slug" element={<FlightsToDestination />} />
+                <Route path="*" element={<NotFound />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <FlybotWrapper />
