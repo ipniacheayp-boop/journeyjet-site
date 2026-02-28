@@ -4,10 +4,13 @@ import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FlightSearchBar from "@/components/flights/FlightSearchBar";
+import DealsGrid from "@/components/flights/DealsGrid";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import FAQSchema from "@/components/seo/FAQSchema";
 import { getAirlineBySlug } from "@/data/destinationsData";
-import { ChevronRight, Plane, Tag, SlidersHorizontal, ShieldCheck, Globe, Sparkles } from "lucide-react";
+import { useAirlineFlights } from "@/hooks/useAirlineFlights";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ChevronRight, Plane, Tag, SlidersHorizontal, ShieldCheck, Globe, Sparkles, AlertCircle } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import {
   Accordion,
@@ -68,6 +71,13 @@ export default function AirlinePage() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [slug]);
+
+  // Fetch live flight data for this airline
+  const { flights, loading: flightsLoading, error: flightsError, searchDate } = useAirlineFlights(code);
+
+  const cheapestPrice = flights.length
+    ? Math.ceil(Math.min(...flights.map((f) => f.price)))
+    : null;
 
   const dayData = useMemo(generateDayData, [slug]);
   const monthData = useMemo(generateMonthData, [slug]);
@@ -224,7 +234,51 @@ export default function AirlinePage() {
           </div>
         </section>
 
-        {/* Price trend charts */}
+        {/* Live Flight Results */}
+        <section className="container mx-auto px-4 max-w-6xl py-8">
+          <h2 className="text-xl md:text-2xl font-semibold text-foreground mb-2">
+            {displayName} Flights Available Now
+          </h2>
+          {cheapestPrice && (
+            <p className="text-sm text-muted-foreground mb-4">
+              Prices starting from <strong className="text-primary">${cheapestPrice}</strong>/person
+            </p>
+          )}
+
+          {flightsLoading && (
+            <div className="space-y-3">
+              {[...Array(4)].map((_, i) => (
+                <Skeleton key={i} className="h-24 w-full rounded-lg" />
+              ))}
+            </div>
+          )}
+
+          {!flightsLoading && flightsError && (
+            <div className="text-center py-8 border border-border rounded-xl bg-card">
+              <AlertCircle className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">{flightsError}</p>
+            </div>
+          )}
+
+          {!flightsLoading && flights.length > 0 && (
+            <>
+              <p className="text-xs text-muted-foreground mb-3">
+                Showing flights for{" "}
+                <strong>
+                  {new Date(searchDate).toLocaleDateString("en-US", {
+                    weekday: "long",
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </strong>
+              </p>
+              <DealsGrid flights={flights} title={`Top ${displayName} Deals`} />
+            </>
+          )}
+        </section>
+
+
         <section className="container mx-auto px-4 max-w-6xl py-8">
           <motion.h2
             initial={{ opacity: 0 }}
