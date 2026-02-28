@@ -27,7 +27,7 @@ const FlightSearchBar = ({ defaultDestination = "" }: FlightSearchBarProps) => {
           value={destination}
           onChange={(e) => setDestination(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-          className="pl-9"
+          className="pl-9 bg-background text-foreground border-border"
         />
       </div>
       <Button onClick={handleSearch} size="sm">
