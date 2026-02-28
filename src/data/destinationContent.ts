@@ -9,11 +9,78 @@ export interface DestinationContent {
   popularRoutes: { from: string; slug: string }[];
   bestTimeToVisit: string;
   faq: { question: string; answer: string }[];
+  priceByDay: { day: string; price: number }[];
+  priceByMonth: { month: string; price: number }[];
+  cheapestDay: string;
+  cheapestMonth: string;
+  expensiveMonth: string;
+}
+
+// Seeded pseudo-random for consistent per-city prices
+function seededRandom(seed: string) {
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    const char = seed.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash |= 0;
+  }
+  return () => {
+    hash = (hash * 16807) % 2147483647;
+    return (hash & 0x7fffffff) / 0x7fffffff;
+  };
+}
+
+function generateDayPrices(city: string, base: number): { day: string; price: number }[] {
+  const rand = seededRandom(city + "day");
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  return days.map((day) => ({
+    day,
+    price: Math.round(base + (rand() * 60 - 30)),
+  }));
+}
+
+function generateMonthPrices(city: string, base: number): { month: string; price: number }[] {
+  const rand = seededRandom(city + "month");
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  // Create a curve: cheap in winter, expensive in summer
+  const seasonMultiplier = [0.85, 0.88, 0.95, 1.1, 1.25, 1.35, 1.38, 1.3, 1.05, 0.95, 0.88, 0.82];
+  return months.map((month, i) => ({
+    month,
+    price: Math.round(base * seasonMultiplier[i] + (rand() * 30 - 15)),
+  }));
+}
+
+function getBasePrice(country: string): number {
+  const prices: Record<string, number> = {
+    US: 320, UK: 450, France: 480, Japan: 650, UAE: 550,
+    Mexico: 350, Spain: 470, Italy: 490, Netherlands: 460,
+    Thailand: 580, Canada: 280, Australia: 750, Germany: 440,
+    Singapore: 620, Turkey: 500, "South Korea": 640,
+    India: 520, "South Africa": 700, Greece: 490, Portugal: 460,
+  };
+  return prices[country] || 400;
 }
 
 // Generic fallback content generator
 export function getDestinationContent(city: string, iataCode: string, country: string): DestinationContent {
   const isUS = country === "US";
+  const base = getBasePrice(country);
+  const dayPrices = generateDayPrices(city, base);
+  const monthPrices = generateMonthPrices(city, base);
+
+  const cheapestDayEntry = dayPrices.reduce((min, d) => d.price < min.price ? d : min, dayPrices[0]);
+  const cheapestMonthEntry = monthPrices.reduce((min, m) => m.price < min.price ? m : min, monthPrices[0]);
+  const expensiveMonthEntry = monthPrices.reduce((max, m) => m.price > max.price ? m : max, monthPrices[0]);
+
+  const fullDayNames: Record<string, string> = {
+    Sun: "Sunday", Mon: "Monday", Tue: "Tuesday", Wed: "Wednesday",
+    Thu: "Thursday", Fri: "Friday", Sat: "Saturday",
+  };
+  const fullMonthNames: Record<string, string> = {
+    Jan: "January", Feb: "February", Mar: "March", Apr: "April",
+    May: "May", Jun: "June", Jul: "July", Aug: "August",
+    Sep: "September", Oct: "October", Nov: "November", Dec: "December",
+  };
 
   return {
     description: `Looking for cheap flights to ${city}? You're in the right place! Whether you're traveling for business, a weekend getaway, or exploring ${city} for the first time, finding an affordable plane ticket is easier than ever with Chyeap. We compare prices across 30+ airlines to bring you the best deals.`,
@@ -33,19 +100,19 @@ export function getDestinationContent(city: string, iataCode: string, country: s
     ],
 
     travelTips: [
-      `**Be Flexible with Your Travel Dates:** Flights to ${city} can be significantly cheaper if you fly on Tuesdays or Wednesdays. Flying during off-peak seasons also brings lower prices.`,
-      `**Book in Advance:** For the best fares to ${city}, try booking ${isUS ? '1-3 months' : '2-5 months'} before your travel date.`,
-      `**Use Flight Comparison Tools:** Platforms like Chyeap make it easy to compare ticket prices from top airlines in seconds.`,
-      `**Set Fare Alerts:** Don't want to miss out on price drops? Set up a fare alert so you get notified the moment cheap ${city} tickets become available.`,
-      `**Consider Nearby Airports:** Sometimes flying into a nearby airport can save you significantly on airfare.`,
+      `**Be Flexible with Your Travel Dates:** Flights to ${city} can be significantly cheaper if you fly on **${fullDayNames[cheapestDayEntry.day] || "Tuesdays"} or Wednesdays**. Also, flying during the off-peak seasons, such as **${fullMonthNames[cheapestMonthEntry.month]} to March** or **September**, usually brings lower prices.`,
       `**Try searching for cheap round-trip flights to ${city} in off-season months for the best value!**`,
+      `**Use Flight Comparison Tools:** Platforms like **Chyeap** make it easy to compare ticket prices from top airlines in seconds. You can filter by Departure city, Preferred airline, Layover options, Flight duration.`,
+      `**Set Fare Alerts:** Don't want to miss out on price drops? **Set up a fare alert** so you get notified the moment cheap ${city} tickets become available.`,
+      `**Consider Nearby Airports:** Sometimes flying into a nearby airport can save you significantly on airfare.`,
+      `**Book in Advance:** For the best fares to ${city}, try booking ${isUS ? '1-3 months' : '2-5 months'} before your travel date.`,
     ],
 
     popularRoutes: isUS
       ? [
           { from: "Los Angeles", slug: "los-angeles" },
           { from: "San Francisco", slug: "san-francisco" },
-          { from: "Chicago", slug: "chicago" },
+          { from: "Las Vegas", slug: "las-vegas" },
           { from: "Boston", slug: "boston" },
           { from: "Dallas", slug: "dallas" },
           { from: "Seattle", slug: "seattle" },
@@ -59,12 +126,18 @@ export function getDestinationContent(city: string, iataCode: string, country: s
           { from: "Dallas", slug: "dallas" },
         ],
 
-    bestTimeToVisit: `The best time to book flights to ${city} depends on your preferences. ${isUS ? 'Spring (March-May) and Fall (September-November) typically offer pleasant weather and lower fares.' : 'Shoulder seasons often provide the best combination of good weather and affordable flights.'} For the cheapest flights, consider traveling mid-week and during off-peak months. Historically, January and February tend to have the lowest average fares.`,
+    bestTimeToVisit: `The best time to book flights to ${city} depends on your preferences. ${isUS ? 'Spring (March-May) and Fall (September-November) typically offer pleasant weather and lower fares.' : 'Shoulder seasons often provide the best combination of good weather and affordable flights.'} For the cheapest flights, consider traveling mid-week and during off-peak months. Historically, ${fullMonthNames[cheapestMonthEntry.month]} and February tend to have the lowest average fares.`,
+
+    priceByDay: dayPrices,
+    priceByMonth: monthPrices,
+    cheapestDay: fullDayNames[cheapestDayEntry.day] || "Monday",
+    cheapestMonth: fullMonthNames[cheapestMonthEntry.month] || "December",
+    expensiveMonth: fullMonthNames[expensiveMonthEntry.month] || "May",
 
     faq: [
       {
         question: `What is the cheapest month to fly to ${city}?`,
-        answer: `The cheapest months for flights to ${city} are typically January, February, and September. Prices can be 20-40% lower compared to peak travel periods. Use Chyeap to track prices and set fare alerts.`,
+        answer: `The cheapest months for flights to ${city} are typically ${fullMonthNames[cheapestMonthEntry.month]} and February. Prices can be 20-40% lower compared to peak travel periods like ${fullMonthNames[expensiveMonthEntry.month]}. Use Chyeap to track prices and set fare alerts.`,
       },
       {
         question: `How far in advance should I book a flight to ${city}?`,

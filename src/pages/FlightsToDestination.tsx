@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SearchWidget from "@/components/SearchWidget";
 import DealsGrid from "@/components/flights/DealsGrid";
+import PriceCharts from "@/components/flights/PriceCharts";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import FAQSchema from "@/components/seo/FAQSchema";
 import { getDestinationBySlug, popularDestinations, airlinesData } from "@/data/destinationsData";
@@ -188,37 +189,47 @@ export default function FlightsToDestination() {
           )}
         </section>
 
-        {/* Book flights content */}
+        {/* Book flights content + city image */}
         <section className="py-8 border-t border-border">
-          <h2 className="text-2xl font-bold text-foreground mb-3 flex items-center gap-2">
-            <Star className="w-5 h-5 text-primary" />
-            Book Flights to {cityName} at the Best Price
-          </h2>
-          <p className="text-muted-foreground leading-relaxed max-w-3xl">
-            {content.description}
-          </p>
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+            <div className="lg:col-span-3">
+              <h2 className="text-2xl font-bold text-foreground mb-3 flex items-center gap-2">
+                <Star className="w-5 h-5 text-primary" />
+                Book Flights to {cityName} at the Best Price
+              </h2>
+              <p className="text-muted-foreground leading-relaxed mb-6">
+                {content.description}
+              </p>
+
+              <h2 className="text-2xl font-bold text-foreground mb-3">
+                Why Visit {cityName}?
+              </h2>
+              <p className="text-muted-foreground leading-relaxed">
+                {content.whyVisit}
+              </p>
+            </div>
+            <div className="lg:col-span-2">
+              <div className="rounded-2xl overflow-hidden shadow-lg h-full min-h-[250px]">
+                <img
+                  src={`https://source.unsplash.com/600x400/?${encodeURIComponent(cityName + ' city skyline')}`}
+                  alt={`${cityName} cityscape`}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+            </div>
+          </div>
         </section>
 
-        {/* Why Visit */}
-        <section className="py-8 border-t border-border">
-          <h2 className="text-2xl font-bold text-foreground mb-3">
-            Why Visit {cityName}?
-          </h2>
-          <p className="text-muted-foreground leading-relaxed max-w-3xl">
-            {content.whyVisit}
-          </p>
-        </section>
-
-        {/* Best Time to Visit */}
-        <section className="py-8 border-t border-border">
-          <h2 className="text-2xl font-bold text-foreground mb-3 flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-primary" />
-            When's a Good Time to Book a Flight to {cityName}?
-          </h2>
-          <p className="text-muted-foreground leading-relaxed max-w-3xl">
-            {content.bestTimeToVisit}
-          </p>
-        </section>
+        {/* Price Trend Charts */}
+        <PriceCharts
+          cityName={cityName}
+          dayData={content.priceByDay}
+          monthData={content.priceByMonth}
+          cheapestDay={content.cheapestDay}
+          cheapestMonth={content.cheapestMonth}
+          expensiveMonth={content.expensiveMonth}
+        />
 
         {/* How to Find Cheap Flights */}
         <section className="py-8 border-t border-border">
