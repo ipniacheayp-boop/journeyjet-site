@@ -193,7 +193,9 @@ export default function AirlinePage() {
                 Search across hundreds of travel sites to find the best {displayName} ({code}) deals.
               </p>
             </motion.div>
-            <SearchWidget defaultTab="flights" />
+            <div className="bg-background rounded-2xl p-4 shadow-lg text-foreground">
+              <SearchWidget defaultTab="flights" />
+            </div>
           </div>
         </section>
 
