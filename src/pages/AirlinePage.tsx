@@ -1,13 +1,13 @@
 import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
+import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FlightSearchBar from "@/components/flights/FlightSearchBar";
-import TrustPartners from "@/components/TrustPartners";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import FAQSchema from "@/components/seo/FAQSchema";
 import { getAirlineBySlug } from "@/data/destinationsData";
-import { ChevronRight, Plane, Tag, SlidersHorizontal, ShieldCheck, Globe } from "lucide-react";
+import { ChevronRight, Plane, Tag, SlidersHorizontal, ShieldCheck, Globe, Sparkles } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import {
   Accordion,
@@ -31,7 +31,6 @@ function titleCase(s: string) {
   return s.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-// Generate mock price data for charts
 function generateDayData() {
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const base = 280 + Math.floor(Math.random() * 80);
@@ -50,6 +49,15 @@ function generateMonthData() {
     price: base + curve[i] + Math.floor(Math.random() * 20),
   }));
 }
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.1, duration: 0.4, ease: "easeOut" as const },
+  }),
+};
 
 export default function AirlinePage() {
   const { slug } = useParams<{ slug: string }>();
@@ -100,21 +108,33 @@ export default function AirlinePage() {
       icon: Tag,
       title: "Cheap Flight Deals",
       desc: "Fly for less. What you see is what you pay. Zero hidden cost!",
+      gradient: "from-orange-500/10 to-amber-500/10",
+      iconColor: "text-orange-500",
+      borderColor: "border-orange-200 dark:border-orange-800/30",
     },
     {
       icon: SlidersHorizontal,
       title: "Tailored Flight Options",
       desc: "Customize every aspect of your journey to match your preferences.",
+      gradient: "from-blue-500/10 to-cyan-500/10",
+      iconColor: "text-blue-500",
+      borderColor: "border-blue-200 dark:border-blue-800/30",
     },
     {
       icon: ShieldCheck,
       title: "Trusted and Free",
       desc: "Chyeap is free to use with zero hidden charges or surprises.",
+      gradient: "from-emerald-500/10 to-green-500/10",
+      iconColor: "text-emerald-500",
+      borderColor: "border-emerald-200 dark:border-emerald-800/30",
     },
     {
       icon: Globe,
       title: "Connecting the World",
       desc: "Trusted by millions of travelers. Partnered with over 500+ global airlines.",
+      gradient: "from-purple-500/10 to-violet-500/10",
+      iconColor: "text-purple-500",
+      borderColor: "border-purple-200 dark:border-purple-800/30",
     },
   ];
 
@@ -137,20 +157,32 @@ export default function AirlinePage() {
         ]}
       />
 
-      <FAQSchema
-        faqs={faqs.map((f) => ({ question: f.q, answer: f.a }))}
-      />
+      <FAQSchema faqs={faqs.map((f) => ({ question: f.q, answer: f.a }))} />
 
       <Header />
 
       <main className="pt-20">
-        {/* Hero section */}
-        <section className="bg-gradient-to-b from-foreground/95 to-foreground/85 text-background py-10 md:py-14">
-          <div className="container mx-auto px-4 max-w-6xl">
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 flex items-center gap-3">
-              <Plane className="w-7 h-7" />
-              Compare {displayName} Flights
-            </h1>
+        {/* Hero section with gradient */}
+        <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary/90 to-primary/70 text-primary-foreground py-12 md:py-16">
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTTAgMCBoNjAgdjYwIEgwIFoiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCBmaWxsPSJ1cmwoI2cpIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIi8+PC9zdmc+')] opacity-40" />
+          <div className="container mx-auto px-4 max-w-6xl relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <Sparkles className="w-5 h-5 opacity-80" />
+                <span className="text-sm font-medium opacity-80">Compare & Save</span>
+              </div>
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2 flex items-center gap-3">
+                <Plane className="w-7 h-7" />
+                Compare {displayName} Flights
+              </h1>
+              <p className="text-sm opacity-80 mb-6 max-w-xl">
+                Search across hundreds of travel sites to find the best {displayName} ({code}) deals.
+              </p>
+            </motion.div>
             <FlightSearchBar defaultDestination="" />
           </div>
         </section>
@@ -169,40 +201,55 @@ export default function AirlinePage() {
         {/* Feature highlights */}
         <section className="container mx-auto px-4 max-w-6xl py-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {features.map((f) => (
-              <div
+            {features.map((f, i) => (
+              <motion.div
                 key={f.title}
-                className="flex items-start gap-3 p-5 rounded-xl bg-accent/30 border border-border/50 hover:shadow-sm transition-shadow"
+                custom={i}
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                whileHover={{ y: -4, scale: 1.02 }}
+                className={`flex items-start gap-3 p-5 rounded-xl bg-gradient-to-br ${f.gradient} border ${f.borderColor} cursor-default transition-shadow hover:shadow-lg`}
               >
-                <div className="p-2 rounded-lg bg-primary/10 shrink-0">
-                  <f.icon className="w-5 h-5 text-primary" />
+                <div className={`p-2.5 rounded-lg bg-background/80 shrink-0 shadow-sm`}>
+                  <f.icon className={`w-5 h-5 ${f.iconColor}`} />
                 </div>
                 <div>
                   <h3 className="font-semibold text-sm text-foreground">{f.title}</h3>
                   <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{f.desc}</p>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </section>
 
         {/* Price trend charts */}
         <section className="container mx-auto px-4 max-w-6xl py-8">
-          <h2 className="text-xl md:text-2xl font-semibold text-foreground mb-2">
+          <motion.h2
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="text-xl md:text-2xl font-semibold text-foreground mb-2"
+          >
             When is the Best Time to Book a Flight with {displayName}?
-          </h2>
+          </motion.h2>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-6">
             {/* Day of week chart */}
-            <div>
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
               <h3 className="font-semibold text-foreground mb-2">
                 Cheapest Day of the Week to Fly with {displayName}
               </h3>
               <p className="text-sm text-muted-foreground mb-4">
-                If you're looking for a flight deal with {displayName}, it's recommended to look for
-                departures on <strong>{cheapestDay.day}</strong>. Weekends tend to have higher prices.
+                It's recommended to look for departures on <strong>{cheapestDay.day}</strong>. Weekends tend to have higher prices.
               </p>
-              <div className="border border-border rounded-xl p-4 bg-card">
+              <div className="border border-border rounded-xl p-4 bg-card hover:shadow-md transition-shadow">
                 <ResponsiveContainer width="100%" height={250}>
                   <BarChart data={dayData}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -218,24 +265,28 @@ export default function AirlinePage() {
                 <div className="text-center mt-3">
                   <Link
                     to="/"
-                    className="inline-block px-6 py-2.5 bg-foreground text-background text-sm font-medium rounded-lg hover:bg-foreground/90 transition-colors"
+                    className="inline-block px-6 py-2.5 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:bg-primary/90 hover:shadow-md transition-all"
                   >
                     Search Cheap Flights
                   </Link>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Month chart */}
-            <div>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
               <h3 className="font-semibold text-foreground mb-2">
                 Cheapest Month to Fly with {displayName}
               </h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Historically, <strong>{cheapestMonth.month}</strong> has been the cheapest month for flights
-                with {displayName}. The most expensive month tends to be <strong>{expensiveMonth.month}</strong>.
+                Historically, <strong>{cheapestMonth.month}</strong> has been the cheapest month. The most expensive tends to be <strong>{expensiveMonth.month}</strong>.
               </p>
-              <div className="border border-border rounded-xl p-4 bg-card">
+              <div className="border border-border rounded-xl p-4 bg-card hover:shadow-md transition-shadow">
                 <ResponsiveContainer width="100%" height={250}>
                   <LineChart data={monthData}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -258,13 +309,13 @@ export default function AirlinePage() {
                 <div className="text-center mt-3">
                   <Link
                     to="/"
-                    className="inline-block px-6 py-2.5 bg-foreground text-background text-sm font-medium rounded-lg hover:bg-foreground/90 transition-colors"
+                    className="inline-block px-6 py-2.5 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:bg-primary/90 hover:shadow-md transition-all"
                   >
                     Search Cheap Flights
                   </Link>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </section>
 
@@ -287,57 +338,62 @@ export default function AirlinePage() {
           <h2 className="text-xl md:text-2xl font-semibold text-foreground mb-6">
             {displayName} Flights Frequently Asked Questions
           </h2>
-          <div className="border border-border rounded-xl p-6 bg-card max-w-4xl">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="border border-border rounded-xl p-6 bg-card max-w-4xl hover:shadow-sm transition-shadow"
+          >
             <Accordion type="single" collapsible>
               {faqs.map((faq, i) => (
                 <AccordionItem key={i} value={`faq-${i}`}>
-                  <AccordionTrigger className="text-sm text-left">{faq.q}</AccordionTrigger>
+                  <AccordionTrigger className="text-sm text-left hover:text-primary transition-colors">
+                    {faq.q}
+                  </AccordionTrigger>
                   <AccordionContent className="text-sm text-muted-foreground">
                     {faq.a}
                   </AccordionContent>
                 </AccordionItem>
               ))}
             </Accordion>
-          </div>
+          </motion.div>
         </section>
 
         {/* Save money highlights */}
-        <section className="bg-accent/20 py-12 mt-8">
+        <section className="bg-gradient-to-br from-accent/40 via-accent/20 to-background py-12 mt-8">
           <div className="container mx-auto px-4 max-w-6xl">
             <h2 className="text-xl md:text-2xl font-semibold text-foreground mb-6">
               Save money when you book flights with Chyeap
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
-                { emoji: "🛍️", title: "Big names and deals", desc: "Search 100s of travel sites to compare prices." },
-                { emoji: "⚙️", title: "Filter for what you want", desc: "Free Wi-Fi? Stopover? Instantly customize your results." },
-                { emoji: "🔒", title: "Trusted and free", desc: "We're completely free to use – no hidden charges or fees." },
-                { emoji: "🔔", title: "Price Alerts", desc: "Not ready to book? Create a price alert to track prices." },
+                { emoji: "🛍️", title: "Big names and deals", desc: "Search 100s of travel sites to compare prices.", hoverBorder: "hover:border-orange-300" },
+                { emoji: "⚙️", title: "Filter for what you want", desc: "Free Wi-Fi? Stopover? Instantly customize your results.", hoverBorder: "hover:border-blue-300" },
+                { emoji: "🔒", title: "Trusted and free", desc: "We're completely free to use – no hidden charges or fees.", hoverBorder: "hover:border-emerald-300" },
+                { emoji: "🔔", title: "Price Alerts", desc: "Not ready to book? Create a price alert to track prices.", hoverBorder: "hover:border-purple-300" },
               ].map((item) => (
-                <div
+                <motion.div
                   key={item.title}
-                  className="p-5 rounded-xl bg-card border border-border/50 hover:shadow-sm transition-shadow"
+                  whileHover={{ y: -3, scale: 1.01 }}
+                  className={`p-5 rounded-xl bg-card border border-border/50 ${item.hoverBorder} hover:shadow-lg transition-all cursor-default`}
                 >
                   <p className="text-lg mb-1">
                     {item.emoji} <span className="font-semibold text-sm text-foreground">{item.title}</span>
                   </p>
                   <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
-                </div>
+                </motion.div>
               ))}
             </div>
             <div className="text-center mt-8">
               <Link
                 to="/"
-                className="inline-block px-8 py-3 bg-foreground text-background text-sm font-medium rounded-lg hover:bg-foreground/90 transition-colors"
+                className="inline-block px-8 py-3 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:bg-primary/90 hover:shadow-lg hover:-translate-y-0.5 transition-all"
               >
                 Search Cheap Flights
               </Link>
             </div>
           </div>
         </section>
-
-        {/* Trusted Partners */}
-        <TrustPartners />
       </main>
 
       <Footer />
