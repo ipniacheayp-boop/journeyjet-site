@@ -52,6 +52,7 @@ import AirportLandingPage from "./pages/seo/AirportLandingPage";
 import WebCheckIn from "./pages/WebCheckIn";
 import FlightStatus from "./pages/FlightStatus";
 import FlightsToDestination from "./pages/FlightsToDestination";
+import AirlinePage from "./pages/AirlinePage";
 
 const FlybotWrapper = () => {
   const location = useLocation();
@@ -124,6 +125,7 @@ const App = () => (
                 <Route path="/webcheck-in" element={<WebCheckIn />} />
                 <Route path="/flight-status" element={<FlightStatus />} />
                 <Route path="/flights-to-:slug" element={<FlightsToDestination />} />
+                <Route path="/airlines/:slug" element={<AirlinePage />} />
                 <Route path="*" element={<NotFound />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>

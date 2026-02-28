@@ -63,16 +63,56 @@ export const popularDestinations: Destination[] = [
   { city: "Lisbon", slug: "lisbon", iataCode: "LIS", country: "Portugal", type: "international" },
 ];
 
-export const airlines = [
-  "American Airlines", "Delta Air Lines", "United Airlines", "Southwest Airlines",
-  "JetBlue Airways", "Alaska Airlines", "Spirit Airlines", "Frontier Airlines",
-  "Hawaiian Airlines", "Allegiant Air", "Sun Country Airlines", "Breeze Airways",
-  "British Airways", "Lufthansa", "Air France", "Emirates",
-  "Qatar Airways", "Singapore Airlines", "Cathay Pacific", "Japan Airlines",
-  "ANA", "Turkish Airlines", "KLM", "Iberia",
-  "Air Canada", "WestJet", "Ryanair", "EasyJet",
-  "Etihad Airways", "Thai Airways", "Korean Air", "LATAM Airlines",
+export interface AirlineInfo {
+  name: string;
+  slug: string;
+  code: string;
+  country: string;
+  popular?: boolean;
+}
+
+export const airlinesData: AirlineInfo[] = [
+  { name: "Air Canada", slug: "air-canada", code: "AC", country: "Canada" },
+  { name: "Air France", slug: "air-france", code: "AF", country: "France" },
+  { name: "Air India", slug: "air-india", code: "AI", country: "India" },
+  { name: "Alaska Airlines", slug: "alaska-airlines", code: "AS", country: "US", popular: true },
+  { name: "Allegiant Air", slug: "allegiant-air", code: "G4", country: "US" },
+  { name: "American Airlines", slug: "american-airlines", code: "AA", country: "US", popular: true },
+  { name: "ANA", slug: "ana", code: "NH", country: "Japan" },
+  { name: "Breeze Airways", slug: "breeze-airways", code: "MX", country: "US" },
+  { name: "British Airways", slug: "british-airways", code: "BA", country: "UK", popular: true },
+  { name: "Cathay Pacific", slug: "cathay-pacific", code: "CX", country: "Hong Kong" },
+  { name: "Delta Air Lines", slug: "delta-air-lines", code: "DL", country: "US", popular: true },
+  { name: "EasyJet", slug: "easyjet", code: "U2", country: "UK" },
+  { name: "Emirates", slug: "emirates", code: "EK", country: "UAE", popular: true },
+  { name: "Etihad Airways", slug: "etihad-airways", code: "EY", country: "UAE" },
+  { name: "Frontier Airlines", slug: "frontier-airlines", code: "F9", country: "US" },
+  { name: "Hawaiian Airlines", slug: "hawaiian-airlines", code: "HA", country: "US" },
+  { name: "Iberia", slug: "iberia", code: "IB", country: "Spain" },
+  { name: "Japan Airlines", slug: "japan-airlines", code: "JL", country: "Japan" },
+  { name: "JetBlue Airways", slug: "jetblue-airways", code: "B6", country: "US", popular: true },
+  { name: "KLM", slug: "klm", code: "KL", country: "Netherlands" },
+  { name: "Korean Air", slug: "korean-air", code: "KE", country: "South Korea" },
+  { name: "LATAM Airlines", slug: "latam-airlines", code: "LA", country: "Chile" },
+  { name: "Lufthansa", slug: "lufthansa", code: "LH", country: "Germany", popular: true },
+  { name: "Qatar Airways", slug: "qatar-airways", code: "QR", country: "Qatar", popular: true },
+  { name: "Ryanair", slug: "ryanair", code: "FR", country: "Ireland" },
+  { name: "Singapore Airlines", slug: "singapore-airlines", code: "SQ", country: "Singapore", popular: true },
+  { name: "Southwest Airlines", slug: "southwest-airlines", code: "WN", country: "US", popular: true },
+  { name: "Spirit Airlines", slug: "spirit-airlines", code: "NK", country: "US" },
+  { name: "Sun Country Airlines", slug: "sun-country-airlines", code: "SY", country: "US" },
+  { name: "Thai Airways", slug: "thai-airways", code: "TG", country: "Thailand" },
+  { name: "Turkish Airlines", slug: "turkish-airlines", code: "TK", country: "Turkey", popular: true },
+  { name: "United Airlines", slug: "united-airlines", code: "UA", country: "US", popular: true },
+  { name: "WestJet", slug: "westjet", code: "WS", country: "Canada" },
 ];
+
+// Legacy compat
+export const airlines = airlinesData.map(a => a.name);
+
+export function getAirlineBySlug(slug: string): AirlineInfo | undefined {
+  return airlinesData.find(a => a.slug === slug);
+}
 
 export function getDestinationBySlug(slug: string): Destination | undefined {
   return popularDestinations.find(d => d.slug === slug);
