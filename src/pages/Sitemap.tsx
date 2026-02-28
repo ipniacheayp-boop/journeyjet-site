@@ -1,17 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SitemapSection from "@/components/sitemap/SitemapSection";
 import AirlineList from "@/components/sitemap/AirlineList";
-import DestinationList from "@/components/sitemap/DestinationList";
-import { popularDestinations } from "@/data/destinationsData";
+import DestinationGrid from "@/components/sitemap/DestinationGrid";
 import { siteMapData } from "@/data/sitemapData";
 import { Helmet } from "react-helmet";
 import {
   Plane,
-  MapPin,
-  Globe,
   Info,
   Shield,
   Phone,
@@ -30,16 +27,9 @@ import {
 } from "@/components/ui/accordion";
 
 export default function Sitemap() {
-  const [showAll, setShowAll] = useState(false);
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  const domestic = popularDestinations.filter((d) => d.type === "domestic");
-  const international = popularDestinations.filter(
-    (d) => d.type === "international"
-  );
 
   // Existing sitemap sections (Traveler Assistance etc.)
   const otherSections = siteMapData.filter(
@@ -74,21 +64,8 @@ export default function Sitemap() {
           <AirlineList />
         </SitemapSection>
 
-        {/* Domestic Destinations */}
-        <SitemapSection
-          title="Domestic Destinations"
-          icon={<MapPin className="w-5 h-5 text-primary" />}
-        >
-          <DestinationList destinations={domestic} />
-        </SitemapSection>
-
-        {/* International Destinations */}
-        <SitemapSection
-          title="International Destinations"
-          icon={<Globe className="w-5 h-5 text-primary" />}
-        >
-          <DestinationList destinations={international} />
-        </SitemapSection>
+        {/* Unified Destinations */}
+        <DestinationGrid />
 
         {/* Legacy sitemap sections */}
         {otherSections.map((section) => {
