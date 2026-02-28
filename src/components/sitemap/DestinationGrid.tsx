@@ -1,82 +1,93 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { popularDestinations, Destination } from "@/data/destinationsData";
-import { MapPin, ChevronDown, Plane, Globe } from "lucide-react";
+import { popularDestinations } from "@/data/destinationsData";
+import { MapPin, ChevronDown, Globe2 } from "lucide-react";
+
+const INITIAL_COUNT = 28;
 
 const DestinationGrid = () => {
   const [showAll, setShowAll] = useState(false);
 
-  const domestic = popularDestinations.filter((d) => d.type === "domestic");
-  const international = popularDestinations.filter((d) => d.type === "international");
+  // Sort alphabetically
+  const sorted = [...popularDestinations].sort((a, b) =>
+    a.city.localeCompare(b.city)
+  );
 
-  const visibleDomestic = showAll ? domestic : domestic.slice(0, 15);
-  const visibleIntl = showAll ? international : international.slice(0, 12);
-  const hasMore = !showAll && (domestic.length > 15 || international.length > 12);
+  const visible = showAll ? sorted : sorted.slice(0, INITIAL_COUNT);
+  const remaining = sorted.length - INITIAL_COUNT;
 
   return (
-    <div className="space-y-10 mb-12">
-      {/* Domestic */}
-      <section>
-        <div className="flex items-center gap-3 mb-5">
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-sm">
-            <Plane className="w-4.5 h-4.5 text-white" />
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-foreground">Domestic Destinations</h2>
-            <p className="text-xs text-muted-foreground">{domestic.length} US cities</p>
-          </div>
+    <section className="mb-14">
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-8">
+        <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-md">
+          <Globe2 className="w-5 h-5 text-primary-foreground" />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-1">
-          {visibleDomestic.map((dest) => (
-            <DestItem key={dest.slug} dest={dest} />
-          ))}
+        <div>
+          <h2 className="text-2xl font-bold text-foreground tracking-tight">
+            Popular Flight Destinations
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            {popularDestinations.length} destinations worldwide
+          </p>
         </div>
-      </section>
+      </div>
 
-      {/* International */}
-      <section>
-        <div className="flex items-center gap-3 mb-5">
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-sm">
-            <Globe className="w-4.5 h-4.5 text-white" />
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-foreground">International Destinations</h2>
-            <p className="text-xs text-muted-foreground">{international.length} global cities</p>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-1">
-          {visibleIntl.map((dest) => (
-            <DestItem key={dest.slug} dest={dest} />
-          ))}
-        </div>
-      </section>
+      {/* Unified Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-0.5">
+        {visible.map((dest) => (
+          <Link
+            key={dest.slug}
+            to={`/flights-to-${dest.slug}`}
+            className="group relative flex items-center gap-3 py-3 px-2 rounded-lg transition-all duration-300 hover:bg-gradient-to-r hover:from-primary/5 hover:to-transparent"
+          >
+            {/* Animated pin icon */}
+            <div className="relative shrink-0">
+              <MapPin className="w-4 h-4 text-primary/40 group-hover:text-primary group-hover:scale-110 transition-all duration-300" />
+              {/* Pulse ring on hover */}
+              <span className="absolute inset-0 rounded-full bg-primary/10 scale-0 group-hover:scale-[2.5] transition-transform duration-500 opacity-0 group-hover:opacity-100" />
+            </div>
 
-      {/* View More */}
-      {hasMore && (
-        <div className="flex justify-center">
+            {/* City link */}
+            <span className="text-sm text-foreground/80 group-hover:text-primary transition-colors duration-300 relative">
+              Cheap Flights to {dest.city}
+              {/* Underline animation */}
+              <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-primary/60 group-hover:w-full transition-all duration-400 ease-out" />
+            </span>
+
+            {/* Country badge on hover */}
+            <span className="ml-auto text-[10px] font-medium text-muted-foreground/0 group-hover:text-muted-foreground transition-all duration-300 shrink-0">
+              {dest.country === "US" ? "🇺🇸" : dest.type === "international" ? "🌍" : ""} {dest.iataCode}
+            </span>
+          </Link>
+        ))}
+      </div>
+
+      {/* View More Button */}
+      {!showAll && remaining > 0 && (
+        <div className="flex justify-center mt-8">
           <button
             onClick={() => setShowAll(true)}
-            className="group inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-primary/20 text-primary text-sm font-medium hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-sm hover:shadow-md"
+            className="group inline-flex items-center gap-2 px-8 py-3 rounded-full border-2 border-primary/20 text-primary text-sm font-semibold hover:bg-primary hover:text-primary-foreground hover:border-primary hover:shadow-lg hover:shadow-primary/20 transition-all duration-400"
           >
-            View All Destinations
-            <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
+            View All {sorted.length} Destinations
+            <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform duration-300" />
           </button>
         </div>
       )}
-    </div>
+
+      {showAll && (
+        <div className="flex justify-center mt-8">
+          <button
+            onClick={() => setShowAll(false)}
+            className="text-sm text-muted-foreground hover:text-primary transition-colors"
+          >
+            Show Less
+          </button>
+        </div>
+      )}
+    </section>
   );
 };
-
-const DestItem = ({ dest }: { dest: Destination }) => (
-  <Link
-    to={`/flights-to-${dest.slug}`}
-    className="group flex items-center gap-2.5 py-2 text-sm text-muted-foreground transition-colors duration-200 hover:text-primary"
-  >
-    <MapPin className="w-3.5 h-3.5 text-primary/50 group-hover:text-primary shrink-0 transition-colors" />
-    <span className="group-hover:translate-x-0.5 transition-transform duration-200 story-link">
-      Cheap Flights to {dest.city}
-    </span>
-  </Link>
-);
 
 export default DestinationGrid;
