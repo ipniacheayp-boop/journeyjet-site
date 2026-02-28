@@ -38,7 +38,7 @@ const DestinationGrid = () => {
         {visible.map((dest) => (
           <Link
             key={dest.slug}
-            to={`/flights-to-${dest.slug}`}
+            to={`/flights-to/${dest.slug}`}
             className="group relative flex items-center gap-3 py-3 px-2 rounded-lg transition-all duration-300 hover:bg-gradient-to-r hover:from-primary/5 hover:to-transparent"
           >
             {/* Animated pin icon */}

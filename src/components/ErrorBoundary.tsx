@@ -21,13 +21,12 @@ class ErrorBoundaryClass extends Component<Props & { navigate: (path: string) =>
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error("ErrorBoundary caught an error:", error, errorInfo);
-    // Redirect to error page
     this.props.navigate("/error");
   }
 
   render() {
     if (this.state.hasError) {
-      return null; // Return null while redirecting
+      return null;
     }
 
     return this.props.children;
