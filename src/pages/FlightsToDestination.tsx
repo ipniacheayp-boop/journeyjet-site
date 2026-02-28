@@ -58,12 +58,10 @@ export default function FlightsToDestination() {
     destination?.country || ""
   );
 
-  // Get related destinations (same type, excluding current)
   const relatedDestinations = popularDestinations
     .filter((d) => d.slug !== slug)
     .slice(0, 24);
 
-  // Popular airlines for this route
   const popularAirlines = airlinesData.filter((a) => a.popular).slice(0, 6);
 
   return (
@@ -71,14 +69,14 @@ export default function FlightsToDestination() {
       <Helmet>
         <title>{metaTitle}</title>
         <meta name="description" content={metaDescription} />
-        <link rel="canonical" href={`https://chyeap.lovable.app/flights-to-${slug}`} />
+        <link rel="canonical" href={`https://chyeap.lovable.app/flights-to/${slug}`} />
       </Helmet>
 
       <BreadcrumbSchema
         items={[
           { name: "Home", url: "https://chyeap.lovable.app/" },
           { name: "Sitemap", url: "https://chyeap.lovable.app/sitemap" },
-          { name: `Flights to ${cityName}`, url: `https://chyeap.lovable.app/flights-to-${slug}` },
+          { name: `Flights to ${cityName}`, url: `https://chyeap.lovable.app/flights-to/${slug}` },
         ]}
       />
 
@@ -94,7 +92,6 @@ export default function FlightsToDestination() {
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white pt-24 pb-10">
         <div className="container mx-auto px-4 max-w-6xl">
-          {/* Breadcrumb */}
           <nav className="flex items-center gap-1 text-sm text-white/60 mb-6">
             <Link to="/" className="hover:text-white transition-colors">Chyeap</Link>
             <ChevronRight className="w-3.5 h-3.5" />
@@ -118,7 +115,6 @@ export default function FlightsToDestination() {
       </section>
 
       <main className="container mx-auto px-4 pb-20 max-w-6xl">
-
         {/* Feature Highlights */}
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 py-8 border-b border-border">
           {[
@@ -278,7 +274,7 @@ export default function FlightsToDestination() {
             {content.popularRoutes.map((route) => (
               <li key={route.slug}>
                 <Link
-                  to={`/flights-to-${route.slug}`}
+                  to={`/flights-to/${route.slug}`}
                   className="text-sm text-primary hover:underline transition-colors"
                 >
                   Flights from {cityName} to {route.from}
@@ -288,7 +284,7 @@ export default function FlightsToDestination() {
           </ul>
         </section>
 
-        {/* Best Places to Stay */}
+        {/* Best Places to Visit */}
         <section className="py-8 border-t border-border">
           <h2 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
             <MapPin className="w-5 h-5 text-primary" />
@@ -390,7 +386,7 @@ export default function FlightsToDestination() {
             {relatedDestinations.map((dest) => (
               <Link
                 key={dest.slug}
-                to={`/flights-to-${dest.slug}`}
+                to={`/flights-to/${dest.slug}`}
                 className="group flex items-center gap-2 py-2 text-sm text-muted-foreground hover:text-primary transition-colors"
               >
                 <MapPin className="w-3.5 h-3.5 text-primary/50 group-hover:text-primary shrink-0 transition-colors" />

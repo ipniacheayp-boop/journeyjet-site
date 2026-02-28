@@ -11,7 +11,7 @@ const DestinationList = ({ destinations }: DestinationListProps) => (
     {destinations.map((dest) => (
       <li key={dest.slug}>
         <Link
-          to={`/flights-to-${dest.slug}`}
+          to={`/flights-to/${dest.slug}`}
           className="group flex items-center gap-2 text-sm text-muted-foreground py-1 transition-colors hover:text-primary"
         >
           <MapPin className="w-3.5 h-3.5 text-primary/60 group-hover:text-primary shrink-0 transition-colors" />

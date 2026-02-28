@@ -15,7 +15,7 @@ const FlightSearchBar = ({ defaultDestination = "" }: FlightSearchBarProps) => {
   const handleSearch = () => {
     if (!destination.trim()) return;
     const slug = destination.trim().toLowerCase().replace(/\s+/g, "-");
-    navigate(`/flights-to-${slug}`);
+    navigate(`/flights-to/${slug}`);
   };
 
   return (
