@@ -115,5 +115,19 @@ export function getAirlineBySlug(slug: string): AirlineInfo | undefined {
 }
 
 export function getDestinationBySlug(slug: string): Destination | undefined {
-  return popularDestinations.find(d => d.slug === slug);
+  // Direct slug match first
+  const direct = popularDestinations.find(d => d.slug === slug);
+  if (direct) return direct;
+
+  // Fuzzy match: try matching by country name (e.g., "india" -> Delhi)
+  const normalized = slug.replace(/-/g, " ").toLowerCase();
+  const byCountry = popularDestinations.find(
+    d => d.country.toLowerCase() === normalized
+  );
+  if (byCountry) return byCountry;
+
+  // Try partial city name match
+  return popularDestinations.find(
+    d => d.city.toLowerCase().includes(normalized) || normalized.includes(d.city.toLowerCase())
+  );
 }
