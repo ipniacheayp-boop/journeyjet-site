@@ -215,14 +215,14 @@ const DealCardEnhanced = ({ deal, index = 0, onQuickView, onClick }: DealCardEnh
           <div className="mt-auto pt-3 space-y-3">
             <div className="flex items-end justify-between">
               <div>
-                <p className="text-xs text-muted-foreground line-through">${Math.round(deal.originalPrice)}</p>
+                <p className="text-xs text-muted-foreground line-through">${deal.originalPrice}</p>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-black text-primary">${Math.round(deal.price)}</span>
+                  <span className="text-3xl font-black text-primary">${deal.price}</span>
                   <span className="text-sm text-muted-foreground">/person</span>
                 </div>
               </div>
               <p className="text-xs text-green-600 dark:text-green-400 font-semibold">
-                Save ${Math.round(deal.originalPrice - deal.price)}
+                Save ${deal.originalPrice - deal.price}
               </p>
             </div>
 
