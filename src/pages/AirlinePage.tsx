@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import FlightSearchBar from "@/components/flights/FlightSearchBar";
+import SearchWidget from "@/components/SearchWidget";
 import DealsGrid from "@/components/flights/DealsGrid";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import FAQSchema from "@/components/seo/FAQSchema";
@@ -193,7 +193,7 @@ export default function AirlinePage() {
                 Search across hundreds of travel sites to find the best {displayName} ({code}) deals.
               </p>
             </motion.div>
-            <FlightSearchBar defaultDestination="" />
+            <SearchWidget defaultTab="flights" />
           </div>
         </section>
 
