@@ -1,35 +1,35 @@
 import { motion } from "framer-motion";
 
 const airlines = [
-  { 
-    name: "Virgin Atlantic", 
+  {
+    name: "Virgin Atlantic",
     logo: "https://upload.wikimedia.org/wikipedia/commons/f/f4/Virgin_Atlantic_logo.svg",
-    bgColor: "bg-white"
+    bgColor: "bg-white",
   },
   {
     name: "Gulf Air",
-    logo: "https://logos-world.net/wp-content/uploads/2023/01/Gulf-Air-Logo.png",
+    logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUUpDipSVClCKWAM5O2krqGSWqal5XGeztdQ&s",
     bgColor: "bg-white",
   },
   {
     name: "Oman Air",
-    logo: "https://logos-world.net/wp-content/uploads/2023/01/Oman-Air-Logo.png",
+    logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu067JemC1GRfI4cJcSI5rKyzS0iTK8JSUvA&s",
     bgColor: "bg-white",
   },
-  { 
-    name: "American Airlines", 
-    logo: "https://s202.q4cdn.com/986123435/files/doc_downloads/logos/american-airlines/THUMB-aa_aa__ahz_4cp_grd_pos-(1).png",
-    bgColor: "bg-white"
+  {
+    name: "American Airlines",
+    logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSn2SKXRlALaCj6dUxlhGDcsqSwxzKMz_4tRQ&s",
+    bgColor: "bg-white",
   },
-  { 
-    name: "Delta Air Lines", 
+  {
+    name: "Delta Air Lines",
     logo: "https://upload.wikimedia.org/wikipedia/commons/d/d1/Delta_logo.svg",
-    bgColor: "bg-white"
+    bgColor: "bg-white",
   },
-  { 
-    name: "British Airways", 
-    logo: "https://mediacentre.britishairways.com/contents/archives/216/86/images/thumb1280x1683_width/britishairways_216861253015751_thumb.jpg",
-    bgColor: "bg-white"
+  {
+    name: "British Airways",
+    logo: "https://i.pinimg.com/564x/49/57/07/4957072a43937ac100d9e2052fc95d70.jpg",
+    bgColor: "bg-white",
   },
 ];
 
