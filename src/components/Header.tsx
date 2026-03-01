@@ -48,11 +48,24 @@ const Header = () => {
 
   return (
     <>
+      {/* Top Call Bar */}
+      <div className="fixed top-0 left-0 right-0 z-[51] bg-primary text-primary-foreground">
+        <div className="container mx-auto px-4 flex items-center justify-end h-8">
+          <a
+            href="tel:+18009634330"
+            className="flex items-center gap-2 text-sm font-semibold hover:opacity-80 transition-opacity"
+          >
+            <Phone className="w-3.5 h-3.5" />
+            <span>Call 24/7: 1-800-963-4330</span>
+          </a>
+        </div>
+      </div>
+
       <motion.header
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        className={`fixed top-8 left-0 right-0 z-50 transition-all duration-500 ${
           isScrolled
             ? "bg-background/95 backdrop-blur-xl shadow-lg border-b border-border/50"
             : "bg-background/80 backdrop-blur-sm"
