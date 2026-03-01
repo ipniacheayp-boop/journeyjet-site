@@ -48,24 +48,11 @@ const Header = () => {
 
   return (
     <>
-      {/* Top Call Bar */}
-      <div className="fixed top-0 left-0 right-0 z-[51] bg-primary text-primary-foreground">
-        <div className="container mx-auto px-4 flex items-center justify-end h-8">
-          <a
-            href="tel:+18009634330"
-            className="flex items-center gap-2 text-sm font-semibold hover:opacity-80 transition-opacity"
-          >
-            <Phone className="w-3.5 h-3.5" />
-            <span>Call 24/7: 1-800-963-4330</span>
-          </a>
-        </div>
-      </div>
-
       <motion.header
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className={`fixed top-8 left-0 right-0 z-50 transition-all duration-500 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           isScrolled
             ? "bg-background/95 backdrop-blur-xl shadow-lg border-b border-border/50"
             : "bg-background/80 backdrop-blur-sm"
@@ -100,80 +87,6 @@ const Header = () => {
 
             {/* Right Side Actions */}
             <div className="flex items-center gap-2">
-              {/* Desktop Call CTA */}
-              <a
-                href="tel:+18009634330"
-                className="hidden xl:flex items-center gap-3 px-3 py-2 rounded-xl
-             bg-background/95 backdrop-blur-xl
-             border border-primary/30
-             shadow-sm transition-all duration-300
-             hover:border-primary/60
-             hover:bg-muted/60
-             hover:shadow-md"
-              >
-                {/* Avatar */}
-                <div className="relative">
-                  <img
-                    src={femaleAgent}
-                    alt="Agent"
-                    className="w-8 h-8 rounded-full border border-success object-cover"
-                  />
-                  <span
-                    className="absolute bottom-0 right-0 w-2 h-2
-                     bg-success border border-background rounded-full"
-                  />
-                </div>
-
-                {/* Text */}
-                <div className="leading-tight">
-                  <p className="text-sm font-semibold text-foreground hover:text-primary transition-colors">
-                    1-800-963-4330
-                  </p>
-                  <p className="text-[10px] text-muted-foreground">Save time & get best deals</p>
-                </div>
-
-                {/* Call Button */}
-                <div
-                  className="flex items-center justify-center w-8 h-8 rounded-full
-               bg-success shadow-sm
-               transition-all duration-300
-               hover:scale-105 hover:brightness-110"
-                >
-                  <Phone className="w-4 h-4 text-success-foreground" />
-                </div>
-              </a>
-              {/* Tablet Call CTA – Mini with content */}
-              <a
-                href="tel:+18009634330"
-                className="hidden md:flex xl:hidden
-             items-center gap-3 px-4 py-2.5
-             rounded-2xl
-             bg-background/95 backdrop-blur-xl
-             border border-primary/30
-             shadow-lg
-             transition-all duration-300
-             hover:border-primary/60
-             hover:bg-muted/60
-             hover:shadow-xl"
-              >
-                {/* Call Button */}
-                <div
-                  className="flex items-center justify-center
-               w-10 h-10 rounded-xl
-               bg-success
-               transition-all duration-300
-               hover:scale-105"
-                >
-                  <Phone className="w-5 h-5 text-success-foreground" />
-                </div>
-
-                {/* Text */}
-                <div className="leading-tight">
-                  <p className="text-sm font-semibold text-foreground hover:text-primary transition-colors">Call us</p>
-                  <p className="text-[11px] text-muted-foreground">Best deals faster</p>
-                </div>
-              </a>
-
               {/* Dark Mode Toggle */}
               <Button
                 variant="ghost"
@@ -275,6 +188,19 @@ const Header = () => {
                   <Link to="/login">{t("navigation.signIn")}</Link>
                 </Button>
               )}
+
+              {/* Call 24/7 Button - rightmost */}
+              <a
+                href="tel:+18009634330"
+                className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full border border-foreground/20 hover:border-primary hover:bg-muted/50 transition-all duration-300"
+              >
+                <div className="flex items-center justify-center w-7 h-7 rounded-full bg-success">
+                  <Phone className="w-3.5 h-3.5 text-success-foreground" />
+                </div>
+                <span className="text-sm font-semibold text-foreground whitespace-nowrap">
+                  Call 24/7: +1-800-963-4330
+                </span>
+              </a>
 
               {/* Mobile Menu Toggle */}
               <Button
