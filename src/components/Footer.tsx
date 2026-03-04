@@ -130,7 +130,7 @@ const Footer = () => {
 
           {/* Copyright & Legal Links */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
-            <p className="text-xs text-white/50">© {new Date().getFullYear()} ChyeapFlights. All rights reserved.</p>
+            <p className="text-xs text-white/50">© {new Date().getFullYear()} Tripile. All rights reserved.</p>
             <div className="flex items-center gap-3 text-xs text-white/50">
               <Link
                 to="/privacy"
