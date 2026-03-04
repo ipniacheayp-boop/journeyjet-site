@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Phone, User, Menu, X, LogOut, BookOpen, Globe, Moon, Sun } from "lucide-react";
 import chyeapFlightsLogo from "@/assets/chyeap-flights-logo.png";
+import newLogo from "@/assets/new_logo.png";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -61,13 +62,12 @@ const Header = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
-            <Link to="/" className="flex items-center group">
-              <motion.div whileHover={{ scale: 1.05 }} className="h-[3.5rem] md:h-[4.5rem] lg:h-[5.5rem] w-auto">
-                <img
-                  src={chyeapFlightsLogo}
-                  alt="ChyeapFlights"
-                  className="h-[3.5rem] md:h-[4.5rem] lg:h-[5.5rem] w-auto object-contain"
-                />
+            <Link to="/" className="flex items-center group ml-10">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                className="h-[3.5rem] md:h-[4.5rem] lg:h-[5.5rem] w-auto flex items-center"
+              >
+                <img src={newLogo} alt="Tripile Logo" className="h-6 md:h-8 lg:h-10 w-auto object-contain" />
               </motion.div>
             </Link>
 
