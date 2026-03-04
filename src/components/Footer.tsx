@@ -25,8 +25,8 @@ const Footer = () => {
     {
       title: "Book",
       links: [
-        { label: "Chyeap Flights", href: "/deals" },
-        { label: "Chyeap Hotels", href: "/search?type=hotels" },
+        { label: "Cheap Flights", href: "/deals" },
+        { label: "Cheap Hotels", href: "/search?type=hotels" },
         { label: "Car Rentals", href: "/search?type=cars" },
         { label: "Group Travel", href: "/support?topic=group" },
       ],
@@ -44,7 +44,7 @@ const Footer = () => {
       ],
     },
     {
-      title: "About ChyeapFlights",
+      title: "About Tripile",
       links: [
         { label: "About Us", href: "/about" },
         { label: "Contact Us", href: "/support#contact" },
