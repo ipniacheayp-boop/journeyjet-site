@@ -291,7 +291,7 @@ const Index = () => {
             className="text-center mb-12"
           >
             <motion.h2 variants={fadeInUp} className="font-display text-3xl md:text-4xl font-bold mb-4">
-              Why Travelers Choose <span className="text-gradient-vibrant">ChyeapFlights</span>
+              Why Travelers Choose <span className="text-gradient-vibrant">Tripile</span>
             </motion.h2>
             <motion.p variants={fadeInUp} className="text-muted-foreground text-lg max-w-2xl mx-auto">
               Join over 2 million satisfied travelers who trust us for their journeys
