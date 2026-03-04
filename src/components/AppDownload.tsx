@@ -28,7 +28,7 @@ const AppDownload = () => {
 
           {/* Title */}
           <h2 id="app-download-title" className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Get the ChyeapFlights app
+            Get the Tripile app
           </h2>
 
           {/* Subtitle */}
