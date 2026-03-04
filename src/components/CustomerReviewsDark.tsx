@@ -38,7 +38,7 @@ const CustomerReviewsDark = () => {
       timeAgo: "5 days ago",
       rating: 5,
       image: "avatars/4.png",
-      text: "I've been using ChyeapFlights for years now. Never disappointed! Their customer service team goes above and beyond every time.",
+      text: "I've been using Tripile for years now. Never disappointed! Their customer service team goes above and beyond every time.",
     },
     {
       id: 5,
