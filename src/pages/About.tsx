@@ -17,18 +17,15 @@ const About = () => {
           content="about Tripile, US travel company, travel booking platform, flight deals company, trusted travel partner"
         />
         <link rel="canonical" href="https://tripile.com/about" />
-        <meta property="og:title" content="About CheapFlights | Your Trusted US Travel Booking Partner" />
-        <meta
-          property="og:description"
-          content="Learn about CheapFlights - America's trusted travel booking platform."
-        />
+        <meta property="og:title" content="About Tripile | Your Trusted US Travel Booking Partner" />
+        <meta property="og:description" content="Learn about Tripile - America's trusted travel booking platform." />
       </Helmet>
       <Header />
 
       <main className="flex-1 pt-24 pb-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold mb-4 text-gradient-vibrant">About CheapFlights</h1>
+            <h1 className="text-4xl font-bold mb-4 text-gradient-vibrant">About Tripile</h1>
             <p className="text-muted-foreground max-w-3xl mx-auto">
               At Tripile, we're passionate about making travel dreams come true. We believe every journey can be life
               changing — a chance to explore, unwind, and discover the beauty of the world. Whether you're planning a
@@ -49,7 +46,7 @@ const About = () => {
                 Our mission is simple: to make travel affordable, easy, and enjoyable for everyone.
               </p>
               <p className="text-foreground/90">
-                With a deep understanding of what travelers need, CheapFlights offers a smooth, hassle-free booking
+                With a deep understanding of what travelers need, Tripile offers a smooth, hassle-free booking
                 experience designed to save you time and money. From comparing prices to securing last-minute deals, we
                 handle the hard part so you can focus on your next adventure.
               </p>
@@ -63,7 +60,7 @@ const About = () => {
               </a>{" "}
               — we'll do our best to beat it!
             </p>
-            <p>At CheapFlights, great journeys start with great fares. Let's make your next trip unforgettable.</p>
+            <p>At Tripile, great journeys start with great fares. Let's make your next trip unforgettable.</p>
           </div>
         </div>
       </main>
