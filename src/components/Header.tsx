@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Phone, User, Menu, X, LogOut, BookOpen, Globe, Moon, Sun } from "lucide-react";
-import chyeapFlightsLogo from "@/assets/chyeap-flights-logo.png";
-import newLogo from "@/assets/new_logo.png";
+import tripileLogo from "@/assets/tripile-logo.svg";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -67,7 +66,7 @@ const Header = () => {
                 whileHover={{ scale: 1.05 }}
                 className="h-[3.5rem] md:h-[4.5rem] lg:h-[5.5rem] w-auto flex items-center"
               >
-                <img src={newLogo} alt="Tripile Logo" className="h-6 md:h-8 lg:h-10 w-auto object-contain" />
+                <img src={tripileLogo} alt="Tripile Logo" className="h-8 md:h-10 lg:h-12 w-auto object-contain" />
               </motion.div>
             </Link>
 
