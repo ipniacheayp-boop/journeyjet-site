@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Phone, User, Menu, X, LogOut, BookOpen, Globe, Moon, Sun } from "lucide-react";
-import chyeapFlightsLogo from "@/assets/chyeap-flights-logo.png";
-import newLogo from "@/assets/new_logo.png";
+import tripileLogo from "@/assets/tripile-logo.svg";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/hooks/useLanguage";
