@@ -5,7 +5,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const SYSTEM_PROMPT = `You are FlyBot, the official AI travel assistant for ChyeapFlights (tripile.com). You help users find flights, answer travel questions, and provide booking assistance.
+const SYSTEM_PROMPT = `You are FlyBot, the official AI travel assistant for Triplie.com. You help users find flights, answer travel questions, and provide booking assistance.
 
 ## Your Capabilities:
 1. **Flight Search**: You can search for real flights using the search_flights tool. When a user asks about flights, extract the origin, destination, date, and other parameters, then call the tool.

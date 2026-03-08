@@ -108,7 +108,7 @@ const FlyBot = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "bot",
-      content: "Hey there! 👋 I'm FlyBot, your Triplie.com travel assistant. I can search real flights, answer travel questions, and help you book your trip. What can I help you with?",
+      content: "Hey there! 👋 I'm FlyBot, your Triplie.comravel assistant. I can search real flights, answer travel questions, and help you book your trip. What can I help you with?",
     },
   ]);
   const [inputValue, setInputValue] = useState("");
@@ -356,7 +356,7 @@ const FlyBot = () => {
                 {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               </Button>
             </div>
-            <p className="text-[10px] text-muted-foreground text-center mt-1.5">Powered by ChyeapFlights AI</p>
+            <p className="text-[10px] text-muted-foreground text-center mt-1.5">Powered by ChTriplie.comI</p>
           </div>
         </Card>
       )}
