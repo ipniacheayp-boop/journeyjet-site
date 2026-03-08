@@ -66,7 +66,7 @@ const Terms = () => {
                 Please read the Terms of Use carefully before you start to use the Website. By using the Website or by
                 clicking to accept or agree to the Terms of Use when this option is made available to you, you accept
                 and agree to be bound and abide by these Terms of Use and our Privacy Policy, found at{" "}
-                <a href="https://www.tripile.com/privacy-policy" className="text-primary hover:underline">
+                <a href="https://tripile.com/privacy" className="text-primary hover:underline">
                   https://www.tripile.com/privacy-policy
                 </a>
                 , incorporated herein by reference. If you do not want to agree to these Terms of Use or the Privacy
