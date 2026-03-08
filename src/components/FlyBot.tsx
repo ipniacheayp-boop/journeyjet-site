@@ -108,7 +108,7 @@ const FlyBot = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "bot",
-      content: "Hey there! 👋 I'm FlyBot, your ChyeapFlights travel assistant. I can search real flights, answer travel questions, and help you book your trip. What can I help you with?",
+      content: "Hey there! 👋 I'm FlyBot, your Triplie.com travel assistant. I can search real flights, answer travel questions, and help you book your trip. What can I help you with?",
     },
   ]);
   const [inputValue, setInputValue] = useState("");
