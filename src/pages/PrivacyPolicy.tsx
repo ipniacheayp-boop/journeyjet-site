@@ -324,7 +324,7 @@ const PrivacyPolicy = () => {
         <Li>To our subsidiaries and affiliates;</Li>
         <Li>
           To contractors, service providers, and other third parties we use to support our business, including but not
-          limited to, Travel Booking Pvt. Ltd., but only to the extent such parties are necessary for the fulfillment of
+          limited to, Triplile.com Pvt. Ltd., but only to the extent such parties are necessary for the fulfillment of
           your travel arrangements. Generally, it will be necessary for us to process personal data via a third party,
           including, but not limited to, airlines, hotel vendors, car rental companies, and entry visa or passport
           companies, in the course of completing your purchases of travel;
@@ -423,7 +423,7 @@ const PrivacyPolicy = () => {
         If you delete your User Contributions from the Website, copies of your User Contributions may remain viewable in
         cached and archived pages or might have been copied or stored by other Website users. Proper access and use of
         information provided on the Website, including User Contributions, is governed by our Terms and Conditions,
-        Cheap Flights Terms and Conditions. Residents of certain states within the United States may have additional
+        Triplie.com Terms and Conditions. Residents of certain states within the United States may have additional
         personal information rights and choices. Please see the section on your specific state's privacy rights, if
         applicable.
       </P>
