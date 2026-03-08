@@ -68,9 +68,7 @@ function FlightCard({ flight }: { flight: FlightResult }) {
           </div>
           <span className="font-semibold text-sm">{flight.airline}</span>
         </div>
-        <span className="text-lg font-bold text-primary">
-          ${flight.price.toLocaleString()}
-        </span>
+        <span className="text-lg font-bold text-primary">${flight.price.toLocaleString()}</span>
       </div>
       <div className="flex items-center justify-between text-sm">
         <div className="text-center">
@@ -108,7 +106,8 @@ const FlyBot = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "bot",
-      content: "Hey there! 👋 I'm FlyBot, your Triplie.comravel assistant. I can search real flights, answer travel questions, and help you book your trip. What can I help you with?",
+      content:
+        "Hey there! 👋 I'm FlyBot, your Triplie.comravel assistant. I can search real flights, answer travel questions, and help you book your trip. What can I help you with?",
     },
   ]);
   const [inputValue, setInputValue] = useState("");
@@ -162,7 +161,11 @@ const FlyBot = () => {
         return;
       }
       if (response.status === 402) {
-        toast({ title: "Service unavailable", description: "AI service temporarily unavailable.", variant: "destructive" });
+        toast({
+          title: "Service unavailable",
+          description: "AI service temporarily unavailable.",
+          variant: "destructive",
+        });
         return;
       }
       if (!response.ok || !response.body) throw new Error("Failed to get response");
@@ -235,7 +238,12 @@ const FlyBot = () => {
       if (flightResults.length > 0 && !botMessageAdded) {
         setMessages((prev) => [
           ...prev,
-          { role: "bot", content: assistantMessage || "Here are the flights I found:", flights: flightResults, searchParams },
+          {
+            role: "bot",
+            content: assistantMessage || "Here are the flights I found:",
+            flights: flightResults,
+            searchParams,
+          },
         ]);
       }
     } catch (error) {
@@ -278,7 +286,12 @@ const FlyBot = () => {
                   </p>
                 </div>
               </div>
-              <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="hover:bg-white/20 text-primary-foreground">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsOpen(false)}
+                className="hover:bg-white/20 text-primary-foreground"
+              >
                 <X className="h-5 w-5" />
               </Button>
             </div>
@@ -291,9 +304,7 @@ const FlyBot = () => {
                 <div className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                   <div
                     className={`max-w-[85%] rounded-2xl px-4 py-2.5 ${
-                      msg.role === "user"
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted text-foreground"
+                      msg.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"
                     }`}
                   >
                     <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
@@ -352,11 +363,16 @@ const FlyBot = () => {
                 className="min-h-[44px] max-h-[100px] resize-none text-sm"
                 rows={1}
               />
-              <Button onClick={() => handleSendMessage()} size="icon" className="h-11 w-11 shrink-0" disabled={isLoading || !inputValue.trim()}>
+              <Button
+                onClick={() => handleSendMessage()}
+                size="icon"
+                className="h-11 w-11 shrink-0"
+                disabled={isLoading || !inputValue.trim()}
+              >
                 {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               </Button>
             </div>
-            <p className="text-[10px] text-muted-foreground text-center mt-1.5">Powered by ChTriplie.comI</p>
+            <p className="text-[10px] text-muted-foreground text-center mt-1.5">Powered by Triplie.com</p>
           </div>
         </Card>
       )}
