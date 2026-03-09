@@ -517,8 +517,8 @@ const Terms = () => {
               <p className="text-base leading-7 text-foreground/90 mb-4">
                 If you believe that any User Contributions violate your copyright, please send us a notice of copyright
                 infringement to{" "}
-                <a href="mailto:help@chyeap.com" className="text-primary hover:underline">
-                  help@chyeap.com
+                <a href="mailto:Support@Tripile.com" className="text-primary hover:underline">
+                  Support@Tripile.com
                 </a>
                 . It is the policy of the Company to terminate the user accounts of repeat infringers.
               </p>
