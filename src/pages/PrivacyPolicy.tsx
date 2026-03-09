@@ -685,7 +685,7 @@ const PrivacyPolicy = () => {
         2020 ("CPRA"), California residents have certain rights around the collection, use, and sharing of their
         personal information. California Civil Code 1798.83 permits California residents who use our Website to request
         certain information regarding our disclosure of personal information to third parties for their direct marketing
-        purposes. To make such a request, please send an email to help@chyeap.com or info@chyeap.com. To learn more
+        purposes. To make such a request, please send an email to Support@Tripile.com. To learn more
         about your Privacy Rights, please visit our state specific notice at California Privacy Notice - Cheap Flights.
       </P>
       <SubHeading>Nevada Residents; Nevada Privacy Rights Notice</SubHeading>
