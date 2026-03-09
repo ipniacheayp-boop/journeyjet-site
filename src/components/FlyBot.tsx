@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import chyeapFlightsLogo from "@/assets/flybot-logo.png";
+import flyBotLogo from "@/assets/flybot-logo.png";
 
 interface FlightResult {
   id: string;
