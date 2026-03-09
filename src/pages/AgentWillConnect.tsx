@@ -166,18 +166,18 @@ const AgentWillConnect = () => {
                 <h4 className="font-medium mb-3">Need Immediate Assistance?</h4>
                 <div className="space-y-2">
                   <a 
-                    href="tel:+1-800-555-0123" 
+                    href="tel:+18009634330" 
                     className="flex items-center gap-2 text-sm text-primary hover:underline"
                   >
                     <Phone className="w-4 h-4" />
-                    +1 (800) 555-0123
+                    1-800-963-4330
                   </a>
                   <a 
-                    href="mailto:support@cheapflights.travel" 
+                    href="mailto:Support@Tripile.com" 
                     className="flex items-center gap-2 text-sm text-primary hover:underline"
                   >
                     <Mail className="w-4 h-4" />
-                    support@cheapflights.travel
+                    Support@Tripile.com
                   </a>
                 </div>
               </div>

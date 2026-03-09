@@ -51,11 +51,11 @@ const AirportSchema = ({
     "description": `Find cheap flights departing from ${airportName} (${airportCode}) in ${cityName}, ${stateName}. Compare prices from multiple airlines.`,
     "brand": {
       "@type": "Brand",
-      "name": "CheapFlights"
+      "name": "Tripile.com"
     },
     "offers": {
       "@type": "AggregateOffer",
-      "url": `https://cheapflights.com/cheap-flights-from-${cityName.toLowerCase().replace(/\s+/g, '-')}-${stateName.toLowerCase().substring(0, 2)}-${airportCode.toLowerCase()}`,
+      "url": `https://tripile.com/cheap-flights-from-${cityName.toLowerCase().replace(/\s+/g, '-')}-${stateName.toLowerCase().substring(0, 2)}-${airportCode.toLowerCase()}`,
       "priceCurrency": "USD",
       "lowPrice": samplePrice,
       "highPrice": samplePrice * 3,
@@ -64,7 +64,7 @@ const AirportSchema = ({
       "availability": "https://schema.org/InStock",
       "seller": {
         "@type": "Organization",
-        "name": "CheapFlights"
+        "name": "Tripile.com"
       }
     },
     "aggregateRating": {

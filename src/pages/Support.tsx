@@ -72,12 +72,12 @@ const Support = () => {
   return (
     <div className="min-h-screen flex flex-col font-poppins">
       <Helmet>
-        <title>Customer Support | CheapFlights - 24/7 Travel Assistance</title>
+        <title>Customer Support | Tripile.com - 24/7 Travel Assistance</title>
         <meta
           name="description"
-          content="Get 24/7 customer support for your travel bookings. Contact CheapFlights for help with flights, hotels, car rentals, refunds, and more."
+          content="Get 24/7 customer support for your travel bookings. Contact Tripile.com for help with flights, hotels, car rentals, refunds, and more."
         />
-        <link rel="canonical" href="https://cheapflights.com/support" />
+        <link rel="canonical" href="https://tripile.com/support" />
       </Helmet>
       <Header />
 

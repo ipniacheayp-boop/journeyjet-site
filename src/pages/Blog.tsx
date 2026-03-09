@@ -32,10 +32,10 @@ const Blog = () => {
   return (
     <>
       <SEOHead
-        title="Travel Blog | ChyeapFlights - Tips, Guides & Inspiration"
+        title="Travel Blog | Tripile.com - Tips, Guides & Inspiration"
         description="Explore our travel blog for expert tips, destination guides, flight deals, and travel inspiration. Plan your next adventure with insider knowledge."
         keywords="travel blog, travel tips, destination guides, flight deals, travel inspiration, budget travel"
-        canonicalUrl="https://chyeap.lovable.app/blog"
+        canonicalUrl="https://tripile.com/blog"
       />
 
       <Header />

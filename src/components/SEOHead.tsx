@@ -91,7 +91,7 @@ const SEOHead = ({
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImage} />
-      <meta name="twitter:site" content="@cheapflights" />
+      <meta name="twitter:site" content="@tripile" />
 
       {/* Additional SEO Tags */}
       <meta name="geo.region" content="US" />

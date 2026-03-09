@@ -129,10 +129,10 @@ const BlogDetail = () => {
   return (
     <>
       <SEOHead
-        title={`${post.title} | ChyeapFlights Blog`}
+        title={`${post.title} | Tripile.com Blog`}
         description={post.excerpt}
         keywords={post.tags.join(", ")}
-        canonicalUrl={`https://chyeap.lovable.app/blog/${post.slug}`}
+        canonicalUrl={`https://tripile.com/blog/${post.slug}`}
         ogType="article"
       />
 

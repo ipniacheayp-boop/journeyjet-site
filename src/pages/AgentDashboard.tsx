@@ -243,7 +243,7 @@ const AgentDashboard = () => {
               </Button>
             </div>
             <p className="text-xs text-muted-foreground text-center">
-              If this persists, contact support at support@cheapflights.com
+              If this persists, contact support at Support@Tripile.com
             </p>
           </CardContent>
         </Card>

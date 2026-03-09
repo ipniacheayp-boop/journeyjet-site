@@ -66,12 +66,12 @@ const Footer = () => {
   ];
 
   const socialLinks = [
-    { icon: Facebook, href: "https://facebook.com/cheapflights", label: "Follow us on Facebook" },
-    { icon: Twitter, href: "https://twitter.com/cheapflights", label: "Follow us on X (Twitter)" },
-    { icon: Linkedin, href: "https://linkedin.com/company/cheapflights", label: "Connect with us on LinkedIn" },
-    { icon: Instagram, href: "https://instagram.com/cheapflights", label: "Follow us on Instagram" },
-    { icon: Pinterest, href: "https://pinterest.com/cheapflights", label: "Follow us on Pinterest" },
-    { icon: Youtube, href: "https://youtube.com/cheapflights", label: "Subscribe to our YouTube channel" },
+    { icon: Facebook, href: "https://facebook.com/tripile", label: "Follow us on Facebook" },
+    { icon: Twitter, href: "https://twitter.com/tripile", label: "Follow us on X (Twitter)" },
+    { icon: Linkedin, href: "https://linkedin.com/company/tripile", label: "Connect with us on LinkedIn" },
+    { icon: Instagram, href: "https://instagram.com/tripile", label: "Follow us on Instagram" },
+    { icon: Pinterest, href: "https://pinterest.com/tripile", label: "Follow us on Pinterest" },
+    { icon: Youtube, href: "https://youtube.com/tripile", label: "Subscribe to our YouTube channel" },
   ];
 
   return (

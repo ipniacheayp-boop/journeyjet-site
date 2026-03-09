@@ -41,7 +41,7 @@ const FlightOfferSchema = ({
       "availability": "https://schema.org/InStock",
       "seller": {
         "@type": "Organization",
-        "name": "ChyeapFlights"
+        "name": "Tripile.com"
       }
     },
     "aggregateRating": {

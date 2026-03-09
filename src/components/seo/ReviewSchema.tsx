@@ -75,7 +75,7 @@ const ReviewSchema = ({
           "bestRating": "5",
           "worstRating": "1"
         },
-        "reviewBody": "Best flight deals I've found online. Used ChyeapFlights for my family vacation to Orlando and the savings were significant. Highly recommend!",
+        "reviewBody": "Best flight deals I've found online. Used Tripile.com for my family vacation to Orlando and the savings were significant. Highly recommend!",
         "datePublished": "2024-12-10"
       },
       {
