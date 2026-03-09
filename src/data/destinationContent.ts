@@ -83,7 +83,7 @@ export function getDestinationContent(city: string, iataCode: string, country: s
   };
 
   return {
-    description: `Looking for cheap flights to ${city}? You're in the right place! Whether you're traveling for business, a weekend getaway, or exploring ${city} for the first time, finding an affordable plane ticket is easier than ever with Chyeap. We compare prices across 30+ airlines to bring you the best deals.`,
+    description: `Looking for cheap flights to ${city}? You're in the right place! Whether you're traveling for business, a weekend getaway, or exploring ${city} for the first time, finding an affordable plane ticket is easier than ever with Tripile.com. We compare prices across 30+ airlines to bring you the best deals.`,
 
     whyVisit: `${city} is one of the most popular destinations for travelers ${isUS ? 'across the United States' : 'around the world'}. With a unique blend of culture, cuisine, and attractions, ${city} offers unforgettable experiences for every type of traveler. Whether you're planning a family vacation, romantic getaway, or solo adventure, ${city} has something special waiting for you.`,
 
