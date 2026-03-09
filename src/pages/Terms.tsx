@@ -874,7 +874,7 @@ const Terms = () => {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-foreground mb-4">Your Comments and Concerns</h2>
               <p className="text-base leading-7 text-foreground/90 mb-4">
-                This website is operated by Cheap Flights LLC, 1028 Broad St, Newark, NJ 07102.
+                This website is operated by Trivoya Ventures LLC, 5900 Balcones Drive STE 100, Austin, TX 78731 USA.
               </p>
               <p className="text-base leading-7 text-foreground/90 mb-4">
                 All other feedback, comments, requests for technical support and other communications relating to the
