@@ -600,7 +600,7 @@ const PrivacyPolicy = () => {
       <P className="mt-4">
         The Data Subject may exercise these rights at any time by contacting the responsible party. The responsible
         party, according to Article 4 (7) of the GDPR, is Cheap Flights, LLC, [Adress ], Attn: Information Security
-        Coordinator, telephone: +1-216-302-2732, E-mail: help@chyeap.com or info@chyeap.com.
+        Coordinator, telephone: +1-800-963-4330, E-mail: Support@Tripile.com.
       </P>
       <P>
         Under applicable law, we will not process and/or disclose your personal data without a lawful basis to do so, as
