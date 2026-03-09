@@ -425,7 +425,7 @@ const TaxesFees = () => {
               </p>
               <p>
                 <sup>(2)</sup> Refund processing times vary based on the original form of payment and airline policies.
-                Credit card refunds typically take 7-14 business days after airline approval. ChyeapFlights is not
+                Credit card refunds typically take 7-14 business days after airline approval. Tripile.com is not
                 responsible for delays caused by airlines or financial institutions.
               </p>
               <p>
