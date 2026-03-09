@@ -389,7 +389,7 @@ const PrivacyPolicy = () => {
         <Li>
           <strong>Targeted Advertising.</strong> If you do not want us to use information that we collect or that you
           provide to us to deliver advertisements according to our advertisers' target-audience preferences, you can
-          opt-out by sending us an email stating your request at help@chyeap.com. For this opt-out to function, you must
+          opt-out by sending us an email stating your request at Support@Tripile.com. For this opt-out to function, you must
           have your browser or smartphone set to accept browser cookies.
         </Li>
       </ul>
