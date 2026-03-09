@@ -30,7 +30,7 @@ const CruiseDeals = () => {
       rating: 4.7,
       text: "Instant Feedback",
       reviews: "22,801",
-      link: "https://www.sitejabber.com/reviews/cheapflightsfares.com#instant-feedback",
+      link: "https://www.sitejabber.com/reviews/tripile.com#instant-feedback",
     },
     {
       name: "Reviews.io",
