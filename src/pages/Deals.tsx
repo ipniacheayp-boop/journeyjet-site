@@ -13,7 +13,21 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useOptimizedMinPriceDeals, type MinPriceDeal } from "@/hooks/useOptimizedMinPriceDeals";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Badge } from "@/components/ui/badge";
-import { Plane, Filter, TrendingDown, Sparkles, AlertCircle, RefreshCw, TicketPercent, Clipboard } from "lucide-react";
+import {
+  Plane,
+  Filter,
+  TrendingDown,
+  Sparkles,
+  AlertCircle,
+  RefreshCw,
+  TicketPercent,
+  Clipboard,
+  Gift,
+  Tag,
+  Briefcase,
+  GraduationCap,
+  Luggage,
+} from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { mockDeals, type Deal } from "@/data/mockDeals";
@@ -82,6 +96,74 @@ const coupons = [
   },
 ];
 
+const getTimeRemaining = (until?: string) => {
+  if (!until) return null;
+  const target = new Date(until).getTime();
+  const now = Date.now();
+  const diff = target - now;
+  if (diff <= 0) return "Ended";
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+  if (days > 0) return `${days}d ${hours}h left`;
+  return `${hours}h left`;
+};
+
+const specialOffers = [
+  {
+    id: "last-minute",
+    title: "Last Minute Flight Deals",
+    description: "Grab seats on departures in the next 7 days before prices jump.",
+    badge: "🔥 Hot Deal",
+    icon: Plane,
+    ctaLabel: "View Last Minute Deals",
+    couponCode: "TRIP20",
+    limitedUntil: "2026-03-20T23:59:59Z",
+  },
+  {
+    id: "under-99",
+    title: "Deals Under $99",
+    description: "Short hops and weekend getaways that cost less than dinner out.",
+    badge: "⚡ Limited Offer",
+    icon: Tag,
+    ctaLabel: "See Deals Under $99",
+    limitedUntil: "2026-04-01T23:59:59Z",
+  },
+  {
+    id: "seniors",
+    title: "Deals for Seniors",
+    description: "Extra savings and flexible options for travelers 60+.",
+    badge: "💫 Gentle Saver",
+    icon: Gift,
+    ctaLabel: "Explore Senior Deals",
+  },
+  {
+    id: "business-class",
+    title: "Business Class Flights",
+    description: "Premium cabins at prices that feel surprisingly reasonable.",
+    badge: "✈ Premium Pick",
+    icon: Briefcase,
+    ctaLabel: "View Business Fares",
+  },
+  {
+    id: "students",
+    title: "Student Travel Deals",
+    description: "Flexible fares and extra savings for students on the move.",
+    badge: "🎓 Student Special",
+    icon: GraduationCap,
+    ctaLabel: "Unlock Student Offers",
+    couponCode: "STUDY15",
+    limitedUntil: "2026-03-31T23:59:59Z",
+  },
+  {
+    id: "top-airlines",
+    title: "Top Airline Deals",
+    description: "Handpicked offers from the most trusted airlines worldwide.",
+    badge: "⭐ Top Pick",
+    icon: Luggage,
+    ctaLabel: "Browse Airline Deals",
+  },
+];
+
 const Deals = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
@@ -94,6 +176,7 @@ const Deals = () => {
   const [sort, setSort] = useState("price_asc"); // Default to lowest price first
   const [showFilters, setShowFilters] = useState(false);
   const [showCoupons, setShowCoupons] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   // Fetch minimum price deals from API with React Query caching (guaranteed 50+ deals)
   const { deals: minPriceDeals, loading, isFetching, error, fromCache, refetch } = useOptimizedMinPriceDeals(50);
@@ -195,6 +278,61 @@ const Deals = () => {
     }
   };
 
+  const handleOfferClick = (offerId: string) => {
+    setActiveCategory(offerId);
+    setPage(1);
+
+    switch (offerId) {
+      case "last-minute":
+        setSort("date");
+        toast({
+          title: "Last minute deals",
+          description: "Showing deals sorted by the soonest departure dates first.",
+        });
+        break;
+      case "under-99":
+        setPriceRange([0, 99]);
+        setSort("price_asc");
+        toast({
+          title: "Deals under $99",
+          description: "Price filter adjusted to highlight the most affordable fares.",
+        });
+        break;
+      case "business-class":
+        setSort("price_desc");
+        toast({
+          title: "Business class fares",
+          description: "Showing higher-value fares first. Look for Business and Premium cabins.",
+        });
+        break;
+      case "students":
+        setSort("price_asc");
+        toast({
+          title: "Student-friendly fares",
+          description: "Surfacing lower-cost options that work well for student travel.",
+        });
+        break;
+      case "seniors":
+        setSort("popularity");
+        toast({
+          title: "Senior deals",
+          description: "Highlighting popular, comfortable routes for senior travelers.",
+        });
+        break;
+      case "top-airlines":
+        setSort("popularity");
+        toast({
+          title: "Top airline deals",
+          description: "Showing offers from routes other travelers love most.",
+        });
+        break;
+      default:
+        break;
+    }
+
+    document.getElementById("deals-grid")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden bg-background pt-16 ">
       <Helmet>
@@ -281,6 +419,109 @@ const Deals = () => {
             flights worldwide
           </p>
         </motion.div>
+
+        {/* Coupons & Special Offers Categories */}
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.5 }}
+          className="mb-10"
+        >
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-4">
+            <div>
+              <h2 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
+                Coupons &amp; Special Offers
+                <Sparkles className="w-5 h-5 text-primary" />
+              </h2>
+              <p className="mt-1 text-sm md:text-base text-muted-foreground max-w-xl">
+                Explore themed offers for last‑minute trips, students, seniors, and more. Start from the category that
+                fits your next journey.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {specialOffers.map((offer) => {
+              const Icon = offer.icon;
+              const remaining = getTimeRemaining(offer.limitedUntil);
+              return (
+                <div
+                  key={offer.id}
+                  className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/5 via-background to-secondary/10 border border-primary/10 shadow-sm transition-all duration-200 hover:-translate-y-1.5 hover:shadow-2xl"
+                >
+                  {/* Decorative gift icon */}
+                  <div className="pointer-events-none absolute -top-3 right-3 h-10 w-10 rounded-2xl bg-primary/90 text-primary-foreground flex items-center justify-center shadow-md transform translate-y-1 group-hover:translate-y-0 group-hover:rotate-3 group-hover:scale-110 transition-transform duration-200">
+                    <Gift className="w-5 h-5" />
+                  </div>
+                  {/* Confetti / glow */}
+                  <div className="pointer-events-none absolute -top-6 -right-6 h-20 w-20 rounded-full bg-primary/20 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="pointer-events-none absolute bottom-2 left-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <span className="h-2 w-2 rounded-full bg-primary/70 animate-bounce" />
+                    <span className="h-2 w-2 rounded-full bg-secondary/70 animate-bounce delay-150" />
+                    <span className="h-2 w-2 rounded-full bg-amber-400 animate-bounce delay-300" />
+                  </div>
+
+                  <div className="p-4 space-y-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <div className="h-11 w-11 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                          <Icon className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-base md:text-lg">{offer.title}</h3>
+                          <p className="text-xs text-muted-foreground">{offer.description}</p>
+                        </div>
+                      </div>
+                      {offer.badge && (
+                        <Badge className="text-[10px] px-2 py-0.5 bg-primary/10 text-primary border-primary/20">
+                          {offer.badge}
+                        </Badge>
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-between gap-2">
+                      {remaining && (
+                        <span className="text-[11px] font-mono text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full flex items-center gap-1">
+                          <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
+                          {remaining === "Ended" ? "Offer ended" : `Ends in ${remaining}`}
+                        </span>
+                      )}
+                      {offer.couponCode && (
+                        <Badge variant="outline" className="ml-auto text-[10px] px-2 py-0.5 font-mono">
+                          Code: {offer.couponCode}
+                        </Badge>
+                      )}
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Button
+                        className={`flex-1 gap-2 bg-primary/90 hover:bg-primary text-primary-foreground shadow-sm ${
+                          activeCategory === offer.id ? "ring-2 ring-primary/60 ring-offset-2" : ""
+                        }`}
+                        onClick={() => handleOfferClick(offer.id)}
+                      >
+                        <Plane className="w-4 h-4" />
+                        {offer.ctaLabel}
+                      </Button>
+                      {offer.couponCode && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="sm:w-auto w-full gap-1 text-xs"
+                          onClick={() => handleCopyCoupon(offer.couponCode!)}
+                        >
+                          <Clipboard className="w-3 h-3" />
+                          Copy Code
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </motion.section>
 
         {/* Coupons Section */}
         {showCoupons && (
@@ -524,6 +765,7 @@ const Deals = () => {
         ) : (
           <>
             <motion.div
+              id="deals-grid"
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8"
               initial="hidden"
               animate="visible"
