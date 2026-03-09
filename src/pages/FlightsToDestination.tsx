@@ -163,7 +163,7 @@ export default function FlightsToDestination() {
           {[
             { icon: "💰", title: "Cheap Flight Deals", desc: "Fly for less. What you see is what you pay, zero hidden cost!", color: "from-emerald-500/15 to-green-500/5 hover:from-emerald-500/25 hover:to-green-500/10" },
             { icon: "✈️", title: "Tailored Flight Options", desc: "Customize every aspect of your journey to match your preferences.", color: "from-blue-500/15 to-cyan-500/5 hover:from-blue-500/25 hover:to-cyan-500/10" },
-            { icon: "✅", title: "Trusted and Free", desc: "Chyeap is free to use with zero hidden charges or surprises.", color: "from-amber-500/15 to-orange-500/5 hover:from-amber-500/25 hover:to-orange-500/10" },
+            { icon: "✅", title: "Trusted and Free", desc: "Tripile.com is free to use with zero hidden charges or surprises.", color: "from-amber-500/15 to-orange-500/5 hover:from-amber-500/25 hover:to-orange-500/10" },
             { icon: "🌍", title: "Connecting the World", desc: "Trusted by millions of travelers. Partnered with 30+ global airlines.", color: "from-purple-500/15 to-pink-500/5 hover:from-purple-500/25 hover:to-pink-500/10" },
           ].map((item) => (
             <div
