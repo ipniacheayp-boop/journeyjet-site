@@ -207,7 +207,7 @@ These small steps reduce both cost and stress.
 
 ## Frequently Asked Questions (FAQs)
 
-### How does ChyeapFlights help find cheap international flights?
+### How does Tripile.com help find cheap international flights?
 We compare live prices from multiple airlines, offer flexible date views, smart filters, and real-time deals in one place.
 
 ### Are flight prices updated in real time?
