@@ -599,7 +599,7 @@ const PrivacyPolicy = () => {
       </ul>
       <P className="mt-4">
         The Data Subject may exercise these rights at any time by contacting the responsible party. The responsible
-        party, according to Article 4 (7) of the GDPR, is Cheap Flights, LLC, [Adress ], Attn: Information Security
+        party, according to Article 4 (7) of the GDPR, is Trivoya Ventures LLC, 5900 Balcones Drive STE 100, Austin, TX 78731 USA, Attn: Information Security
         Coordinator, telephone: +1-800-963-4330, E-mail: Support@Tripile.com.
       </P>
       <P>
