@@ -28,7 +28,7 @@ export const blogPosts: BlogPost[] = [
 
 International travel doesn’t have to be expensive. While flight prices often seem unpredictable, the truth is that airfare follows patterns. Travelers who understand these patterns—and use the right tools—can consistently find cheap international flights without compromising comfort or convenience.
 
-At **ChyeapFlights**, we focus on helping travelers book smarter, not faster. With live comparisons, flexible-date tools, and reliable price tracking, international travel becomes affordable and stress-free.
+At **Tripile.com**, we focus on helping travelers book smarter, not faster. With live comparisons, flexible-date tools, and reliable price tracking, international travel becomes affordable and stress-free.
 
 ---
 
