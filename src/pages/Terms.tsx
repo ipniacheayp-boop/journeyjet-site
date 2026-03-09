@@ -865,7 +865,7 @@ const Terms = () => {
               <h2 className="text-2xl font-semibold text-foreground mb-4">Entire Agreement</h2>
               <p className="text-base leading-7 text-foreground/90 mb-4">
                 The Terms of Use, our Privacy Policy and our Terms of Sale constitute the sole and entire agreement
-                between you and Cheap Flights LLC with respect to the Website and supersede all prior and
+                between you and Trivoya Ventures LLC with respect to the Website and supersede all prior and
                 contemporaneous understandings, agreements, representations and warranties, both written and oral, with
                 respect to the Website.
               </p>
