@@ -420,7 +420,7 @@ const CruiseDeals = () => {
                     onCheckedChange={(checked) => setAgreeOffers(checked as boolean)}
                   />
                   <label htmlFor="offers" className="text-sm text-gray-600">
-                    I would like to receive email from Cheapflightsfares.com with the latest offers and promotions.{" "}
+                    I would like to receive email from Tripile.com with the latest offers and promotions.{" "}
                     <Link to="/privacy-policy" className="text-blue-600 hover:underline">
                       Privacy Policy
                     </Link>
