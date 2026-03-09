@@ -102,7 +102,7 @@ export function getDestinationContent(city: string, iataCode: string, country: s
     travelTips: [
       `**Be Flexible with Your Travel Dates:** Flights to ${city} can be significantly cheaper if you fly on **${fullDayNames[cheapestDayEntry.day] || "Tuesdays"} or Wednesdays**. Also, flying during the off-peak seasons, such as **${fullMonthNames[cheapestMonthEntry.month]} to March** or **September**, usually brings lower prices.`,
       `**Try searching for cheap round-trip flights to ${city} in off-season months for the best value!**`,
-      `**Use Flight Comparison Tools:** Platforms like **Chyeap** make it easy to compare ticket prices from top airlines in seconds. You can filter by Departure city, Preferred airline, Layover options, Flight duration.`,
+      `**Use Flight Comparison Tools:** Platforms like **Tripile.com** make it easy to compare ticket prices from top airlines in seconds. You can filter by Departure city, Preferred airline, Layover options, Flight duration.`,
       `**Set Fare Alerts:** Don't want to miss out on price drops? **Set up a fare alert** so you get notified the moment cheap ${city} tickets become available.`,
       `**Consider Nearby Airports:** Sometimes flying into a nearby airport can save you significantly on airfare.`,
       `**Book in Advance:** For the best fares to ${city}, try booking ${isUS ? '1-3 months' : '2-5 months'} before your travel date.`,
