@@ -28,9 +28,9 @@ const CarRentalCityPage = () => {
     );
   }
 
-  const pageTitle = `Cheap Car Rentals in ${city.city} | Compare & Save – ChyeapFlights`;
+  const pageTitle = `Cheap Car Rentals in ${city.city} | Compare & Save – Tripile.com`;
   const pageDescription = `Find affordable car rentals in ${city.city}, ${city.state}. Compare top providers and book instantly. Rentals starting at $${city.avgPrice}/day.`;
-  const canonicalUrl = `https://chyeap.lovable.app/${city.slug}`;
+  const canonicalUrl = `https://tripile.com/${city.slug}`;
 
   const faqs = [
     {
