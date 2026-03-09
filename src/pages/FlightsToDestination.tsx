@@ -396,14 +396,14 @@ export default function FlightsToDestination() {
           </p>
         </section>
 
-        {/* Why Book with Chyeap */}
+        {/* Why Book with Tripile.com */}
         <section className="py-8 border-t border-border">
           <div className="bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5 rounded-2xl p-6 md:p-8 border border-primary/10">
             <h2 className="text-2xl font-bold text-foreground mb-3">
-              Why Book with Chyeap?
+              Why Book with Tripile.com?
             </h2>
             <p className="text-muted-foreground text-sm mb-4">
-              Here's why travelers trust <strong className="text-foreground">Chyeap</strong> for booking flights to {cityName}:
+              Here's why travelers trust <strong className="text-foreground">Tripile.com</strong> for booking flights to {cityName}:
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl">
               {[
