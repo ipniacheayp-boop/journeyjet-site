@@ -186,7 +186,7 @@ async function sendConfirmationEmail(
   const SMTP_PORT = Deno.env.get('SMTP_PORT');
   const SMTP_USERNAME = Deno.env.get('SMTP_USERNAME');
   const SMTP_PASSWORD = Deno.env.get('SMTP_PASSWORD');
-  const SMTP_FROM_NAME = Deno.env.get('SMTP_FROM_NAME') || 'CheapFlights';
+  const SMTP_FROM_NAME = Deno.env.get('SMTP_FROM_NAME') || 'Tripile.com';
   const SMTP_FROM_EMAIL = Deno.env.get('SMTP_FROM_EMAIL');
 
   console.log('[EMAIL] Starting email send process');
@@ -241,7 +241,7 @@ Requirements:
 - Clearly show the booking reference prominently
 - Include all booking details
 - Add this important message: "Your booking is confirmed. Our travel agent will contact you shortly to assist with payment."
-- Include support contact info: Phone +1 (800) 555-0123, Email support@cheapflights.travel
+- Include support contact info: Phone 1-800-963-4330, Email Support@Tripile.com
 - Keep it concise but friendly
 - Do NOT use any HTML tags or markdown, just plain text with line breaks
 - Start with "Dear [Name]," greeting`;
@@ -279,7 +279,7 @@ Requirements:
     console.log('[EMAIL] Using fallback template');
     emailBody = `Dear ${userDetails.firstName || 'Valued Customer'},
 
-Thank you for booking with CheapFlights!
+Thank you for booking with Tripile.com!
 
 Your booking has been confirmed.
 
@@ -296,13 +296,13 @@ IMPORTANT - PAYMENT PENDING:
 Your booking is confirmed. Our travel agent will contact you shortly to assist with payment. No action is needed from your side right now.
 
 If you have any questions, please contact us:
-Phone: +1 (800) 555-0123
-Email: support@cheapflights.travel
+Phone: 1-800-963-4330
+Email: Support@Tripile.com
 
-Thank you for choosing CheapFlights!
+Thank you for choosing Tripile.com!
 
 Best regards,
-The CheapFlights Team`;
+The Tripile.com Team`;
   }
 
   // Send email using SMTP if configured

@@ -51,7 +51,7 @@ const AirportLandingPage = () => {
   // Dynamic SEO content
   const pageTitle = `Cheap Flights from ${airport.cityName} (${airport.airportCode}) | ${airport.airportName} Deals`;
   const pageDescription = airport.description;
-  const canonicalUrl = `https://cheapflights.com/cheap-flights-from-${airport.slug}`;
+  const canonicalUrl = `https://tripile.com/cheap-flights-from-${airport.slug}`;
 
   // Breadcrumbs
   const breadcrumbs = [

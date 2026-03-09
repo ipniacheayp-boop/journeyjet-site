@@ -28,7 +28,7 @@ export const blogPosts: BlogPost[] = [
 
 International travel doesn’t have to be expensive. While flight prices often seem unpredictable, the truth is that airfare follows patterns. Travelers who understand these patterns—and use the right tools—can consistently find cheap international flights without compromising comfort or convenience.
 
-At **ChyeapFlights**, we focus on helping travelers book smarter, not faster. With live comparisons, flexible-date tools, and reliable price tracking, international travel becomes affordable and stress-free.
+At **Tripile.com**, we focus on helping travelers book smarter, not faster. With live comparisons, flexible-date tools, and reliable price tracking, international travel becomes affordable and stress-free.
 
 ---
 
@@ -55,7 +55,7 @@ Overpaying usually happens due to three common mistakes:
 3. **Ignoring airline pricing behavior**  
    Airlines use dynamic pricing models that respond to demand, season, and remaining seats.
 
-By understanding these factors, finding cheap international flights becomes far easier. Platforms like ChyeapFlights simplify this process by showing live prices, airline options, and flexible routes in one place.
+By understanding these factors, finding cheap international flights becomes far easier. Platforms like Tripile.com simplify this process by showing live prices, airline options, and flexible routes in one place.
 
 ---
 
@@ -207,7 +207,7 @@ These small steps reduce both cost and stress.
 
 ## Frequently Asked Questions (FAQs)
 
-### How does ChyeapFlights help find cheap international flights?
+### How does Tripile.com help find cheap international flights?
 We compare live prices from multiple airlines, offer flexible date views, smart filters, and real-time deals in one place.
 
 ### Are flight prices updated in real time?
@@ -230,7 +230,7 @@ Smart travel isn’t about chasing the cheapest ticket blindly—it’s about ma
 
 ### Our Mission
 
-At **ChyeapFlights**, our mission is simple: make international travel affordable, transparent, and stress-free. With smart tools, live updates, and trusted support, we help travelers focus on what truly matters—the journey itself.
+At **Tripile.com**, our mission is simple: make international travel affordable, transparent, and stress-free. With smart tools, live updates, and trusted support, we help travelers focus on what truly matters—the journey itself.
 
 Your next international adventure starts with a smarter choice.
     `,
@@ -697,9 +697,9 @@ Travelers in the National Capital Region (NCR) sometimes find cheaper flights fr
 
 ---
 
-## How Flight Comparison Tools Like Cheapflights Help
+## How Flight Comparison Tools Like Tripile.com Help
 
-Platforms like Cheapflights make finding deals much easier. You can:
+Platforms like Tripile.com make finding deals much easier. You can:
 
 - Compare hundreds of airline prices at once
 - Search using flexible date calendars
@@ -773,7 +773,7 @@ Domestic: 3–6 weeks ahead
 **Q2. Are midweek flights cheaper?**  
 Yes, Tuesday and Wednesday flights are generally 20–40% cheaper.
 
-**Q3. Is Cheapflights reliable?**  
+**Q3. Is Tripile.com reliable?**  
 Yes. It compares multiple airlines and platforms and highlights hidden fees.
 
 **Q4. How can I find cheap last-minute flights?**  

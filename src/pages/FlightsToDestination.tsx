@@ -83,8 +83,8 @@ export default function FlightsToDestination() {
     : null;
 
   const metaTitle = cheapestPrice
-    ? `Cheap Flights to ${cityName} from $${cheapestPrice.toFixed(0)} | Chyeap`
-    : `Cheap Flights to ${cityName} | Chyeap`;
+    ? `Cheap Flights to ${cityName} from $${cheapestPrice.toFixed(0)} | Tripile.com`
+    : `Cheap Flights to ${cityName} | Tripile.com`;
 
   const metaDescription = cheapestPrice
     ? `Find cheap flights to ${cityName} starting from $${cheapestPrice.toFixed(0)}. Compare prices across top airlines and book today.`
@@ -108,14 +108,14 @@ export default function FlightsToDestination() {
       <Helmet>
         <title>{metaTitle}</title>
         <meta name="description" content={metaDescription} />
-        <link rel="canonical" href={`https://chyeap.lovable.app/flights-to/${slug}`} />
+        <link rel="canonical" href={`https://tripile.com/flights-to/${slug}`} />
       </Helmet>
 
       <BreadcrumbSchema
         items={[
-          { name: "Home", url: "https://chyeap.lovable.app/" },
-          { name: "Sitemap", url: "https://chyeap.lovable.app/sitemap" },
-          { name: `Flights to ${cityName}`, url: `https://chyeap.lovable.app/flights-to/${slug}` },
+          { name: "Home", url: "https://tripile.com/" },
+          { name: "Sitemap", url: "https://tripile.com/sitemap" },
+          { name: `Flights to ${cityName}`, url: `https://tripile.com/flights-to/${slug}` },
         ]}
       />
 
@@ -136,7 +136,7 @@ export default function FlightsToDestination() {
         
         <div className="container mx-auto px-4 max-w-6xl relative z-10">
           <nav className="flex items-center gap-1 text-sm text-white/60 mb-6">
-            <Link to="/" className="hover:text-white transition-colors">Chyeap</Link>
+            <Link to="/" className="hover:text-white transition-colors">Tripile</Link>
             <ChevronRight className="w-3.5 h-3.5" />
             <Link to="/sitemap" className="hover:text-white transition-colors">Flights</Link>
             <ChevronRight className="w-3.5 h-3.5" />
@@ -163,7 +163,7 @@ export default function FlightsToDestination() {
           {[
             { icon: "💰", title: "Cheap Flight Deals", desc: "Fly for less. What you see is what you pay, zero hidden cost!", color: "from-emerald-500/15 to-green-500/5 hover:from-emerald-500/25 hover:to-green-500/10" },
             { icon: "✈️", title: "Tailored Flight Options", desc: "Customize every aspect of your journey to match your preferences.", color: "from-blue-500/15 to-cyan-500/5 hover:from-blue-500/25 hover:to-cyan-500/10" },
-            { icon: "✅", title: "Trusted and Free", desc: "Chyeap is free to use with zero hidden charges or surprises.", color: "from-amber-500/15 to-orange-500/5 hover:from-amber-500/25 hover:to-orange-500/10" },
+            { icon: "✅", title: "Trusted and Free", desc: "Tripile.com is free to use with zero hidden charges or surprises.", color: "from-amber-500/15 to-orange-500/5 hover:from-amber-500/25 hover:to-orange-500/10" },
             { icon: "🌍", title: "Connecting the World", desc: "Trusted by millions of travelers. Partnered with 30+ global airlines.", color: "from-purple-500/15 to-pink-500/5 hover:from-purple-500/25 hover:to-pink-500/10" },
           ].map((item) => (
             <div
@@ -396,14 +396,14 @@ export default function FlightsToDestination() {
           </p>
         </section>
 
-        {/* Why Book with Chyeap */}
+        {/* Why Book with Tripile.com */}
         <section className="py-8 border-t border-border">
           <div className="bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5 rounded-2xl p-6 md:p-8 border border-primary/10">
             <h2 className="text-2xl font-bold text-foreground mb-3">
-              Why Book with Chyeap?
+              Why Book with Tripile.com?
             </h2>
             <p className="text-muted-foreground text-sm mb-4">
-              Here's why travelers trust <strong className="text-foreground">Chyeap</strong> for booking flights to {cityName}:
+              Here's why travelers trust <strong className="text-foreground">Tripile.com</strong> for booking flights to {cityName}:
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl">
               {[
@@ -423,7 +423,7 @@ export default function FlightsToDestination() {
               If you're ready to explore {cityName} without breaking the bank, start your journey now.
             </p>
             <p className="text-sm font-semibold text-primary mt-2">
-              Compare, book, and save on flights to {cityName} today — only at Chyeap!
+              Compare, book, and save on flights to {cityName} today — only at Tripile.com!
             </p>
           </div>
         </section>

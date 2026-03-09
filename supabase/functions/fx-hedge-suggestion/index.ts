@@ -72,7 +72,7 @@ serve(async (req) => {
         "Some credit cards offer no foreign transaction fees",
         "Travel-focused credit cards may offer better exchange rates",
       ],
-      disclaimer: "This is informational only and not financial advice. CheapFlights does not offer currency hedging products.",
+      disclaimer: "This is informational only and not financial advice. Tripile.com does not offer currency hedging products.",
     };
 
     console.log(`[fx-hedge-suggestion] Suggestion shown for ${daysUntilTravel} days ahead, currency: ${currency}`);

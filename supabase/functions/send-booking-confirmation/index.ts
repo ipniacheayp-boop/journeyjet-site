@@ -193,13 +193,13 @@ serve(async (req) => {
       <!-- Support Info -->
       <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px;">
         <p style="color: #666; margin: 5px 0;"><strong>Need Help?</strong></p>
-        <p style="color: #666; margin: 5px 0;">Contact our support team at support@cheapflights.com</p>
+        <p style="color: #666; margin: 5px 0;">Contact our support team at Support@Tripile.com</p>
       </div>
     </div>
 
     <!-- Footer -->
     <div style="background: #333; padding: 30px; text-align: center; color: white;">
-      <p style="margin: 5px 0; font-size: 14px;"><strong>Thank you for choosing CheapFlights!</strong></p>
+      <p style="margin: 5px 0; font-size: 14px;"><strong>Thank you for choosing Tripile.com!</strong></p>
       <p style="margin: 5px 0; font-size: 12px; color: #999;">Safe travels! ✈️</p>
     </div>
   </div>
@@ -210,9 +210,9 @@ serve(async (req) => {
     // Send email
     logStep("Sending confirmation email...");
     const emailResponse = await resend.emails.send({
-      from: "CheapFlights <onboarding@resend.dev>",
+      from: "Tripile.com <onboarding@resend.dev>",
       to: [booking.contact_email],
-      subject: `✅ Booking Confirmed - ${bookingRef} | CheapFlights`,
+      subject: `✅ Booking Confirmed - ${bookingRef} | Tripile.com`,
       html: htmlContent,
     });
 

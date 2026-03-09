@@ -158,21 +158,21 @@ const Deals = () => {
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden bg-background pt-16 ">
       <Helmet>
-        <title>Exclusive Flight Deals & Travel Offers | CheapFlights USA</title>
+        <title>Exclusive Flight Deals & Travel Offers | Tripile.com USA</title>
         <meta
           name="description"
-          content="Discover exclusive flight deals and travel offers across the USA. Save up to 50% on roundtrip flights with CheapFlights' best price guarantee."
+          content="Discover exclusive flight deals and travel offers across the USA. Save up to 50% on roundtrip flights with Tripile.com's best price guarantee."
         />
         <meta
           name="keywords"
           content="flight deals USA, cheap airline tickets, travel offers, discounted flights, last minute deals, best flight prices"
         />
-        <meta property="og:title" content="Exclusive Flight Deals & Travel Offers | CheapFlights" />
+        <meta property="og:title" content="Exclusive Flight Deals & Travel Offers | Tripile.com" />
         <meta
           property="og:description"
           content="Discover exclusive travel deals on flights across the USA. Save up to 50% on roundtrip flights."
         />
-        <link rel="canonical" href="https://cheapflights.com/deals" />
+        <link rel="canonical" href="https://tripile.com/deals" />
       </Helmet>
 
       {/* Animated Background Shapes */}

@@ -355,7 +355,7 @@ const FlightStatus = () => {
   return (
     <>
       <SEOHead
-        title="Flight Status – Real-Time Tracking | Chyeap Flights"
+        title="Flight Status – Real-Time Tracking | Tripile.com"
         description="Check real-time flight status by flight number or route. Track departures, arrivals, delays, and cancellations."
       />
       <Header />

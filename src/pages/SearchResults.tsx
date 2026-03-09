@@ -148,10 +148,10 @@ const SearchResults = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>Search Results | CheapFlights - Find the Best Deals</title>
+        <title>Search Results | Tripile.com - Find the Best Deals</title>
         <meta
           name="description"
-          content="Compare and book the best travel deals on CheapFlights. Find cheap flights, hotels, and car rentals across the USA."
+          content="Compare and book the best travel deals on Tripile.com. Find cheap flights, hotels, and car rentals across the USA."
         />
         <meta name="robots" content="noindex, follow" />
       </Helmet>

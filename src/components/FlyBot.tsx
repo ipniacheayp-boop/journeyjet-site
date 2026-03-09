@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import chyeapFlightsLogo from "@/assets/flybot-logo.png";
+import flyBotLogo from "@/assets/flybot-logo.png";
 
 interface FlightResult {
   id: string;
@@ -268,7 +268,7 @@ const FlyBot = () => {
           onClick={() => setIsOpen(true)}
           className="h-[70px] w-[70px] rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 bg-transparent border-0 p-0 cursor-pointer"
         >
-          <img src={chyeapFlightsLogo} alt="FlyBot" className="h-full w-full object-contain" />
+          <img src={flyBotLogo} alt="FlyBot" className="h-full w-full object-contain" />
         </button>
       ) : (
         <Card className="w-[400px] h-[600px] shadow-2xl animate-scale-in flex flex-col md:w-[400px] sm:w-[calc(100vw-48px)]">

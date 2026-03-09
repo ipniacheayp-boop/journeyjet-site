@@ -140,16 +140,16 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>CheapFlights – Book Cheap Flights, Hotels & Car Rentals in the USA</title>
+        <title>Tripile.com – Book Cheap Flights, Hotels & Car Rentals in the USA</title>
         <meta
           name="description"
-          content="CheapFlights helps you find the best flight deals, hotel discounts, and car rentals across the USA. Compare thousands of fares instantly and save big on your next trip."
+          content="Tripile.com helps you find the best flight deals, hotel discounts, and car rentals across the USA. Compare thousands of fares instantly and save big on your next trip."
         />
         <meta
           name="keywords"
           content="cheap flights USA, flight deals, book flights online, US travel deals, last-minute flights, discounted airline tickets, cheap hotels, car rentals USA"
         />
-        <link rel="canonical" href="https://cheapflights.com/" />
+        <link rel="canonical" href="https://tripile.com/" />
       </Helmet>
       <Header />
 

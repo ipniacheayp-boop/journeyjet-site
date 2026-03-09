@@ -88,7 +88,7 @@ export default function AirlinePage() {
 
   const faqs = [
     {
-      q: `How can I book cheap ${displayName} flights with Chyeap?`,
+      q: `How can I book cheap ${displayName} flights with Tripile.com?`,
       a: `Use our search tool above to compare ${displayName} fares with other airlines. We show the lowest prices first and highlight the best deals available.`,
     },
     {
@@ -133,7 +133,7 @@ export default function AirlinePage() {
     {
       icon: ShieldCheck,
       title: "Trusted and Free",
-      desc: "Chyeap is free to use with zero hidden charges or surprises.",
+      desc: "Tripile.com is free to use with zero hidden charges or surprises.",
       gradient: "from-emerald-500/10 to-green-500/10",
       iconColor: "text-emerald-500",
       borderColor: "border-emerald-200 dark:border-emerald-800/30",
@@ -151,19 +151,19 @@ export default function AirlinePage() {
   return (
     <>
       <Helmet>
-        <title>Compare {displayName} Flights – Cheap Fares | Chyeap</title>
+        <title>Compare {displayName} Flights – Cheap Fares | Tripile.com</title>
         <meta
           name="description"
-          content={`Compare ${displayName} (${code}) flight prices and book cheap tickets. Find the best deals on ${displayName} flights with Chyeap.`}
+          content={`Compare ${displayName} (${code}) flight prices and book cheap tickets. Find the best deals on ${displayName} flights with Tripile.com.`}
         />
-        <link rel="canonical" href={`https://chyeap.lovable.app/airlines/${slug}`} />
+        <link rel="canonical" href={`https://tripile.com/airlines/${slug}`} />
       </Helmet>
 
       <BreadcrumbSchema
         items={[
-          { name: "Home", url: "https://chyeap.lovable.app/" },
-          { name: "Airlines", url: "https://chyeap.lovable.app/sitemap" },
-          { name: `Flights With ${displayName}`, url: `https://chyeap.lovable.app/airlines/${slug}` },
+          { name: "Home", url: "https://tripile.com/" },
+          { name: "Airlines", url: "https://tripile.com/sitemap" },
+          { name: `Flights With ${displayName}`, url: `https://tripile.com/airlines/${slug}` },
         ]}
       />
 
@@ -202,7 +202,7 @@ export default function AirlinePage() {
         {/* Breadcrumb */}
         <div className="container mx-auto px-4 max-w-6xl">
           <nav className="flex items-center gap-1 text-sm text-muted-foreground py-4">
-            <Link to="/" className="hover:text-primary transition-colors">Chyeap</Link>
+            <Link to="/" className="hover:text-primary transition-colors">Tripile</Link>
             <ChevronRight className="w-3.5 h-3.5" />
             <Link to="/sitemap" className="hover:text-primary transition-colors">Airlines</Link>
             <ChevronRight className="w-3.5 h-3.5" />
@@ -378,10 +378,10 @@ export default function AirlinePage() {
         {/* Why book section */}
         <section className="container mx-auto px-4 max-w-6xl py-8">
           <h2 className="text-xl md:text-2xl font-semibold text-foreground mb-3">
-            Why Book {displayName} ({code}) Flights on Chyeap
+            Why Book {displayName} ({code}) Flights on Tripile.com
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed max-w-4xl">
-            Chyeap allows travelers to compare {displayName} flight fares with other airlines in one
+            Tripile.com allows travelers to compare {displayName} flight fares with other airlines in one
             place. Our platform helps users explore multiple travel dates, routes, and fare options to
             make informed booking decisions. With real-time pricing and no hidden fees, you can be
             confident you're getting the best deal on {displayName} flights.
@@ -419,7 +419,7 @@ export default function AirlinePage() {
         <section className="bg-gradient-to-br from-accent/40 via-accent/20 to-background py-12 mt-8">
           <div className="container mx-auto px-4 max-w-6xl">
             <h2 className="text-xl md:text-2xl font-semibold text-foreground mb-6">
-              Save money when you book flights with Chyeap
+              Save money when you book flights with Tripile.com
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[

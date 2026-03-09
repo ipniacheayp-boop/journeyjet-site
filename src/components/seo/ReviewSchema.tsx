@@ -15,7 +15,7 @@ interface ReviewSchemaProps {
 }
 
 const ReviewSchema = ({
-  organizationName = "ChyeapFlights",
+  organizationName = "Tripile.com",
   ratingValue = 4.6,
   reviewCount = 2847,
   reviews = []
@@ -24,8 +24,8 @@ const ReviewSchema = ({
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": organizationName,
-    "url": "https://chyeap.lovable.app",
-    "logo": "https://chyeap.lovable.app/logo.png",
+    "url": "https://tripile.com",
+    "logo": "https://tripile.com/logo.png",
     "aggregateRating": {
       "@type": "AggregateRating",
       "ratingValue": ratingValue.toString(),
@@ -75,7 +75,7 @@ const ReviewSchema = ({
           "bestRating": "5",
           "worstRating": "1"
         },
-        "reviewBody": "Best flight deals I've found online. Used ChyeapFlights for my family vacation to Orlando and the savings were significant. Highly recommend!",
+        "reviewBody": "Best flight deals I've found online. Used Tripile.com for my family vacation to Orlando and the savings were significant. Highly recommend!",
         "datePublished": "2024-12-10"
       },
       {

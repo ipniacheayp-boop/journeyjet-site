@@ -178,7 +178,7 @@ serve(async (req) => {
     <!-- Header -->
     <div class="header">
       <h1>✈️ Your Booking is Confirmed!</h1>
-      <p>CheapFlights</p>
+      <p>Tripile.com</p>
     </div>
 
     <!-- Content -->
@@ -286,8 +286,8 @@ serve(async (req) => {
 
     <!-- Footer -->
     <div class="footer">
-      <p><strong>Thank you for booking with CheapFlights. Safe travels!</strong></p>
-      <p>© CheapFlights | San Francisco, CA</p>
+      <p><strong>Thank you for booking with Tripile.com. Safe travels!</strong></p>
+      <p>© Tripile.com | Austin, TX</p>
     </div>
   </div>
 </body>
@@ -297,9 +297,9 @@ serve(async (req) => {
     // Send email
     console.log("[agent-send-confirmation] Sending booking confirmation email...");
     const emailResponse = await resend.emails.send({
-      from: "CheapFlights <onboarding@resend.dev>",
+      from: "Tripile.com <onboarding@resend.dev>",
       to: [requestData.clientEmail],
-      subject: `✈️ CheapFlights Booking Confirmation - ${requestData.bookingRef}`,
+      subject: `✈️ Tripile.com Booking Confirmation - ${requestData.bookingRef}`,
       html: htmlContent,
     });
 

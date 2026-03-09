@@ -55,8 +55,8 @@ const About = () => {
             <p>
               We're committed to providing exceptional service from the moment you book until you return home. And if
               you find a better deal elsewhere, simply email us at{" "}
-              <a href="mailto:support@cheapflights.com" className="text-primary font-medium hover:underline">
-                support@cheapflights.com
+              <a href="mailto:Support@Tripile.com" className="text-primary font-medium hover:underline">
+                Support@Tripile.com
               </a>{" "}
               — we'll do our best to beat it!
             </p>

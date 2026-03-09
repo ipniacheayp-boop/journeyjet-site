@@ -234,7 +234,7 @@ const CruiseDeals = () => {
         <SEOHead
           title="Best Cruise Deals | Up to 25% Off Luxury Cruises"
           description="Book the best cruise deals with up to 25% off on Royal Caribbean, Carnival, Norwegian, Princess, and more. Exclusive cruise packages to Alaska, Caribbean, and Mediterranean destinations."
-          canonicalUrl="https://cheapflights.com/cruise-deals"
+          canonicalUrl="https://tripile.com/cruise-deals"
           keywords="cruise deals, cheap cruises, Royal Caribbean, Carnival, Norwegian, Princess, Alaska cruise, Caribbean cruise, Mediterranean cruise"
         />
 
@@ -479,7 +479,7 @@ const CruiseDeals = () => {
           
           <div className="mt-12 pt-8 border-t border-gray-800 text-center">
             <p className="text-sm text-gray-500">
-              © {new Date().getFullYear()} ChyeapFlights. All rights reserved.
+              © {new Date().getFullYear()} Tripile.com. All rights reserved.
             </p>
           </div>
         </div>

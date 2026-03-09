@@ -83,7 +83,7 @@ export function getDestinationContent(city: string, iataCode: string, country: s
   };
 
   return {
-    description: `Looking for cheap flights to ${city}? You're in the right place! Whether you're traveling for business, a weekend getaway, or exploring ${city} for the first time, finding an affordable plane ticket is easier than ever with Chyeap. We compare prices across 30+ airlines to bring you the best deals.`,
+    description: `Looking for cheap flights to ${city}? You're in the right place! Whether you're traveling for business, a weekend getaway, or exploring ${city} for the first time, finding an affordable plane ticket is easier than ever with Tripile.com. We compare prices across 30+ airlines to bring you the best deals.`,
 
     whyVisit: `${city} is one of the most popular destinations for travelers ${isUS ? 'across the United States' : 'around the world'}. With a unique blend of culture, cuisine, and attractions, ${city} offers unforgettable experiences for every type of traveler. Whether you're planning a family vacation, romantic getaway, or solo adventure, ${city} has something special waiting for you.`,
 
@@ -102,7 +102,7 @@ export function getDestinationContent(city: string, iataCode: string, country: s
     travelTips: [
       `**Be Flexible with Your Travel Dates:** Flights to ${city} can be significantly cheaper if you fly on **${fullDayNames[cheapestDayEntry.day] || "Tuesdays"} or Wednesdays**. Also, flying during the off-peak seasons, such as **${fullMonthNames[cheapestMonthEntry.month]} to March** or **September**, usually brings lower prices.`,
       `**Try searching for cheap round-trip flights to ${city} in off-season months for the best value!**`,
-      `**Use Flight Comparison Tools:** Platforms like **Chyeap** make it easy to compare ticket prices from top airlines in seconds. You can filter by Departure city, Preferred airline, Layover options, Flight duration.`,
+      `**Use Flight Comparison Tools:** Platforms like **Tripile.com** make it easy to compare ticket prices from top airlines in seconds. You can filter by Departure city, Preferred airline, Layover options, Flight duration.`,
       `**Set Fare Alerts:** Don't want to miss out on price drops? **Set up a fare alert** so you get notified the moment cheap ${city} tickets become available.`,
       `**Consider Nearby Airports:** Sometimes flying into a nearby airport can save you significantly on airfare.`,
       `**Book in Advance:** For the best fares to ${city}, try booking ${isUS ? '1-3 months' : '2-5 months'} before your travel date.`,
@@ -137,7 +137,7 @@ export function getDestinationContent(city: string, iataCode: string, country: s
     faq: [
       {
         question: `What is the cheapest month to fly to ${city}?`,
-        answer: `The cheapest months for flights to ${city} are typically ${fullMonthNames[cheapestMonthEntry.month]} and February. Prices can be 20-40% lower compared to peak travel periods like ${fullMonthNames[expensiveMonthEntry.month]}. Use Chyeap to track prices and set fare alerts.`,
+        answer: `The cheapest months for flights to ${city} are typically ${fullMonthNames[cheapestMonthEntry.month]} and February. Prices can be 20-40% lower compared to peak travel periods like ${fullMonthNames[expensiveMonthEntry.month]}. Use Tripile.com to track prices and set fare alerts.`,
       },
       {
         question: `How far in advance should I book a flight to ${city}?`,
@@ -145,7 +145,7 @@ export function getDestinationContent(city: string, iataCode: string, country: s
       },
       {
         question: `Which airport in ${city} is cheapest to fly into?`,
-        answer: `${city} ${iataCode} is the primary airport. Compare prices across all nearby airports on Chyeap — sometimes a slightly farther airport offers significantly cheaper fares.`,
+        answer: `${city} ${iataCode} is the primary airport. Compare prices across all nearby airports on Tripile.com — sometimes a slightly farther airport offers significantly cheaper fares.`,
       },
       {
         question: `Are red-eye flights to ${city} cheaper?`,

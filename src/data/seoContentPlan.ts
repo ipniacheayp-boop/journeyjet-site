@@ -1,4 +1,4 @@
-// 6-Month SEO Content Plan for ChyeapFlights
+// 6-Month SEO Content Plan for Tripile.com
 // 2 Articles per week = ~52 articles
 
 export interface ContentArticle {

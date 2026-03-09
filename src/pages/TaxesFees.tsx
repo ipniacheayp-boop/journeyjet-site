@@ -100,9 +100,9 @@ const TaxesFees = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background pt-16">
       <SEOHead
-        title="Airline Taxes, Fees & Post-Ticketing Charges | ChyeapFlights"
+        title="Airline Taxes, Fees & Post-Ticketing Charges | Tripile.com"
         description="Understand airline taxes, service fees, and post-ticketing charges including changes, cancellations, and refunds."
-        canonicalUrl="https://chyeapflights.com/taxes-fees"
+        canonicalUrl="https://tripile.com/taxes-fees"
         keywords="airline taxes, flight fees, post-ticketing fees, cancellation fees, change fees, baggage fees, refund policy"
       />
       <Header />
@@ -425,7 +425,7 @@ const TaxesFees = () => {
               </p>
               <p>
                 <sup>(2)</sup> Refund processing times vary based on the original form of payment and airline policies.
-                Credit card refunds typically take 7-14 business days after airline approval. ChyeapFlights is not
+                Credit card refunds typically take 7-14 business days after airline approval. Tripile.com is not
                 responsible for delays caused by airlines or financial institutions.
               </p>
               <p>
@@ -434,7 +434,7 @@ const TaxesFees = () => {
                 fare rules at the time of booking and before requesting any post-ticketing services.
               </p>
               <p>
-                ChyeapFlights acts as an intermediary between customers and airlines. We do not control airline
+                Tripile.com acts as an intermediary between customers and airlines. We do not control airline
                 policies, schedules, or pricing. Any airline-imposed fees are collected on behalf of the respective
                 carriers and are non-negotiable.
               </p>
