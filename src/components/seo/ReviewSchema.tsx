@@ -24,8 +24,8 @@ const ReviewSchema = ({
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": organizationName,
-    "url": "https://chyeap.lovable.app",
-    "logo": "https://chyeap.lovable.app/logo.png",
+    "url": "https://tripile.com",
+    "logo": "https://tripile.com/logo.png",
     "aggregateRating": {
       "@type": "AggregateRating",
       "ratingValue": ratingValue.toString(),
