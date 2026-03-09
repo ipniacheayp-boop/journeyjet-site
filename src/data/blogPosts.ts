@@ -697,9 +697,9 @@ Travelers in the National Capital Region (NCR) sometimes find cheaper flights fr
 
 ---
 
-## How Flight Comparison Tools Like Cheapflights Help
+## How Flight Comparison Tools Like Tripile.com Help
 
-Platforms like Cheapflights make finding deals much easier. You can:
+Platforms like Tripile.com make finding deals much easier. You can:
 
 - Compare hundreds of airline prices at once
 - Search using flexible date calendars
