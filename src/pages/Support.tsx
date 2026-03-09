@@ -214,8 +214,8 @@ const Support = () => {
                       <Mail className="w-6 h-6 text-support-sky" />
                     </div>
                     <p className="text-sm font-medium">Email Support</p>
-                    <a href="mailto:Pallav.arora@cheapflightsfares.com" className="text-support-sky hover:underline text-sm">
-                      Pallav.arora@cheapflightsfares.com
+                    <a href="mailto:Support@Tripile.com" className="text-support-sky hover:underline text-sm">
+                      Support@Tripile.com
                     </a>
                   </div>
 

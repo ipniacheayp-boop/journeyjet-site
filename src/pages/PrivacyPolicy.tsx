@@ -85,7 +85,7 @@ const PrivacyPolicy = () => {
         telephone number, email address, or any screen name or user name you may use. If we learn we have collected or
         received personal information from a child under 13 without verification of parental consent, we will delete
         that information. If you believe we might have any information from or about a child under 13, please contact us
-        at help@chyeap.com.
+        at Support@Tripile.com.
       </P>
 
       <SectionHeading>INFORMATION WE COLLECT ABOUT YOU AND HOW WE COLLECT IT</SectionHeading>
@@ -376,12 +376,12 @@ const PrivacyPolicy = () => {
         <Li>
           <strong>Disclosure of Your Information for Third-Party Advertising.</strong> If you do not want us to share
           your personal information with unaffiliated or non-agent third parties for promotional purposes, you can
-          opt-out by sending us an email stating your request at help@chyeap.com.
+          opt-out by sending us an email stating your request at Support@Tripile.com.
         </Li>
         <Li>
           <strong>Promotional Offers from the Company.</strong> If you do not wish to have your contact information used
           by the Company to promote our own or third parties' products or services, you can opt-out by sending us an
-          email stating your request help@chyeap,com. If we have sent you a promotional email, you may send us a return
+          email stating your request Support@Tripile.com. If we have sent you a promotional email, you may send us a return
           email asking to be omitted from future email distributions. This opt out does not apply to information
           provided to the Company as a result of a product purchase, licensing subscription, product service experience,
           or other transaction.
@@ -389,7 +389,7 @@ const PrivacyPolicy = () => {
         <Li>
           <strong>Targeted Advertising.</strong> If you do not want us to use information that we collect or that you
           provide to us to deliver advertisements according to our advertisers' target-audience preferences, you can
-          opt-out by sending us an email stating your request at help@chyeap.com. For this opt-out to function, you must
+          opt-out by sending us an email stating your request at Support@Tripile.com. For this opt-out to function, you must
           have your browser or smartphone set to accept browser cookies.
         </Li>
       </ul>
@@ -414,7 +414,7 @@ const PrivacyPolicy = () => {
       <P>
         If you have signed up for an account on our Website, you can review and change your personal information by
         logging into your account and visiting your account profile page. You may also send us an email at
-        help@chyeap.com to request access to, correct or delete any personal information that you have provided to us.
+        Support@Tripile.com to request access to, correct or delete any personal information that you have provided to us.
         We cannot delete your personal information except by also deleting your user account. We may not accommodate a
         request to change information if we believe the change would violate any law or legal requirement or cause the
         information to be incorrect.
@@ -502,7 +502,7 @@ const PrivacyPolicy = () => {
         your country.
       </P>
       <P>
-        The servers for our platform are located in the United States, and Cheapflightsfares and its third- party
+        The servers for our platform are located in the United States, and Tripile.com and its third- party
         service providers operate in many countries around the world. When we collect your personal information, we may
         process it in any of those countries. Our employees may access your personal information from various countries
         around the world. The transferees of your personal data may also be located in countries other than the country
@@ -600,7 +600,7 @@ const PrivacyPolicy = () => {
       <P className="mt-4">
         The Data Subject may exercise these rights at any time by contacting the responsible party. The responsible
         party, according to Article 4 (7) of the GDPR, is Cheap Flights, LLC, [Adress ], Attn: Information Security
-        Coordinator, telephone: +1-216-302-2732, E-mail: help@chyeap.com or info@chyeap.com.
+        Coordinator, telephone: +1-800-963-4330, E-mail: Support@Tripile.com.
       </P>
       <P>
         Under applicable law, we will not process and/or disclose your personal data without a lawful basis to do so, as
@@ -645,7 +645,7 @@ const PrivacyPolicy = () => {
       </P>
       <P>
         To exercise your rights described above, please submit a verifiable consumer request to us in one of the
-        following ways: Triplie.com, LLC, [address], telephone: [address], E- mail: help@chyeap.com.
+        following ways: Tripile.com, LLC, [address], telephone: [address], E- mail: Support@Tripile.com.
       </P>
       <P>A consumer request must:</P>
       <ul>
@@ -685,7 +685,7 @@ const PrivacyPolicy = () => {
         2020 ("CPRA"), California residents have certain rights around the collection, use, and sharing of their
         personal information. California Civil Code 1798.83 permits California residents who use our Website to request
         certain information regarding our disclosure of personal information to third parties for their direct marketing
-        purposes. To make such a request, please send an email to help@chyeap.com or info@chyeap.com. To learn more
+        purposes. To make such a request, please send an email to Support@Tripile.com. To learn more
         about your Privacy Rights, please visit our state specific notice at California Privacy Notice - Cheap Flights.
       </P>
       <SubHeading>Nevada Residents; Nevada Privacy Rights Notice</SubHeading>
@@ -694,7 +694,7 @@ const PrivacyPolicy = () => {
         operators under Nevada law (SB 220). In the preceding twelve (12) months, Cheap Flights has not sold your
         personal information to third parties (as defined by Nevada law) and will not do so in the future without
         providing you with notice and an opportunity to opt out of such sale as required by law. If you have questions
-        regarding these rights, please contact us at info@chyeap.com or help@chyeap.com
+        regarding these rights, please contact us at Support@Tripile.com
       </P>
       <SubHeading>Virginia Residents; Virginia Privacy Rights Notice</SubHeading>
       <P>
@@ -735,8 +735,7 @@ const PrivacyPolicy = () => {
         </Li>
       </ul>
       <P className="mt-4">
-        To exercise one or more of your rights, or appeal a denial of a request, contact us at: info@chyeap.com or
-        help@cheayp.com
+        To exercise one or more of your rights, or appeal a denial of a request, contact us at: Support@Tripile.com
       </P>
 
       <SubHeading>Colorado Residents; Colorado Privacy Rights Notice</SubHeading>
@@ -758,8 +757,7 @@ const PrivacyPolicy = () => {
         notwithstanding your deletion request; and (4) obtain a copy of your personal data.
       </P>
       <P>
-        To exercise one or more of your rights, or appeal a denial of a request, contact us at help@chyeap.com or
-        info@chyeap.com
+        To exercise one or more of your rights, or appeal a denial of a request, contact us at Support@Tripile.com
       </P>
 
       <SubHeading>Connecticut Residents; Connecticut Privacy Rights Notice</SubHeading>
@@ -781,8 +779,7 @@ const PrivacyPolicy = () => {
         notwithstanding your deletion request; and (4) obtain a copy of your personal data.
       </P>
       <P>
-        To exercise one or more of your rights, or appeal a denial of a request, contact us at: info@chyeap.com or
-        help@chyeap.com
+        To exercise one or more of your rights, or appeal a denial of a request, contact us at: Support@Tripile.com
       </P>
 
       <SectionHeading>CHANGES TO OUR PRIVACY POLICY</SectionHeading>
@@ -803,7 +800,7 @@ const PrivacyPolicy = () => {
         To ask questions or submit comments about our Privacy Policy and our privacy practices, or to reach the data
         protection coordinator, contact us at:
       </P>
-      <P>By Email: help@chyeap.com or info@chyeap.com</P>
+      <P>By Email: Support@Tripile.com</P>
       <P>By Mail: [Address]</P>
       <P>By Phone: [Number]</P>
       <P>

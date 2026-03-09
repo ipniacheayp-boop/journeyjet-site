@@ -149,7 +149,7 @@ const DealModal = ({ deal, open, onOpenChange }: DealModalProps) => {
               <div className="space-y-3">
                 {/* Email */}
                 <a
-                  href="mailto:help@chyeap.com"
+                  href="mailto:Support@Tripile.com"
                   onClick={handleContactEmail}
                   className="flex items-center gap-3 p-3 rounded-lg hover:bg-background transition-colors group"
                 >
@@ -158,7 +158,7 @@ const DealModal = ({ deal, open, onOpenChange }: DealModalProps) => {
                   </div>
                   <div>
                     <div className="font-medium">Email Support</div>
-                    <div className="text-sm text-muted-foreground">help@chyeap.com</div>
+                    <div className="text-sm text-muted-foreground">Support@Tripile.com</div>
                   </div>
                 </a>
 

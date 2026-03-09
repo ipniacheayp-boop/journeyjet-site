@@ -23,14 +23,14 @@ const CruiseDeals = () => {
       rating: 4.7,
       text: "This rating is as of 01/05/2026",
       reviews: "22,801",
-      link: "https://www.trustpilot.com/review/cheapflightsfares.com",
+      link: "https://www.trustpilot.com/review/tripile.com",
     },
     {
       name: "SiteJabber",
       rating: 4.7,
       text: "Instant Feedback",
       reviews: "22,801",
-      link: "https://www.sitejabber.com/reviews/cheapflightsfares.com#instant-feedback",
+      link: "https://www.sitejabber.com/reviews/tripile.com#instant-feedback",
     },
     {
       name: "Reviews.io",
@@ -393,7 +393,7 @@ const CruiseDeals = () => {
         <section className="py-16 px-4 bg-gradient-to-r from-blue-600 to-teal-500">
           <div className="container mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-bold text-white mb-4">Subscribe to our Newsletter</h2>
-            <p className="text-white/90 mb-8">Get latest offers from Cheapflightsfares</p>
+            <p className="text-white/90 mb-8">Get latest offers from Tripile.com</p>
 
             <div className="bg-white rounded-xl p-6 shadow-xl">
               <div className="flex flex-col sm:flex-row gap-4 mb-6">
@@ -420,7 +420,7 @@ const CruiseDeals = () => {
                     onCheckedChange={(checked) => setAgreeOffers(checked as boolean)}
                   />
                   <label htmlFor="offers" className="text-sm text-gray-600">
-                    I would like to receive email from Cheapflightsfares.com with the latest offers and promotions.{" "}
+                    I would like to receive email from Tripile.com with the latest offers and promotions.{" "}
                     <Link to="/privacy-policy" className="text-blue-600 hover:underline">
                       Privacy Policy
                     </Link>

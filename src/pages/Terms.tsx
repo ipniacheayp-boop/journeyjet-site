@@ -283,8 +283,8 @@ const Terms = () => {
                 You must not access or use for any commercial purposes any part of the Website or any services or
                 materials available through the Website. If you wish to make any use of material on the Website other
                 than that set out in this section, please address your request to:{" "}
-                <a href="mailto:help@chyeap.com" className="text-primary hover:underline">
-                  help@chyeap.com
+                <a href="mailto:Support@Tripile.com" className="text-primary hover:underline">
+                  Support@Tripile.com
                 </a>
               </p>
               <p className="text-base leading-7 text-foreground/90 mb-4">
@@ -517,8 +517,8 @@ const Terms = () => {
               <p className="text-base leading-7 text-foreground/90 mb-4">
                 If you believe that any User Contributions violate your copyright, please send us a notice of copyright
                 infringement to{" "}
-                <a href="mailto:help@chyeap.com" className="text-primary hover:underline">
-                  help@chyeap.com
+                <a href="mailto:Support@Tripile.com" className="text-primary hover:underline">
+                  Support@Tripile.com
                 </a>
                 . It is the policy of the Company to terminate the user accounts of repeat infringers.
               </p>
@@ -879,8 +879,8 @@ const Terms = () => {
               <p className="text-base leading-7 text-foreground/90 mb-4">
                 All other feedback, comments, requests for technical support and other communications relating to the
                 Website should be directed to:{" "}
-                <a href="mailto:help@chyeap.com" className="text-primary hover:underline">
-                  help@chyeap.com
+                <a href="mailto:Support@Tripile.com" className="text-primary hover:underline">
+                  Support@Tripile.com
                 </a>
                 .
               </p>
@@ -971,8 +971,8 @@ const Terms = () => {
               </p>
               <p className="text-base leading-7 text-foreground/90 mb-4">
                 To request a cancellation, contact our customer support at{" "}
-                <a href="mailto:help@chyeap.com" className="text-primary hover:underline">
-                  help@chyeap.com
+                <a href="mailto:Support@Tripile.com" className="text-primary hover:underline">
+                  Support@Tripile.com
                 </a>{" "}
                 or call 1-800-963-4330. Cancellation requests must be made in accordance with the applicable
                 cancellation policy timeframes.
@@ -1012,8 +1012,8 @@ const Terms = () => {
               </p>
               <p className="text-base leading-7 text-foreground/90 mb-4">
                 If you have specific accessibility requirements, please contact us directly at{" "}
-                <a href="mailto:help@chyeap.com" className="text-primary hover:underline">
-                  help@chyeap.com
+                <a href="mailto:Support@Tripile.com" className="text-primary hover:underline">
+                  Support@Tripile.com
                 </a>{" "}
                 or 1-800-963-4330 so we can better assist you in making appropriate arrangements.
               </p>
@@ -1107,8 +1107,8 @@ const Terms = () => {
               <p className="text-sm text-muted-foreground text-center">Last Updated: October 7, 2025</p>
               <p className="text-sm text-muted-foreground text-center mt-2">
                 Cheap Flights LLC | 1028 Broad St, Newark, NJ 07102 |{" "}
-                <a href="mailto:help@chyeap.com" className="text-primary hover:underline">
-                  help@chyeap.com
+                <a href="mailto:Support@Tripile.com" className="text-primary hover:underline">
+                  Support@Tripile.com
                 </a>
               </p>
             </footer>
