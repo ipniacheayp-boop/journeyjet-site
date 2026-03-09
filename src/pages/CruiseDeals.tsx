@@ -393,7 +393,7 @@ const CruiseDeals = () => {
         <section className="py-16 px-4 bg-gradient-to-r from-blue-600 to-teal-500">
           <div className="container mx-auto max-w-2xl text-center">
             <h2 className="text-3xl font-bold text-white mb-4">Subscribe to our Newsletter</h2>
-            <p className="text-white/90 mb-8">Get latest offers from Cheapflightsfares</p>
+            <p className="text-white/90 mb-8">Get latest offers from Tripile.com</p>
 
             <div className="bg-white rounded-xl p-6 shadow-xl">
               <div className="flex flex-col sm:flex-row gap-4 mb-6">
