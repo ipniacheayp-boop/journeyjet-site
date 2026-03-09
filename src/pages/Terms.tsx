@@ -92,7 +92,7 @@ const Terms = () => {
                   yourself or on behalf of someone.
                 </li>
                 <li>
-                  Cheap Flights LLC reserves the right to request documentation for any reservation that requires
+                  Trivoya Ventures LLC reserves the right to request documentation for any reservation that requires
                   further validation from the card holder. Cancellation may happen, if the requested documents are not
                   provided.
                 </li>
