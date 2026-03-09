@@ -645,7 +645,7 @@ const PrivacyPolicy = () => {
       </P>
       <P>
         To exercise your rights described above, please submit a verifiable consumer request to us in one of the
-        following ways: Triplie.com, LLC, [address], telephone: [address], E- mail: help@chyeap.com.
+        following ways: Tripile.com, LLC, [address], telephone: [address], E- mail: Support@Tripile.com.
       </P>
       <P>A consumer request must:</P>
       <ul>
