@@ -414,7 +414,7 @@ const PrivacyPolicy = () => {
       <P>
         If you have signed up for an account on our Website, you can review and change your personal information by
         logging into your account and visiting your account profile page. You may also send us an email at
-        help@chyeap.com to request access to, correct or delete any personal information that you have provided to us.
+        Support@Tripile.com to request access to, correct or delete any personal information that you have provided to us.
         We cannot delete your personal information except by also deleting your user account. We may not accommodate a
         request to change information if we believe the change would violate any law or legal requirement or cause the
         information to be incorrect.
