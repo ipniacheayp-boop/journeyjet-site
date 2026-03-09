@@ -735,8 +735,7 @@ const PrivacyPolicy = () => {
         </Li>
       </ul>
       <P className="mt-4">
-        To exercise one or more of your rights, or appeal a denial of a request, contact us at: info@chyeap.com or
-        help@cheayp.com
+        To exercise one or more of your rights, or appeal a denial of a request, contact us at: Support@Tripile.com
       </P>
 
       <SubHeading>Colorado Residents; Colorado Privacy Rights Notice</SubHeading>
