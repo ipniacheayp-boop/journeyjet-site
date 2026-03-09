@@ -15,7 +15,7 @@ interface ReviewSchemaProps {
 }
 
 const ReviewSchema = ({
-  organizationName = "ChyeapFlights",
+  organizationName = "Tripile.com",
   ratingValue = 4.6,
   reviewCount = 2847,
   reviews = []
