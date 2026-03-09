@@ -113,9 +113,9 @@ export default function FlightsToDestination() {
 
       <BreadcrumbSchema
         items={[
-          { name: "Home", url: "https://chyeap.lovable.app/" },
-          { name: "Sitemap", url: "https://chyeap.lovable.app/sitemap" },
-          { name: `Flights to ${cityName}`, url: `https://chyeap.lovable.app/flights-to/${slug}` },
+          { name: "Home", url: "https://tripile.com/" },
+          { name: "Sitemap", url: "https://tripile.com/sitemap" },
+          { name: `Flights to ${cityName}`, url: `https://tripile.com/flights-to/${slug}` },
         ]}
       />
 
