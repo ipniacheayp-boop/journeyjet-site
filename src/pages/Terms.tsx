@@ -971,8 +971,8 @@ const Terms = () => {
               </p>
               <p className="text-base leading-7 text-foreground/90 mb-4">
                 To request a cancellation, contact our customer support at{" "}
-                <a href="mailto:help@chyeap.com" className="text-primary hover:underline">
-                  help@chyeap.com
+                <a href="mailto:Support@Tripile.com" className="text-primary hover:underline">
+                  Support@Tripile.com
                 </a>{" "}
                 or call 1-800-963-4330. Cancellation requests must be made in accordance with the applicable
                 cancellation policy timeframes.
