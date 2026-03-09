@@ -108,7 +108,7 @@ export default function FlightsToDestination() {
       <Helmet>
         <title>{metaTitle}</title>
         <meta name="description" content={metaDescription} />
-        <link rel="canonical" href={`https://chyeap.lovable.app/flights-to/${slug}`} />
+        <link rel="canonical" href={`https://tripile.com/flights-to/${slug}`} />
       </Helmet>
 
       <BreadcrumbSchema
