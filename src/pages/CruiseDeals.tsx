@@ -23,7 +23,7 @@ const CruiseDeals = () => {
       rating: 4.7,
       text: "This rating is as of 01/05/2026",
       reviews: "22,801",
-      link: "https://www.trustpilot.com/review/cheapflightsfares.com",
+      link: "https://www.trustpilot.com/review/tripile.com",
     },
     {
       name: "SiteJabber",
