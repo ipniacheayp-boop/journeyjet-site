@@ -83,8 +83,8 @@ export default function FlightsToDestination() {
     : null;
 
   const metaTitle = cheapestPrice
-    ? `Cheap Flights to ${cityName} from $${cheapestPrice.toFixed(0)} | Chyeap`
-    : `Cheap Flights to ${cityName} | Chyeap`;
+    ? `Cheap Flights to ${cityName} from $${cheapestPrice.toFixed(0)} | Tripile.com`
+    : `Cheap Flights to ${cityName} | Tripile.com`;
 
   const metaDescription = cheapestPrice
     ? `Find cheap flights to ${cityName} starting from $${cheapestPrice.toFixed(0)}. Compare prices across top airlines and book today.`
