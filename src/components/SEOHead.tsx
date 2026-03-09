@@ -82,7 +82,7 @@ const SEOHead = ({
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={ogImage} />
-      <meta property="og:site_name" content="CheapFlights" />
+      <meta property="og:site_name" content="Tripile.com" />
       <meta property="og:locale" content="en_US" />
 
       {/* Twitter */}
