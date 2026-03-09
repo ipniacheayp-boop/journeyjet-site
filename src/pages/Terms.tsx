@@ -812,14 +812,14 @@ const Terms = () => {
               <p className="text-base leading-7 text-foreground/90 mb-4">
                 All matters relating to the Website and these Terms of Use and any dispute or claim arising therefrom or
                 related thereto (in each case, including non-contractual disputes or claims), shall be governed by and
-                construed in accordance with the internal laws of the State of New Jersey without giving effect to any
-                choice or conflict of law provision or rule (whether of the State of New Jersey or any other
+                construed in accordance with the internal laws of the State of Texas without giving effect to any
+                choice or conflict of law provision or rule (whether of the State of Texas or any other
                 jurisdiction).
               </p>
               <p className="text-base leading-7 text-foreground/90 mb-4">
                 Any legal suit, action or proceeding arising out of, or related to, these Terms of Use or the Website
                 shall be instituted exclusively in the federal courts of the United States or the courts of the State of
-                New Jersey in each case located in the City of Newark and County of Essex although we retain the right
+                Texas in each case located in the City of Austin and County of Travis although we retain the right
                 to bring any suit, action or proceeding against you for breach of these Terms of Use in your country of
                 residence or any other relevant country. You waive any and all objections to the exercise of
                 jurisdiction over you by such courts and to venue in such courts.
