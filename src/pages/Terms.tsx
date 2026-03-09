@@ -1104,7 +1104,7 @@ const Terms = () => {
             </section>
 
             <footer className="mt-12 pt-8 border-t border-border">
-              <p className="text-sm text-muted-foreground text-center">Last Updated: October 7, 2025</p>
+              <p className="text-sm text-muted-foreground text-center">Last Updated: March 9, 2026</p>
               <p className="text-sm text-muted-foreground text-center mt-2">
                 Trivoya Ventures LLC | 5900 Balcones Drive STE 100, Austin, TX 78731 USA |{" "}
                 <a href="mailto:Support@Tripile.com" className="text-primary hover:underline">
