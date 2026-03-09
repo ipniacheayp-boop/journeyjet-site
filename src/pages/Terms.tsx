@@ -1012,8 +1012,8 @@ const Terms = () => {
               </p>
               <p className="text-base leading-7 text-foreground/90 mb-4">
                 If you have specific accessibility requirements, please contact us directly at{" "}
-                <a href="mailto:help@chyeap.com" className="text-primary hover:underline">
-                  help@chyeap.com
+                <a href="mailto:Support@Tripile.com" className="text-primary hover:underline">
+                  Support@Tripile.com
                 </a>{" "}
                 or 1-800-963-4330 so we can better assist you in making appropriate arrangements.
               </p>
