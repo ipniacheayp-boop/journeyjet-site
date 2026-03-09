@@ -34,7 +34,7 @@ const FlightOfferSchema = ({
     },
     "offers": {
       "@type": "Offer",
-      "url": `https://chyeap.lovable.app/cheap-flights-from-${origin.toLowerCase().replace(/\s+/g, '-')}-to-${destination.toLowerCase().replace(/\s+/g, '-')}`,
+      "url": `https://tripile.com/cheap-flights-from-${origin.toLowerCase().replace(/\s+/g, '-')}-to-${destination.toLowerCase().replace(/\s+/g, '-')}`,
       "priceCurrency": currency,
       "price": price,
       "priceValidUntil": new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
