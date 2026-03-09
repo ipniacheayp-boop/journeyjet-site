@@ -88,7 +88,7 @@ export default function AirlinePage() {
 
   const faqs = [
     {
-      q: `How can I book cheap ${displayName} flights with Chyeap?`,
+      q: `How can I book cheap ${displayName} flights with Tripile.com?`,
       a: `Use our search tool above to compare ${displayName} fares with other airlines. We show the lowest prices first and highlight the best deals available.`,
     },
     {
