@@ -4,77 +4,77 @@ import { useState } from "react";
 
 const reviews = [
   {
-    name: "Amanda Lee",
+    name: "Meghan R.",
     message:
       "Fast response and very clear communication throughout the entire process. The support team made sure all my questions were answered properly.",
     date: "5 days ago",
     rating: 5,
   },
   {
-    name: "James Walker",
+    name: "Jared Kim",
     message:
       "Booking changes were handled smoothly without any hassle. The representative was polite, patient, and knowledgeable.",
     date: "1 week ago",
     rating: 4,
   },
   {
-    name: "Sophia Martinez",
+    name: "Lucia Alvarez",
     message:
       "I had an issue with my itinerary and the support team resolved it quickly. They kept me informed at every step, which I really appreciated.",
     date: "1 week ago",
     rating: 5,
   },
   {
-    name: "Daniel Thompson",
+    name: "Noah Patel",
     message:
       "Customer support was responsive and efficient. Even though my request was a bit complicated, they managed everything professionally.",
     date: "8 days ago",
     rating: 4,
   },
   {
-    name: "Lourdes",
+    name: "Lourdes M.",
     message:
       "Dino from the Support Team and Travel expert Mia were both quick in getting my issue resolved. They explained everything clearly and followed up to ensure there were no further problems.",
     date: "2 days ago",
     rating: 5,
   },
   {
-    name: "Nelson Collazo",
+    name: "Nelson C.",
     message:
       "Mia was professional, courteous, and pleasantly helpful as I needed to change my booking at the last minute. The process was smooth and stress-free.",
     date: "3 days ago",
     rating: 5,
   },
   {
-    name: "Rigo Morales",
+    name: "Rigo M.",
     message:
       "Mia was extremely helpful in getting my e-tickets confirmed and sent on time. I really appreciated the quick turnaround and clear communication.",
     date: "4 days ago",
     rating: 4,
   },
   {
-    name: "Priya Sharma",
+    name: "Priya S.",
     message:
       "Great experience overall. The agent was friendly and took the time to understand my concern before offering the best solution.",
     date: "9 days ago",
     rating: 5,
   },
   {
-    name: "Michael Brown",
+    name: "M. Brown",
     message:
       "I was initially worried about my booking, but the support team reassured me and fixed the issue faster than expected.",
     date: "10 days ago",
     rating: 4,
   },
   {
-    name: "Ayesha Khan",
+    name: "Ayesha K.",
     message:
       "Excellent service and very prompt responses. The team followed up after resolving my issue to ensure everything was working fine.",
     date: "12 days ago",
     rating: 5,
   },
   {
-    name: "Chris Johnson",
+    name: "Chris J.",
     message:
       "The entire experience was smooth and well-handled. I felt confident knowing my request was being taken care of properly.",
     date: "2 weeks ago",

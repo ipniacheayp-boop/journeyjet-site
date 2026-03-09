@@ -8,14 +8,16 @@ import DealsSkeleton from "@/components/DealsSkeleton";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useOptimizedMinPriceDeals, type MinPriceDeal } from "@/hooks/useOptimizedMinPriceDeals";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Badge } from "@/components/ui/badge";
-import { Plane, Filter, TrendingDown, Sparkles, AlertCircle, RefreshCw } from "lucide-react";
+import { Plane, Filter, TrendingDown, Sparkles, AlertCircle, RefreshCw, TicketPercent, Clipboard } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { mockDeals, type Deal } from "@/data/mockDeals";
+import { toast } from "@/hooks/use-toast";
 
 // Adapter to convert MinPriceDeal to component deal format
 const adaptMinPriceDeal = (deal: MinPriceDeal): Deal => ({
@@ -59,6 +61,27 @@ const getDestinationImage = (destCode: string): string => {
   return imageMap[destCode] || "/deal-beach.jpg";
 };
 
+const coupons = [
+  {
+    code: "TRIP20",
+    discount: "20% OFF",
+    description: "Save on roundtrip flights above $400. Applies to base fare only.",
+    expiry: "Valid till Mar 31, 2026",
+  },
+  {
+    code: "REDYE500",
+    discount: "$50 OFF",
+    description: "Late-night and red-eye departures from select US cities.",
+    expiry: "Valid till Apr 15, 2026",
+  },
+  {
+    code: "FAMILY10",
+    discount: "10% OFF",
+    description: "For bookings with 3+ passengers on the same itinerary.",
+    expiry: "Valid till May 10, 2026",
+  },
+];
+
 const Deals = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
@@ -70,6 +93,7 @@ const Deals = () => {
   const [page, setPage] = useState(1);
   const [sort, setSort] = useState("price_asc"); // Default to lowest price first
   const [showFilters, setShowFilters] = useState(false);
+  const [showCoupons, setShowCoupons] = useState(false);
 
   // Fetch minimum price deals from API with React Query caching (guaranteed 50+ deals)
   const { deals: minPriceDeals, loading, isFetching, error, fromCache, refetch } = useOptimizedMinPriceDeals(50);
@@ -153,6 +177,22 @@ const Deals = () => {
     setSelectedAirline("all");
     setSelectedDestination("all");
     setPage(1);
+  };
+
+  const handleCopyCoupon = async (code: string) => {
+    try {
+      await navigator.clipboard.writeText(code);
+      toast({
+        title: "Copied!",
+        description: `Coupon code ${code} copied to clipboard.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Unable to copy",
+        description: "Please copy the coupon code manually.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -242,6 +282,76 @@ const Deals = () => {
           </p>
         </motion.div>
 
+        {/* Coupons Section */}
+        {showCoupons && (
+          <motion.section
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="mb-8"
+          >
+            <Card className="glass-card rounded-2xl border-primary/10 bg-gradient-to-r from-primary/5 via-secondary/5 to-background">
+              <CardHeader className="flex flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-2">
+                  <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center">
+                    <TicketPercent className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      Available Coupons
+                      <Badge variant="secondary" className="text-xs px-2 py-0.5">
+                        Limited time
+                      </Badge>
+                    </CardTitle>
+                    <CardDescription>Apply these at checkout to stack savings on top of deals.</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {coupons.length === 0 ? (
+                  <div className="py-8 text-center text-muted-foreground">
+                    No coupons available right now. Check back later.
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {coupons.map((coupon) => (
+                      <div
+                        key={coupon.code}
+                        className="group flex flex-col justify-between rounded-xl border border-primary/10 bg-card/90 p-4 shadow-sm hover:-translate-y-1 hover:shadow-lg hover:border-primary/40 transition-all duration-200"
+                      >
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between gap-2">
+                            <Badge
+                              variant="outline"
+                              className="font-mono text-xs px-2 py-1 bg-primary/5 group-hover:bg-primary/10 group-hover:text-primary border-dashed"
+                            >
+                              {coupon.code}
+                            </Badge>
+                            <span className="text-sm font-semibold text-primary group-hover:scale-105 transform">
+                              {coupon.discount}
+                            </span>
+                          </div>
+                          <p className="text-sm text-muted-foreground">{coupon.description}</p>
+                          <p className="text-xs text-muted-foreground/80">Expires: {coupon.expiry}</p>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="mt-4 w-full gap-2 group-hover:bg-primary group-hover:text-primary-foreground"
+                          onClick={() => handleCopyCoupon(coupon.code)}
+                        >
+                          <Clipboard className="w-4 h-4 group-hover:animate-pulse" />
+                          Copy Code
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </motion.section>
+        )}
+
         {/* Error/Fallback Notice */}
         {usingFallback && (
           <motion.div
@@ -264,14 +374,30 @@ const Deals = () => {
           className="mb-8"
         >
           <div className="glass-card p-6 rounded-2xl">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-4 gap-4">
               <div className="flex items-center gap-2">
                 <Filter className="w-5 h-5 text-muted-foreground" />
                 <h2 className="font-bold text-lg">Filter Deals</h2>
               </div>
-              <Button variant="ghost" size="sm" onClick={() => setShowFilters(!showFilters)} className="lg:hidden">
-                {showFilters ? "Hide" : "Show"}
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant={showCoupons ? "default" : "outline"}
+                  size="sm"
+                  className="gap-1"
+                  onClick={() => setShowCoupons((prev) => !prev)}
+                >
+                  <TicketPercent className="w-4 h-4" />
+                  Coupons
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="lg:hidden"
+                >
+                  {showFilters ? "Hide" : "Show"}
+                </Button>
+              </div>
             </div>
 
             <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 ${!showFilters && "hidden lg:grid"}`}>
