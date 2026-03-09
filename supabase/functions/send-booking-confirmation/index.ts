@@ -199,7 +199,7 @@ serve(async (req) => {
 
     <!-- Footer -->
     <div style="background: #333; padding: 30px; text-align: center; color: white;">
-      <p style="margin: 5px 0; font-size: 14px;"><strong>Thank you for choosing CheapFlights!</strong></p>
+      <p style="margin: 5px 0; font-size: 14px;"><strong>Thank you for choosing Tripile.com!</strong></p>
       <p style="margin: 5px 0; font-size: 12px; color: #999;">Safe travels! ✈️</p>
     </div>
   </div>
