@@ -241,7 +241,7 @@ Requirements:
 - Clearly show the booking reference prominently
 - Include all booking details
 - Add this important message: "Your booking is confirmed. Our travel agent will contact you shortly to assist with payment."
-- Include support contact info: Phone +1 (800) 555-0123, Email support@cheapflights.travel
+- Include support contact info: Phone 1-800-963-4330, Email Support@Tripile.com
 - Keep it concise but friendly
 - Do NOT use any HTML tags or markdown, just plain text with line breaks
 - Start with "Dear [Name]," greeting`;
