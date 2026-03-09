@@ -53,7 +53,7 @@ export default function Sitemap() {
       <main className="container mx-auto px-4 py-10 pt-24 pb-20 max-w-7xl">
         <h1 className="text-3xl font-bold mb-2 text-foreground">Site Map</h1>
         <p className="text-muted-foreground mb-8">
-          Explore all destinations, airlines, and pages on Chyeap.
+          Explore all destinations, airlines, and pages on Tripile.com.
         </p>
 
         {/* Airlines */}
