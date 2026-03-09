@@ -286,8 +286,8 @@ serve(async (req) => {
 
     <!-- Footer -->
     <div class="footer">
-      <p><strong>Thank you for booking with CheapFlights. Safe travels!</strong></p>
-      <p>© CheapFlights | San Francisco, CA</p>
+      <p><strong>Thank you for booking with Tripile.com. Safe travels!</strong></p>
+      <p>© Tripile.com | Austin, TX</p>
     </div>
   </div>
 </body>
