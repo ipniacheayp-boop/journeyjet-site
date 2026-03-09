@@ -381,7 +381,7 @@ const PrivacyPolicy = () => {
         <Li>
           <strong>Promotional Offers from the Company.</strong> If you do not wish to have your contact information used
           by the Company to promote our own or third parties' products or services, you can opt-out by sending us an
-          email stating your request help@chyeap,com. If we have sent you a promotional email, you may send us a return
+          email stating your request Support@Tripile.com. If we have sent you a promotional email, you may send us a return
           email asking to be omitted from future email distributions. This opt out does not apply to information
           provided to the Company as a result of a product purchase, licensing subscription, product service experience,
           or other transaction.
