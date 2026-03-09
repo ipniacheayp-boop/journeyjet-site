@@ -434,7 +434,7 @@ const TaxesFees = () => {
                 fare rules at the time of booking and before requesting any post-ticketing services.
               </p>
               <p>
-                ChyeapFlights acts as an intermediary between customers and airlines. We do not control airline
+                Tripile.com acts as an intermediary between customers and airlines. We do not control airline
                 policies, schedules, or pricing. Any airline-imposed fees are collected on behalf of the respective
                 carriers and are non-negotiable.
               </p>

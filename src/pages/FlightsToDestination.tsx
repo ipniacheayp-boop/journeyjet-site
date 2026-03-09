@@ -423,7 +423,7 @@ export default function FlightsToDestination() {
               If you're ready to explore {cityName} without breaking the bank, start your journey now.
             </p>
             <p className="text-sm font-semibold text-primary mt-2">
-              Compare, book, and save on flights to {cityName} today — only at Chyeap!
+              Compare, book, and save on flights to {cityName} today — only at Tripile.com!
             </p>
           </div>
         </section>

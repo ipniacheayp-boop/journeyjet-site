@@ -479,7 +479,7 @@ const CruiseDeals = () => {
           
           <div className="mt-12 pt-8 border-t border-gray-800 text-center">
             <p className="text-sm text-gray-500">
-              © {new Date().getFullYear()} ChyeapFlights. All rights reserved.
+              © {new Date().getFullYear()} Tripile.com. All rights reserved.
             </p>
           </div>
         </div>
