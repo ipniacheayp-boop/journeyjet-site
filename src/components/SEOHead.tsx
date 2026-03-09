@@ -11,10 +11,10 @@ interface SEOHeadProps {
 }
 
 const SEOHead = ({
-  title = "CheapFlights – Book Cheap Flights, Hotels & Car Rentals in the USA",
-  description = "CheapFlights helps you find the best flight deals, hotel discounts, and car rentals across the USA. Compare thousands of fares instantly and save big on your next trip.",
+  title = "Tripile.com – Book Cheap Flights, Hotels & Car Rentals in the USA",
+  description = "Tripile.com helps you find the best flight deals, hotel discounts, and car rentals across the USA. Compare thousands of fares instantly and save big on your next trip.",
   keywords = "cheap flights USA, flight deals, book flights online, US travel deals, last-minute flights, discounted airline tickets, cheap hotels, car rentals USA, travel booking, airfare deals",
-  canonicalUrl = "https://cheapflights.com",
+  canonicalUrl = "https://tripile.com",
   ogImage = "/og-image.png",
   ogType = "website",
   noIndex = false
