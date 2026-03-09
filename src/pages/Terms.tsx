@@ -92,7 +92,7 @@ const Terms = () => {
                   yourself or on behalf of someone.
                 </li>
                 <li>
-                  Cheap Flights LLC reserves the right to request documentation for any reservation that requires
+                  Trivoya Ventures LLC reserves the right to request documentation for any reservation that requires
                   further validation from the card holder. Cancellation may happen, if the requested documents are not
                   provided.
                 </li>
@@ -812,14 +812,14 @@ const Terms = () => {
               <p className="text-base leading-7 text-foreground/90 mb-4">
                 All matters relating to the Website and these Terms of Use and any dispute or claim arising therefrom or
                 related thereto (in each case, including non-contractual disputes or claims), shall be governed by and
-                construed in accordance with the internal laws of the State of New Jersey without giving effect to any
-                choice or conflict of law provision or rule (whether of the State of New Jersey or any other
+                construed in accordance with the internal laws of the State of Texas without giving effect to any
+                choice or conflict of law provision or rule (whether of the State of Texas or any other
                 jurisdiction).
               </p>
               <p className="text-base leading-7 text-foreground/90 mb-4">
                 Any legal suit, action or proceeding arising out of, or related to, these Terms of Use or the Website
                 shall be instituted exclusively in the federal courts of the United States or the courts of the State of
-                New Jersey in each case located in the City of Newark and County of Essex although we retain the right
+                Texas in each case located in the City of Austin and County of Travis although we retain the right
                 to bring any suit, action or proceeding against you for breach of these Terms of Use in your country of
                 residence or any other relevant country. You waive any and all objections to the exercise of
                 jurisdiction over you by such courts and to venue in such courts.
@@ -865,7 +865,7 @@ const Terms = () => {
               <h2 className="text-2xl font-semibold text-foreground mb-4">Entire Agreement</h2>
               <p className="text-base leading-7 text-foreground/90 mb-4">
                 The Terms of Use, our Privacy Policy and our Terms of Sale constitute the sole and entire agreement
-                between you and Cheap Flights LLC with respect to the Website and supersede all prior and
+                between you and Trivoya Ventures LLC with respect to the Website and supersede all prior and
                 contemporaneous understandings, agreements, representations and warranties, both written and oral, with
                 respect to the Website.
               </p>
@@ -874,7 +874,7 @@ const Terms = () => {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-foreground mb-4">Your Comments and Concerns</h2>
               <p className="text-base leading-7 text-foreground/90 mb-4">
-                This website is operated by Cheap Flights LLC, 1028 Broad St, Newark, NJ 07102.
+                This website is operated by Trivoya Ventures LLC, 5900 Balcones Drive STE 100, Austin, TX 78731 USA.
               </p>
               <p className="text-base leading-7 text-foreground/90 mb-4">
                 All other feedback, comments, requests for technical support and other communications relating to the
@@ -1106,7 +1106,7 @@ const Terms = () => {
             <footer className="mt-12 pt-8 border-t border-border">
               <p className="text-sm text-muted-foreground text-center">Last Updated: October 7, 2025</p>
               <p className="text-sm text-muted-foreground text-center mt-2">
-                Cheap Flights LLC | 1028 Broad St, Newark, NJ 07102 |{" "}
+                Trivoya Ventures LLC | 5900 Balcones Drive STE 100, Austin, TX 78731 USA |{" "}
                 <a href="mailto:Support@Tripile.com" className="text-primary hover:underline">
                   Support@Tripile.com
                 </a>
