@@ -376,7 +376,7 @@ const PrivacyPolicy = () => {
         <Li>
           <strong>Disclosure of Your Information for Third-Party Advertising.</strong> If you do not want us to share
           your personal information with unaffiliated or non-agent third parties for promotional purposes, you can
-          opt-out by sending us an email stating your request at help@chyeap.com.
+          opt-out by sending us an email stating your request at Support@Tripile.com.
         </Li>
         <Li>
           <strong>Promotional Offers from the Company.</strong> If you do not wish to have your contact information used
