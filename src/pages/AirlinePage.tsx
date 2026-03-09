@@ -202,7 +202,7 @@ export default function AirlinePage() {
         {/* Breadcrumb */}
         <div className="container mx-auto px-4 max-w-6xl">
           <nav className="flex items-center gap-1 text-sm text-muted-foreground py-4">
-            <Link to="/" className="hover:text-primary transition-colors">Chyeap</Link>
+            <Link to="/" className="hover:text-primary transition-colors">Tripile</Link>
             <ChevronRight className="w-3.5 h-3.5" />
             <Link to="/sitemap" className="hover:text-primary transition-colors">Airlines</Link>
             <ChevronRight className="w-3.5 h-3.5" />
