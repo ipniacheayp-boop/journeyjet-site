@@ -779,8 +779,7 @@ const PrivacyPolicy = () => {
         notwithstanding your deletion request; and (4) obtain a copy of your personal data.
       </P>
       <P>
-        To exercise one or more of your rights, or appeal a denial of a request, contact us at: info@chyeap.com or
-        help@chyeap.com
+        To exercise one or more of your rights, or appeal a denial of a request, contact us at: Support@Tripile.com
       </P>
 
       <SectionHeading>CHANGES TO OUR PRIVACY POLICY</SectionHeading>
