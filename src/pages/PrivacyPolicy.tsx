@@ -85,7 +85,7 @@ const PrivacyPolicy = () => {
         telephone number, email address, or any screen name or user name you may use. If we learn we have collected or
         received personal information from a child under 13 without verification of parental consent, we will delete
         that information. If you believe we might have any information from or about a child under 13, please contact us
-        at help@chyeap.com.
+        at Support@Tripile.com.
       </P>
 
       <SectionHeading>INFORMATION WE COLLECT ABOUT YOU AND HOW WE COLLECT IT</SectionHeading>
