@@ -773,7 +773,7 @@ Domestic: 3–6 weeks ahead
 **Q2. Are midweek flights cheaper?**  
 Yes, Tuesday and Wednesday flights are generally 20–40% cheaper.
 
-**Q3. Is Cheapflights reliable?**  
+**Q3. Is Tripile.com reliable?**  
 Yes. It compares multiple airlines and platforms and highlights hidden fees.
 
 **Q4. How can I find cheap last-minute flights?**  
