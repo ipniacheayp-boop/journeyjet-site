@@ -161,9 +161,9 @@ export default function AirlinePage() {
 
       <BreadcrumbSchema
         items={[
-          { name: "Home", url: "https://chyeap.lovable.app/" },
-          { name: "Airlines", url: "https://chyeap.lovable.app/sitemap" },
-          { name: `Flights With ${displayName}`, url: `https://chyeap.lovable.app/airlines/${slug}` },
+          { name: "Home", url: "https://tripile.com/" },
+          { name: "Airlines", url: "https://tripile.com/sitemap" },
+          { name: `Flights With ${displayName}`, url: `https://tripile.com/airlines/${slug}` },
         ]}
       />
 
