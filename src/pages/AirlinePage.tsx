@@ -378,10 +378,10 @@ export default function AirlinePage() {
         {/* Why book section */}
         <section className="container mx-auto px-4 max-w-6xl py-8">
           <h2 className="text-xl md:text-2xl font-semibold text-foreground mb-3">
-            Why Book {displayName} ({code}) Flights on Chyeap
+            Why Book {displayName} ({code}) Flights on Tripile.com
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed max-w-4xl">
-            Chyeap allows travelers to compare {displayName} flight fares with other airlines in one
+            Tripile.com allows travelers to compare {displayName} flight fares with other airlines in one
             place. Our platform helps users explore multiple travel dates, routes, and fare options to
             make informed booking decisions. With real-time pricing and no hidden fees, you can be
             confident you're getting the best deal on {displayName} flights.
