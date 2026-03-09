@@ -186,7 +186,7 @@ async function sendConfirmationEmail(
   const SMTP_PORT = Deno.env.get('SMTP_PORT');
   const SMTP_USERNAME = Deno.env.get('SMTP_USERNAME');
   const SMTP_PASSWORD = Deno.env.get('SMTP_PASSWORD');
-  const SMTP_FROM_NAME = Deno.env.get('SMTP_FROM_NAME') || 'CheapFlights';
+  const SMTP_FROM_NAME = Deno.env.get('SMTP_FROM_NAME') || 'Tripile.com';
   const SMTP_FROM_EMAIL = Deno.env.get('SMTP_FROM_EMAIL');
 
   console.log('[EMAIL] Starting email send process');
