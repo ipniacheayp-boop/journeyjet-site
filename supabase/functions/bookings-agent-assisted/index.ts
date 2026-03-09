@@ -279,7 +279,7 @@ Requirements:
     console.log('[EMAIL] Using fallback template');
     emailBody = `Dear ${userDetails.firstName || 'Valued Customer'},
 
-Thank you for booking with CheapFlights!
+Thank you for booking with Tripile.com!
 
 Your booking has been confirmed.
 
