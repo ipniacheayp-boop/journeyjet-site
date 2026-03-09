@@ -879,8 +879,8 @@ const Terms = () => {
               <p className="text-base leading-7 text-foreground/90 mb-4">
                 All other feedback, comments, requests for technical support and other communications relating to the
                 Website should be directed to:{" "}
-                <a href="mailto:help@chyeap.com" className="text-primary hover:underline">
-                  help@chyeap.com
+                <a href="mailto:Support@Tripile.com" className="text-primary hover:underline">
+                  Support@Tripile.com
                 </a>
                 .
               </p>
