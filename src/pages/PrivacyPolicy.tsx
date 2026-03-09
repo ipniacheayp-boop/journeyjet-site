@@ -694,7 +694,7 @@ const PrivacyPolicy = () => {
         operators under Nevada law (SB 220). In the preceding twelve (12) months, Cheap Flights has not sold your
         personal information to third parties (as defined by Nevada law) and will not do so in the future without
         providing you with notice and an opportunity to opt out of such sale as required by law. If you have questions
-        regarding these rights, please contact us at info@chyeap.com or help@chyeap.com
+        regarding these rights, please contact us at Support@Tripile.com
       </P>
       <SubHeading>Virginia Residents; Virginia Privacy Rights Notice</SubHeading>
       <P>
