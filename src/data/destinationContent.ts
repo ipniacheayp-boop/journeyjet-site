@@ -137,7 +137,7 @@ export function getDestinationContent(city: string, iataCode: string, country: s
     faq: [
       {
         question: `What is the cheapest month to fly to ${city}?`,
-        answer: `The cheapest months for flights to ${city} are typically ${fullMonthNames[cheapestMonthEntry.month]} and February. Prices can be 20-40% lower compared to peak travel periods like ${fullMonthNames[expensiveMonthEntry.month]}. Use Chyeap to track prices and set fare alerts.`,
+        answer: `The cheapest months for flights to ${city} are typically ${fullMonthNames[cheapestMonthEntry.month]} and February. Prices can be 20-40% lower compared to peak travel periods like ${fullMonthNames[expensiveMonthEntry.month]}. Use Tripile.com to track prices and set fare alerts.`,
       },
       {
         question: `How far in advance should I book a flight to ${city}?`,
