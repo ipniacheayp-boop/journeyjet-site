@@ -800,7 +800,7 @@ const PrivacyPolicy = () => {
         To ask questions or submit comments about our Privacy Policy and our privacy practices, or to reach the data
         protection coordinator, contact us at:
       </P>
-      <P>By Email: help@chyeap.com or info@chyeap.com</P>
+      <P>By Email: Support@Tripile.com</P>
       <P>By Mail: [Address]</P>
       <P>By Phone: [Number]</P>
       <P>
