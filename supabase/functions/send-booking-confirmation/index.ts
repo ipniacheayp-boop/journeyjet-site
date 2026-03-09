@@ -193,7 +193,7 @@ serve(async (req) => {
       <!-- Support Info -->
       <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 8px;">
         <p style="color: #666; margin: 5px 0;"><strong>Need Help?</strong></p>
-        <p style="color: #666; margin: 5px 0;">Contact our support team at support@cheapflights.com</p>
+        <p style="color: #666; margin: 5px 0;">Contact our support team at Support@Tripile.com</p>
       </div>
     </div>
 
