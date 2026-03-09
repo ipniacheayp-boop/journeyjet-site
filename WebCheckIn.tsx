@@ -91,17 +91,17 @@ const WebCheckIn = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>Airlines Web Check-In | Chyeap</title>
+        <title>Airlines Web Check-In | Tripile.com</title>
         <meta
           name="description"
           content="Find official airline web check-in links, flight status pages, and contact update links."
         />
         <meta
           name="keywords"
-          content="airline web check-in, web check in, flight status, online check-in, Chyeap"
+          content="airline web check-in, web check in, flight status, online check-in, Tripile.com"
         />
-        <link rel="canonical" href="https://chyeap.com/webcheck-in" />
-        <meta property="og:title" content="Airlines Web Check-In | Chyeap" />
+        <link rel="canonical" href="https://tripile.com/webcheck-in" />
+        <meta property="og:title" content="Airlines Web Check-In | Tripile.com" />
         <meta
           property="og:description"
           content="Find official airline web check-in links, flight status pages, and contact update links."
