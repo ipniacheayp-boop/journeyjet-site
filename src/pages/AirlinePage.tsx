@@ -419,7 +419,7 @@ export default function AirlinePage() {
         <section className="bg-gradient-to-br from-accent/40 via-accent/20 to-background py-12 mt-8">
           <div className="container mx-auto px-4 max-w-6xl">
             <h2 className="text-xl md:text-2xl font-semibold text-foreground mb-6">
-              Save money when you book flights with Chyeap
+              Save money when you book flights with Tripile.com
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[

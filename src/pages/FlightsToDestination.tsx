@@ -136,7 +136,7 @@ export default function FlightsToDestination() {
         
         <div className="container mx-auto px-4 max-w-6xl relative z-10">
           <nav className="flex items-center gap-1 text-sm text-white/60 mb-6">
-            <Link to="/" className="hover:text-white transition-colors">Chyeap</Link>
+            <Link to="/" className="hover:text-white transition-colors">Tripile</Link>
             <ChevronRight className="w-3.5 h-3.5" />
             <Link to="/sitemap" className="hover:text-white transition-colors">Flights</Link>
             <ChevronRight className="w-3.5 h-3.5" />

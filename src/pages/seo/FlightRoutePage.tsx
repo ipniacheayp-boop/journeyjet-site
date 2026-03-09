@@ -60,8 +60,8 @@ const FlightRoutePage = () => {
   ];
 
   const breadcrumbs = [
-    { name: 'Home', url: 'https://chyeap.lovable.app/' },
-    { name: 'Deals', url: 'https://chyeap.lovable.app/deals' },
+    { name: 'Home', url: 'https://tripile.com/' },
+    { name: 'Deals', url: 'https://tripile.com/deals' },
     { name: `${route.origin} to ${route.destination}`, url: canonicalUrl }
   ];
 

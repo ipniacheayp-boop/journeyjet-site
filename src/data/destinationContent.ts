@@ -145,7 +145,7 @@ export function getDestinationContent(city: string, iataCode: string, country: s
       },
       {
         question: `Which airport in ${city} is cheapest to fly into?`,
-        answer: `${city} ${iataCode} is the primary airport. Compare prices across all nearby airports on Chyeap — sometimes a slightly farther airport offers significantly cheaper fares.`,
+        answer: `${city} ${iataCode} is the primary airport. Compare prices across all nearby airports on Tripile.com — sometimes a slightly farther airport offers significantly cheaper fares.`,
       },
       {
         question: `Are red-eye flights to ${city} cheaper?`,

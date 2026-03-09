@@ -48,8 +48,8 @@ const HotelCityPage = () => {
   ];
 
   const breadcrumbs = [
-    { name: 'Home', url: 'https://chyeap.lovable.app/' },
-    { name: 'Hotels', url: 'https://chyeap.lovable.app/deals' },
+    { name: 'Home', url: 'https://tripile.com/' },
+    { name: 'Hotels', url: 'https://tripile.com/deals' },
     { name: city.city, url: canonicalUrl }
   ];
 
