@@ -151,12 +151,12 @@ export default function AirlinePage() {
   return (
     <>
       <Helmet>
-        <title>Compare {displayName} Flights – Cheap Fares | Chyeap</title>
+        <title>Compare {displayName} Flights – Cheap Fares | Tripile.com</title>
         <meta
           name="description"
-          content={`Compare ${displayName} (${code}) flight prices and book cheap tickets. Find the best deals on ${displayName} flights with Chyeap.`}
+          content={`Compare ${displayName} (${code}) flight prices and book cheap tickets. Find the best deals on ${displayName} flights with Tripile.com.`}
         />
-        <link rel="canonical" href={`https://chyeap.lovable.app/airlines/${slug}`} />
+        <link rel="canonical" href={`https://tripile.com/airlines/${slug}`} />
       </Helmet>
 
       <BreadcrumbSchema
