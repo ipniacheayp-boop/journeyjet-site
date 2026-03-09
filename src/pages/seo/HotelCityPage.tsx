@@ -28,9 +28,9 @@ const HotelCityPage = () => {
     );
   }
 
-  const pageTitle = `Cheap Hotels in ${city.city} | Best Deals & Discounts – ChyeapFlights`;
+  const pageTitle = `Cheap Hotels in ${city.city} | Best Deals & Discounts – Tripile.com`;
   const pageDescription = `Book cheap hotels in ${city.city}, ${city.state} with exclusive discounts. Compare prices, ratings, and amenities. Hotels starting at $${city.avgPrice}/night.`;
-  const canonicalUrl = `https://chyeap.lovable.app/${city.slug}`;
+  const canonicalUrl = `https://tripile.com/${city.slug}`;
 
   const faqs = [
     {
