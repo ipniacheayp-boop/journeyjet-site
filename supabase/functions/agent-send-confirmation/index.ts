@@ -178,7 +178,7 @@ serve(async (req) => {
     <!-- Header -->
     <div class="header">
       <h1>✈️ Your Booking is Confirmed!</h1>
-      <p>CheapFlights</p>
+      <p>Tripile.com</p>
     </div>
 
     <!-- Content -->
