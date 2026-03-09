@@ -133,7 +133,7 @@ export default function AirlinePage() {
     {
       icon: ShieldCheck,
       title: "Trusted and Free",
-      desc: "Chyeap is free to use with zero hidden charges or surprises.",
+      desc: "Tripile.com is free to use with zero hidden charges or surprises.",
       gradient: "from-emerald-500/10 to-green-500/10",
       iconColor: "text-emerald-500",
       borderColor: "border-emerald-200 dark:border-emerald-800/30",
