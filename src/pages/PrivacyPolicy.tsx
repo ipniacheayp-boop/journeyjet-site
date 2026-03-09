@@ -502,7 +502,7 @@ const PrivacyPolicy = () => {
         your country.
       </P>
       <P>
-        The servers for our platform are located in the United States, and Cheapflightsfares and its third- party
+        The servers for our platform are located in the United States, and Tripile.com and its third- party
         service providers operate in many countries around the world. When we collect your personal information, we may
         process it in any of those countries. Our employees may access your personal information from various countries
         around the world. The transferees of your personal data may also be located in countries other than the country
