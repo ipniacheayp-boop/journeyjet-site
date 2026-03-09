@@ -16,8 +16,8 @@ const NotFound = () => {
         </div>
         <div className="flex items-center gap-2">
           <Mail className="w-5 h-5 text-primary" />
-          <a href="mailto:support@travelbooking.com" className="hover:underline">
-            support@travelbooking.com
+          <a href="mailto:Support@Tripile.com" className="hover:underline">
+            Support@Tripile.com
           </a>
         </div>
       </div>

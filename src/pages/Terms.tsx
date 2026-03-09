@@ -1107,8 +1107,8 @@ const Terms = () => {
               <p className="text-sm text-muted-foreground text-center">Last Updated: October 7, 2025</p>
               <p className="text-sm text-muted-foreground text-center mt-2">
                 Cheap Flights LLC | 1028 Broad St, Newark, NJ 07102 |{" "}
-                <a href="mailto:help@chyeap.com" className="text-primary hover:underline">
-                  help@chyeap.com
+                <a href="mailto:Support@Tripile.com" className="text-primary hover:underline">
+                  Support@Tripile.com
                 </a>
               </p>
             </footer>
