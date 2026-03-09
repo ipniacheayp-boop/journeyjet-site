@@ -24,17 +24,17 @@ const SEOHead = ({
     "@graph": [
       {
         "@type": "Organization",
-        "@id": "https://cheapflights.com/#organization",
-        "name": "CheapFlights",
-        "url": "https://cheapflights.com",
+        "@id": "https://tripile.com/#organization",
+        "name": "Tripile.com",
+        "url": "https://tripile.com",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://cheapflights.com/logo.png"
+          "url": "https://tripile.com/logo.png"
         },
         "sameAs": [
-          "https://facebook.com/cheapflights",
-          "https://twitter.com/cheapflights",
-          "https://instagram.com/cheapflights"
+          "https://facebook.com/tripile",
+          "https://twitter.com/tripile",
+          "https://instagram.com/tripile"
         ],
         "contactPoint": {
           "@type": "ContactPoint",
@@ -46,18 +46,18 @@ const SEOHead = ({
       },
       {
         "@type": "WebSite",
-        "@id": "https://cheapflights.com/#website",
-        "url": "https://cheapflights.com",
-        "name": "CheapFlights",
+        "@id": "https://tripile.com/#website",
+        "url": "https://tripile.com",
+        "name": "Tripile.com",
         "description": description,
         "publisher": {
-          "@id": "https://cheapflights.com/#organization"
+          "@id": "https://tripile.com/#organization"
         },
         "potentialAction": {
           "@type": "SearchAction",
           "target": {
             "@type": "EntryPoint",
-            "urlTemplate": "https://cheapflights.com/search-results?q={search_term_string}"
+            "urlTemplate": "https://tripile.com/search-results?q={search_term_string}"
           },
           "query-input": "required name=search_term_string"
         }
