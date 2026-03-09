@@ -283,8 +283,8 @@ const Terms = () => {
                 You must not access or use for any commercial purposes any part of the Website or any services or
                 materials available through the Website. If you wish to make any use of material on the Website other
                 than that set out in this section, please address your request to:{" "}
-                <a href="mailto:help@chyeap.com" className="text-primary hover:underline">
-                  help@chyeap.com
+                <a href="mailto:Support@Tripile.com" className="text-primary hover:underline">
+                  Support@Tripile.com
                 </a>
               </p>
               <p className="text-base leading-7 text-foreground/90 mb-4">
