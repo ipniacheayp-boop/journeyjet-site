@@ -55,7 +55,7 @@ Overpaying usually happens due to three common mistakes:
 3. **Ignoring airline pricing behavior**  
    Airlines use dynamic pricing models that respond to demand, season, and remaining seats.
 
-By understanding these factors, finding cheap international flights becomes far easier. Platforms like ChyeapFlights simplify this process by showing live prices, airline options, and flexible routes in one place.
+By understanding these factors, finding cheap international flights becomes far easier. Platforms like Tripile.com simplify this process by showing live prices, airline options, and flexible routes in one place.
 
 ---
 
