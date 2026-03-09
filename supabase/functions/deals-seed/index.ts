@@ -5,7 +5,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Demo deals based on CheapFlightsFares structure
+// Demo deals based on Tripile.com structure
 const generateDemoDeals = (count: number) => {
   const origins = [
     { city: 'New York', code: 'JFK' },

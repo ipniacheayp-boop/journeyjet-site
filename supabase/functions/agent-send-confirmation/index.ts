@@ -297,9 +297,9 @@ serve(async (req) => {
     // Send email
     console.log("[agent-send-confirmation] Sending booking confirmation email...");
     const emailResponse = await resend.emails.send({
-      from: "CheapFlights <onboarding@resend.dev>",
+      from: "Tripile.com <onboarding@resend.dev>",
       to: [requestData.clientEmail],
-      subject: `✈️ CheapFlights Booking Confirmation - ${requestData.bookingRef}`,
+      subject: `✈️ Tripile.com Booking Confirmation - ${requestData.bookingRef}`,
       html: htmlContent,
     });
 

@@ -210,9 +210,9 @@ serve(async (req) => {
     // Send email
     logStep("Sending confirmation email...");
     const emailResponse = await resend.emails.send({
-      from: "CheapFlights <onboarding@resend.dev>",
+      from: "Tripile.com <onboarding@resend.dev>",
       to: [booking.contact_email],
-      subject: `✅ Booking Confirmed - ${bookingRef} | CheapFlights`,
+      subject: `✅ Booking Confirmed - ${bookingRef} | Tripile.com`,
       html: htmlContent,
     });
 

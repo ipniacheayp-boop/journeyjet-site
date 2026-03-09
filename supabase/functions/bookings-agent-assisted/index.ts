@@ -296,13 +296,13 @@ IMPORTANT - PAYMENT PENDING:
 Your booking is confirmed. Our travel agent will contact you shortly to assist with payment. No action is needed from your side right now.
 
 If you have any questions, please contact us:
-Phone: +1 (800) 555-0123
-Email: support@cheapflights.travel
+Phone: 1-800-963-4330
+Email: Support@Tripile.com
 
-Thank you for choosing CheapFlights!
+Thank you for choosing Tripile.com!
 
 Best regards,
-The CheapFlights Team`;
+The Tripile.com Team`;
   }
 
   // Send email using SMTP if configured
