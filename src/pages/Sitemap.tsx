@@ -41,7 +41,7 @@ export default function Sitemap() {
   return (
     <>
       <Helmet>
-        <title>Sitemap – Cheap Flights, Airlines & Destinations | Chyeap</title>
+        <title>Sitemap – Cheap Flights, Airlines & Destinations | Tripile.com</title>
         <meta
           name="description"
           content="Browse our complete site map. Find cheap flights to 50+ destinations, compare 30+ airlines, and discover travel deals."
