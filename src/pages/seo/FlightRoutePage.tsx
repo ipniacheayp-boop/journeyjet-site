@@ -30,9 +30,9 @@ const FlightRoutePage = () => {
     );
   }
 
-  const pageTitle = `Cheap Flights from ${route.origin} to ${route.destination} | Save Big – ChyeapFlights`;
-  const pageDescription = `Find cheap flights from ${route.origin} to ${route.destination}. Compare airlines, get the lowest fares starting at $${route.avgPrice}, and book securely with ChyeapFlights.`;
-  const canonicalUrl = `https://chyeap.lovable.app/${route.slug}`;
+  const pageTitle = `Cheap Flights from ${route.origin} to ${route.destination} | Save Big – Tripile.com`;
+  const pageDescription = `Find cheap flights from ${route.origin} to ${route.destination}. Compare airlines, get the lowest fares starting at $${route.avgPrice}, and book securely with Tripile.com.`;
+  const canonicalUrl = `https://tripile.com/${route.slug}`;
 
   // Related routes (same origin or destination)
   const relatedRoutes = seoFlightRoutes
