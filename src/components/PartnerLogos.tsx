@@ -1,5 +1,3 @@
-import { motion } from "framer-motion";
-
 const PartnerLogos = () => {
   const partners = [
     {
@@ -44,59 +42,31 @@ const PartnerLogos = () => {
     },
   ];
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.05,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.4,
-        ease: [0.25, 0.1, 0.25, 1] as const,
-      },
-    },
-  };
-
   return (
-    <section className="py-10 md:py-14 bg-muted/30" aria-labelledby="partners-title">
-      <div className="container mx-auto px-4">
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4 }}
-          id="partners-title"
-          className="text-center text-sm text-muted-foreground mb-8"
-        >
+    <section
+      className="py-12 border-y border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50"
+      aria-labelledby="partners-title"
+    >
+      <div className="container mx-auto px-4 text-center">
+        <p id="partners-title" className="text-sm font-semibold text-slate-500 uppercase tracking-widest mb-8">
           Trusted by millions across leading travel platforms
-        </motion.p>
+        </p>
 
-        <motion.div
-          className="flex flex-wrap justify-center items-center gap-6 md:gap-10"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-30px" }}
-        >
+        <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 lg:gap-16">
           {partners.map((partner) => (
-            <motion.div
+            <div
               key={partner.name}
-              variants={itemVariants}
-              className="flex items-center justify-center px-4 py-2 opacity-60 hover:opacity-100 transition-opacity duration-300 "
+              className="flex items-center justify-center hover:opacity-100 transition-all duration-300"
             >
-              <img src={partner.logo} alt={partner.name} className="h-6 md:h-8 w-auto object-contain" />
-            </motion.div>
+              <img
+                src={partner.logo}
+                alt={partner.name}
+                className="h-6 md:h-8 w-auto object-contain max-w-[120px]"
+                loading="lazy"
+              />
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
