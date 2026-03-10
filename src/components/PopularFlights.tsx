@@ -42,12 +42,12 @@ const PopularFlights = () => {
           {airlines.map((airline) => (
             <div
               key={airline.name}
-              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-4 md:p-6 flex items-center justify-center h-20 md:h-24 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-sm transition-all duration-300 group cursor-pointer"
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-4 md:p-6 flex items-center justify-center h-20 md:h-24 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-sm transition-all duration-300 group cursor-pointer card-unified"
             >
               <img
                 src={airline.logo}
                 alt={airline.name}
-                className="h-8 md:h-10 w-auto object-contain max-w-[100px] md:max-w-[120px] group-hover:opacity-100 transition-opacity  group-hover:grayscale-0 card-unified"
+                className="h-8 md:h-10 w-auto object-contain max-w-[100px] md:max-w-[120px] group-hover:opacity-100 transition-opacity  group-hover:grayscale-0"
                 loading="lazy"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
