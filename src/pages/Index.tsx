@@ -312,8 +312,8 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Featured Deals - Colorful Section */}
-      <section className="py-20 bg-gradient-to-b from-purple-50/50 via-blue-50/30 to-background dark:from-purple-950/20 dark:via-blue-950/10 dark:to-background">
+      {/* Featured Deals - Structured Layout */}
+      <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <motion.div
             initial="initial"
@@ -322,9 +322,7 @@ const Index = () => {
             className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-12 gap-4"
           >
             <motion.div variants={fadeInUp}>
-              <h2 className="font-display text-3xl md:text-4xl font-bold mb-2">
-                <span className="text-gradient-vibrant">Featured</span> Deals
-              </h2>
+              <h2 className="font-display text-3xl md:text-4xl font-bold mb-2">Featured Deals</h2>
               <p className="text-muted-foreground">Handpicked offers refreshed daily</p>
             </motion.div>
             <motion.div variants={fadeInUp} className="flex gap-3">
