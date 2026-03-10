@@ -259,8 +259,8 @@ const Index = () => {
         <PartnerLogos />
       </Suspense>
 
-      {/* Why Choose Us Section - Colorful */}
-      <section className="py-20 bg-gradient-to-b from-background via-blue-50/30 to-background dark:from-background dark:via-blue-950/20 dark:to-background">
+      {/* Why Choose Us Section - Professional */}
+      <section className="py-20 bg-slate-50 dark:bg-slate-900/50">
         <div className="container mx-auto px-4">
           <motion.div
             initial="initial"
@@ -270,7 +270,7 @@ const Index = () => {
             className="text-center mb-12"
           >
             <motion.h2 variants={fadeInUp} className="font-display text-3xl md:text-4xl font-bold mb-4">
-              Why Travelers Choose <span className="text-gradient-vibrant">Tripile</span>
+              Why Travelers Choose Tripile
             </motion.h2>
             <motion.p variants={fadeInUp} className="text-muted-foreground text-lg max-w-2xl mx-auto">
               Join over 2 million satisfied travelers who trust us for their journeys
@@ -286,20 +286,20 @@ const Index = () => {
           >
             {whyChooseUs.map((item, index) => {
               const gradients = [
-                "from-blue-500 to-cyan-500",
-                "from-purple-500 to-pink-500",
-                "from-orange-500 to-rose-500",
-                "from-emerald-500 to-teal-500",
+                "from-slate-700 to-slate-900",
+                "from-blue-600 to-blue-800",
+                "from-indigo-600 to-indigo-800",
+                "from-slate-600 to-slate-800",
               ];
               return (
                 <motion.div
                   key={item.title}
                   variants={fadeInUp}
-                  whileHover={{ y: -8, transition: { duration: 0.3 } }}
-                  className="card-colorful p-6 text-center group hover-glow-blue"
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                  className="card-unified p-6 text-center group"
                 >
                   <div
-                    className={`w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${gradients[index]} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}
+                    className={`w-16 h-16 mx-auto mb-4 rounded-xl text-white bg-gradient-to-br ${gradients[index]} flex items-center justify-center transition-colors group-hover:bg-primary/20`}
                   >
                     <item.icon className="w-8 h-8 text-white" />
                   </div>
