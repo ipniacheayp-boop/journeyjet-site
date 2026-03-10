@@ -47,7 +47,7 @@ const PopularFlights = () => {
               <img
                 src={airline.logo}
                 alt={airline.name}
-                className="h-8 md:h-10 w-auto object-contain max-w-[100px] md:max-w-[120px] opacity-70 group-hover:opacity-100 transition-opacity  group-hover:grayscale-0"
+                className="h-8 md:h-10 w-auto object-contain max-w-[100px] md:max-w-[120px] group-hover:opacity-100 transition-opacity  group-hover:grayscale-0 card-unified"
                 loading="lazy"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
