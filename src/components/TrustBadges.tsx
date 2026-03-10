@@ -1,31 +1,34 @@
 import { Award, Shield, ThumbsUp, Users } from "lucide-react";
-import { motion } from "framer-motion";
-import type { Variants } from "framer-motion";
+
 const TrustBadges = () => {
   const stats = [
     {
       icon: Users,
       value: "2M+",
-      label: "Happy Travelers",
-      color: "text-primary",
+      label: "Verified Travelers",
+      color: "text-blue-600",
+      bg: "bg-blue-100 dark:bg-blue-900/30",
     },
     {
       icon: ThumbsUp,
       value: "4.8/5",
-      label: "Customer Rating",
-      color: "text-success",
+      label: "Average Rating",
+      color: "text-emerald-600",
+      bg: "bg-emerald-100 dark:bg-emerald-900/30",
     },
     {
       icon: Shield,
       value: "100%",
-      label: "Secure Booking",
-      color: "text-accent-foreground",
+      label: "Secure Transactions",
+      color: "text-indigo-600",
+      bg: "bg-indigo-100 dark:bg-indigo-900/30",
     },
     {
       icon: Award,
       value: "15+",
-      label: "Years of Service",
-      color: "text-primary",
+      label: "Years Excellence",
+      color: "text-amber-600",
+      bg: "bg-amber-100 dark:bg-amber-900/30",
     },
   ];
 
@@ -34,172 +37,102 @@ const TrustBadges = () => {
       name: "Trustpilot",
       rating: "4.4",
       reviews: "9,865 reviews",
-      stars: "★★★★★",
-      note: "Verified customer reviews",
-      color: "text-green-600",
       logo: "https://upload.wikimedia.org/wikipedia/commons/7/78/Trustpilot_Logo_%282022%29.svg",
     },
     {
       name: "Google",
       rating: "4.1",
       reviews: "1,605 reviews",
-      stars: "★★★★☆",
-      note: "Public Google user ratings",
-      color: "text-yellow-500",
       logo: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg",
     },
     {
       name: "Sitejabber",
       rating: "4.7",
       reviews: "22,801 reviews",
-      stars: "★★★★★",
-      note: "Independent consumer review site",
-      color: "text-orange-500",
-      logo: "https://m.bbb.org/prod/ProfileImages/2023/ee858f63-8ffb-4758-94f1-80cd0b3c2fbc.png?tx=c_limit,h_51,w_65,dpr_2.0",
+      logo: "https://m.bbb.org/prod/ProfileImages/2023/ee858f63-8ffb-4758-94f1-80cd0b3c2fbc.png",
     },
     {
       name: "Reviews.io",
       rating: "4.1",
       reviews: "4,585 reviews",
-      stars: "★★★★☆",
-      note: "Verified purchase reviews",
-      color: "text-gray-900 dark:text-gray-200",
       logo: "https://cdn.prod.website-files.com/642419dd2be643c50e400f66/66e00d77b400163fc0d831d0_4d3b0b51312903ee62e3ff7df64fc4af_reviewsio-logo.svg",
     },
     {
       name: "Facebook",
       rating: "4.4",
       reviews: "483 reviews",
-      stars: "★★★★☆",
-      note: "Customer feedback on Facebook",
-      color: "text-blue-600",
       logo: "https://upload.wikimedia.org/wikipedia/commons/9/93/Facebook_logo_%282023%29.svg",
     },
     {
       name: "ResellerRatings",
       rating: "4.6",
       reviews: "18,200 reviews",
-      stars: "★★★★★",
-      note: "Retail & service review authority",
-      color: "text-purple-600",
       logo: "https://www.hubspot.com/hubfs/Reseller%20Ratings-2.svg",
     },
   ];
 
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.12,
-      },
-    },
-  };
-
-  const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.4,
-        ease: [0.25, 0.1, 0.25, 1],
-      },
-    },
-  };
-
   return (
-    <section className="py-16 md:py-20 bg-background border-y border-border/40" aria-labelledby="trust-badges-title">
+    <section
+      className="py-20 bg-slate-50 dark:bg-slate-900/40 border-y border-slate-200 dark:border-slate-800"
+      aria-labelledby="trust-badges-title"
+    >
       <div className="container mx-auto px-4">
         {/* Heading */}
-        <div className="text-center mb-12">
-          <h2 id="trust-badges-title" className="text-2xl md:text-3xl font-bold tracking-tight mb-3">
-            Trusted by Millions Worldwide
+        <div className="text-center mb-16 max-w-2xl mx-auto">
+          <h2 id="trust-badges-title" className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white mb-4">
+            Trusted by Millions of Travelers
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            We’re committed to providing a secure, reliable, and premium travel booking experience.
+
+          <p className="text-slate-600 dark:text-slate-400 text-lg">
+            Our commitment to security, reliability, and service excellence has earned the trust of travelers worldwide.
           </p>
         </div>
 
         {/* Stats */}
-        <motion.div
-          className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 max-w-5xl mx-auto"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          {stats.map((stat) => (
-            <motion.div key={stat.label} variants={itemVariants}>
-              <div className="glass-card text-center px-5 py-6 hover:-translate-y-1 transition-all duration-300">
-                <div
-                  className={`mx-auto mb-4 flex items-center justify-center
-                  w-14 h-14 md:w-16 md:h-16 rounded-full
-                  bg-background border border-border shadow-sm ${stat.color}`}
-                >
-                  <stat.icon className="w-7 h-7 md:w-8 md:h-8" />
-                </div>
-                <div className="text-2xl md:text-3xl font-bold">{stat.value}</div>
-                <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 max-w-5xl mx-auto mb-20">
+          {stats.map((stat) => {
+            const Icon = stat.icon;
 
-        {/* Review Platforms */}
-        <div className="mt-16 border-t border-border/60 pt-10">
-          <p className="text-center text-xs font-semibold tracking-widest text-muted-foreground mb-8">
-            VERIFIED REVIEWS FROM INDEPENDENT PLATFORMS
+            return (
+              <div
+                key={stat.label}
+                className="group bg-white dark:bg-slate-950 rounded-2xl p-8 text-center border border-slate-200 dark:border-slate-800 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+              >
+                <div
+                  className={`mx-auto mb-5 w-12 h-12 rounded-xl flex items-center justify-center ${stat.bg} transition-transform duration-300 group-hover:scale-105`}
+                >
+                  <Icon className={`w-6 h-6 ${stat.color}`} />
+                </div>
+
+                <div className="text-3xl font-bold text-slate-900 dark:text-white mb-2">{stat.value}</div>
+
+                <div className="text-sm font-medium text-slate-600 dark:text-slate-400">{stat.label}</div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Reviews */}
+        <div className="max-w-6xl mx-auto border-t border-slate-200 dark:border-slate-800 pt-16">
+          <p className="text-center text-xs font-semibold tracking-widest text-slate-500 uppercase mb-10">
+            Verified Independent Reviews
           </p>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 max-w-6xl mx-auto">
+          <div className="grid grid-cols-2 lg:grid-cols-6 gap-6">
             {platforms.map((item) => (
-              <div key={item.name} className="relative group">
-                {/* Base card */}
-                <div
-                  className="rounded-xl bg-card border border-border/60
-            px-4 py-4 text-center shadow-sm
-            transition-all duration-300
-            hover:-translate-y-1 hover:shadow-md"
-                >
-                  {/* Logo */}
-                  <div className="flex justify-center mb-2">
-                    <img src={item.logo} alt={`${item.name} logo`} className="h-6 object-contain" />
-                  </div>
+              <div
+                key={item.name}
+                className="group rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-6 text-center flex flex-col items-center justify-center transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+              >
+                <img
+                  src={item.logo}
+                  alt={`${item.name} logo`}
+                  className="h-6 object-contain mb-4 opacity-80 group-hover:opacity-100 transition-opacity"
+                />
 
-                  {/* <div className={`font-semibold text-sm ${item.color}`}>
-                    {item.name}
-                  </div> */}
-                  <div className="text-xs text-muted-foreground mt-1">{item.reviews}</div>
-                  <div className="text-xs text-muted-foreground mt-1">{item.rating} / 5</div>
-                </div>
+                <div className="text-slate-900 dark:text-white font-semibold text-sm mb-1">{item.rating} / 5</div>
 
-                {/* Hover detail */}
-                <div
-                  className="absolute left-1/2 -translate-x-1/2 top-full mt-3 w-72
-            opacity-0 group-hover:opacity-100
-           transition-opacity duration-200
-           pointer-events-none z-30"
-                >
-                  <div className="glass-card p-4 text-sm">
-                    <div className="flex items-center gap-2 mb-1">
-                      <img src={item.logo} alt="" className="h-5 object-contain" />
-                      {/* <span className={`font-semibold ${item.color}`}>
-                        {item.name}
-                      </span> */}
-                    </div>
-
-                    <div className="text-yellow-500 text-base mb-2">{item.stars}</div>
-
-                    <p className="text-muted-foreground">
-                      Rating: <span className="font-medium">{item.rating}</span> / 5
-                    </p>
-                    <p className="text-muted-foreground">
-                      Reviews: <span className="font-medium">{item.reviews}</span>
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-2">{item.note}</p>
-                  </div>
-                </div>
+                <div className="text-xs text-slate-500">{item.reviews}</div>
               </div>
             ))}
           </div>
