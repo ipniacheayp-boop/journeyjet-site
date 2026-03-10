@@ -417,9 +417,7 @@ const Index = () => {
             transition={{ duration: 0.6 }}
             className="glass-card rounded-3xl p-8 md:p-12 max-w-5xl mx-auto"
           >
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-center mb-12">
-              SIGN UP & UNLOCK <span className="text-gradient">REWARDS</span>
-            </h2>
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-center mb-12">SIGN UP & UNLOCK REWARDS</h2>
             <div className="grid md:grid-cols-2 gap-8 items-center">
               <motion.div
                 initial={{ opacity: 0, x: -30 }}
