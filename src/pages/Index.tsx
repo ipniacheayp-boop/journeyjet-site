@@ -222,7 +222,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Floating Search Widget - Glowing Border */}
+      {/* Structured Search Widget Container */}
       <div className="container mx-auto px-4 -mt-24 relative z-20">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -230,9 +230,10 @@ const Index = () => {
           transition={{ delay: 0.6, duration: 0.6 }}
           className="relative"
         >
-          {/* Glowing border effect */}
-          <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl opacity-75 blur-sm animate-pulse" />
-          <div className="glass-vibrant rounded-3xl shadow-colorful-lg p-3 md:p-4 relative">
+          <div
+            id="search-widget"
+            className="bg-white rounded-2xl shadow-xl border border-slate-200/50 p-3 md:p-4 relative"
+          >
             <SearchWidget />
           </div>
         </motion.div>
