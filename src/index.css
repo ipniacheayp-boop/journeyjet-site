@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,6 +10,10 @@
    Secondary: Slate - Secondary buttons, icons
    Accent: Coral - Pricing highlights, limited promotions only
 */
+
+.font-display {
+  font-family: "Sora", sans-serif;
+}
 
 @layer base {
   :root {
