@@ -7,22 +7,22 @@ const ForTravelPros = () => {
       icon: Globe,
       title: "Explore",
       subtitle: "See destinations on your budget",
-      gradient: "from-blue-500 to-cyan-500",
-      bgColor: "bg-blue-50 dark:bg-blue-950/30",
+      gradient: "from-slate-700 to-slate-900",
+      bgColor: "bg-white dark:bg-slate-900",
     },
     {
       icon: Bell,
       title: "Price Alerts",
       subtitle: "Know when prices change",
-      gradient: "from-purple-500 to-pink-500",
-      bgColor: "bg-purple-50 dark:bg-purple-950/30",
+      gradient: "from-indigo-600 to-indigo-800",
+      bgColor: "bg-white dark:bg-slate-900",
     },
     {
       icon: Plane,
       title: "Flight Tracker",
       subtitle: "See real-time delays",
-      gradient: "from-orange-500 to-red-500",
-      bgColor: "bg-orange-50 dark:bg-orange-950/30",
+      gradient: "from-sky-600 to-blue-800",
+      bgColor: "bg-white dark:bg-slate-900",
     },
   ];
 
@@ -59,7 +59,7 @@ const ForTravelPros = () => {
           className="text-center mb-12"
         >
           <h2 id="travel-pros-title" className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            For travel pros
+            For Travel Professionals
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Professional tools to help you travel smarter and save more
@@ -77,22 +77,20 @@ const ForTravelPros = () => {
             <motion.div
               key={card.title}
               variants={itemVariants}
-              className={`${card.bgColor} rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer group`}
+              className={`${card.bgColor} card-unified flex flex-col items-center justify-center p-6 rounded-2xl text-center border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-300 hover:-translate-y-1 hover:shadow-md group`}
             >
               {/* Icon Container */}
-              <div className={`w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br ${card.gradient} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                <card.icon className="w-10 h-10 text-white" aria-hidden="true" />
+              <div
+                className={`w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br ${card.gradient} flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-300`}
+              >
+                <card.icon className="w-8 h-8 text-white" aria-hidden="true" />
               </div>
 
               {/* Title */}
-              <h3 className="text-xl font-bold text-foreground mb-2">
-                {card.title}
-              </h3>
+              <h3 className="text-xl font-bold text-foreground mb-2">{card.title}</h3>
 
               {/* Subtitle */}
-              <p className="text-muted-foreground text-sm">
-                {card.subtitle}
-              </p>
+              <p className="text-muted-foreground text-sm">{card.subtitle}</p>
             </motion.div>
           ))}
         </motion.div>
