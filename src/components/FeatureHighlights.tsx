@@ -106,7 +106,7 @@ const FeatureHighlights = () => {
         </motion.div>
         <div className="mt-14 text-center">
           <a
-            href="tel:+18002215246"
+            href="tel:+18009634330"
             className="inline-flex items-center text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
           >
             Speak with a Travel Advisor
