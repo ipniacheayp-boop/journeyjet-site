@@ -172,41 +172,54 @@ const Index = () => {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="text-center max-w-4xl"
           >
+            {/* Badge */}
             <motion.span
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-8 py-2 border border-white/20 bg-black/30 backdrop-blur-md text-white text-sm font-semibold tracking-wider rounded-md mb-6"
+              className="group inline-flex items-center gap-2 px-7 py-2.5 rounded-full border border-white/20 bg-gradient-to-r from-blue-500/15 via-purple-500/15 to-pink-500/15 backdrop-blur-lg text-sm font-medium text-gray-200 tracking-wide mb-6 shadow-[0_0_25px_rgba(99,102,241,0.15)] hover:shadow-[0_0_35px_rgba(99,102,241,0.25)] transition-all duration-300"
             >
+              <span className="text-base">✈</span>
               Start Planning Your Next Trip
             </motion.span>
 
+            {/* Heading */}
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.6 }}
-              className="font-display text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight"
+              className="font-display text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
             >
-              Discover Your Next
-              <span className="block text-white">Adventure</span>
+              <span className="bg-gradient-to-r from-white via-gray-200 to-gray-300 bg-clip-text text-transparent">
+                Discover Your Next
+              </span>
+
+              <span className="block bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                Adventure
+              </span>
             </motion.h1>
 
+            {/* Description */}
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.6 }}
-              className="text-lg md:text-xl text-white/90 mb-4 max-w-2xl mx-auto"
+              className="text-lg md:text-xl text-gray-300 mb-4 max-w-2xl mx-auto"
             >
-              Compare 500+ airlines and save up to 50% on flights, hotels, and car rentals.
+              Compare <span className="text-blue-400 font-semibold">500+ airlines</span> and save up to{" "}
+              <span className="text-purple-400 font-semibold">50%</span> on flights, hotels, and car rentals.
             </motion.p>
 
+            {/* Sub text */}
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.6 }}
-              className="text-xl md:text-2xl font-semibold text-white/90"
+              className="text-lg md:text-xl font-medium text-gray-400"
             >
-              Zero Booking Fees • Instant Confirmation
+              <span className="text-green-400">Zero Booking Fees</span>
+              <span className="mx-3 text-gray-600">•</span>
+              <span className="text-blue-400">Instant Confirmation</span>
             </motion.p>
           </motion.div>
         </div>
