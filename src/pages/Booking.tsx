@@ -335,7 +335,9 @@ const Booking = () => {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="lastName">Last Name *</Label>
+                        <Label htmlFor="lastName">
+                          Last Name <span className="text-destructive">*</span>
+                        </Label>
                         <Input
                           id="lastName"
                           required
@@ -347,7 +349,9 @@ const Booking = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="email">Email Address *</Label>
+                      <Label htmlFor="email">
+                        Email Address <span className="text-destructive">*</span>
+                      </Label>
                       <Input
                         id="email"
                         type="email"
@@ -359,7 +363,9 @@ const Booking = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="phone">Phone Number *</Label>
+                      <Label htmlFor="phone">
+                        Phone Number <span className="text-destructive">*</span>
+                      </Label>
                       <Input
                         id="phone"
                         type="tel"
