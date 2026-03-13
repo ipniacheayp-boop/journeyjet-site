@@ -23,7 +23,7 @@ const Booking = () => {
   const [offer, setOffer] = useState<any>(null);
   const [agentId, setAgentId] = useState<string | undefined>(undefined);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
-  const [selectedCurrency, setSelectedCurrency] = useState<string>('USD');
+  const [selectedCurrency, setSelectedCurrency] = useState<string>("USD");
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -32,10 +32,10 @@ const Booking = () => {
   });
 
   // Idempotency: Generate clientRequestId once per booking attempt
-  const clientRequestIdRef = useRef<string>('');
+  const clientRequestIdRef = useRef<string>("");
   const [validatedOffer, setValidatedOffer] = useState<any>(null);
   const [validatedPrice, setValidatedPrice] = useState<number | null>(null);
-  const [validatedCurrency, setValidatedCurrency] = useState<string>('USD');
+  const [validatedCurrency, setValidatedCurrency] = useState<string>("USD");
   const [expiresAt, setExpiresAt] = useState<string | null>(null);
   const [showPriceChangeModal, setShowPriceChangeModal] = useState(false);
   const [pendingPriceChangeOffer, setPendingPriceChangeOffer] = useState<any>(null);
@@ -53,7 +53,7 @@ const Booking = () => {
 
   useEffect(() => {
     // Retrieve the selected offer from sessionStorage
-    const storedData = sessionStorage.getItem('selectedOffer');
+    const storedData = sessionStorage.getItem("selectedOffer");
     if (storedData) {
       const parsed = JSON.parse(storedData);
       setOffer(parsed.offer);
@@ -102,16 +102,24 @@ const Booking = () => {
   const total = price + taxes;
 
   // FX-SmartSave calculation - MUST be called unconditionally (React hooks rule)
-  const normalizedBookingType = (bookingType === 'flights' ? 'flight' : bookingType === 'hotels' ? 'hotel' : bookingType === 'cars' ? 'car' : 'flight') as 'flight' | 'hotel' | 'car';
-  
+  const normalizedBookingType = (
+    bookingType === "flights"
+      ? "flight"
+      : bookingType === "hotels"
+        ? "hotel"
+        : bookingType === "cars"
+          ? "car"
+          : "flight"
+  ) as "flight" | "hotel" | "car";
+
   const { data: fxData } = useFxSmartSave({
     productType: normalizedBookingType,
     prices: [
-      { currency: 'USD', amount: total || 0 },
-      { currency: 'EUR', amount: (total || 0) * 0.92 },
-      { currency: 'GBP', amount: (total || 0) * 0.79 },
+      { currency: "USD", amount: total || 0 },
+      { currency: "EUR", amount: (total || 0) * 0.92 },
+      { currency: "GBP", amount: (total || 0) * 0.79 },
     ],
-    travelDate: offer?.itineraries?.[0]?.segments?.[0]?.departure?.at?.split('T')[0],
+    travelDate: offer?.itineraries?.[0]?.segments?.[0]?.departure?.at?.split("T")[0],
     enabled: !!offer && total > 0, // Only enable when we have valid data
   });
 
@@ -135,20 +143,16 @@ const Booking = () => {
     }
 
     // Step 1: Validate prebooking with provider
-    const productType = bookingType as 'flight' | 'hotel' | 'car' | 'flights' | 'hotels' | 'cars';
-    const validationResult = await validatePrebooking(
-      productType,
-      validatedOffer || offer,
-      clientRequestIdRef.current
-    );
+    const productType = bookingType as "flight" | "hotel" | "car" | "flights" | "hotels" | "cars";
+    const validationResult = await validatePrebooking(productType, validatedOffer || offer, clientRequestIdRef.current);
 
     if (!validationResult.ok) {
-      if (validationResult.code === 'PRICE_CHANGED') {
+      if (validationResult.code === "PRICE_CHANGED") {
         // Modal will be shown via useEffect
         setPendingPriceChangeOffer(validationResult.validatedOffer);
         return;
       }
-      toast.error(validationResult.message || 'Validation failed. Please try again.');
+      toast.error(validationResult.message || "Validation failed. Please try again.");
       return;
     }
 
@@ -161,15 +165,15 @@ const Booking = () => {
     // Store validated data
     setValidatedOffer(validationResult.validatedOffer);
     setValidatedPrice(validationResult.price || null);
-    setValidatedCurrency(validationResult.currency || 'USD');
+    setValidatedCurrency(validationResult.currency || "USD");
     setExpiresAt(validationResult.expiresAt || null);
 
     // Step 2: Create provisional booking
     await proceedToCheckout(
       validationResult.validatedOffer || offer,
       validationResult.price || parseFloat(getPrice(offer)),
-      validationResult.currency || 'USD',
-      validationResult.expiresAt
+      validationResult.currency || "USD",
+      validationResult.expiresAt,
     );
   };
 
@@ -177,17 +181,17 @@ const Booking = () => {
     offerToBook: any,
     checkoutPrice: number,
     checkoutCurrency: string,
-    expires?: string
+    expires?: string,
   ) => {
     const productTypeName = bookingType as string;
-    
+
     // ALWAYS use USD
-    const finalCurrency = 'USD';
+    const finalCurrency = "USD";
     const finalPrice = checkoutPrice;
-    
+
     // Use agent-assisted booking (no Stripe payment required)
     try {
-      const { data, error: fnError } = await supabase.functions.invoke('bookings-agent-assisted', {
+      const { data, error: fnError } = await supabase.functions.invoke("bookings-agent-assisted", {
         body: {
           productType: productTypeName,
           offer,
@@ -206,11 +210,11 @@ const Booking = () => {
       });
 
       if (fnError) {
-        throw new Error(fnError.message || 'Failed to create booking');
+        throw new Error(fnError.message || "Failed to create booking");
       }
 
       if (!data.ok) {
-        throw new Error(data.message || 'Booking creation failed');
+        throw new Error(data.message || "Booking creation failed");
       }
 
       // Store booking details for confirmation page
@@ -230,14 +234,14 @@ const Booking = () => {
         },
       };
 
-      sessionStorage.setItem('pendingBooking', JSON.stringify(pendingBookingData));
+      sessionStorage.setItem("pendingBooking", JSON.stringify(pendingBookingData));
 
       toast.success("Booking confirmed! Our agent will contact you shortly.");
-      
+
       // Navigate to agent-will-connect page
       navigate(`/agent-will-connect?booking_id=${data.bookingId}`);
     } catch (err: any) {
-      toast.error(err.message || 'Failed to create booking');
+      toast.error(err.message || "Failed to create booking");
       // Generate new clientRequestId for retry
       clientRequestIdRef.current = generateClientRequestId();
     }
@@ -251,16 +255,12 @@ const Booking = () => {
       // Update with new price and proceed - ALWAYS use USD
       setValidatedOffer(pendingPriceChangeOffer);
       setValidatedPrice(priceChangeData.newPrice);
-      setValidatedCurrency('USD');
-      
+      setValidatedCurrency("USD");
+
       // Generate new clientRequestId for the new price
       clientRequestIdRef.current = generateClientRequestId();
-      
-      await proceedToCheckout(
-        pendingPriceChangeOffer,
-        priceChangeData.newPrice,
-        'USD'
-      );
+
+      await proceedToCheckout(pendingPriceChangeOffer, priceChangeData.newPrice, "USD");
     }
   };
 
@@ -283,9 +283,7 @@ const Booking = () => {
                 No offer selected. Please search and select an offer first.
               </p>
               <div className="mt-4 text-center">
-                <Button onClick={() => navigate("/")}>
-                  Go to Search
-                </Button>
+                <Button onClick={() => navigate("/")}>Go to Search</Button>
               </div>
             </CardContent>
           </Card>
@@ -298,7 +296,7 @@ const Booking = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      
+
       {/* Price Change Modal */}
       {priceChangeData && (
         <PriceChangeModal
@@ -310,14 +308,14 @@ const Booking = () => {
           onCancel={handlePriceChangeCancel}
         />
       )}
-      
-      <main className="flex-1 pt-24 pb-16 bg-secondary">
+
+      <main className="flex-1 pt-24 pb-16 bg-background">
         <div className="container mx-auto px-4 max-w-5xl">
-          <h1 className="text-4xl font-bold mb-8">Complete Your Booking</h1>
+          <h1 className="font-display text-4xl font-bold mb-8 text-foreground mt-4">Complete Your Booking</h1>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
-              <Card>
+              <Card className="bg-card border-border">
                 <CardHeader>
                   <CardTitle>Traveler Information</CardTitle>
                 </CardHeader>
@@ -379,7 +377,7 @@ const Booking = () => {
                         recommendedAmountUSD={fxData.recommendedAmountUSD}
                         originalCurrency={currency}
                         originalAmount={total}
-                        travelDate={offer?.itineraries?.[0]?.segments?.[0]?.departure?.at?.split('T')[0]}
+                        travelDate={offer?.itineraries?.[0]?.segments?.[0]?.departure?.at?.split("T")[0]}
                         onCurrencySelect={handleCurrencySelect}
                       />
                     )}
@@ -412,12 +410,7 @@ const Booking = () => {
                       </div>
                     </div>
 
-                    <Button 
-                      type="submit" 
-                      size="lg" 
-                      className="w-full" 
-                      disabled={isProcessing || !acceptedTerms}
-                    >
+                    <Button type="submit" size="lg" className="w-full" disabled={isProcessing || !acceptedTerms}>
                       {isProcessing ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -454,9 +447,7 @@ const Booking = () => {
                       </p>
                     )}
                     {bookingType === "hotels" && (
-                      <p className="text-sm text-muted-foreground">
-                        {offer.hotel?.name || "Hotel Booking"}
-                      </p>
+                      <p className="text-sm text-muted-foreground">{offer.hotel?.name || "Hotel Booking"}</p>
                     )}
                     {bookingType === "cars" && (
                       <div className="space-y-1">
@@ -481,7 +472,9 @@ const Booking = () => {
                     </div>
                     <div className="border-t pt-2 flex justify-between font-bold">
                       <span>Total</span>
-                      <span className="text-primary">${total.toFixed(2)} {currency}</span>
+                      <span className="text-primary">
+                        ${total.toFixed(2)} {currency}
+                      </span>
                     </div>
                   </div>
 
