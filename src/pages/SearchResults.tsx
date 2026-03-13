@@ -242,7 +242,7 @@ const SearchResults = () => {
           )}
         </div>
       </main>
-       {/* /* {showCallPopup && <CallSupportPopup onClose={() => setShowCallPopup(false)} />}  */ */}
+      {showCallPopup && <CallSupportPopup onClose={() => setShowCallPopup(false)} />}
       <Footer />
     </div>
   );
