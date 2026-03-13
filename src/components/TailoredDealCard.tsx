@@ -64,9 +64,9 @@ const TailoredDealCard = ({ deal }: TailoredDealCardProps) => {
           <p className="text-sm text-muted-foreground line-clamp-2">{deal.description}</p>
           <Button
             variant="outline"
-            className={`w-full border-2 bg-gradient-to-r ${tagConfig.gradient} bg-clip-text text-transparent border-transparent bg-origin-border hover:text-white relative overflow-hidden group/btn`}
+            className={`w-full border-2 bg-gradient-to-r ${tagConfig.gradient} bg-clip-text text-transparent border-transparent bg-origin-border hover:text-foreground relative overflow-hidden group/btn`}
             style={{
-              backgroundImage: `linear-gradient(white, white), linear-gradient(to right, var(--tw-gradient-stops))`,
+              backgroundImage: `linear-gradient(hsl(var(--background)), hsl(var(--background))), linear-gradient(to right, var(--tw-gradient-stops))`,
               backgroundOrigin: "border-box",
               backgroundClip: "padding-box, border-box",
             }}
@@ -74,7 +74,8 @@ const TailoredDealCard = ({ deal }: TailoredDealCardProps) => {
             <span
               className={`absolute inset-0 bg-gradient-to-r ${tagConfig.gradient} opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300`}
             />
-            <span className="relative z-10 flex items-center justify-center gap-2 text-black group-hover/btn:text-white transition-colors">
+
+            <span className="relative z-10 flex items-center justify-center gap-2 text-foreground group-hover/btn:text-foreground transition-colors">
               View More
               <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
             </span>
