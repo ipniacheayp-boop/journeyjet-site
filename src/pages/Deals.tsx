@@ -427,16 +427,16 @@ const Deals = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="mb-10 rounded-2xl overflow-hidden shadow-lg"
         >
-          <div className="relative bg-gradient-to-r from-[hsl(220,90%,45%)] via-[hsl(220,85%,50%)] to-[hsl(220,80%,55%)] px-6 py-8 md:px-10 md:py-10 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="relative bg-gradient-to-r from-primary via-primary/90 to-primary/80 px-6 py-8 md:px-10 md:py-10 flex flex-col md:flex-row items-center justify-between gap-6">
             {/* Subtle decorative circles */}
-            <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/4 pointer-events-none" />
-            <div className="absolute bottom-0 left-10 w-24 h-24 bg-white/5 rounded-full translate-y-1/2 pointer-events-none" />
+            <div className="absolute top-0 right-0 w-40 h-40 bg-primary-foreground/5 rounded-full -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+            <div className="absolute bottom-0 left-10 w-24 h-24 bg-primary-foreground/5 rounded-full translate-y-1/2 pointer-events-none" />
 
             <div className="relative z-10 text-center md:text-left space-y-2">
-              <h2 className="text-2xl md:text-3xl font-black text-white flex items-center gap-2 justify-center md:justify-start">
+              <h2 className="text-2xl md:text-3xl font-black text-primary-foreground flex items-center gap-2 justify-center md:justify-start">
                 Gift Rewards <span className="text-3xl">🎁</span>
               </h2>
-              <p className="text-white/90 text-base md:text-lg max-w-lg">
+              <p className="text-primary-foreground/90 text-base md:text-lg max-w-lg">
                 Make Spring Travel Pay You Back: Get{" "}
                 <span className="font-bold text-amber-300">up to $100*</span>{" "}
                 in travel credits after every flight booking.
@@ -445,7 +445,7 @@ const Deals = () => {
 
             <Button
               onClick={() => navigate("/booking")}
-              className="relative z-10 bg-white text-[hsl(220,90%,45%)] hover:bg-white/90 font-bold px-8 py-3 rounded-xl text-base shadow-md whitespace-nowrap"
+              className="relative z-10 bg-primary-foreground text-primary hover:bg-primary-foreground/90 font-bold px-8 py-3 rounded-xl text-base shadow-md whitespace-nowrap"
             >
               Book & Earn
             </Button>
