@@ -153,6 +153,10 @@
   }
 }
 
+input[type="date"] {
+  color-scheme: light dark;
+}
+
 @layer base {
   * {
     @apply border-border;
