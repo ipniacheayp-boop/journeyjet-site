@@ -13,7 +13,6 @@ import FlightResultCard from "@/components/FlightResultCard";
 import HotelResultCard from "@/components/HotelResultCard";
 import CarResultCard from "@/components/CarResultCard";
 import { toast } from "sonner";
-import CallSupportPopup from "@/components/CallSupportPopup";
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
@@ -242,7 +241,6 @@ const SearchResults = () => {
           )}
         </div>
       </main>
-      {showCallPopup && <CallSupportPopup onClose={() => setShowCallPopup(false)} />}
       <Footer />
     </div>
   );
