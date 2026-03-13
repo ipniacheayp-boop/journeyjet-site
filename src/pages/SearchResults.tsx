@@ -155,10 +155,10 @@ const SearchResults = () => {
         <meta name="robots" content="noindex, follow" />
       </Helmet>
       <Header />
-      <main className="flex-1 pt-24 pb-16 bg-secondary">
-        <div className="container mx-auto px-4">
+      <main className="flex-1 pt-24 pb-16 bg-background">
+        <div className="container mx-auto px-4 max-w-7xl">
           <div className="mb-8">
-            <h1 className="text-4xl font-bold mb-2 capitalize">{type} Search Results</h1>
+            <h1 className="font-display text-4xl font-bold mb-2 capitalize text-foreground">{type} Search Results</h1>
             <p className="text-muted-foreground">
               {loading ? "Finding the best available price for you..." : `Found ${results.length} result(s)`}
             </p>
@@ -183,7 +183,7 @@ const SearchResults = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <Card key={i}>
+                  <Card key={i} className="bg-card border-border">
                     <CardHeader>
                       <Skeleton className="h-20 w-full" />
                     </CardHeader>
@@ -195,7 +195,7 @@ const SearchResults = () => {
               </div>
             </div>
           ) : results.length === 0 ? (
-            <Card>
+            <Card className="bg-card border-border">
               <CardContent className="py-12 text-center">
                 <div className="max-w-lg mx-auto">
                   <p className="text-lg font-semibold mb-2">No results found</p>
