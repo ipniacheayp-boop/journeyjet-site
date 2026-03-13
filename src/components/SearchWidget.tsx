@@ -74,22 +74,10 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Helper to extract a 3-letter IATA code from code or display value
-  const extractIATACode = (displayValue: string, codeValue: string): string => {
-    if (codeValue && /^[A-Z]{3}$/i.test(codeValue.trim())) return codeValue.trim().toUpperCase();
-    const match = displayValue.match(/\(([A-Z]{3})\)/i);
-    if (match) return match[1].toUpperCase();
-    const trimmed = displayValue.trim().toUpperCase();
-    if (/^[A-Z]{3}$/.test(trimmed)) return trimmed;
-    return "";
-  };
-
   const validateFlightForm = () => {
     const newErrors: Record<string, string> = {};
-    const originCode = extractIATACode(flightOrigin, flightOriginCode);
-    const destCode = extractIATACode(flightDestination, flightDestinationCode);
-    if (!originCode) newErrors.origin = "Please select a valid airport (3-letter code)";
-    if (!destCode) newErrors.destination = "Please select a valid airport (3-letter code)";
+    if (!flightOrigin.trim()) newErrors.origin = "Origin is required";
+    if (!flightDestination.trim()) newErrors.destination = "Destination is required";
     if (!departDate) newErrors.departDate = "Departure date is required";
     if (tripType === "round-trip" && !returnDate) newErrors.returnDate = "Return date is required";
     if (tripType === "round-trip" && departDate && returnDate && new Date(returnDate) < new Date(departDate)) {
@@ -127,8 +115,8 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
     e.preventDefault();
     if (validateFlightForm()) {
       toast.success("Searching for flights...");
-      const origin = extractIATACode(flightOrigin, flightOriginCode);
-      const destination = extractIATACode(flightDestination, flightDestinationCode);
+      const origin = (flightOriginCode || flightOrigin).trim().toUpperCase();
+      const destination = (flightDestinationCode || flightDestination).trim().toUpperCase();
       const params = new URLSearchParams({
         type: "flights",
         originLocationCode: origin,
@@ -231,7 +219,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
   return (
     <div
       id="search-widget"
-      className="w-full max-w-7xl mx-auto bg-card/95 dark:bg-card border border-border shadow-xl p-4 md:p-6"
+      className="w-full max-w-7xl mx-auto bg-card text-card-foreground rounded-2xl shadow-xl border border-border p-4 md:p-6"
     >
       <Tabs value={searchType} onValueChange={setSearchType} className="w-full">
         {/* Minimal Search Bar */}
@@ -246,32 +234,20 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
           </div>
         </div> */}
 
-        <TabsList className="grid w-full grid-cols-4 mb-3 h-9 rounded-xl bg-muted dark:bg-muted/50 border border-border">
-          <TabsTrigger
-            value="flights"
-            className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:text-foreground rounded-lg"
-          >
+        <TabsList className="grid w-full grid-cols-4 mb-3 h-9">
+          <TabsTrigger value="flights" className="flex items-center gap-2">
             <Plane className="w-4 h-4" />
             <span className="hidden sm:inline">Flights</span>
           </TabsTrigger>
-          <TabsTrigger
-            value="hotels"
-            className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:text-foreground rounded-lg"
-          >
+          <TabsTrigger value="hotels" className="flex items-center gap-2">
             <Hotel className="w-4 h-4" />
             <span className="hidden sm:inline">Hotels</span>
           </TabsTrigger>
-          <TabsTrigger
-            value="cars"
-            className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:text-foreground rounded-lg"
-          >
+          <TabsTrigger value="cars" className="flex items-center gap-2">
             <Car className="w-4 h-4" />
             <span className="hidden sm:inline">Cars</span>
           </TabsTrigger>
-          <TabsTrigger
-            value="cruise"
-            className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:text-foreground rounded-lg"
-          >
+          <TabsTrigger value="cruise" className="flex items-center gap-2">
             <Ship className="w-4 h-4" />
             <span className="hidden sm:inline">Cruise</span>
           </TabsTrigger>
@@ -300,6 +276,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                 <Label htmlFor="flight-origin" className="text-sm">
                   From
                 </Label>
+
                 <AirportDropdown
                   value={flightOrigin}
                   onChange={(value, iataCode) => {
@@ -307,8 +284,9 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     setFlightOriginCode(iataCode);
                   }}
                   placeholder="City or Airport"
-                  className={`pl-10 bg-background text-foreground border border-border ${errors.origin ? "border-destructive" : ""}`}
+                  className={`pl-10 px-2 py-1 rounded-md border border-input bg-background text-foreground ${errors.origin ? "border-destructive" : ""}`}
                 />
+
                 {errors.origin && <p className="text-sm text-destructive">{errors.origin}</p>}
               </div>
 
@@ -323,7 +301,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     setFlightDestinationCode(iataCode);
                   }}
                   placeholder="City or Airport"
-                  className={`pl-10 bg-background text-foreground border border-border ${errors.destination ? "border-destructive" : ""}`}
+                  className={`pl-10 px-2 py-1 rounded-md border border-input bg-background text-foreground ${errors.origin ? "border-destructive" : ""}`}
                 />
                 {errors.destination && <p className="text-sm text-destructive">{errors.destination}</p>}
               </div>
@@ -339,7 +317,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     type="date"
                     value={departDate}
                     onChange={(e) => setDepartDate(e.target.value)}
-                    className={`pl-10 h-9 bg-background text-foreground border border-border ${errors.departDate ? "border-destructive" : ""}`}
+                    className={`pl-10 h-9 ${errors.departDate ? "border-destructive" : ""}`}
                     min={new Date().toISOString().split("T")[0]}
                   />
                 </div>
@@ -358,7 +336,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                       type="date"
                       value={returnDate}
                       onChange={(e) => setReturnDate(e.target.value)}
-                      className={`pl-10 h-9 bg-background text-foreground border border-border ${errors.returnDate ? "border-destructive" : ""}`}
+                      className={`pl-10 h-9 ${errors.returnDate ? "border-destructive" : ""}`}
                       min={departDate || new Date().toISOString().split("T")[0]}
                     />
                   </div>
@@ -373,11 +351,12 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                   Passengers
                 </Label>
                 <div className="relative">
+                  <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <select
                     id="passengers"
                     value={passengers}
                     onChange={(e) => setPassengers(e.target.value)}
-                    className="w-full px-3 pr-10 h-9 rounded-md border border-input bg-background text-foreground"
+                    className="w-full pl-10 pr-10 h-9 rounded-md border border-input bg-background text-foreground"
                     aria-label="Number of passengers"
                   >
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
@@ -399,7 +378,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     id="cabin-class"
                     value={cabinClass}
                     onChange={(e) => setCabinClass(e.target.value)}
-                    className="w-full px-3 pr-10 h-9 rounded-md border border-input bg-background text-foreground"
+                    className="w-full px-3 pr-10 h-9 rounded-md border border-input bg-background"
                     aria-label="Cabin class"
                   >
                     <option value="ECONOMY">Economy</option>
@@ -436,7 +415,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     setCityCodeIATA(iataCode);
                   }}
                   placeholder="City or Airport"
-                  className={`pl-10 bg-background text-foreground border border-border ${errors.cityCode ? "border-destructive" : ""}`}
+                  className={`pl-10 bg-background text-foreground px-2 py-1 rounded-md border border-input ${errors.cityCode ? "border-destructive" : ""}`}
                 />
                 {errors.cityCode && <p className="text-sm text-destructive">{errors.cityCode}</p>}
               </div>
@@ -452,7 +431,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     type="date"
                     value={checkInDate}
                     onChange={(e) => setCheckInDate(e.target.value)}
-                    className={`pl-10 h-9 bg-background text-foreground border border-border ${errors.checkInDate ? "border-destructive" : ""}`}
+                    className={`pl-10 h-9 ${errors.checkInDate ? "border-destructive" : ""}`}
                     min={new Date().toISOString().split("T")[0]}
                   />
                 </div>
@@ -470,7 +449,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     type="date"
                     value={checkOutDate}
                     onChange={(e) => setCheckOutDate(e.target.value)}
-                    className={`pl-10 h-9 bg-background text-foreground border border-border ${errors.checkOutDate ? "border-destructive" : ""}`}
+                    className={`pl-10 h-9 ${errors.checkOutDate ? "border-destructive" : ""}`}
                     min={checkInDate || new Date().toISOString().split("T")[0]}
                   />
                 </div>
@@ -482,12 +461,13 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                   Guests
                 </Label>
                 <div className="relative">
+                  <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <select
                     id="hotel-guests"
                     value={hotelGuests}
                     aria-label="Number of guests"
                     onChange={(e) => setHotelGuests(e.target.value)}
-                    className="w-full px-3 pr-10 h-9 rounded-md border border-input bg-background text-foreground"
+                    className="w-full pl-10 pr-10 h-9 rounded-md border border-input bg-background text-foreground"
                   >
                     {[1, 2, 3, 4, 5, 6].map((num) => (
                       <option key={num} value={num}>
@@ -511,7 +491,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     value={rooms}
                     aria-label="Number of rooms"
                     onChange={(e) => setRooms(e.target.value)}
-                    className="w-full px-3 pr-10 h-9 rounded-md border border-input bg-background text-foreground"
+                    className="w-full px-3 pr-10 h-9 rounded-md border border-input bg-background"
                   >
                     {[1, 2, 3, 4, 5].map((num) => (
                       <option key={num} value={num}>
@@ -548,7 +528,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     setPickUpLocationCode(iataCode);
                   }}
                   placeholder="Airport or City"
-                  className={`pl-10 bg-background text-foreground border border-border ${errors.pickUpLocation ? "border-destructive" : ""}`}
+                  className={`pl-10 bg-background text-foreground px-2 py-1 rounded-md border border-input ${errors.pickUpLocation ? "border-destructive" : ""}`}
                 />
                 {errors.pickUpLocation && <p className="text-sm text-destructive">{errors.pickUpLocation}</p>}
               </div>
@@ -564,7 +544,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     type="date"
                     value={pickUpDate}
                     onChange={(e) => setPickUpDate(e.target.value)}
-                    className={`pl-10 h-9 bg-background text-foreground border border-border ${errors.pickUpDate ? "border-destructive" : ""}`}
+                    className={`pl-10 h-9 ${errors.pickUpDate ? "border-destructive" : ""}`}
                     min={new Date().toISOString().split("T")[0]}
                   />
                 </div>
@@ -582,7 +562,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     type="date"
                     value={dropOffDate}
                     onChange={(e) => setDropOffDate(e.target.value)}
-                    className={`pl-10 h-9 bg-background text-foreground border border-border ${errors.dropOffDate ? "border-destructive" : ""}`}
+                    className={`pl-10 h-9 ${errors.dropOffDate ? "border-destructive" : ""}`}
                     min={pickUpDate || new Date().toISOString().split("T")[0]}
                   />
                 </div>
@@ -601,7 +581,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     onChange={(e) => setDriverAge(e.target.value)}
                     min="18"
                     max="99"
-                    className="h-9 bg-background text-foreground border border-border"
+                    className="h-9"
                   />
                 </div>
               </div>
@@ -631,7 +611,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     placeholder="Port City"
                     value={cruiseOrigin}
                     onChange={(e) => setCruiseOrigin(e.target.value)}
-                    className="pl-10 h-9 bg-background text-foreground border border-border"
+                    className="pl-10 h-9"
                   />
                 </div>
               </div>
@@ -647,7 +627,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     placeholder="Destination Region"
                     value={cruiseDestination}
                     onChange={(e) => setCruiseDestination(e.target.value)}
-                    className="pl-10 h-9 bg-background text-foreground border border-border"
+                    className="pl-10 h-9"
                   />
                 </div>
               </div>
@@ -663,7 +643,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     type="date"
                     value={cruiseDate}
                     onChange={(e) => setCruiseDate(e.target.value)}
-                    className="pl-10 h-9 bg-background text-foreground border border-border"
+                    className="pl-10 h-9"
                     min={new Date().toISOString().split("T")[0]}
                   />
                 </div>
@@ -674,11 +654,12 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                   Passengers
                 </Label>
                 <div className="relative">
+                  <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <select
                     id="cruise-passengers"
                     value={cruisePassengers}
                     onChange={(e) => setCruisePassengers(e.target.value)}
-                    className="w-full px-3 pr-10 h-9 rounded-md border border-input bg-background text-foreground"
+                    className="w-full pl-10 pr-10 h-9 rounded-md border border-input bg-background text-foreground"
                     aria-label="Number of passengers"
                   >
                     {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
