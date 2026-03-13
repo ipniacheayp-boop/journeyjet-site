@@ -245,7 +245,7 @@ const Index = () => {
         >
           <div
             id="search-widget"
-            className="bg-card rounded-2xl shadow-xl border border-border p-3 md:p-4 relative"
+            className="bg-card text-card-foreground rounded-2xl shadow-xl border border-border p-3 md:p-4 relative"
           >
             <SearchWidget />
           </div>
