@@ -4,14 +4,14 @@ import Footer from "@/components/Footer";
 
 // Helper component for headings, styled in blue per your request.
 const SectionHeading: React.FC<React.HTMLAttributes<HTMLHeadingElement>> = ({ children, className = "", ...props }) => (
-  <h2 className={`text-2xl font-semibold text-blue-700 mt-8 mb-4 ${className}`} {...props}>
+  <h2 className={`text-2xl font-semibold text-blue-700 dark:text-blue-400 mt-8 mb-4 ${className}`} {...props}>
     {children}
   </h2>
 );
 
 // Helper component for sub-headings
 const SubHeading: React.FC<React.HTMLAttributes<HTMLHeadingElement>> = ({ children, className = "", ...props }) => (
-  <h3 className={`text-xl font-semibold text-blue-600 mt-6 mb-3 ${className}`} {...props}>
+  <h3 className={`text-xl font-semibold text-blue-600 dark:text-blue-400 mt-6 mb-3 ${className}`} {...props}>
     {children}
   </h3>
 );
@@ -37,7 +37,7 @@ const Li: React.FC<React.HTMLAttributes<HTMLLIElement>> = ({ children, className
 const PrivacyPolicy = () => {
   return (
     <div className="p-6 md:p-12">
-      <h1 className="text-4xl font-bold text-center text-blue-800 mb-8">Privacy Policy</h1>
+      <h1 className="text-4xl font-bold text-center text-blue-800 dark:text-blue-300 mb-8">Privacy Policy</h1>
 
       <SectionHeading>INTRODUCTION</SectionHeading>
       <P>
@@ -818,8 +818,8 @@ const PrivacyPolicy = () => {
  */
 export default function App() {
   return (
-    <div className="font-sans antialiased text-gray-800 bg-gray-50 min-h-screen">
-      <main className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg my-10">
+    <div className="font-sans antialiased text-foreground bg-background min-h-screen">
+      <main className="max-w-4xl mx-auto bg-card shadow-lg rounded-lg my-10">
         <PrivacyPolicy />
       </main>
     </div>

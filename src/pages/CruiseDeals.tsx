@@ -218,11 +218,11 @@ const CruiseDeals = () => {
                 ? "fill-yellow-400 text-yellow-400"
                 : i === fullStars && hasHalfStar
                   ? "fill-yellow-400/50 text-yellow-400"
-                  : "text-gray-300"
+                  : "text-muted-foreground"
             }`}
           />
         ))}
-        <span className="ml-1 font-semibold text-gray-800">{rating}</span>
+        <span className="ml-1 font-semibold text-foreground">{rating}</span>
       </div>
     );
   };
@@ -230,7 +230,7 @@ const CruiseDeals = () => {
   return (
     <>
       <Header />
-      <div className="min-h-screen bg-white pt-20">
+      <div className="min-h-screen bg-background pt-20">
         <SEOHead
           title="Best Cruise Deals | Up to 25% Off Luxury Cruises"
           description="Book the best cruise deals with up to 25% off on Royal Caribbean, Carnival, Norwegian, Princess, and more. Exclusive cruise packages to Alaska, Caribbean, and Mediterranean destinations."
@@ -273,7 +273,7 @@ const CruiseDeals = () => {
         </section>
 
         {/* Trust Badges Row */}
-        <section className="py-8 bg-gray-50 border-y border-gray-200">
+        <section className="py-8 bg-muted/50 dark:bg-muted/30 border-y border-border">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
               {trustBadges.map((badge, index) => (
@@ -282,12 +282,12 @@ const CruiseDeals = () => {
                   href={badge.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-300 text-center"
+                  className="bg-card rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-300 text-center border border-border"
                 >
-                  <h3 className="font-semibold text-gray-800 mb-2">{badge.name}</h3>
+                  <h3 className="font-semibold text-foreground mb-2">{badge.name}</h3>
                   {renderStars(badge.rating)}
-                  <p className="text-xs text-gray-600 mt-2">{badge.text}</p>
-                  <p className="text-xs text-gray-500">Based on {badge.reviews} Reviews</p>
+                  <p className="text-xs text-muted-foreground mt-2">{badge.text}</p>
+                  <p className="text-xs text-muted-foreground">Based on {badge.reviews} Reviews</p>
                 </a>
               ))}
             </div>
@@ -297,23 +297,23 @@ const CruiseDeals = () => {
         {/* Handpicked Cruise Deals */}
         <section className="py-16 px-4">
           <div className="container mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-12">Handpicked Cruise Deals</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-12">Handpicked Cruise Deals</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {cruiseDeals.map((deal, index) => (
                 <div
                   key={index}
-                  className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                  className="bg-card rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-border"
                 >
                   <div className="relative h-48 overflow-hidden">
                     <img src={deal.image} alt={deal.title} className="w-full h-full object-cover" />
-                    <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-1">
-                      <span className="font-bold text-gray-800">{deal.cruiseLine}</span>
+                    <div className="absolute top-4 left-4 bg-card/90 dark:bg-slate-900/90 backdrop-blur-sm rounded-lg px-3 py-1">
+                      <span className="font-bold text-foreground">{deal.cruiseLine}</span>
                     </div>
                   </div>
 
                   <div className="p-6">
-                    <div className="flex items-center gap-4 text-gray-600 mb-3">
+                    <div className="flex items-center gap-4 text-muted-foreground mb-3">
                       <div className="flex items-center gap-1">
                         <Ship className="w-4 h-4" />
                         <span className="text-sm">Cruise</span>
@@ -326,16 +326,16 @@ const CruiseDeals = () => {
                       </div>
                     </div>
 
-                    <h3 className="font-semibold text-gray-900 mb-3 line-clamp-2">{deal.title}</h3>
+                    <h3 className="font-semibold text-foreground mb-3 line-clamp-2">{deal.title}</h3>
 
                     <div className="mb-4">
-                      <span className="text-sm text-gray-500">From</span>
+                      <span className="text-sm text-muted-foreground">From</span>
                       <span className="text-3xl font-bold text-blue-600 ml-2">${deal.price}</span>
                     </div>
 
                     <ul className="space-y-2 mb-6">
                       {deal.benefits.map((benefit, i) => (
-                        <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                        <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
                           <Check className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
                           {benefit}
                         </li>
@@ -356,13 +356,13 @@ const CruiseDeals = () => {
         </section>
 
         {/* Content Section */}
-        <section className="py-16 px-4 bg-gray-50">
+        <section className="py-16 px-4 bg-muted/50 dark:bg-muted/30">
           <div className="container mx-auto max-w-4xl">
-            <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-8">
+            <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-8">
               Sail with Handpicked Cruise Deals
             </h2>
 
-            <div className="prose prose-lg max-w-none text-gray-600">
+            <div className="prose prose-lg max-w-none text-muted-foreground dark:prose-invert">
               <p className="mb-6">
                 Embark on the vacation of a lifetime with our handpicked cruise deals. Whether you're dreaming of
                 glaciers in Alaska, crystal-clear waters in the Caribbean, or the historic shores of the Mediterranean,
@@ -395,10 +395,10 @@ const CruiseDeals = () => {
             <h2 className="text-3xl font-bold text-white mb-4">Subscribe to our Newsletter</h2>
             <p className="text-white/90 mb-8">Get latest offers from Tripile.com</p>
 
-            <div className="bg-white rounded-xl p-6 shadow-xl">
+            <div className="bg-card rounded-xl p-6 shadow-xl border border-border">
               <div className="flex flex-col sm:flex-row gap-4 mb-6">
                 <div className="flex-1 relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <Input
                     type="email"
                     placeholder="Enter your email address"
@@ -419,9 +419,9 @@ const CruiseDeals = () => {
                     checked={agreeOffers}
                     onCheckedChange={(checked) => setAgreeOffers(checked as boolean)}
                   />
-                  <label htmlFor="offers" className="text-sm text-gray-600">
+                  <label htmlFor="offers" className="text-sm text-muted-foreground">
                     I would like to receive email from Tripile.com with the latest offers and promotions.{" "}
-                    <Link to="/privacy-policy" className="text-blue-600 hover:underline">
+                    <Link to="/privacy-policy" className="text-primary hover:underline">
                       Privacy Policy
                     </Link>
                   </label>
@@ -433,9 +433,9 @@ const CruiseDeals = () => {
                     checked={agreeTerms}
                     onCheckedChange={(checked) => setAgreeTerms(checked as boolean)}
                   />
-                  <label htmlFor="terms" className="text-sm text-gray-600">
+                  <label htmlFor="terms" className="text-sm text-muted-foreground">
                     I have read and agree to the{" "}
-                    <Link to="/terms" className="text-blue-600 hover:underline">
+                    <Link to="/terms" className="text-primary hover:underline">
                       terms and conditions
                     </Link>
                   </label>

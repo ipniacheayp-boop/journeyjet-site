@@ -98,7 +98,7 @@ const Support = () => {
         </div>
       </div>
 
-      <main className="flex-1 bg-gradient-to-b from-support-bg-light to-white">
+      <main className="flex-1 bg-gradient-to-b from-support-bg-light to-white dark:from-background dark:to-card">
         <div className="container mx-auto px-4 py-16">
           {/* Main Assistance Grid */}
           <div className="mb-20">
@@ -135,7 +135,7 @@ const Support = () => {
               {enhanceServices.map((service, index) => (
                 <Card
                   key={index}
-                  className="transition-all duration-300 hover:scale-105 hover:shadow-xl border-0 bg-white"
+                  className="transition-all duration-300 hover:scale-105 hover:shadow-xl border-0 bg-card"
                 >
                   <CardHeader className="text-center">
                     <div className="w-14 h-14 bg-gradient-to-br from-support-green to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md">

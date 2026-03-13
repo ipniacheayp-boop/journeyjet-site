@@ -35,7 +35,7 @@ const PriceCharts = ({
 
           <div className="bg-muted/30 rounded-xl p-4 border border-border">
             <div className="flex items-center gap-2 mb-3">
-              <span className="w-4 h-4 rounded-sm bg-slate-800" />
+              <span className="w-4 h-4 rounded-sm bg-primary" />
               <span className="text-xs text-muted-foreground font-medium">Day Price</span>
             </div>
             <ResponsiveContainer width="100%" height={220}>
@@ -47,7 +47,7 @@ const PriceCharts = ({
                   formatter={(value: number) => [`$${value}`, "Avg Price"]}
                   contentStyle={{ borderRadius: 8, fontSize: 12, border: '1px solid hsl(var(--border))' }}
                 />
-                <Bar dataKey="price" fill="hsl(220 30% 20%)" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="price" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -74,7 +74,7 @@ const PriceCharts = ({
 
           <div className="bg-muted/30 rounded-xl p-4 border border-border">
             <div className="flex items-center gap-2 mb-3">
-              <span className="w-4 h-4 rounded-sm border-2 border-slate-800 bg-slate-100" />
+              <span className="w-4 h-4 rounded-sm border-2 border-slate-800 dark:border-slate-600 bg-slate-100 dark:bg-slate-700" />
               <span className="text-xs text-muted-foreground font-medium">Month Price</span>
             </div>
             <ResponsiveContainer width="100%" height={220}>
@@ -89,10 +89,10 @@ const PriceCharts = ({
                 <Area
                   type="monotone"
                   dataKey="price"
-                  stroke="hsl(220 30% 20%)"
+                  stroke="hsl(var(--primary))"
                   strokeWidth={2.5}
-                  fill="hsl(220 30% 20% / 0.08)"
-                  dot={{ r: 4, fill: "hsl(220 30% 20%)" }}
+                  fill="hsl(var(--primary) / 0.2)"
+                  dot={{ r: 4, fill: "hsl(var(--primary))" }}
                 />
               </AreaChart>
             </ResponsiveContainer>

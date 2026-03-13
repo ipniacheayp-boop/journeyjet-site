@@ -80,7 +80,7 @@ const CustomerReviewsDark = () => {
 
   const renderStars = (rating: number) =>
     Array.from({ length: 5 }, (_, i) => (
-      <Star key={i} className={`w-4 h-4 ${i < rating ? "text-yellow-400 fill-yellow-400" : "text-gray-500"}`} />
+      <Star key={i} className={`w-4 h-4 ${i < rating ? "text-yellow-400 fill-yellow-400" : "text-muted-foreground"}`} />
     ));
 
   // Duplicate for infinite horizontal scroll

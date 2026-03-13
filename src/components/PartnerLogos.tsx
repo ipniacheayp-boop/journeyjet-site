@@ -48,7 +48,7 @@ const PartnerLogos = () => {
       aria-labelledby="partners-title"
     >
       <div className="container mx-auto px-4 text-center">
-        <p id="partners-title" className="text-sm font-semibold text-slate-500 uppercase tracking-widest mb-8">
+        <p id="partners-title" className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-8">
           Trusted by millions across leading travel platforms
         </p>
 

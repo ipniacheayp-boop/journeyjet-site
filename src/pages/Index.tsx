@@ -218,7 +218,7 @@ const Index = () => {
               className="text-lg md:text-xl font-medium text-gray-400"
             >
               <span className="text-green-400">Zero Booking Fees</span>
-              <span className="mx-3 text-gray-600">•</span>
+              <span className="mx-3 text-white/60">•</span>
               <span className="text-blue-400">Instant Confirmation</span>
             </motion.p>
           </motion.div>
@@ -245,7 +245,7 @@ const Index = () => {
         >
           <div
             id="search-widget"
-            className="bg-white rounded-2xl shadow-xl border border-slate-200/50 p-3 md:p-4 relative"
+            className="bg-card rounded-2xl shadow-xl border border-border p-3 md:p-4 relative"
           >
             <SearchWidget />
           </div>

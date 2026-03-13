@@ -16,7 +16,7 @@ const CallSupportPopup = ({ onClose }: Props) => {
       transition={{ duration: 0.3 }}
     >
       <motion.div
-        className="relative bg-white rounded-2xl overflow-hidden shadow-2xl"
+        className="relative bg-card rounded-2xl overflow-hidden shadow-2xl border border-border"
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}

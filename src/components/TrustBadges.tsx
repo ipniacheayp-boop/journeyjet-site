@@ -114,7 +114,7 @@ const TrustBadges = () => {
 
         {/* Reviews */}
         <div className="max-w-6xl mx-auto border-t border-slate-200 dark:border-slate-800 pt-16">
-          <p className="text-center text-xs font-semibold tracking-widest text-slate-500 uppercase mb-10">
+          <p className="text-center text-xs font-semibold tracking-widest text-slate-500 dark:text-slate-400 uppercase mb-10">
             Verified Independent Reviews
           </p>
 
@@ -132,7 +132,7 @@ const TrustBadges = () => {
 
                 <div className="text-slate-900 dark:text-white font-semibold text-sm mb-1">{item.rating} / 5</div>
 
-                <div className="text-xs text-slate-500">{item.reviews}</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400">{item.reviews}</div>
               </div>
             ))}
           </div>

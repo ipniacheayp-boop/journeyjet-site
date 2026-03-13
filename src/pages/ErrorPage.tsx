@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 
 const ErrorPage = () => {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center text-center bg-gradient-to-b from-blue-50 to-white px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center text-center bg-gradient-to-b from-muted/50 to-background px-4">
       <h1 className="text-5xl font-bold text-primary mb-4">Our Agent Will Contact You Soon</h1>
-      <p className="text-lg text-gray-600 mb-6">Breathe in… and hold on.</p>
+      <p className="text-lg text-muted-foreground mb-6">Breathe in… and hold on.</p>
 
-      <div className="flex flex-col items-center gap-2 text-gray-700">
+      <div className="flex flex-col items-center gap-2 text-foreground">
         <div className="flex items-center gap-2">
           <Phone className="w-5 h-5 text-primary" />
           <Link to="/contact-us" className="hover:underline">

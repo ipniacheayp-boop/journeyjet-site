@@ -100,7 +100,7 @@ const ChatWindow = ({ onClose }: ChatWindowProps) => {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 p-4 bg-gray-50 overflow-y-auto">
+      <div className="flex-1 p-4 bg-muted/30 dark:bg-muted/50 overflow-y-auto">
         {isLoading ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center text-muted-foreground">
@@ -119,8 +119,8 @@ const ChatWindow = ({ onClose }: ChatWindowProps) => {
                     msg.sender_type === 'user'
                       ? 'bg-support-sky text-white'
                       : msg.sender_type === 'system'
-                      ? 'bg-gray-200 text-gray-700 text-sm italic'
-                      : 'bg-white text-gray-900 shadow-sm'
+                      ? 'bg-muted text-muted-foreground text-sm italic'
+                      : 'bg-card text-card-foreground shadow-sm border border-border'
                   }`}
                 >
                   <div className="flex items-start gap-2">
@@ -133,7 +133,7 @@ const ChatWindow = ({ onClose }: ChatWindowProps) => {
                       <p className="break-words">{msg.message}</p>
                       <p
                         className={`text-xs mt-1 ${
-                          msg.sender_type === 'user' ? 'text-white/70' : 'text-gray-500'
+                          msg.sender_type === 'user' ? 'text-white/70' : 'text-muted-foreground'
                         }`}
                       >
                         {format(new Date(msg.created_at), 'HH:mm')}
@@ -149,7 +149,7 @@ const ChatWindow = ({ onClose }: ChatWindowProps) => {
       </div>
 
       {/* Input */}
-      <div className="p-4 bg-white border-t">
+      <div className="p-4 bg-card border-t border-border">
         <div className="flex gap-2">
           <Input
             value={inputValue}

@@ -63,7 +63,7 @@ const DealDetail = () => {
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-8">
               {/* Flight Details */}
-              <section className="bg-white rounded-lg shadow-md p-6">
+              <section className="bg-card rounded-lg shadow-md p-6 border border-border">
                 <h2 className="text-2xl font-bold mb-4">Flight Details</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex items-start gap-3">
@@ -110,7 +110,7 @@ const DealDetail = () => {
               </section>
 
               {/* About */}
-              <section className="bg-white rounded-lg shadow-md p-6">
+              <section className="bg-card rounded-lg shadow-md p-6 border border-border">
                 <h2 className="text-2xl font-bold mb-4">About This Deal</h2>
                 <div className="prose max-w-none text-muted-foreground">
                   <p className="mb-4">
@@ -133,7 +133,7 @@ const DealDetail = () => {
 
             {/* Booking Sidebar */}
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-lg shadow-md p-6 sticky top-24">
+              <div className="bg-card rounded-lg shadow-md p-6 sticky top-24 border border-border">
                 <div className="mb-6">
                   <p className="text-sm text-muted-foreground mb-2">Price per person</p>
                   <div className="flex items-baseline gap-2 mb-1">
