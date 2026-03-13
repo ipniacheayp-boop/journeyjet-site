@@ -156,7 +156,6 @@ const SearchResults = () => {
         <meta name="robots" content="noindex, follow" />
       </Helmet>
       <Header />
-
       <main className="flex-1 pt-24 pb-16 bg-secondary">
         <div className="container mx-auto px-4">
           <div className="mb-8">
@@ -182,7 +181,7 @@ const SearchResults = () => {
                   </div>
                 </div>
               )}
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
                   <Card key={i}>
@@ -243,9 +242,7 @@ const SearchResults = () => {
           )}
         </div>
       </main>
-
-      {showCallPopup && <CallSupportPopup onClose={() => setShowCallPopup(false)} />}
-
+      /* {showCallPopup && <CallSupportPopup onClose={() => setShowCallPopup(false)} />} */
       <Footer />
     </div>
   );
