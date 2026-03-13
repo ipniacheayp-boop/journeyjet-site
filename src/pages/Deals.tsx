@@ -389,46 +389,106 @@ const Deals = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12 space-y-4 relative overflow-hidden"
+          className="text-center mb-12 space-y-4 relative overflow-hidden py-8"
         >
-          {/* Floating reward emojis on white background */}
-          <motion.span
-            className="absolute top-2 left-[8%] text-2xl opacity-20 pointer-events-none select-none"
-            animate={{ y: [0, -8, 0], rotate: [0, 12, -12, 0] }}
-            transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-          >🎁</motion.span>
-          <motion.span
-            className="absolute top-6 right-[10%] text-xl opacity-15 pointer-events-none select-none"
-            animate={{ y: [0, -6, 0], scale: [1, 1.15, 1] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-          >✨</motion.span>
-          <motion.span
-            className="absolute bottom-4 left-[15%] text-lg opacity-15 pointer-events-none select-none"
-            animate={{ y: [0, -7, 0], rotate: [0, -10, 10, 0] }}
-            transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-          >🎉</motion.span>
-          <motion.span
-            className="absolute bottom-2 right-[18%] text-xl opacity-20 pointer-events-none select-none"
-            animate={{ y: [0, -5, 0], rotate: [0, 8, -8, 0] }}
-            transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
-          >💰</motion.span>
-          <motion.span
-            className="absolute top-1/2 left-[3%] text-lg opacity-10 pointer-events-none select-none"
-            animate={{ y: [0, -9, 0], scale: [1, 1.1, 1] }}
-            transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut", delay: 1.2 }}
-          >🏷️</motion.span>
-          <motion.span
-            className="absolute top-1/3 right-[5%] text-lg opacity-10 pointer-events-none select-none"
-            animate={{ y: [0, -6, 0], rotate: [0, 15, -15, 0] }}
-            transition={{ duration: 3.6, repeat: Infinity, ease: "easeInOut", delay: 0.7 }}
-          >🎀</motion.span>
+          {/* Travel-themed SVG decorations */}
+          {/* Plane trail - left side */}
+          <motion.svg
+            className="absolute top-4 left-[2%] w-32 h-20 pointer-events-none"
+            viewBox="0 0 120 60"
+            fill="none"
+            animate={{ x: [0, 10, 0], y: [0, -5, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <path d="M5 45 Q30 10, 60 30 T115 15" stroke="hsl(var(--primary))" strokeWidth="1.5" strokeDasharray="4 4" opacity="0.15" fill="none" />
+            <polygon points="112,12 120,15 112,18" fill="hsl(var(--primary))" opacity="0.25" />
+          </motion.svg>
 
-          {/* Glowing dots */}
-          <div className="absolute top-8 left-[30%] w-1.5 h-1.5 bg-primary/20 rounded-full animate-pulse pointer-events-none" />
-          <div className="absolute bottom-6 right-[35%] w-2 h-2 bg-amber-300/20 rounded-full animate-pulse pointer-events-none" />
-          <div className="absolute top-1/2 right-[25%] w-1.5 h-1.5 bg-primary/15 rounded-full animate-pulse pointer-events-none" />
+          {/* Plane trail - right side */}
+          <motion.svg
+            className="absolute bottom-6 right-[3%] w-28 h-16 pointer-events-none"
+            viewBox="0 0 110 50"
+            fill="none"
+            animate={{ x: [0, -8, 0], y: [0, 4, 0] }}
+            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          >
+            <path d="M105 40 Q80 5, 50 25 T5 10" stroke="hsl(var(--primary))" strokeWidth="1.5" strokeDasharray="4 4" opacity="0.12" fill="none" />
+            <polygon points="8,7 0,10 8,13" fill="hsl(var(--primary))" opacity="0.2" />
+          </motion.svg>
 
-          <div className="flex items-center justify-center gap-3 mb-4">
+          {/* Gift box icon - top right */}
+          <motion.svg
+            className="absolute top-2 right-[8%] w-10 h-10 pointer-events-none"
+            viewBox="0 0 40 40"
+            fill="none"
+            animate={{ y: [0, -6, 0], rotate: [0, 5, -5, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <rect x="6" y="16" width="28" height="20" rx="3" stroke="hsl(var(--primary))" strokeWidth="1.5" opacity="0.15" />
+            <rect x="4" y="12" width="32" height="8" rx="2" stroke="hsl(var(--primary))" strokeWidth="1.5" opacity="0.15" />
+            <line x1="20" y1="12" x2="20" y2="36" stroke="hsl(var(--primary))" strokeWidth="1.5" opacity="0.12" />
+            <path d="M20 12 Q15 4, 8 8" stroke="hsl(var(--primary))" strokeWidth="1.5" opacity="0.15" fill="none" />
+            <path d="M20 12 Q25 4, 32 8" stroke="hsl(var(--primary))" strokeWidth="1.5" opacity="0.15" fill="none" />
+          </motion.svg>
+
+          {/* Trophy / reward icon - bottom left */}
+          <motion.svg
+            className="absolute bottom-2 left-[10%] w-9 h-9 pointer-events-none"
+            viewBox="0 0 36 36"
+            fill="none"
+            animate={{ y: [0, -5, 0], scale: [1, 1.05, 1] }}
+            transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
+          >
+            <path d="M10 8 h16 v10 q0 8 -8 10 q-8 -2 -8 -10 z" stroke="hsl(var(--primary))" strokeWidth="1.5" opacity="0.15" fill="none" />
+            <path d="M10 12 Q4 12, 4 8 Q4 4, 10 8" stroke="hsl(var(--primary))" strokeWidth="1.2" opacity="0.12" fill="none" />
+            <path d="M26 12 Q32 12, 32 8 Q32 4, 26 8" stroke="hsl(var(--primary))" strokeWidth="1.2" opacity="0.12" fill="none" />
+            <line x1="14" y1="30" x2="22" y2="30" stroke="hsl(var(--primary))" strokeWidth="1.5" opacity="0.12" />
+            <line x1="18" y1="28" x2="18" y2="32" stroke="hsl(var(--primary))" strokeWidth="1.2" opacity="0.1" />
+          </motion.svg>
+
+          {/* Coin icon - top left */}
+          <motion.svg
+            className="absolute top-8 left-[20%] w-7 h-7 pointer-events-none"
+            viewBox="0 0 28 28"
+            fill="none"
+            animate={{ y: [0, -4, 0], rotate: [0, 360] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+          >
+            <circle cx="14" cy="14" r="12" stroke="hsl(var(--primary))" strokeWidth="1.5" opacity="0.12" />
+            <text x="14" y="18" textAnchor="middle" fontSize="12" fill="hsl(var(--primary))" opacity="0.15" fontWeight="bold">$</text>
+          </motion.svg>
+
+          {/* Map pin - right side */}
+          <motion.svg
+            className="absolute top-1/2 right-[4%] w-8 h-8 pointer-events-none"
+            viewBox="0 0 30 36"
+            fill="none"
+            animate={{ y: [0, -7, 0] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
+          >
+            <path d="M15 2 C8 2, 3 7, 3 14 C3 22, 15 34, 15 34 C15 34, 27 22, 27 14 C27 7, 22 2, 15 2Z" stroke="hsl(var(--primary))" strokeWidth="1.5" opacity="0.12" fill="none" />
+            <circle cx="15" cy="14" r="4" stroke="hsl(var(--primary))" strokeWidth="1.2" opacity="0.1" fill="none" />
+          </motion.svg>
+
+          {/* Globe icon - bottom right */}
+          <motion.svg
+            className="absolute bottom-4 right-[20%] w-8 h-8 pointer-events-none"
+            viewBox="0 0 32 32"
+            fill="none"
+            animate={{ rotate: [0, 360] }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          >
+            <circle cx="16" cy="16" r="13" stroke="hsl(var(--primary))" strokeWidth="1.2" opacity="0.1" />
+            <ellipse cx="16" cy="16" rx="6" ry="13" stroke="hsl(var(--primary))" strokeWidth="1" opacity="0.08" />
+            <line x1="3" y1="16" x2="29" y2="16" stroke="hsl(var(--primary))" strokeWidth="1" opacity="0.08" />
+          </motion.svg>
+
+          {/* Sparkle dots */}
+          <div className="absolute top-6 left-[35%] w-1.5 h-1.5 bg-primary/15 rounded-full animate-pulse pointer-events-none" />
+          <div className="absolute bottom-8 right-[30%] w-2 h-2 bg-primary/10 rounded-full animate-pulse pointer-events-none" />
+          <div className="absolute top-1/3 left-[45%] w-1 h-1 bg-primary/20 rounded-full animate-pulse pointer-events-none" />
+
+          <div className="flex items-center justify-center gap-3 mb-4 relative z-10">
             <motion.div
               animate={{
                 rotate: [0, 10, -10, 0],
@@ -447,11 +507,11 @@ const Deals = () => {
             </Badge>
           </div>
 
-          <h1 className="text-4xl md:text-6xl font-black bg-gradient-to-r from-foreground via-foreground/80 to-foreground bg-clip-text text-transparent font-display">
+          <h1 className="text-4xl md:text-6xl font-black bg-gradient-to-r from-foreground via-foreground/80 to-foreground bg-clip-text text-transparent font-display relative z-10">
             Today's Best Flight Deals
           </h1>
 
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto relative z-10">
             Exclusive offers handpicked for you. Save up to <span className="text-primary font-bold">50%</span> on
             flights worldwide
           </p>
