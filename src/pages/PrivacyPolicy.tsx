@@ -381,16 +381,16 @@ const PrivacyPolicy = () => {
         <Li>
           <strong>Promotional Offers from the Company.</strong> If you do not wish to have your contact information used
           by the Company to promote our own or third parties' products or services, you can opt-out by sending us an
-          email stating your request Support@Tripile.com. If we have sent you a promotional email, you may send us a return
-          email asking to be omitted from future email distributions. This opt out does not apply to information
+          email stating your request Support@Tripile.com. If we have sent you a promotional email, you may send us a
+          return email asking to be omitted from future email distributions. This opt out does not apply to information
           provided to the Company as a result of a product purchase, licensing subscription, product service experience,
           or other transaction.
         </Li>
         <Li>
           <strong>Targeted Advertising.</strong> If you do not want us to use information that we collect or that you
           provide to us to deliver advertisements according to our advertisers' target-audience preferences, you can
-          opt-out by sending us an email stating your request at Support@Tripile.com. For this opt-out to function, you must
-          have your browser or smartphone set to accept browser cookies.
+          opt-out by sending us an email stating your request at Support@Tripile.com. For this opt-out to function, you
+          must have your browser or smartphone set to accept browser cookies.
         </Li>
       </ul>
       <P className="mt-4">
@@ -414,9 +414,9 @@ const PrivacyPolicy = () => {
       <P>
         If you have signed up for an account on our Website, you can review and change your personal information by
         logging into your account and visiting your account profile page. You may also send us an email at
-        Support@Tripile.com to request access to, correct or delete any personal information that you have provided to us.
-        We cannot delete your personal information except by also deleting your user account. We may not accommodate a
-        request to change information if we believe the change would violate any law or legal requirement or cause the
+        Support@Tripile.com to request access to, correct or delete any personal information that you have provided to
+        us. We cannot delete your personal information except by also deleting your user account. We may not accommodate
+        a request to change information if we believe the change would violate any law or legal requirement or cause the
         information to be incorrect.
       </P>
       <P>
@@ -502,11 +502,11 @@ const PrivacyPolicy = () => {
         your country.
       </P>
       <P>
-        The servers for our platform are located in the United States, and Tripile.com and its third- party
-        service providers operate in many countries around the world. When we collect your personal information, we may
-        process it in any of those countries. Our employees may access your personal information from various countries
-        around the world. The transferees of your personal data may also be located in countries other than the country
-        in which you reside.
+        The servers for our platform are located in the United States, and Tripile.com and its third- party service
+        providers operate in many countries around the world. When we collect your personal information, we may process
+        it in any of those countries. Our employees may access your personal information from various countries around
+        the world. The transferees of your personal data may also be located in countries other than the country in
+        which you reside.
       </P>
       {/* ... Omitting the rest of this section for brevity, but it would be included in a full version ... */}
       <P>
@@ -599,8 +599,8 @@ const PrivacyPolicy = () => {
       </ul>
       <P className="mt-4">
         The Data Subject may exercise these rights at any time by contacting the responsible party. The responsible
-        party, according to Article 4 (7) of the GDPR, is Trivoya Ventures LLC, 5900 Balcones Drive STE 100, Austin, TX 78731 USA, Attn: Information Security
-        Coordinator, telephone: +1-800-963-4330, E-mail: Support@Tripile.com.
+        party, according to Article 4 (7) of the GDPR, is Trivoya Ventures LLC, 5900 Balcones Drive STE 100, Austin, TX
+        78731 USA, Attn: Information Security Coordinator, telephone: +1-800-963-4330, E-mail: Support@Tripile.com.
       </P>
       <P>
         Under applicable law, we will not process and/or disclose your personal data without a lawful basis to do so, as
@@ -685,8 +685,8 @@ const PrivacyPolicy = () => {
         2020 ("CPRA"), California residents have certain rights around the collection, use, and sharing of their
         personal information. California Civil Code 1798.83 permits California residents who use our Website to request
         certain information regarding our disclosure of personal information to third parties for their direct marketing
-        purposes. To make such a request, please send an email to Support@Tripile.com. To learn more
-        about your Privacy Rights, please visit our state specific notice at California Privacy Notice - Cheap Flights.
+        purposes. To make such a request, please send an email to Support@Tripile.com. To learn more about your Privacy
+        Rights, please visit our state specific notice at California Privacy Notice - Cheap Flights.
       </P>
       <SubHeading>Nevada Residents; Nevada Privacy Rights Notice</SubHeading>
       <P>
@@ -756,9 +756,7 @@ const PrivacyPolicy = () => {
         there are exceptions under the CPA and other laws which may allow us to retain and use certain personal data
         notwithstanding your deletion request; and (4) obtain a copy of your personal data.
       </P>
-      <P>
-        To exercise one or more of your rights, or appeal a denial of a request, contact us at Support@Tripile.com
-      </P>
+      <P>To exercise one or more of your rights, or appeal a denial of a request, contact us at Support@Tripile.com</P>
 
       <SubHeading>Connecticut Residents; Connecticut Privacy Rights Notice</SubHeading>
       <P>
@@ -778,9 +776,7 @@ const PrivacyPolicy = () => {
         there are exceptions under the CDA and other laws which may allow us to retain and use certain personal data
         notwithstanding your deletion request; and (4) obtain a copy of your personal data.
       </P>
-      <P>
-        To exercise one or more of your rights, or appeal a denial of a request, contact us at: Support@Tripile.com
-      </P>
+      <P>To exercise one or more of your rights, or appeal a denial of a request, contact us at: Support@Tripile.com</P>
 
       <SectionHeading>CHANGES TO OUR PRIVACY POLICY</SectionHeading>
       <P>
@@ -801,8 +797,8 @@ const PrivacyPolicy = () => {
         protection coordinator, contact us at:
       </P>
       <P>By Email: Support@Tripile.com</P>
-      <P>By Mail: [Address]</P>
-      <P>By Phone: [Number]</P>
+      <P>By Mail: Trivoya Ventures LLC | 5900 Balcones Drive STE 100, Austin, TX 78731 USA</P>
+      <P>By Phone: 1-800-963-4330</P>
       <P>
         Please ensure that the subject line of any correspondence contains the word, "PRIVACY", so we can ensure that
         your correspondence is routed in a timely and efficient manner.
