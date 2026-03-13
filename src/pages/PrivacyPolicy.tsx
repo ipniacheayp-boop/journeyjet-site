@@ -796,9 +796,26 @@ const PrivacyPolicy = () => {
         To ask questions or submit comments about our Privacy Policy and our privacy practices, or to reach the data
         protection coordinator, contact us at:
       </P>
-      <P>By Email: Support@Tripile.com</P>
-      <P>By Mail: Trivoya Ventures LLC | 5900 Balcones Drive STE 100, Austin, TX 78731 USA</P>
-      <P>By Phone: 1-800-963-4330</P>
+      <div className="space-y-3 text-muted-foreground mt-1 mb-2">
+        <p className="flex items-start gap-2">
+          <span className="font-semibold text-foreground">📧 Email:</span>
+          <a href="mailto:Support@Tripile.com" className="text-primary hover:underline">
+            Support@Tripile.com
+          </a>
+        </p>
+
+        <p className="flex items-start gap-2">
+          <span className="font-semibold text-foreground">📍 Address:</span>
+          <span>Trivoya Ventures LLC 5900 Balcones Drive STE 100 Austin, TX 78731 USA</span>
+        </p>
+
+        <p className="flex items-start gap-2">
+          <span className="font-semibold text-foreground">📞 Phone:</span>
+          <a href="tel:+18009634330" className="text-primary font-medium hover:underline">
+            1-800-963-4330
+          </a>
+        </p>
+      </div>
       <P>
         Please ensure that the subject line of any correspondence contains the word, "PRIVACY", so we can ensure that
         your correspondence is routed in a timely and efficient manner.
