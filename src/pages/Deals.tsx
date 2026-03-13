@@ -427,10 +427,47 @@ const Deals = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="mb-10 rounded-2xl overflow-hidden shadow-lg"
         >
-          <div className="relative bg-gradient-to-r from-primary via-primary/90 to-primary/80 px-6 py-8 md:px-10 md:py-10 flex flex-col md:flex-row items-center justify-between gap-6">
-            {/* Subtle decorative circles */}
+          <div className="relative bg-gradient-to-r from-primary via-primary/90 to-primary/80 px-6 py-8 md:px-10 md:py-10 flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden">
+            {/* Decorative circles */}
             <div className="absolute top-0 right-0 w-40 h-40 bg-primary-foreground/5 rounded-full -translate-y-1/2 translate-x-1/4 pointer-events-none" />
             <div className="absolute bottom-0 left-10 w-24 h-24 bg-primary-foreground/5 rounded-full translate-y-1/2 pointer-events-none" />
+
+            {/* Floating reward emojis / icons */}
+            <motion.span
+              className="absolute top-3 right-[15%] text-2xl opacity-40 pointer-events-none select-none"
+              animate={{ y: [0, -8, 0], rotate: [0, 10, -10, 0] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            >🎉</motion.span>
+            <motion.span
+              className="absolute bottom-3 right-[30%] text-xl opacity-30 pointer-events-none select-none"
+              animate={{ y: [0, -6, 0], rotate: [0, -15, 15, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+            >🏷️</motion.span>
+            <motion.span
+              className="absolute top-4 right-[45%] text-2xl opacity-25 pointer-events-none select-none"
+              animate={{ y: [0, -10, 0], scale: [1, 1.15, 1] }}
+              transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+            >✨</motion.span>
+            <motion.span
+              className="absolute bottom-4 left-[5%] text-xl opacity-30 pointer-events-none select-none"
+              animate={{ y: [0, -7, 0], rotate: [0, 12, -12, 0] }}
+              transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
+            >🎁</motion.span>
+            <motion.span
+              className="absolute top-2 left-[25%] text-lg opacity-20 pointer-events-none select-none"
+              animate={{ y: [0, -5, 0], scale: [1, 1.1, 1] }}
+              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
+            >💰</motion.span>
+            <motion.span
+              className="absolute bottom-2 right-[10%] text-lg opacity-25 pointer-events-none select-none"
+              animate={{ y: [0, -6, 0], rotate: [0, -8, 8, 0] }}
+              transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
+            >🎀</motion.span>
+
+            {/* Glowing dots */}
+            <div className="absolute top-1/2 right-[20%] w-2 h-2 bg-amber-300/40 rounded-full animate-pulse pointer-events-none" />
+            <div className="absolute top-1/4 left-[40%] w-1.5 h-1.5 bg-primary-foreground/20 rounded-full animate-pulse pointer-events-none" />
+            <div className="absolute bottom-1/3 right-[50%] w-2 h-2 bg-amber-200/30 rounded-full animate-pulse pointer-events-none" />
 
             <div className="relative z-10 text-center md:text-left space-y-2">
               <h2 className="text-2xl md:text-3xl font-black text-primary-foreground flex items-center gap-2 justify-center md:justify-start">
