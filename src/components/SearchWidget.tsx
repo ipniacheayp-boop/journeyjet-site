@@ -365,7 +365,6 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                       </option>
                     ))}
                   </select>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" />
                 </div>
               </div>
 
@@ -386,7 +385,6 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     <option value="BUSINESS">Business</option>
                     <option value="FIRST">First Class</option>
                   </select>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" />
                 </div>
               </div>
 
@@ -475,7 +473,6 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                       </option>
                     ))}
                   </select>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" />
                 </div>
               </div>
             </div>
@@ -499,7 +496,6 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                       </option>
                     ))}
                   </select>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" />
                 </div>
               </div>
 
@@ -668,7 +664,6 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                       </option>
                     ))}
                   </select>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" />
                 </div>
               </div>
             </div>
