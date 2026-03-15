@@ -643,10 +643,19 @@ const PrivacyPolicy = () => {
         To the extent we are able under applicable law and contractual obligations, we will correct or amend personal
         information where inaccurate or deficient, note any disputes received, and advise third parties as appropriate.
       </P>
-      <P>
-        To exercise your rights described above, please submit a verifiable consumer request to us in one of the
-        following ways: Tripile.com, LLC, [address], telephone: [address], E- mail: Support@Tripile.com.
-      </P>
+      <p>
+        To exercise your rights described above, please submit a verifiable consumer request to us using one of the
+        following methods:
+      </p>
+      <br />
+
+      <ul className="ml-2">
+        <li> • Company Name: Trivoya Ventures LLC</li>
+        <li> • Address: 5900 Balcones Drive STE 100, Austin, TX 78731 USA</li>
+        <li> • Telephone: +1-800-963-4330</li>
+        <li> • Email: Support@Tripile.com</li>
+      </ul>
+      <br />
       <P>A consumer request must:</P>
       <ul>
         <Li>
