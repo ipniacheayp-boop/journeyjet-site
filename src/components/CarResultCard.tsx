@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useFxSmartSave } from "@/hooks/useFxSmartSave";
 import FxSmartSaveBadge from "@/components/FxSmartSaveBadge";
-import { Car, Users } from "lucide-react";
+import { Car, Users, Calendar, MapPin } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 
 interface CarResultCardProps {
@@ -13,33 +13,46 @@ interface CarResultCardProps {
 }
 
 export function CarResultCard({ car, onBook }: CarResultCardProps) {
+  // Handle both Amadeus transformed format and mock data format
   const vehicle = car.vehicle || {};
-  const price = parseFloat(car.price?.total || "0");
-  const currency = car.price?.currency || "USD";
+  const pricing = car.pricing || {};
+  const priceObj = car.price || {};
+  
+  // Extract price - support both formats
+  const totalPrice = pricing.grandTotal || pricing.totalPrice || parseFloat(priceObj.total || "0");
+  const currency = pricing.currency || priceObj.currency || "USD";
+  const dailyRate = pricing.dailyRate || (priceObj.perDay ? parseFloat(priceObj.perDay) : null);
+  const totalDays = pricing.totalDays || null;
+  const taxes = pricing.taxes || null;
+
   const provider = car.provider || {};
-  const vehicleName = vehicle.make && vehicle.model 
-    ? `${vehicle.make} ${vehicle.model}` 
+  const pickup = car.pickup || car.pickUp || {};
+  const dropoff = car.dropoff || car.dropOff || {};
+  const isMock = car.isMockData || false;
+
+  const vehicleName = vehicle.make && vehicle.model
+    ? `${vehicle.make} ${vehicle.model}`
     : vehicle.category || "Car Rental";
 
   // FX-SmartSave calculation
   const { data: fxData, showBadge } = useFxSmartSave({
     productType: 'car',
     prices: [
-      { currency: 'USD', amount: price },
-      { currency: 'EUR', amount: price * 0.92 },
-      { currency: 'GBP', amount: price * 0.79 },
+      { currency: 'USD', amount: totalPrice },
+      { currency: 'EUR', amount: totalPrice * 0.92 },
+      { currency: 'GBP', amount: totalPrice * 0.79 },
     ],
-    enabled: price > 0,
+    enabled: totalPrice > 0,
   });
 
   return (
-    <Card className="hover:shadow-lg transition-shadow animate-fade-in">
-      <CardHeader>
+    <Card className="hover:shadow-lg transition-shadow animate-fade-in border-border">
+      <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             {vehicle.imageUrl ? (
-              <img 
-                src={vehicle.imageUrl} 
+              <img
+                src={vehicle.imageUrl}
                 alt={vehicleName}
                 className="w-16 h-12 object-contain rounded-lg bg-muted"
               />
@@ -57,18 +70,53 @@ export function CarResultCard({ car, onBook }: CarResultCardProps) {
             </div>
           </div>
           <div className="text-right">
-            <div className="flex items-center gap-2 justify-end mb-1">
-              <Badge variant="default" className="bg-green-600 hover:bg-green-700 text-white text-xs">
-                🟢 Best Price
+            {isMock && (
+              <Badge variant="outline" className="text-xs mb-1 border-amber-400 text-amber-600">
+                Demo Price
               </Badge>
+            )}
+            <div className="text-2xl font-bold text-primary">
+              {formatCurrency(totalPrice, currency)}
             </div>
-            <div className="text-2xl font-bold text-primary">{formatCurrency(price, currency)}</div>
-            <p className="text-xs text-muted-foreground">total</p>
+            {dailyRate && totalDays ? (
+              <p className="text-xs text-muted-foreground">
+                {formatCurrency(dailyRate, currency)}/day × {totalDays} days
+              </p>
+            ) : (
+              <p className="text-xs text-muted-foreground">total</p>
+            )}
+            {taxes != null && taxes > 0 && (
+              <p className="text-xs text-muted-foreground">
+                incl. {formatCurrency(taxes, currency)} taxes
+              </p>
+            )}
           </div>
         </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
+          {/* Pickup / Dropoff info */}
+          {(pickup.date || pickup.locationCode) && (
+            <div className="grid grid-cols-2 gap-2 text-xs bg-muted/50 rounded-lg p-2">
+              <div className="flex items-start gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-green-600 mt-0.5 shrink-0" />
+                <div>
+                  <span className="font-medium">Pick-up</span>
+                  <p className="text-muted-foreground">{pickup.address || pickup.locationCode}</p>
+                  {pickup.date && <p className="text-muted-foreground">{pickup.date}</p>}
+                </div>
+              </div>
+              <div className="flex items-start gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-red-500 mt-0.5 shrink-0" />
+                <div>
+                  <span className="font-medium">Drop-off</span>
+                  <p className="text-muted-foreground">{dropoff.address || dropoff.locationCode}</p>
+                  {dropoff.date && <p className="text-muted-foreground">{dropoff.date}</p>}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Vehicle Features */}
           <div className="grid grid-cols-2 gap-2 text-sm">
             <div className="flex items-center gap-2">
@@ -91,19 +139,25 @@ export function CarResultCard({ car, onBook }: CarResultCardProps) {
 
           {/* Feature badges */}
           <div className="flex flex-wrap gap-2">
-            {vehicle.hasAC !== false && (
+            {(vehicle.hasAC !== false && vehicle.airConditioning !== false) && (
               <Badge variant="outline" className="text-xs">❄️ AC</Badge>
             )}
             {vehicle.transmission && (
               <Badge variant="outline" className="text-xs">{vehicle.transmission}</Badge>
             )}
             {vehicle.fuelType && (
-              <Badge variant="outline" className="text-xs">{vehicle.fuelType}</Badge>
+              <Badge variant="outline" className="text-xs">⛽ {vehicle.fuelType}</Badge>
             )}
             {vehicle.acrissCode && (
               <Badge variant="secondary" className="text-xs">{vehicle.acrissCode}</Badge>
             )}
-            
+            {/* Extra features from mock data */}
+            {car.features?.map((f: string, i: number) => (
+              <Badge key={i} variant="outline" className="text-xs text-green-700 border-green-300">
+                ✓ {f}
+              </Badge>
+            ))}
+
             {/* FX-SmartSave Badge */}
             {showBadge && fxData && (
               <TooltipProvider>
@@ -119,7 +173,7 @@ export function CarResultCard({ car, onBook }: CarResultCardProps) {
           </div>
 
           <Button onClick={() => onBook(car)} className="w-full">
-            Book Now
+            Book Now — {formatCurrency(totalPrice, currency)}
           </Button>
         </div>
       </CardContent>
