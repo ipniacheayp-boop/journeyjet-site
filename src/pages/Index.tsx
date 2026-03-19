@@ -320,57 +320,6 @@ const Index = () => {
       </Suspense>
 
       {/* Why Choose Us Section - Professional */}
-      <section className="py-20 bg-slate-50 dark:bg-slate-900/50">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={staggerContainer}
-            className="text-center mb-12"
-          >
-            <motion.h2 variants={fadeInUp} className="font-display text-3xl md:text-4xl font-bold mb-4">
-              Why Travelers Choose Tripile
-            </motion.h2>
-            <motion.p variants={fadeInUp} className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Join over 2 million satisfied travelers who trust us for their journeys
-            </motion.p>
-          </motion.div>
-
-          <motion.div
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={staggerContainer}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-          >
-            {whyChooseUs.map((item, index) => {
-              const gradients = [
-                "from-slate-700 to-slate-900",
-                "from-blue-600 to-blue-800",
-                "from-indigo-600 to-indigo-800",
-                "from-slate-600 to-slate-800",
-              ];
-              return (
-                <motion.div
-                  key={item.title}
-                  variants={fadeInUp}
-                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                  className="card-unified p-6 text-center group"
-                >
-                  <div
-                    className={`w-16 h-16 mx-auto mb-4 rounded-xl text-white bg-gradient-to-br ${gradients[index]} flex items-center justify-center transition-colors group-hover:bg-primary/20`}
-                  >
-                    <item.icon className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
-                  <p className="text-muted-foreground text-sm">{item.description}</p>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        </div>
-      </section>
       <section className="py-20 bg-slate-50 dark:bg-slate-950/60">
         <div className="container mx-auto px-4">
           {/* Header */}
