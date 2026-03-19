@@ -391,7 +391,7 @@ const Index = () => {
             className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-muted-foreground"
           >
             <div className="flex items-center gap-1.5">
-              {[...Array(4.5)].map((_, i) => (
+              {[...Array(5)].map((_, i) => (
                 <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
               ))}
               <span className="font-semibold text-foreground ml-1">4.5</span>
