@@ -53,16 +53,18 @@ import WebCheckIn from "./pages/WebCheckIn";
 import FlightStatus from "./pages/FlightStatus";
 import FlightsToDestination from "./pages/FlightsToDestination";
 import AirlinePage from "./pages/AirlinePage";
+import TravelChecklists from "@/pages/TravelChecklists";
 
 const FlybotWrapper = () => {
   const location = useLocation();
-  const isFlybotEnabled = import.meta.env.VITE_ENABLE_FLYBOT !== 'false';
-  
-  const shouldShowFlybot = isFlybotEnabled && 
-    !location.pathname.includes('/support') &&
-    !location.pathname.includes('/customer-support') &&
-    !location.pathname.includes('/help/support');
-  
+  const isFlybotEnabled = import.meta.env.VITE_ENABLE_FLYBOT !== "false";
+
+  const shouldShowFlybot =
+    isFlybotEnabled &&
+    !location.pathname.includes("/support") &&
+    !location.pathname.includes("/customer-support") &&
+    !location.pathname.includes("/help/support");
+
   return shouldShowFlybot ? <FlyBot /> : null;
 };
 
@@ -117,6 +119,7 @@ const App = () => (
                 <Route path="/cruise-deals" element={<CruiseDeals />} />
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/blog/:slug" element={<BlogDetail />} />
+                <Route path="/destinations-checklist" element={<TravelChecklists />} />
                 {/* SEO Route Pages */}
                 <Route path="/airport/:slug" element={<AirportLandingPage />} />
                 <Route path="/cheap-flights-from-:slug" element={<FlightRoutePage />} />
