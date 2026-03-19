@@ -1,56 +1,72 @@
 import { motion } from "framer-motion";
-import { Globe, Bell, Plane } from "lucide-react";
+import { Globe, Bell, Plane, ArrowRight, Briefcase, Shield, Zap, Map } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+
+const tools = [
+  {
+    icon: Globe,
+    title: "Explore Destinations",
+    subtitle: "Browse hundreds of US routes with real-time pricing filtered to your budget.",
+    link: "/deals",
+    linkText: "Explore deals",
+    gradient: "from-blue-600 to-indigo-700",
+    highlight: "#0b69ff",
+    badge: "Popular",
+  },
+  {
+    icon: Bell,
+    title: "Price Drop Alerts",
+    subtitle: "Set alerts and get notified instantly when fares drop on your favorite routes.",
+    link: "/account",
+    linkText: "Set an alert",
+    gradient: "from-violet-600 to-purple-700",
+    highlight: "#7c3aed",
+    badge: "New",
+  },
+  {
+    icon: Plane,
+    title: "Flight Status Tracker",
+    subtitle: "Track any US flight in real time — delays, gate changes, and arrivals.",
+    link: "/flightstatus",
+    linkText: "Track a flight",
+    gradient: "from-sky-500 to-blue-700",
+    highlight: "#0ea5e9",
+    badge: "Live",
+  },
+  {
+    icon: Map,
+    title: "Travel Checklists",
+    subtitle: "Track your global adventures and save your bucket list destinations.",
+    link: "/destinations-checklist",
+    linkText: "View checklists",
+    gradient: "from-emerald-500 to-teal-700",
+    highlight: "#10b981",
+    badge: "Free",
+  },
+];
+
+const perks = [
+  { icon: Briefcase, label: "Business class deals" },
+  { icon: Shield, label: "Best price guarantee" },
+  { icon: Zap, label: "Instant booking" },
+];
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.12 } },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] as const } },
+};
 
 const ForTravelPros = () => {
-  const cards = [
-    {
-      icon: Globe,
-      title: "Explore",
-      subtitle: "See destinations on your budget",
-      gradient: "from-slate-700 to-slate-900",
-      bgColor: "bg-white dark:bg-slate-900",
-    },
-    {
-      icon: Bell,
-      title: "Price Alerts",
-      subtitle: "Know when prices change",
-      gradient: "from-indigo-600 to-indigo-800",
-      bgColor: "bg-white dark:bg-slate-900",
-    },
-    {
-      icon: Plane,
-      title: "Flight Tracker",
-      subtitle: "See real-time delays",
-      gradient: "from-sky-600 to-blue-800",
-      bgColor: "bg-white dark:bg-slate-900",
-    },
-  ];
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-        ease: [0.25, 0.1, 0.25, 1] as const,
-      },
-    },
-  };
-
   return (
-    <section className="py-16 md:py-20 bg-background" aria-labelledby="travel-pros-title">
+    <section className="py-16 md:py-24 bg-background" aria-labelledby="travel-pros-title">
       <div className="container mx-auto px-4">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -58,41 +74,85 @@ const ForTravelPros = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <h2 id="travel-pros-title" className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            For Travel Professionals
+          <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-2">Smart Travel Tools</p>
+          <h2 id="travel-pros-title" className="text-2xl md:text-3xl font-bold text-foreground mb-3">
+            Built for Savvy Travelers
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Professional tools to help you travel smarter and save more
+          <p className="text-muted-foreground max-w-xl mx-auto text-sm">
+            Everything you need to find better fares, track flights, and travel with confidence.
           </p>
         </motion.div>
 
+        {/* Tool Cards */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto mb-10"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-50px" }}
         >
-          {cards.map((card) => (
-            <motion.div
-              key={card.title}
-              variants={itemVariants}
-              className={`${card.bgColor} card-unified flex flex-col items-center justify-center p-6 rounded-2xl text-center border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-300 hover:-translate-y-1 hover:shadow-md group`}
-            >
-              {/* Icon Container */}
-              <div
-                className={`w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br ${card.gradient} flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-300`}
+          {tools.map((tool) => {
+            const Icon = tool.icon;
+            return (
+              <motion.div
+                key={tool.title}
+                variants={itemVariants}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="group relative bg-card rounded-2xl border border-border hover:border-primary/25 hover:shadow-lg transition-all duration-200 p-6 flex flex-col overflow-hidden"
               >
-                <card.icon className="w-8 h-8 text-white" aria-hidden="true" />
+                {/* Subtle gradient top stripe */}
+                <div className={`absolute top-0 left-0 right-0 h-1 rounded-t-2xl bg-gradient-to-r ${tool.gradient}`} />
+
+                {/* Badge */}
+                <span
+                  className={`self-start text-[10px] font-bold px-2 py-0.5 rounded-full bg-gradient-to-r ${tool.gradient} text-white mb-4 uppercase tracking-wider`}
+                >
+                  {tool.badge}
+                </span>
+
+                {/* Icon */}
+                <div
+                  className={`w-12 h-12 rounded-xl bg-gradient-to-br ${tool.gradient} flex items-center justify-center mb-4 shadow-sm`}
+                >
+                  <Icon className="w-6 h-6 text-white" aria-hidden="true" />
+                </div>
+
+                <h3 className="text-base font-bold text-foreground mb-2">{tool.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed flex-1">{tool.subtitle}</p>
+
+                <Link
+                  to={tool.link}
+                  className="inline-flex items-center gap-1.5 mt-5 text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
+                >
+                  {tool.linkText}
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-200" />
+                </Link>
+              </motion.div>
+            );
+          })}
+        </motion.div>
+
+        {/* Bottom perks bar + CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="flex flex-col sm:flex-row items-center justify-between gap-6 max-w-5xl mx-auto bg-muted/50 dark:bg-muted/20 rounded-2xl border border-border px-6 py-4"
+        >
+          <div className="flex flex-wrap justify-center sm:justify-start items-center gap-5">
+            {perks.map(({ icon: PerkIcon, label }) => (
+              <div key={label} className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
+                <PerkIcon className="w-4 h-4 text-primary shrink-0" />
+                {label}
               </div>
-
-              {/* Title */}
-              <h3 className="text-xl font-bold text-foreground mb-2">{card.title}</h3>
-
-              {/* Subtitle */}
-              <p className="text-muted-foreground text-sm">{card.subtitle}</p>
-            </motion.div>
-          ))}
+            ))}
+          </div>
+          <Button asChild size="sm" className="shrink-0 rounded-xl bg-primary hover:bg-primary/90 font-semibold gap-2">
+            <Link to="/account">
+              Get Started Free <ArrowRight className="w-4 h-4" />
+            </Link>
+          </Button>
         </motion.div>
       </div>
     </section>
