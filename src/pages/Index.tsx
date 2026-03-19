@@ -142,11 +142,46 @@ const Index = () => {
     {
       icon: Shield,
       title: "Best Price Guarantee",
-      description: "Find a lower price? We'll match it plus give you 10% off.",
+      stat: "10% off",
+      statLabel: "if you find lower",
+      description:
+        "Find a cheaper fare anywhere else and we'll match it — plus give you an extra 10% off. That's our promise.",
+      color: "text-blue-500",
+      iconBg: "bg-blue-600",
+      link: "/deals",
     },
-    { icon: Clock, title: "24/7 Support", description: "Our travel experts are available around the clock." },
-    { icon: Headphones, title: "Expert Guidance", description: "Personalized recommendations from real travel pros." },
-    { icon: CreditCard, title: "Flexible Payments", description: "Pay your way with multiple payment options." },
+    {
+      icon: Clock,
+      title: "24/7 Expert Support",
+      stat: "< 2 min",
+      statLabel: "avg. response time",
+      description: "Real travel specialists on call day and night — by phone, live chat, or email. Never wait alone.",
+      color: "text-emerald-500",
+      iconBg: "bg-emerald-600",
+      link: "/support",
+    },
+    {
+      icon: Headphones,
+      title: "Personalized Guidance",
+      stat: "500+",
+      statLabel: "airlines compared",
+      description:
+        "Our agents search across 500+ carriers to find the fare that best fits your schedule, budget, and preferences.",
+      color: "text-indigo-500",
+      iconBg: "bg-indigo-600",
+      link: "/support",
+    },
+    {
+      icon: CreditCard,
+      title: "Flexible Payments",
+      stat: "0%",
+      statLabel: "interest on FlexPay",
+      description:
+        "Break your trip into easy monthly installments with zero interest. Multiple cards, wallets, and BNPL options.",
+      color: "text-amber-500",
+      iconBg: "bg-amber-500",
+      link: "/support?topic=flexpay",
+    },
   ];
 
   return (
@@ -333,6 +368,94 @@ const Index = () => {
                 </motion.div>
               );
             })}
+          </motion.div>
+        </div>
+      </section>
+      <section className="py-20 bg-slate-50 dark:bg-slate-950/60">
+        <div className="container mx-auto px-4">
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-12"
+          >
+            <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-2">Why Tripile</p>
+            <h2 className="font-display text-2xl md:text-3xl font-bold mb-3">Why Travelers Choose Tripile</h2>
+            <p className="text-muted-foreground max-w-xl mx-auto text-sm">
+              Join over <strong className="text-foreground">2 million</strong> satisfied travelers who trust us to find
+              the best deals, every day.
+            </p>
+          </motion.div>
+
+          {/* Cards Grid */}
+          <motion.div
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={staggerContainer}
+            className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-4xl mx-auto"
+          >
+            {whyChooseUs.map((item) => (
+              <motion.div
+                key={item.title}
+                variants={fadeInUp}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="group bg-card rounded-2xl border border-border hover:border-primary/25 hover:shadow-lg transition-all duration-200 p-6 flex gap-5"
+              >
+                {/* Icon */}
+                <div
+                  className={`shrink-0 w-12 h-12 rounded-xl ${item.iconBg} flex items-center justify-center shadow-sm mt-0.5`}
+                >
+                  <item.icon className="w-5 h-5 text-white" />
+                </div>
+
+                {/* Text */}
+                <div className="min-w-0">
+                  {/* Stat */}
+                  <div className="flex items-baseline gap-1.5 mb-1">
+                    <span className={`text-xl font-extrabold ${item.color}`}>{item.stat}</span>
+                    <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">
+                      {item.statLabel}
+                    </span>
+                  </div>
+                  <h3 className="font-bold text-sm text-foreground mb-1.5">{item.title}</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">{item.description}</p>
+                  <Link
+                    to={item.link}
+                    className={`inline-flex items-center gap-1 mt-3 text-xs font-semibold ${item.color} hover:opacity-80 transition-opacity`}
+                  >
+                    Learn more <ArrowRight className="w-3 h-3" />
+                  </Link>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* Bottom social-proof strip */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-muted-foreground"
+          >
+            <div className="flex items-center gap-1.5">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+              ))}
+              <span className="font-semibold text-foreground ml-1">4.9</span>
+              <span>/ 5 average rating</span>
+            </div>
+            <span className="hidden sm:block w-px h-4 bg-border" />
+            <span>
+              Based on <strong className="text-foreground">56,000+</strong> verified reviews
+            </span>
+            <span className="hidden sm:block w-px h-4 bg-border" />
+            <Link to="/reviews" className="text-primary font-semibold hover:underline flex items-center gap-1">
+              Read reviews <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </motion.div>
         </div>
       </section>
