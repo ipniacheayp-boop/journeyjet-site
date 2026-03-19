@@ -4,7 +4,7 @@ import { Check, Map, Compass, Globe, Navigation, ChevronDown } from "lucide-reac
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
-import { checklistsData, Checklist, ChecklistCategory, ChecklistItem } from "@/data/checklists";
+// import { checklistsData, Checklist, ChecklistCategory, ChecklistItem } from "@/data/checklists";
 import { cn } from "@/lib/utils";
 
 // Custom styled checkbox to avoid missing shadcn dependencies
@@ -16,48 +16,45 @@ const CustomCheckbox = ({ checked, onChange }: { checked: boolean; onChange: () 
     onClick={onChange}
     className={cn(
       "w-5 h-5 rounded-md border flex items-center justify-center transition-all shrink-0 mt-0.5",
-      checked 
-        ? "bg-primary border-primary text-primary-foreground" 
-        : "bg-background border-input hover:border-primary/50 text-transparent"
+      checked
+        ? "bg-primary border-primary text-primary-foreground"
+        : "bg-background border-input hover:border-primary/50 text-transparent",
     )}
   >
     <Check className="w-3.5 h-3.5" />
   </button>
 );
 
-const ChecklistSection = ({ 
-  checklist, 
-  completedItems, 
-  toggleItem 
-}: { 
-  checklist: Checklist; 
-  completedItems: Set<string>; 
+const ChecklistSection = ({
+  checklist,
+  completedItems,
+  toggleItem,
+}: {
+  checklist: Checklist;
+  completedItems: Set<string>;
   toggleItem: (id: string) => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  
+
   const totalItems = checklist.categories.reduce((acc, cat) => acc + cat.items.length, 0);
   const completedCount = checklist.categories.reduce(
-    (acc, cat) => acc + cat.items.filter(item => completedItems.has(item.id)).length, 
-    0
+    (acc, cat) => acc + cat.items.filter((item) => completedItems.has(item.id)).length,
+    0,
   );
   const progress = Math.round((completedCount / totalItems) * 100) || 0;
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden flex flex-col mb-8"
     >
       {/* Banner / Header Area */}
-      <div 
-        className="relative h-48 md:h-64 cursor-pointer group overflow-hidden"
-        onClick={() => setIsOpen(!isOpen)}
-      >
+      <div className="relative h-48 md:h-64 cursor-pointer group overflow-hidden" onClick={() => setIsOpen(!isOpen)}>
         <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors z-10" />
-        <img 
-          src={checklist.image} 
+        <img
+          src={checklist.image}
           alt={checklist.title}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
@@ -71,12 +68,14 @@ const ChecklistSection = ({
               <span className="text-2xl font-bold">{progress}%</span>
               <div className="flex flex-col text-[10px] font-semibold uppercase tracking-wider opacity-80 leading-tight">
                 <span>Completed</span>
-                <span>{completedCount} / {totalItems}</span>
+                <span>
+                  {completedCount} / {totalItems}
+                </span>
               </div>
             </div>
           </div>
         </div>
-        
+
         {/* Toggle Icon */}
         <div className="absolute top-4 right-4 z-20 w-10 h-10 bg-black/30 backdrop-blur-md rounded-full flex items-center justify-center text-white/80 group-hover:text-white transition-colors">
           <ChevronDown className={cn("w-6 h-6 transition-transform duration-300", isOpen && "rotate-180")} />
@@ -85,17 +84,14 @@ const ChecklistSection = ({
 
       {/* Progress Bar (Visible when closed) */}
       <div className="h-1.5 w-full bg-muted">
-        <div 
-          className="h-full bg-primary transition-all duration-500"
-          style={{ width: `${progress}%` }}
-        />
+        <div className="h-full bg-primary transition-all duration-500" style={{ width: `${progress}%` }} />
       </div>
 
       {/* Expandable Content */}
-      <div 
+      <div
         className={cn(
           "grid transition-all duration-300 ease-in-out",
-          isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+          isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0",
         )}
       >
         <div className="overflow-hidden">
@@ -105,25 +101,23 @@ const ChecklistSection = ({
                 <div className="flex items-center justify-between border-b border-border pb-2">
                   <h3 className="font-semibold text-lg text-foreground">{cat.title}</h3>
                   <span className="text-xs font-medium text-muted-foreground bg-muted px-2 py-1 rounded-md">
-                    {cat.items.filter(i => completedItems.has(i.id)).length}/{cat.items.length}
+                    {cat.items.filter((i) => completedItems.has(i.id)).length}/{cat.items.length}
                   </span>
                 </div>
                 <div className="space-y-3">
-                  {cat.items.map(item => {
+                  {cat.items.map((item) => {
                     const isChecked = completedItems.has(item.id);
                     return (
-                      <label 
-                        key={item.id} 
-                        className="flex items-start gap-3 cursor-pointer group"
-                      >
-                        <CustomCheckbox 
-                          checked={isChecked} 
-                          onChange={() => toggleItem(item.id)} 
-                        />
-                        <span className={cn(
-                          "text-sm pt-0.5 transition-colors",
-                          isChecked ? "text-muted-foreground line-through decoration-muted-foreground/50" : "text-foreground group-hover:text-primary"
-                        )}>
+                      <label key={item.id} className="flex items-start gap-3 cursor-pointer group">
+                        <CustomCheckbox checked={isChecked} onChange={() => toggleItem(item.id)} />
+                        <span
+                          className={cn(
+                            "text-sm pt-0.5 transition-colors",
+                            isChecked
+                              ? "text-muted-foreground line-through decoration-muted-foreground/50"
+                              : "text-foreground group-hover:text-primary",
+                          )}
+                        >
                           {item.name}
                         </span>
                       </label>
@@ -164,7 +158,7 @@ const TravelChecklists = () => {
   }, [completedItems, isLoaded]);
 
   const toggleItem = (id: string) => {
-    setCompletedItems(prev => {
+    setCompletedItems((prev) => {
       const next = new Set(prev);
       if (next.has(id)) {
         next.delete(id);
@@ -177,9 +171,9 @@ const TravelChecklists = () => {
 
   const totalPossible = checklistsData.reduce(
     (acc, chl) => acc + chl.categories.reduce((cAcc, cat) => cAcc + cat.items.length, 0),
-    0
+    0,
   );
-  
+
   return (
     <>
       <SEOHead
@@ -187,19 +181,15 @@ const TravelChecklists = () => {
         description="Track your adventures with our ultimate travel checklists. Top 100 places in the world, USA highlights, and bucket-list trips."
       />
       <Header />
-      
+
       <main className="min-h-screen bg-slate-50 dark:bg-slate-950/60 pb-20">
         {/* Hero Section */}
         <section className="relative pt-32 pb-20 bg-primary overflow-hidden">
           <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&q=80')] bg-cover bg-center opacity-10 mix-blend-overlay" />
           <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/80 to-transparent" />
-          
+
           <div className="container mx-auto px-4 relative z-10 text-center">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="max-w-3xl mx-auto"
-            >
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl mx-auto">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-sm mb-6 shadow-xl border border-white/20">
                 <Map className="w-8 h-8 text-white" />
               </div>
@@ -207,9 +197,10 @@ const TravelChecklists = () => {
                 Ultimate Travel Checklists
               </h1>
               <p className="text-lg md:text-xl text-white/80 mb-10 leading-relaxed font-light">
-                Whether you're exploring all 197 countries or seeking the top bucket-list destinations, track your global adventures right here. Your progress is saved automatically.
+                Whether you're exploring all 197 countries or seeking the top bucket-list destinations, track your
+                global adventures right here. Your progress is saved automatically.
               </p>
-              
+
               <div className="flex flex-wrap items-center justify-center gap-6">
                 <div className="bg-white/10 backdrop-blur-md rounded-2xl px-6 py-4 flex items-center gap-4 border border-white/20">
                   <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
@@ -217,7 +208,10 @@ const TravelChecklists = () => {
                   </div>
                   <div className="text-left">
                     <p className="text-white/60 text-xs font-semibold uppercase tracking-wider">Total Progress</p>
-                    <p className="text-white font-bold text-xl">{completedItems.size} <span className="text-white/50 text-base font-normal">/ {totalPossible} places</span></p>
+                    <p className="text-white font-bold text-xl">
+                      {completedItems.size}{" "}
+                      <span className="text-white/50 text-base font-normal">/ {totalPossible} places</span>
+                    </p>
                   </div>
                 </div>
               </div>
@@ -234,11 +228,7 @@ const TravelChecklists = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
             >
-              <ChecklistSection 
-                checklist={checklist} 
-                completedItems={completedItems} 
-                toggleItem={toggleItem} 
-              />
+              <ChecklistSection checklist={checklist} completedItems={completedItems} toggleItem={toggleItem} />
             </motion.div>
           ))}
         </section>
