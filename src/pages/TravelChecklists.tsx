@@ -4,7 +4,7 @@ import { Check, Map, Compass, Globe, Navigation, ChevronDown } from "lucide-reac
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
-// import { checklistsData, Checklist, ChecklistCategory, ChecklistItem } from "@/data/checklists";
+import { checklistsData, Checklist, ChecklistCategory, ChecklistItem } from "@/data/checklists";
 import { cn } from "@/lib/utils";
 
 // Custom styled checkbox to avoid missing shadcn dependencies
