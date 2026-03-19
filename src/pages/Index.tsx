@@ -26,7 +26,19 @@ import dealBusiness from "@/assets/deal-business.jpg";
 import dealStudents from "@/assets/deal-students.jpg";
 import dealAirlines from "@/assets/deal-airlines.jpg";
 import rewardsIllustration from "@/assets/rewards-illustration.png";
-import { ArrowRight, Check, RefreshCw, Shield, Clock, Headphones, CreditCard } from "lucide-react";
+import {
+  ArrowRight,
+  Check,
+  RefreshCw,
+  Shield,
+  Clock,
+  Headphones,
+  CreditCard,
+  ShieldCheck,
+  BadgeDollarSign,
+  Star,
+  Wallet,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
