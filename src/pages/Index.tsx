@@ -138,16 +138,63 @@ const Index = () => {
     },
   ];
 
-  const whyChooseUs = [
+ const WhyBookWithTripile = () => {
+  const features = [
     {
-      icon: Shield,
-      title: "Best Price Guarantee",
-      description: "Find a lower price? We'll match it plus give you 10% off.",
+      icon: Headphones,
+      title: "24/7 Expert Support",
+      description:
+        "Access our dedicated travel concierges anytime for booking assistance, changes, or urgent travel needs.",
     },
-    { icon: Clock, title: "24/7 Support", description: "Our travel experts are available around the clock." },
-    { icon: Headphones, title: "Expert Guidance", description: "Personalized recommendations from real travel pros." },
-    { icon: CreditCard, title: "Flexible Payments", description: "Pay your way with multiple payment options." },
-  ];
+    {
+      icon: ShieldCheck,
+      title: "Bank-Grade Security",
+      description:
+        "Your data is protected by industry-standard SSL encryption and secure payment gateways.",
+    },
+    {
+      icon: BadgeDollarSign,
+      title: "Transparent Pricing",
+      description:
+        "No hidden fees or surprise charges at checkout. You pay exactly what you see.",
+    },
+    {
+      icon: Star,
+      title: "Price Match Guarantee",
+      description:
+        "Find a lower verifiable price for the identical itinerary, and we will match it.",
+    },
+    {
+      icon: CreditCard,
+      title: "Verified Reliability",
+      description:
+        "Millions of travelers trust Tripile for seamless booking and responsive customer service.",
+    },
+    {
+      icon: Wallet,
+      title: "Flexible Financing",
+      description:
+        "Manage your cash flow by splitting your trip cost into predictable monthly payments.",
+    },
+  ] as const;
+
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.12 },
+    },
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 24 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.45, ease: "easeOut" },
+    },
+  };
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -285,57 +332,73 @@ const Index = () => {
       </Suspense>
 
       {/* Why Choose Us Section - Professional */}
-      <section className="py-20 bg-slate-50 dark:bg-slate-900/50">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={staggerContainer}
-            className="text-center mb-12"
-          >
-            <motion.h2 variants={fadeInUp} className="font-display text-3xl md:text-4xl font-bold mb-4">
-              Why Travelers Choose Tripile
-            </motion.h2>
-            <motion.p variants={fadeInUp} className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Join over 2 million satisfied travelers who trust us for their journeys
-            </motion.p>
-          </motion.div>
+       <section
+      aria-labelledby="why-book-title"
+      className="container mx-auto px-4 py-20"
+    >
+      {/* Heading */}
+      <div className="mb-14 text-center">
+        <h2
+          id="why-book-title"
+          className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white"
+        >
+          Why Choose Tripile
+        </h2>
 
-          <motion.div
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={staggerContainer}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-          >
-            {whyChooseUs.map((item, index) => {
-              const gradients = [
-                "from-slate-700 to-slate-900",
-                "from-blue-600 to-blue-800",
-                "from-indigo-600 to-indigo-800",
-                "from-slate-600 to-slate-800",
-              ];
-              return (
-                <motion.div
-                  key={item.title}
-                  variants={fadeInUp}
-                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                  className="card-unified p-6 text-center group"
-                >
-                  <div
-                    className={`w-16 h-16 mx-auto mb-4 rounded-xl text-white bg-gradient-to-br ${gradients[index]} flex items-center justify-center transition-colors group-hover:bg-primary/20`}
-                  >
-                    <item.icon className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
-                  <p className="text-muted-foreground text-sm">{item.description}</p>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        </div>
-      </section>
+        <p className="text-slate-600 dark:text-slate-400 mt-4 max-w-2xl mx-auto text-lg">
+          Experience a professional, secure, and fully supported booking process designed for peace of mind.
+        </p>
+      </div>
+
+      {/* Feature Grid */}
+      <motion.div
+        variants={container}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: "-80px" }}
+        className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3"
+      >
+        {features.map((feature) => {
+          const Icon = feature.icon;
+
+          return (
+            <motion.article
+              key={feature.title}
+              className="bg-white dark:bg-slate-950 rounded-xl p-7 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-300 hover:-translate-y-1 hover:shadow-md group"
+            >
+              {/* Icon */}
+              <div
+                className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-5 transition-colors duration-300 group-hover:bg-primary/15"
+                aria-hidden="true"
+              >
+                <Icon className="h-6 w-6 text-primary transition-transform duration-300 group-hover:scale-105" />
+              </div>
+
+              {/* Title */}
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
+                {feature.title}
+              </h3>
+
+              {/* Description */}
+              <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                {feature.description}
+              </p>
+            </motion.article>
+          );
+        })}
+      </motion.div>
+
+      {/* CTA */}
+      <div className="mt-14 text-center">
+        <a
+          href="tel:+18002215246"
+          className="inline-flex items-center text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
+        >
+          Speak with a Travel Advisor
+          <ArrowRight className="ml-2 h-4 w-4" />
+        </a>
+      </div>
+    </section>
 
       {/* Featured Deals - Structured Layout */}
       <section className="py-20 bg-background">
