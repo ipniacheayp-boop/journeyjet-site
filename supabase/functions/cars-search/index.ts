@@ -5,255 +5,209 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-let cachedToken: { token: string; expiresAt: number } | null = null;
+const RAPIDAPI_HOST = 'booking-com15.p.rapidapi.com';
+const RAPIDAPI_BASE = `https://${RAPIDAPI_HOST}/api/v1`;
 
-// Determine API base URL based on environment
-function getBaseUrl(): string {
-  const useProd = Deno.env.get('USE_PROD_APIS') === 'true';
-  return useProd ? 'https://api.amadeus.com' : 'https://test.api.amadeus.com';
-}
+// Well-known city coordinates for fast fallback
+const CITY_COORDS: Record<string, { lat: number; lon: number; name: string }> = {
+  'NYC': { lat: 40.6397, lon: -73.7789, name: 'New York' },
+  'JFK': { lat: 40.6397, lon: -73.7789, name: 'New York JFK' },
+  'LAX': { lat: 33.9425, lon: -118.4081, name: 'Los Angeles' },
+  'SFO': { lat: 37.6213, lon: -122.3790, name: 'San Francisco' },
+  'ORD': { lat: 41.9742, lon: -87.9073, name: 'Chicago' },
+  'MIA': { lat: 25.7959, lon: -80.2870, name: 'Miami' },
+  'LHR': { lat: 51.4700, lon: -0.4543, name: 'London Heathrow' },
+  'CDG': { lat: 49.0097, lon: 2.5479, name: 'Paris CDG' },
+  'DXB': { lat: 25.2532, lon: 55.3657, name: 'Dubai' },
+  'NRT': { lat: 35.7720, lon: 140.3929, name: 'Tokyo Narita' },
+  'HND': { lat: 35.5494, lon: 139.7798, name: 'Tokyo Haneda' },
+  'SIN': { lat: 1.3644, lon: 103.9915, name: 'Singapore' },
+  'BOM': { lat: 19.0896, lon: 72.8656, name: 'Mumbai' },
+  'DEL': { lat: 28.5562, lon: 77.1000, name: 'Delhi' },
+  'BLR': { lat: 13.1986, lon: 77.7066, name: 'Bangalore' },
+  'HYD': { lat: 17.2403, lon: 78.4294, name: 'Hyderabad' },
+  'MAA': { lat: 12.9941, lon: 80.1709, name: 'Chennai' },
+  'SYD': { lat: -33.9461, lon: 151.1772, name: 'Sydney' },
+  'ATL': { lat: 33.6407, lon: -84.4277, name: 'Atlanta' },
+  'DFW': { lat: 32.8998, lon: -97.0403, name: 'Dallas' },
+  'DEN': { lat: 39.8561, lon: -104.6737, name: 'Denver' },
+  'SEA': { lat: 47.4502, lon: -122.3088, name: 'Seattle' },
+  'LAS': { lat: 36.0840, lon: -115.1537, name: 'Las Vegas' },
+  'MCO': { lat: 28.4312, lon: -81.3081, name: 'Orlando' },
+  'BOS': { lat: 42.3656, lon: -71.0096, name: 'Boston' },
+  'FCO': { lat: 41.8003, lon: 12.2389, name: 'Rome' },
+  'BCN': { lat: 41.2971, lon: 2.0785, name: 'Barcelona' },
+  'AMS': { lat: 52.3105, lon: 4.7683, name: 'Amsterdam' },
+  'FRA': { lat: 50.0379, lon: 8.5622, name: 'Frankfurt' },
+  'IST': { lat: 41.2753, lon: 28.7519, name: 'Istanbul' },
+  'BKK': { lat: 13.6900, lon: 100.7501, name: 'Bangkok' },
+  'HKG': { lat: 22.3080, lon: 113.9185, name: 'Hong Kong' },
+  'ICN': { lat: 37.4602, lon: 126.4407, name: 'Seoul Incheon' },
+  'CAN': { lat: 23.3924, lon: 113.2988, name: 'Guangzhou' },
+  'MEX': { lat: 19.4363, lon: -99.0721, name: 'Mexico City' },
+  'GRU': { lat: -23.4356, lon: -46.4731, name: 'São Paulo' },
+  'JNB': { lat: -26.1392, lon: 28.2460, name: 'Johannesburg' },
+  'CAI': { lat: 30.1219, lon: 31.4056, name: 'Cairo' },
+};
 
-function isTestEnvironment(): boolean {
-  return Deno.env.get('USE_PROD_APIS') !== 'true';
-}
-
-// Generate mock car data for test environment when Amadeus has no results
-function generateMockCars(locationCode: string, pickUpDate: string, dropOffDate: string): any[] {
-  const providers = ['Hertz', 'Avis', 'Enterprise', 'Budget', 'National'];
-  const categories = [
-    { name: 'Economy', seats: 4, bags: 2, doors: 4 },
-    { name: 'Compact', seats: 5, bags: 3, doors: 4 },
-    { name: 'SUV', seats: 7, bags: 4, doors: 4 },
-    { name: 'Luxury', seats: 5, bags: 3, doors: 4 },
-    { name: 'Minivan', seats: 8, bags: 5, doors: 4 },
-  ];
-  const makes = ['Toyota', 'Honda', 'Ford', 'Chevrolet', 'Nissan', 'BMW', 'Mercedes'];
-  const models = {
-    Economy: ['Corolla', 'Civic', 'Focus', 'Cruze'],
-    Compact: ['Camry', 'Accord', 'Fusion', 'Malibu'],
-    SUV: ['RAV4', 'CR-V', 'Explorer', 'Equinox'],
-    Luxury: ['3 Series', 'C-Class', 'A4', 'ES'],
-    Minivan: ['Sienna', 'Odyssey', 'Pacifica', 'Carnival'],
+function getHeaders(): Record<string, string> {
+  const apiKey = Deno.env.get('RAPIDAPI_KEY');
+  if (!apiKey) throw new Error('RAPIDAPI_KEY is not configured');
+  return {
+    'x-rapidapi-host': RAPIDAPI_HOST,
+    'x-rapidapi-key': apiKey,
+    'Content-Type': 'application/json',
   };
+}
+
+// Resolve a city name or IATA code to lat/lon using the Booking.com API
+async function resolveLocation(input: string): Promise<{ lat: number; lon: number; name: string } | null> {
+  const upper = input.trim().toUpperCase();
+
+  // Check known codes first
+  if (CITY_COORDS[upper]) {
+    console.log(`📍 Known location: ${upper} → ${CITY_COORDS[upper].name}`);
+    return CITY_COORDS[upper];
+  }
+
+  // Try the RapidAPI location endpoint
+  try {
+    const params = new URLSearchParams({ query: input.trim() });
+    const resp = await fetch(`${RAPIDAPI_BASE}/cars/getLocation?${params}`, {
+      headers: getHeaders(),
+    });
+
+    if (resp.ok) {
+      const json = await resp.json();
+      const results = json?.data || json?.result || [];
+      if (Array.isArray(results) && results.length > 0) {
+        const loc = results[0];
+        const lat = loc.latitude || loc.lat;
+        const lon = loc.longitude || loc.lon || loc.lng;
+        if (lat && lon) {
+          console.log(`📍 Resolved "${input}" → ${lat}, ${lon} (${loc.name || loc.city_name || input})`);
+          return { lat, lon, name: loc.name || loc.city_name || input };
+        }
+      }
+    }
+  } catch (e) {
+    console.warn('⚠️ Location API fallback:', e);
+  }
+
+  // Try geocoding via Amadeus as fallback (we still have those credentials)
+  try {
+    const amadeusKey = Deno.env.get('AMADEUS_API_KEY');
+    const amadeusSecret = Deno.env.get('AMADEUS_API_SECRET');
+    if (amadeusKey && amadeusSecret) {
+      const useProd = Deno.env.get('USE_PROD_APIS') === 'true';
+      const base = useProd ? 'https://api.amadeus.com' : 'https://test.api.amadeus.com';
+      
+      const authResp = await fetch(`${base}/v1/security/oauth2/token`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `grant_type=client_credentials&client_id=${amadeusKey}&client_secret=${amadeusSecret}`,
+      });
+
+      if (authResp.ok) {
+        const authData = await authResp.json();
+        const locResp = await fetch(
+          `${base}/v1/reference-data/locations?keyword=${encodeURIComponent(input)}&subType=CITY,AIRPORT&page[limit]=1`,
+          { headers: { Authorization: `Bearer ${authData.access_token}` } }
+        );
+
+        if (locResp.ok) {
+          const locData = await locResp.json();
+          const loc = locData.data?.[0];
+          if (loc?.geoCode) {
+            console.log(`📍 Amadeus resolved "${input}" → ${loc.geoCode.latitude}, ${loc.geoCode.longitude}`);
+            return {
+              lat: loc.geoCode.latitude,
+              lon: loc.geoCode.longitude,
+              name: loc.name || loc.address?.cityName || input,
+            };
+          }
+        }
+      }
+    }
+  } catch (e) {
+    console.warn('⚠️ Amadeus geocoding fallback error:', e);
+  }
+
+  return null;
+}
+
+// Transform RapidAPI car result to our frontend format
+function transformCarResult(car: any, index: number, pickUpDate: string, dropOffDate: string): any {
+  const vehicle = car.vehicle || car;
+  const price = car.price || car.pricing || {};
+  const supplier = car.supplier || car.provider || {};
+  const pickup = car.pickupLocation || car.pickup || {};
+  const dropoff = car.dropoffLocation || car.dropoff || {};
 
   const start = new Date(pickUpDate);
   const end = new Date(dropOffDate);
   const days = Math.max(1, Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)));
 
-  return categories.map((cat, index) => {
-    const provider = providers[index % providers.length];
-    const make = makes[index % makes.length];
-    const model = models[cat.name as keyof typeof models][index % models[cat.name as keyof typeof models].length];
-    const dailyRate = cat.name === 'Economy' ? 35 : cat.name === 'Compact' ? 45 : cat.name === 'SUV' ? 65 : cat.name === 'Luxury' ? 95 : 75;
-
-    return {
-      id: `mock-${locationCode}-${index}-${Date.now()}`,
-      provider: {
-        name: provider,
-        code: provider.substring(0, 2).toUpperCase(),
-        logo: null,
-      },
-      vehicle: {
-        make,
-        model,
-        category: cat.name,
-        type: cat.name,
-        doors: cat.doors,
-        seats: cat.seats,
-        bags: cat.bags,
-        transmission: index % 2 === 0 ? 'Automatic' : 'Manual',
-        airConditioning: true,
-        fuelType: 'Petrol',
-        imageUrl: null,
-      },
-      pricing: {
-        currency: 'USD',
-        dailyRate,
-        totalDays: days,
-        totalPrice: dailyRate * days,
-        taxes: Math.round(dailyRate * days * 0.12),
-        grandTotal: Math.round(dailyRate * days * 1.12),
-      },
-      pickup: {
-        locationCode,
-        address: `${locationCode} Airport Car Rental Center`,
-        date: pickUpDate,
-        time: '10:00',
-      },
-      dropoff: {
-        locationCode,
-        address: `${locationCode} Airport Car Rental Center`,
-        date: dropOffDate,
-        time: '10:00',
-      },
-      features: ['Unlimited Mileage', 'Free Cancellation', 'Insurance Included'],
-      isMockData: true,
-    };
-  });
-}
-
-async function getAmadeusToken(): Promise<string> {
-  if (cachedToken && cachedToken.expiresAt > Date.now()) {
-    return cachedToken.token;
-  }
-
-  const apiKey = Deno.env.get('AMADEUS_API_KEY');
-  const apiSecret = Deno.env.get('AMADEUS_API_SECRET');
-  const baseUrl = getBaseUrl();
-
-  if (!apiKey || !apiSecret) {
-    throw new Error('Amadeus API credentials not configured');
-  }
-
-  console.log(`🔑 Authenticating with Amadeus (${baseUrl.includes('test') ? 'TEST' : 'PRODUCTION'})...`);
-
-  const authResponse = await fetch(`${baseUrl}/v1/security/oauth2/token`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: `grant_type=client_credentials&client_id=${apiKey}&client_secret=${apiSecret}`,
-  });
-
-  if (!authResponse.ok) {
-    const errorText = await authResponse.text();
-    console.error('❌ Auth failed:', errorText);
-    throw new Error('Failed to authenticate with Amadeus API');
-  }
-
-  const authData = await authResponse.json();
-  cachedToken = {
-    token: authData.access_token,
-    expiresAt: Date.now() + (25 * 60 * 1000), // 25 minutes to be safe
-  };
-
-  console.log('✅ Amadeus token obtained successfully');
-  return authData.access_token;
-}
-
-// Resolve city/location name to IATA code
-async function resolveLocationToIATA(token: string, locationInput: string): Promise<{ iataCode: string; name: string } | null> {
-  const baseUrl = getBaseUrl();
-  const keyword = locationInput.trim();
-  
-  console.log(`🔍 Resolving location: "${keyword}"`);
-
-  // If it looks like an IATA code already (3 uppercase letters), try to validate it
-  if (/^[A-Z]{3}$/i.test(keyword)) {
-    return { iataCode: keyword.toUpperCase(), name: keyword.toUpperCase() };
-  }
-
-  const params = new URLSearchParams({
-    keyword: keyword,
-    subType: 'CITY,AIRPORT',
-    'page[limit]': '5',
-  });
-
-  const response = await fetch(`${baseUrl}/v1/reference-data/locations?${params.toString()}`, {
-    headers: {
-      'Authorization': `Bearer ${token}`,
-    },
-  });
-
-  if (!response.ok) {
-    console.error('❌ Location API error:', response.status);
-    return null;
-  }
-
-  const data = await response.json();
-
-  if (!data.data || data.data.length === 0) {
-    console.log('❌ No locations found for:', keyword);
-    return null;
-  }
-
-  // Prefer city over airport, take the first match
-  const cityMatch = data.data.find((loc: any) => loc.subType === 'CITY');
-  const location = cityMatch || data.data[0];
-  
-  console.log(`✅ Resolved "${keyword}" to: ${location.iataCode} (${location.name})`);
-  return { 
-    iataCode: location.iataCode, 
-    name: location.name || location.address?.cityName || keyword 
-  };
-}
-
-// Transform Amadeus car offer to a cleaner format
-function transformCarOffer(offer: any, index: number): any {
-  const vehicle = offer.vehicle || {};
-  const price = offer.price || {};
-  const provider = offer.provider || {};
-  const pickUp = offer.pickUp || {};
-  const dropOff = offer.dropOff || {};
-  
-  // Extract vehicle details
-  const category = vehicle.category || vehicle.acrissCode?.charAt(0) || 'Standard';
-  const categoryMap: Record<string, string> = {
-    'M': 'Mini',
-    'N': 'Mini Elite',
-    'E': 'Economy',
-    'H': 'Economy Elite',
-    'C': 'Compact',
-    'D': 'Compact Elite',
-    'I': 'Intermediate',
-    'J': 'Intermediate Elite',
-    'S': 'Standard',
-    'R': 'Standard Elite',
-    'F': 'Fullsize',
-    'G': 'Fullsize Elite',
-    'P': 'Premium',
-    'U': 'Premium Elite',
-    'L': 'Luxury',
-    'W': 'Luxury Elite',
-    'O': 'Oversize',
-    'X': 'Special',
-  };
-  
-  const transmissionCode = vehicle.acrissCode?.charAt(2) || 'A';
-  const transmission = transmissionCode === 'M' ? 'Manual' : 'Automatic';
-  
-  const fuelAC = vehicle.acrissCode?.charAt(3) || 'R';
-  const hasAC = !['N', 'X'].includes(fuelAC);
+  const totalPrice = parseFloat(price.total || price.amount || price.price || car.price_all_days || '0');
+  const dailyRate = totalPrice > 0 ? Math.round((totalPrice / days) * 100) / 100 : 0;
 
   return {
-    id: offer.id || `car-${index}`,
-    vehicle: {
-      make: vehicle.make || 'Vehicle',
-      model: vehicle.model || '',
-      category: categoryMap[category] || vehicle.category || 'Standard',
-      vehicleType: vehicle.type || vehicle.acrissCode || 'Car',
-      acrissCode: vehicle.acrissCode || '',
-      seats: vehicle.seats || vehicle.seatQuantity || 5,
-      doors: vehicle.doors || 4,
-      bags: vehicle.bagQuantity || vehicle.baggageQuantity || 2,
-      transmission: transmission,
-      hasAC: hasAC,
-      fuelType: vehicle.fuelType || 'Petrol',
-      imageUrl: vehicle.imageURL || null,
-    },
-    price: {
-      total: price.total || price.amount || '0',
-      currency: price.currency || 'USD',
-      perDay: price.base || null,
-    },
+    id: car.vehicle_id || car.id || `car-${index}`,
     provider: {
-      name: provider.name || provider.companyName || 'Car Rental Provider',
-      code: provider.code || '',
-      logoUrl: provider.logoUrl || null,
+      name: supplier.name || car.supplier_name || car.company || 'Car Rental Provider',
+      code: supplier.code || '',
+      logo: supplier.logo || supplier.logoUrl || car.supplier_logo || null,
     },
-    pickUp: {
-      locationCode: pickUp.locationCode || '',
-      address: pickUp.address?.line || pickUp.address?.cityName || '',
-      dateTime: pickUp.dateTime || '',
+    vehicle: {
+      make: vehicle.make || vehicle.brand || car.group || '',
+      model: vehicle.model || car.vehicle_info || '',
+      category: vehicle.category || vehicle.type || car.group || 'Standard',
+      type: vehicle.type || car.group || 'Car',
+      doors: vehicle.doors || car.doors || 4,
+      seats: vehicle.seats || car.seats || 5,
+      bags: vehicle.bags || vehicle.bagQuantity || car.large_suitcase || 2,
+      transmission: vehicle.transmission || car.transmission || 'Automatic',
+      airConditioning: vehicle.airConditioning !== false && car.aircon !== false,
+      fuelType: vehicle.fuelType || car.fuel_type || 'Petrol',
+      imageUrl: vehicle.imageUrl || car.image_url || car.vehicle_image || null,
     },
-    dropOff: {
-      locationCode: dropOff.locationCode || '',
-      address: dropOff.address?.line || dropOff.address?.cityName || '',
-      dateTime: dropOff.dateTime || '',
+    pricing: {
+      currency: price.currency || car.currency_code || 'USD',
+      dailyRate,
+      totalDays: days,
+      totalPrice,
+      taxes: 0,
+      grandTotal: totalPrice,
     },
-    policies: offer.policies || {},
-    originalOffer: offer, // Keep original for booking
+    pickup: {
+      locationCode: pickup.code || '',
+      address: pickup.address || pickup.name || car.pick_up_location || '',
+      date: pickUpDate,
+      time: '10:00',
+    },
+    dropoff: {
+      locationCode: dropoff.code || '',
+      address: dropoff.address || dropoff.name || car.drop_off_location || '',
+      date: dropOffDate,
+      time: '10:00',
+    },
+    features: extractFeatures(car),
+    bookingUrl: car.deeplink || car.url?.web || car.booking_url || null,
+    rating: car.rating || car.review_score || null,
+    isMockData: false,
   };
+}
+
+function extractFeatures(car: any): string[] {
+  const features: string[] = [];
+  if (car.free_cancellation || car.policies?.cancellation?.type === 'free_cancellation') {
+    features.push('Free Cancellation');
+  }
+  if (car.mileage_unlimited || car.unlimited_mileage) features.push('Unlimited Mileage');
+  if (car.aircon !== false) features.push('Air Conditioning');
+  if (car.insurance_included) features.push('Insurance Included');
+  if (features.length === 0) features.push('Standard Coverage');
+  return features;
 }
 
 serve(async (req) => {
@@ -264,178 +218,108 @@ serve(async (req) => {
   try {
     const body = await req.json();
     const { pickUpLocationCode, pickUpCity, pickUpDate, dropOffDate, dropOffCity, driverAge } = body;
-    
-    // Support both pickUpLocationCode and pickUpCity
-    const locationInput = pickUpLocationCode || pickUpCity;
+    const locationInput = pickUpCity || pickUpLocationCode;
 
     console.log('📥 Car search request:', { locationInput, pickUpDate, dropOffDate, driverAge });
 
     if (!locationInput || !pickUpDate || !dropOffDate) {
-      console.error('❌ Missing required parameters');
       return new Response(
-        JSON.stringify({ 
-          error: 'Missing required parameters', 
-          details: 'Please provide pickup location, pickup date, and drop-off date' 
-        }),
+        JSON.stringify({ error: 'Missing required parameters', details: 'Please provide pickup location, dates' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    const token = await getAmadeusToken();
-    const baseUrl = getBaseUrl();
-
-    // Step 1: Resolve location to IATA code
-    const resolvedLocation = await resolveLocationToIATA(token, locationInput);
-    
-    if (!resolvedLocation) {
+    // Step 1: Resolve location to coordinates
+    const location = await resolveLocation(locationInput);
+    if (!location) {
       return new Response(
-        JSON.stringify({ 
+        JSON.stringify({
           error: 'Unable to find location',
-          details: `No results found for "${locationInput}". Please try a different city name or use an airport code (e.g., JFK, LAX, LHR).`
+          details: `No results found for "${locationInput}". Try a different city or airport code.`,
         }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    const resolvedCode = resolvedLocation.iataCode;
-    console.log(`✅ Using location code: ${resolvedCode}`);
+    // Resolve drop-off location if different
+    let dropOffCoords = location;
+    if (dropOffCity && dropOffCity !== locationInput) {
+      const resolved = await resolveLocation(dropOffCity);
+      if (resolved) dropOffCoords = resolved;
+    }
 
-    // Step 2: Search for car rental offers
-    const carParams = new URLSearchParams({
-      pickUpLocationCode: resolvedCode,
-      pickUpDate,
-      dropOffDate,
+    // Step 2: Search car rentals via Booking.com RapidAPI
+    const params = new URLSearchParams({
+      pick_up_latitude: location.lat.toString(),
+      pick_up_longitude: location.lon.toString(),
+      drop_off_latitude: dropOffCoords.lat.toString(),
+      drop_off_longitude: dropOffCoords.lon.toString(),
+      pick_up_time: `${pickUpDate}T10:00:00`,
+      drop_off_time: `${dropOffDate}T10:00:00`,
+      driver_age: (driverAge || 30).toString(),
+      currency_code: 'USD',
     });
 
-    // Handle drop-off location if different
-    if (dropOffCity && dropOffCity !== locationInput) {
-      const dropOffResolved = await resolveLocationToIATA(token, dropOffCity);
-      if (dropOffResolved) {
-        carParams.append('dropOffLocationCode', dropOffResolved.iataCode);
-      }
-    }
-
-    if (driverAge) {
-      carParams.append('driverAge', driverAge.toString());
-    }
-
-    console.log('🚗 Fetching car offers with params:', carParams.toString());
+    console.log('🚗 Calling Booking.com car search:', params.toString());
 
     const carResponse = await fetch(
-      `${baseUrl}/v1/shopping/availability/vehicle-offers?${carParams.toString()}`,
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      }
+      `${RAPIDAPI_BASE}/cars/searchCarRentals?${params.toString()}`,
+      { headers: getHeaders() }
     );
 
-    console.log('📡 Car offers API response status:', carResponse.status);
+    console.log('📡 RapidAPI response status:', carResponse.status);
 
     if (!carResponse.ok) {
       const errorText = await carResponse.text();
-      console.error('❌ Amadeus car search error:', carResponse.status, errorText);
-      
-      // Try alternative endpoint if first one fails
-      console.log('🔄 Trying alternative endpoint...');
-      
-      const altResponse = await fetch(
-        `${baseUrl}/v1/shopping/vehicle-offers?${carParams.toString()}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!altResponse.ok) {
-        const altError = await altResponse.text();
-        console.error('❌ Alternative endpoint also failed:', altResponse.status, altError);
-        
-        // In test environment, return mock data since Amadeus test has limited coverage
-        if (isTestEnvironment()) {
-          console.log('📦 Returning mock car data for test environment');
-          const mockCars = generateMockCars(resolvedCode, pickUpDate, dropOffDate);
-          return new Response(
-            JSON.stringify({
-              data: mockCars,
-              meta: {
-                count: mockCars.length,
-                location: resolvedLocation,
-                environment: 'test',
-                isMockData: true,
-                notice: 'Using demo data - Amadeus test environment has limited coverage for this location.'
-              }
-            }),
-            { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
-        }
-        
-        return new Response(
-          JSON.stringify({ 
-            error: 'No car rentals available',
-            details: `No vehicles found for ${resolvedLocation.name} (${resolvedCode}) on the selected dates. Try different dates or another location.`,
-            meta: { environment: 'production' }
-          }),
-          { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
-      const altData = await altResponse.json();
-      const transformedOffers = (altData.data || []).map(transformCarOffer);
-      
-      // Sort by price
-      transformedOffers.sort((a: any, b: any) => {
-        const priceA = parseFloat(a.price.total || '999999');
-        const priceB = parseFloat(b.price.total || '999999');
-        return priceA - priceB;
-      });
-
+      console.error('❌ RapidAPI error:', carResponse.status, errorText);
       return new Response(
         JSON.stringify({
-          data: transformedOffers,
-          meta: {
-            count: transformedOffers.length,
-            location: resolvedLocation,
-            environment: baseUrl.includes('test') ? 'test' : 'production',
-          }
+          error: 'Car search temporarily unavailable',
+          details: `No vehicles found for ${location.name}. Try different dates or location.`,
         }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     const carData = await carResponse.json();
-    console.log('✅ Raw car offers received:', carData.data?.length || 0);
+    console.log('✅ Raw response keys:', Object.keys(carData));
 
-    // Transform offers to cleaner format
-    const transformedOffers = (carData.data || []).map(transformCarOffer);
+    // Extract results - handle various response shapes
+    const rawResults = carData.data?.search_results
+      || carData.data?.cars
+      || carData.data
+      || carData.search_results
+      || carData.result
+      || [];
 
-    // Sort by price (ascending)
-    transformedOffers.sort((a: any, b: any) => {
-      const priceA = parseFloat(a.price.total || '999999');
-      const priceB = parseFloat(b.price.total || '999999');
-      return priceA - priceB;
-    });
+    const results = Array.isArray(rawResults) ? rawResults : [];
+    console.log('✅ Found', results.length, 'car results');
 
-    console.log('✅ Car search completed:', transformedOffers.length, 'offers');
+    // Transform and sort by price
+    const transformed = results.map((car: any, i: number) =>
+      transformCarResult(car, i, pickUpDate, dropOffDate)
+    );
+
+    transformed.sort((a: any, b: any) => a.pricing.grandTotal - b.pricing.grandTotal);
 
     return new Response(
       JSON.stringify({
-        data: transformedOffers,
+        data: transformed,
         meta: {
-          count: transformedOffers.length,
-          location: resolvedLocation,
-          environment: baseUrl.includes('test') ? 'test' : 'production',
-        }
+          count: transformed.length,
+          location: { iataCode: locationInput.toUpperCase(), name: location.name },
+          environment: 'production',
+          source: 'booking.com',
+        },
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
     console.error('❌ Error in cars-search:', error);
     return new Response(
-      JSON.stringify({ 
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-        details: 'An unexpected error occurred while searching for car rentals.'
+      JSON.stringify({
+        error: error instanceof Error ? error.message : 'Unknown error',
+        details: 'An unexpected error occurred while searching for car rentals.',
       }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
