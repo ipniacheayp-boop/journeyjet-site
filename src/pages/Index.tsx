@@ -204,84 +204,104 @@ const Index = () => {
       <Header />
 
       {/* Professional Hero Section */}
-      <section className="relative min-h-[600px] md:min-h-[700px] w-full overflow-hidden">
-        {/* Background Image with Parallax Effect */}
+      <section className="relative min-h-[680px] md:min-h-[780px] w-full overflow-hidden">
+        {/* Background Image */}
         <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-[1.04] transition-transform duration-[8000ms] ease-out"
           style={{ backgroundImage: `url(${heroBlackFriday})` }}
         />
 
-        {/* Professional Overlay */}
-        <div className="absolute inset-0 bg-slate-900/60" />
+        {/* Multi-layer overlay: dark base + directional gradient for text contrast */}
+        <div className="absolute inset-0 bg-slate-950/55" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/30 via-transparent to-slate-950/80" />
+
+        {/* Subtle animated glow orbs */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-blue-600/10 blur-[120px] pointer-events-none" />
+        <div className="absolute top-1/3 right-1/4 w-80 h-80 rounded-full bg-indigo-500/8 blur-[100px] pointer-events-none" />
 
         {/* Content */}
-        <div className="container mx-auto px-4 h-full relative z-10 flex flex-col items-center justify-center pt-24 pb-32">
+        <div className="container mx-auto px-4 relative z-10 flex flex-col items-center justify-center pt-28 pb-44">
+          {/* Eyebrow badge */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: -16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="text-center max-w-4xl"
+            transition={{ delay: 0.15, duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-xs font-semibold text-white/90 tracking-widest uppercase mb-7 shadow-lg"
           >
-            {/* Badge */}
-            <motion.span
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-              className="group inline-flex items-center gap-2 px-7 py-2.5 rounded-full border border-white/20 bg-gradient-to-r from-blue-500/15 via-purple-500/15 to-pink-500/15 backdrop-blur-lg text-sm font-medium text-gray-200 tracking-wide mb-6 shadow-[0_0_25px_rgba(99,102,241,0.15)] hover:shadow-[0_0_35px_rgba(99,102,241,0.25)] transition-all duration-300"
-            >
-              <span className="text-base">✈</span>
-              Start Planning Your Next Trip
-            </motion.span>
-
-            {/* Heading */}
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-              className="font-display text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
-            >
-              <span className="bg-gradient-to-r from-white via-gray-200 to-gray-300 bg-clip-text text-transparent">
-                Discover Your Next
-              </span>
-
-              <span className="block bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                Adventure
-              </span>
-            </motion.h1>
-
-            {/* Description */}
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-              className="text-lg md:text-xl text-gray-300 mb-4 max-w-2xl mx-auto"
-            >
-              Compare <span className="text-blue-400 font-semibold">500+ airlines</span> and save up to{" "}
-              <span className="text-purple-400 font-semibold">50%</span> on flights, hotels, and car rentals.
-            </motion.p>
-
-            {/* Sub text */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5, duration: 0.6 }}
-              className="text-lg md:text-xl font-medium text-gray-400"
-            >
-              <span className="text-green-400">Zero Booking Fees</span>
-              <span className="mx-3 text-white/60">•</span>
-              <span className="text-blue-400">Instant Confirmation</span>
-            </motion.p>
+            <Plane className="w-3.5 h-3.5 text-blue-300" />
+            #1 Rated US Flight Comparison
           </motion.div>
-        </div>
 
-        {/* Bottom Wave */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
-            <path
-              d="M0 120L48 110C96 100 192 80 288 75C384 70 480 80 576 85C672 90 768 90 864 85C960 80 1056 70 1152 70C1248 70 1344 80 1392 85L1440 90V120H1392C1344 120 1248 120 1152 120C1056 120 960 120 864 120C768 120 672 120 576 120C480 120 384 120 288 120C192 120 96 120 48 120H0Z"
-              className="fill-background"
-            />
-          </svg>
+          {/* Main headline */}
+          <motion.h1
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25, duration: 0.7, ease: "easeOut" }}
+            className="font-display text-balance text-center text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.08] mb-6"
+          >
+            <span className="text-white drop-shadow-lg">Your Gateway to</span>
+            <br />
+            <span className="bg-gradient-to-r from-blue-300 via-sky-300 to-blue-200 bg-clip-text text-transparent">
+              Affordable US Adventures
+            </span>
+          </motion.h1>
+
+          {/* Sub-headline */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.38, duration: 0.6 }}
+            className="text-base md:text-lg text-white/75 mb-10 max-w-xl text-center leading-relaxed"
+          >
+            Compare <span className="text-white font-semibold">500+ airlines</span> in seconds, unlock exclusive fares,
+            and travel smarter — with <span className="text-sky-300 font-semibold">zero hidden fees</span>.
+          </motion.p>
+
+          {/* Primary CTA */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.5, duration: 0.5 }}
+            className="flex flex-col sm:flex-row items-center gap-4 mb-12"
+          >
+            <a
+              href="#search-widget"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById("search-widget")?.scrollIntoView({ behavior: "smooth", block: "center" });
+              }}
+              className="group inline-flex items-center gap-3 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white text-base font-bold px-8 py-4 rounded-2xl shadow-[0_4px_32px_rgba(59,130,246,0.55)] hover:shadow-[0_6px_40px_rgba(59,130,246,0.7)] transition-all duration-200 hover:-translate-y-0.5"
+            >
+              <Plane className="w-5 h-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              Find Your Next Flight
+              <ChevronRight className="w-4 h-4 opacity-70 group-hover:translate-x-1 transition-transform duration-200" />
+            </a>
+
+            <Link
+              to="/deals"
+              className="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm font-medium px-5 py-4 rounded-2xl border border-white/20 hover:border-white/40 bg-white/5 hover:bg-white/10 backdrop-blur-sm transition-all duration-200"
+            >
+              <TrendingDown className="w-4 h-4 text-green-400" />
+              See Today's Deals
+            </Link>
+          </motion.div>
+
+          {/* Popular destination tags */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.65, duration: 0.5 }}
+            className="flex flex-wrap justify-center gap-2"
+          >
+            {["New York", "Los Angeles", "Miami", "Las Vegas", "Chicago", "Orlando"].map((dest) => (
+              <span
+                key={dest}
+                className="px-4 py-1.5 rounded-full text-xs font-medium text-white/70 border border-white/15 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:text-white/90 transition-all duration-150 cursor-pointer"
+              >
+                {dest}
+              </span>
+            ))}
+          </motion.div>
         </div>
       </section>
 
