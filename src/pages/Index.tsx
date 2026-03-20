@@ -38,7 +38,7 @@ import {
   BadgeDollarSign,
   Star,
   Wallet,
-  User,
+  Users,
   Plane,
   TrendingDown,
   ChevronRight,
