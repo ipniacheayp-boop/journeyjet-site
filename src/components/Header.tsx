@@ -36,7 +36,7 @@ const serviceLinks = [
   { label: "Flights", href: "/?type=flights#search-widget", icon: Plane },
   { label: "Hotels", href: "/?type=hotels#search-widget", icon: Hotel },
   { label: "Deals", href: "/deals", icon: Tag },
-  { label: "Flight Status", href: "/flightstatus", icon: PlaneTakeoff },
+  { label: "Flight Status", href: "/flight-status", icon: PlaneTakeoff },
   // { label: "Cruise", href: "/?type=cruise#search-widget", icon: Ship },
 ];
 
