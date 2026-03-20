@@ -205,7 +205,7 @@ const Index = () => {
       <Header />
 
       {/* Professional Hero Section */}
-      <section className="relative min-h-[680px] md:min-h-[780px] w-full overflow-hidden">
+      <section className="relative min-h-[680px] md:min-h-[780px] w-full overflow-hidden z-10">
         {/* Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-[1.04] transition-transform duration-[8000ms] ease-out"
