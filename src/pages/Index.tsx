@@ -282,6 +282,30 @@ const Index = () => {
         </div>
       </section>
 
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.7, duration: 0.6 }}
+        className="relative z-20 container mx-auto px-4 -mt-10 mb-2"
+      >
+        <div className="bg-card border border-border/60 rounded-2xl shadow-lg px-6 py-4 grid grid-cols-2 sm:grid-cols-4 gap-y-4 gap-x-6 text-center">
+          {[
+            { icon: Users, value: "2M+", label: "Happy Travelers", color: "text-blue-500" },
+            { icon: Plane, value: "500+", label: "Airlines Compared", color: "text-indigo-500" },
+            { icon: TrendingDown, value: "50%", label: "Max Savings", color: "text-green-500" },
+            { icon: Star, value: "4.5", label: "Average Rating", color: "text-amber-500" },
+          ].map(({ icon: Icon, value, label, color }) => (
+            <div key={label} className="flex flex-col items-center gap-1">
+              <div className="flex items-center gap-1.5">
+                <Icon className={`w-4 h-4 ${color}`} />
+                <span className="text-xl font-extrabold tracking-tight text-foreground">{value}</span>
+              </div>
+              <span className="text-xs text-muted-foreground font-medium">{label}</span>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
       {/* Structured Search Widget Container */}
       <div className="container mx-auto px-4 -mt-24 relative z-20">
         <motion.div
