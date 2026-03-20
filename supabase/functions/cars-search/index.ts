@@ -7,6 +7,8 @@ const corsHeaders = {
 
 const RAPIDAPI_HOST = 'booking-com15.p.rapidapi.com';
 const RAPIDAPI_BASE = `https://${RAPIDAPI_HOST}/api/v1`;
+const UBER_AUTH_URL = 'https://auth.uber.com/oauth/v2/token';
+const UBER_API_BASE = 'https://api.uber.com/v1.2';
 
 // Well-known city coordinates for fast fallback
 const CITY_COORDS: Record<string, { lat: number; lon: number; name: string }> = {
@@ -60,23 +62,144 @@ function getHeaders(): Record<string, string> {
   };
 }
 
-// Resolve a city name or IATA code to lat/lon using the Booking.com API
+// Get Uber OAuth token via client credentials flow
+async function getUberToken(): Promise<string | null> {
+  const clientId = Deno.env.get('UBER_CLIENT_ID');
+  const clientSecret = Deno.env.get('UBER_CLIENT_SECRET');
+  if (!clientId || !clientSecret) {
+    console.warn('⚠️ Uber credentials not configured');
+    return null;
+  }
+
+  try {
+    const resp = await fetch(UBER_AUTH_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        grant_type: 'client_credentials',
+        client_id: clientId,
+        client_secret: clientSecret,
+        scope: 'ride_request.estimate',
+      }).toString(),
+    });
+
+    if (!resp.ok) {
+      console.warn('⚠️ Uber auth failed:', resp.status, await resp.text());
+      return null;
+    }
+
+    const data = await resp.json();
+    return data.access_token || null;
+  } catch (e) {
+    console.warn('⚠️ Uber auth error:', e);
+    return null;
+  }
+}
+
+// Fetch Uber ride price estimates
+async function getUberEstimates(
+  token: string,
+  startLat: number, startLon: number,
+  endLat: number, endLon: number,
+  pickUpDate: string, dropOffDate: string
+): Promise<any[]> {
+  try {
+    const params = new URLSearchParams({
+      start_latitude: startLat.toString(),
+      start_longitude: startLon.toString(),
+      end_latitude: endLat.toString(),
+      end_longitude: endLon.toString(),
+    });
+
+    const resp = await fetch(`${UBER_API_BASE}/estimates/price?${params}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Accept-Language': 'en_US',
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!resp.ok) {
+      console.warn('⚠️ Uber estimates failed:', resp.status);
+      return [];
+    }
+
+    const data = await resp.json();
+    const prices = data.prices || [];
+    console.log(`🚕 Uber returned ${prices.length} ride estimates`);
+
+    return prices.map((p: any, i: number) => ({
+      id: `uber-${p.product_id || i}`,
+      provider: {
+        name: 'Uber',
+        code: 'UBER',
+        logo: 'https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png',
+      },
+      vehicle: {
+        make: 'Uber',
+        model: p.display_name || p.localized_display_name || 'Ride',
+        category: 'Ride',
+        type: 'Rideshare',
+        doors: 4,
+        seats: p.capacity || 4,
+        bags: 2,
+        transmission: 'N/A',
+        airConditioning: true,
+        fuelType: 'N/A',
+        imageUrl: null,
+      },
+      pricing: {
+        currency: p.currency_code || 'USD',
+        dailyRate: 0,
+        totalDays: 0,
+        totalPrice: p.high_estimate || 0,
+        lowEstimate: p.low_estimate || 0,
+        highEstimate: p.high_estimate || 0,
+        taxes: 0,
+        grandTotal: p.high_estimate || 0,
+        surgeMultiplier: p.surge_multiplier || 1,
+        priceEstimate: p.estimate || '',
+      },
+      pickup: {
+        locationCode: '',
+        address: '',
+        date: pickUpDate,
+        time: '10:00',
+      },
+      dropoff: {
+        locationCode: '',
+        address: '',
+        date: pickUpDate,
+        time: '',
+      },
+      features: [
+        `${p.duration ? Math.round(p.duration / 60) + ' min trip' : 'On-demand'}`,
+        `${p.distance ? p.distance.toFixed(1) + ' mi' : ''}`,
+        p.surge_multiplier > 1 ? `Surge ${p.surge_multiplier}x` : 'No surge',
+      ].filter(Boolean),
+      bookingUrl: null,
+      rating: null,
+      isMockData: false,
+      isRideshare: true,
+    }));
+  } catch (e) {
+    console.warn('⚠️ Uber estimates error:', e);
+    return [];
+  }
+}
+
+// Resolve a city name or IATA code to lat/lon
 async function resolveLocation(input: string): Promise<{ lat: number; lon: number; name: string } | null> {
   const upper = input.trim().toUpperCase();
 
-  // Check known codes first
   if (CITY_COORDS[upper]) {
     console.log(`📍 Known location: ${upper} → ${CITY_COORDS[upper].name}`);
     return CITY_COORDS[upper];
   }
 
-  // Try the RapidAPI location endpoint
   try {
     const params = new URLSearchParams({ query: input.trim() });
-    const resp = await fetch(`${RAPIDAPI_BASE}/cars/getLocation?${params}`, {
-      headers: getHeaders(),
-    });
-
+    const resp = await fetch(`${RAPIDAPI_BASE}/cars/getLocation?${params}`, { headers: getHeaders() });
     if (resp.ok) {
       const json = await resp.json();
       const results = json?.data || json?.result || [];
@@ -85,7 +208,7 @@ async function resolveLocation(input: string): Promise<{ lat: number; lon: numbe
         const lat = loc.latitude || loc.lat;
         const lon = loc.longitude || loc.lon || loc.lng;
         if (lat && lon) {
-          console.log(`📍 Resolved "${input}" → ${lat}, ${lon} (${loc.name || loc.city_name || input})`);
+          console.log(`📍 Resolved "${input}" → ${lat}, ${lon}`);
           return { lat, lon, name: loc.name || loc.city_name || input };
         }
       }
@@ -94,37 +217,29 @@ async function resolveLocation(input: string): Promise<{ lat: number; lon: numbe
     console.warn('⚠️ Location API fallback:', e);
   }
 
-  // Try geocoding via Amadeus as fallback (we still have those credentials)
+  // Amadeus geocoding fallback
   try {
     const amadeusKey = Deno.env.get('AMADEUS_API_KEY');
     const amadeusSecret = Deno.env.get('AMADEUS_API_SECRET');
     if (amadeusKey && amadeusSecret) {
       const useProd = Deno.env.get('USE_PROD_APIS') === 'true';
       const base = useProd ? 'https://api.amadeus.com' : 'https://test.api.amadeus.com';
-      
       const authResp = await fetch(`${base}/v1/security/oauth2/token`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: `grant_type=client_credentials&client_id=${amadeusKey}&client_secret=${amadeusSecret}`,
       });
-
       if (authResp.ok) {
         const authData = await authResp.json();
         const locResp = await fetch(
           `${base}/v1/reference-data/locations?keyword=${encodeURIComponent(input)}&subType=CITY,AIRPORT&page[limit]=1`,
           { headers: { Authorization: `Bearer ${authData.access_token}` } }
         );
-
         if (locResp.ok) {
           const locData = await locResp.json();
           const loc = locData.data?.[0];
           if (loc?.geoCode) {
-            console.log(`📍 Amadeus resolved "${input}" → ${loc.geoCode.latitude}, ${loc.geoCode.longitude}`);
-            return {
-              lat: loc.geoCode.latitude,
-              lon: loc.geoCode.longitude,
-              name: loc.name || loc.address?.cityName || input,
-            };
+            return { lat: loc.geoCode.latitude, lon: loc.geoCode.longitude, name: loc.name || input };
           }
         }
       }
@@ -195,6 +310,7 @@ function transformCarResult(car: any, index: number, pickUpDate: string, dropOff
     bookingUrl: car.deeplink || car.url?.web || car.booking_url || null,
     rating: car.rating || car.review_score || null,
     isMockData: false,
+    isRideshare: false,
   };
 }
 
@@ -248,8 +364,10 @@ serve(async (req) => {
       if (resolved) dropOffCoords = resolved;
     }
 
-    // Step 2: Search car rentals via Booking.com RapidAPI
-    const params = new URLSearchParams({
+    // Step 2: Fetch car rentals AND Uber estimates in parallel
+    const uberTokenPromise = getUberToken();
+
+    const carParams = new URLSearchParams({
       pick_up_latitude: location.lat.toString(),
       pick_up_longitude: location.lon.toString(),
       drop_off_latitude: dropOffCoords.lat.toString(),
@@ -260,56 +378,56 @@ serve(async (req) => {
       currency_code: 'USD',
     });
 
-    console.log('🚗 Calling Booking.com car search:', params.toString());
+    console.log('🚗 Calling Booking.com car search + Uber estimates');
 
-    const carResponse = await fetch(
-      `${RAPIDAPI_BASE}/cars/searchCarRentals?${params.toString()}`,
-      { headers: getHeaders() }
-    );
+    const [carResponse, uberToken] = await Promise.all([
+      fetch(`${RAPIDAPI_BASE}/cars/searchCarRentals?${carParams.toString()}`, { headers: getHeaders() }),
+      uberTokenPromise,
+    ]);
 
-    console.log('📡 RapidAPI response status:', carResponse.status);
-
-    if (!carResponse.ok) {
-      const errorText = await carResponse.text();
-      console.error('❌ RapidAPI error:', carResponse.status, errorText);
-      return new Response(
-        JSON.stringify({
-          error: 'Car search temporarily unavailable',
-          details: `No vehicles found for ${location.name}. Try different dates or location.`,
-        }),
-        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    // Process car rental results
+    let carResults: any[] = [];
+    if (carResponse.ok) {
+      const carData = await carResponse.json();
+      const rawResults = carData.data?.search_results
+        || carData.data?.cars
+        || carData.data
+        || carData.search_results
+        || carData.result
+        || [];
+      const results = Array.isArray(rawResults) ? rawResults : [];
+      console.log('✅ Found', results.length, 'car rental results');
+      carResults = results.map((car: any, i: number) => transformCarResult(car, i, pickUpDate, dropOffDate));
+    } else {
+      console.warn('⚠️ Car rental search failed:', carResponse.status);
     }
 
-    const carData = await carResponse.json();
-    console.log('✅ Raw response keys:', Object.keys(carData));
+    // Process Uber estimates
+    let uberResults: any[] = [];
+    if (uberToken) {
+      uberResults = await getUberEstimates(
+        uberToken,
+        location.lat, location.lon,
+        dropOffCoords.lat, dropOffCoords.lon,
+        pickUpDate, dropOffDate
+      );
+      console.log('✅ Found', uberResults.length, 'Uber ride estimates');
+    }
 
-    // Extract results - handle various response shapes
-    const rawResults = carData.data?.search_results
-      || carData.data?.cars
-      || carData.data
-      || carData.search_results
-      || carData.result
-      || [];
-
-    const results = Array.isArray(rawResults) ? rawResults : [];
-    console.log('✅ Found', results.length, 'car results');
-
-    // Transform and sort by price
-    const transformed = results.map((car: any, i: number) =>
-      transformCarResult(car, i, pickUpDate, dropOffDate)
-    );
-
-    transformed.sort((a: any, b: any) => a.pricing.grandTotal - b.pricing.grandTotal);
+    // Combine: car rentals first (sorted by price), then Uber rides
+    carResults.sort((a: any, b: any) => a.pricing.grandTotal - b.pricing.grandTotal);
+    const allResults = [...carResults, ...uberResults];
 
     return new Response(
       JSON.stringify({
-        data: transformed,
+        data: allResults,
         meta: {
-          count: transformed.length,
+          count: allResults.length,
+          carRentals: carResults.length,
+          rideEstimates: uberResults.length,
           location: { iataCode: locationInput.toUpperCase(), name: location.name },
           environment: 'production',
-          source: 'booking.com',
+          source: 'booking.com+uber',
         },
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
