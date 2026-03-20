@@ -75,24 +75,28 @@ async function getUberToken(): Promise<string | null> {
   }
 
   try {
-    const resp = await fetch(UBER_AUTH_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
-        grant_type: 'client_credentials',
-        client_id: clientId,
-        client_secret: clientSecret,
-        scope: 'ride_request.estimate',
-      }).toString(),
-    });
+    // Try multiple auth endpoints (sandbox vs production)
+    for (const authUrl of UBER_AUTH_URLS) {
+      const resp = await fetch(authUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          grant_type: 'client_credentials',
+          client_id: clientId,
+          client_secret: clientSecret,
+        }).toString(),
+      });
 
-    if (!resp.ok) {
-      console.warn('⚠️ Uber auth failed:', resp.status, await resp.text());
-      return null;
+      if (resp.ok) {
+        const data = await resp.json();
+        console.log('✅ Uber auth succeeded via', authUrl);
+        return data.access_token || null;
+      }
+
+      const errText = await resp.text();
+      console.warn(`⚠️ Uber auth failed (${authUrl}):`, resp.status, errText);
     }
-
-    const data = await resp.json();
-    return data.access_token || null;
+    return null;
   } catch (e) {
     console.warn('⚠️ Uber auth error:', e);
     return null;
