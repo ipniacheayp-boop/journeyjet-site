@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useFxSmartSave } from "@/hooks/useFxSmartSave";
 import FxSmartSaveBadge from "@/components/FxSmartSaveBadge";
-import { Car, Users, Calendar, MapPin } from "lucide-react";
+import { Car, Users, MapPin, Navigation } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 
 interface CarResultCardProps {
@@ -13,12 +13,11 @@ interface CarResultCardProps {
 }
 
 export function CarResultCard({ car, onBook }: CarResultCardProps) {
-  // Handle both Amadeus transformed format and mock data format
+  const isRideshare = car.isRideshare === true;
   const vehicle = car.vehicle || {};
   const pricing = car.pricing || {};
   const priceObj = car.price || {};
-  
-  // Extract price - support both formats
+
   const totalPrice = pricing.grandTotal || pricing.totalPrice || parseFloat(priceObj.total || "0");
   const currency = pricing.currency || priceObj.currency || "USD";
   const dailyRate = pricing.dailyRate || (priceObj.perDay ? parseFloat(priceObj.perDay) : null);
@@ -30,11 +29,12 @@ export function CarResultCard({ car, onBook }: CarResultCardProps) {
   const dropoff = car.dropoff || car.dropOff || {};
   const isMock = car.isMockData || false;
 
-  const vehicleName = vehicle.make && vehicle.model
-    ? `${vehicle.make} ${vehicle.model}`
-    : vehicle.category || "Car Rental";
+  const vehicleName = isRideshare
+    ? `Uber ${vehicle.model || 'Ride'}`
+    : vehicle.make && vehicle.model
+      ? `${vehicle.make} ${vehicle.model}`
+      : vehicle.category || "Car Rental";
 
-  // FX-SmartSave calculation
   const { data: fxData, showBadge } = useFxSmartSave({
     productType: 'car',
     prices: [
@@ -42,15 +42,19 @@ export function CarResultCard({ car, onBook }: CarResultCardProps) {
       { currency: 'EUR', amount: totalPrice * 0.92 },
       { currency: 'GBP', amount: totalPrice * 0.79 },
     ],
-    enabled: totalPrice > 0,
+    enabled: totalPrice > 0 && !isRideshare,
   });
 
   return (
-    <Card className="hover:shadow-lg transition-shadow animate-fade-in border-border">
+    <Card className={`hover:shadow-lg transition-shadow animate-fade-in border-border ${isRideshare ? 'border-l-4 border-l-black dark:border-l-white' : ''}`}>
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            {vehicle.imageUrl ? (
+            {isRideshare ? (
+              <div className="w-12 h-12 bg-black dark:bg-white rounded-lg flex items-center justify-center">
+                <Navigation className="w-6 h-6 text-white dark:text-black" />
+              </div>
+            ) : vehicle.imageUrl ? (
               <img
                 src={vehicle.imageUrl}
                 alt={vehicleName}
@@ -63,7 +67,9 @@ export function CarResultCard({ car, onBook }: CarResultCardProps) {
             )}
             <div>
               <CardTitle className="text-lg">{vehicleName}</CardTitle>
-              <p className="text-sm text-muted-foreground">{vehicle.category || "Standard"}</p>
+              <p className="text-sm text-muted-foreground">
+                {isRideshare ? 'Rideshare' : vehicle.category || "Standard"}
+              </p>
               {provider.name && (
                 <p className="text-xs text-muted-foreground mt-1">by {provider.name}</p>
               )}
@@ -75,20 +81,35 @@ export function CarResultCard({ car, onBook }: CarResultCardProps) {
                 Demo Price
               </Badge>
             )}
-            <div className="text-2xl font-bold text-primary">
-              {formatCurrency(totalPrice, currency)}
-            </div>
-            {dailyRate && totalDays ? (
+            {isRideshare && pricing.priceEstimate ? (
+              <div className="text-2xl font-bold text-primary">{pricing.priceEstimate}</div>
+            ) : (
+              <div className="text-2xl font-bold text-primary">
+                {formatCurrency(totalPrice, currency)}
+              </div>
+            )}
+            {isRideshare ? (
+              <p className="text-xs text-muted-foreground">
+                {pricing.lowEstimate && pricing.highEstimate
+                  ? `${formatCurrency(pricing.lowEstimate, currency)} – ${formatCurrency(pricing.highEstimate, currency)}`
+                  : 'estimated'}
+              </p>
+            ) : dailyRate && totalDays ? (
               <p className="text-xs text-muted-foreground">
                 {formatCurrency(dailyRate, currency)}/day × {totalDays} days
               </p>
             ) : (
               <p className="text-xs text-muted-foreground">total</p>
             )}
-            {taxes != null && taxes > 0 && (
+            {!isRideshare && taxes != null && taxes > 0 && (
               <p className="text-xs text-muted-foreground">
                 incl. {formatCurrency(taxes, currency)} taxes
               </p>
+            )}
+            {isRideshare && pricing.surgeMultiplier > 1 && (
+              <Badge variant="destructive" className="text-xs mt-1">
+                Surge {pricing.surgeMultiplier}x
+              </Badge>
             )}
           </div>
         </div>
@@ -96,7 +117,7 @@ export function CarResultCard({ car, onBook }: CarResultCardProps) {
       <CardContent>
         <div className="space-y-3">
           {/* Pickup / Dropoff info */}
-          {(pickup.date || pickup.locationCode) && (
+          {!isRideshare && (pickup.date || pickup.locationCode) && (
             <div className="grid grid-cols-2 gap-2 text-xs bg-muted/50 rounded-lg p-2">
               <div className="flex items-start gap-1.5">
                 <MapPin className="w-3.5 h-3.5 text-green-600 mt-0.5 shrink-0" />
@@ -117,48 +138,58 @@ export function CarResultCard({ car, onBook }: CarResultCardProps) {
             </div>
           )}
 
-          {/* Vehicle Features */}
-          <div className="grid grid-cols-2 gap-2 text-sm">
-            <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-muted-foreground" />
-              <span>{vehicle.seats || 5} seats</span>
+          {/* Vehicle Features (car rentals only) */}
+          {!isRideshare && (
+            <div className="grid grid-cols-2 gap-2 text-sm">
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-muted-foreground" />
+                <span>{vehicle.seats || 5} seats</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-4 h-4 text-muted-foreground">🚪</span>
+                <span>{vehicle.doors || 4} doors</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-4 h-4 text-muted-foreground">🧳</span>
+                <span>{vehicle.bags || 2} bags</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-4 h-4 text-muted-foreground">⚙️</span>
+                <span>{vehicle.transmission || "Auto"}</span>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="w-4 h-4 text-muted-foreground">🚪</span>
-              <span>{vehicle.doors || 4} doors</span>
+          )}
+
+          {/* Rideshare info */}
+          {isRideshare && (
+            <div className="flex items-center gap-3 text-sm">
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-muted-foreground" />
+                <span>{vehicle.seats || 4} seats</span>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="w-4 h-4 text-muted-foreground">🧳</span>
-              <span>{vehicle.bags || 2} bags</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-4 h-4 text-muted-foreground">⚙️</span>
-              <span>{vehicle.transmission || "Auto"}</span>
-            </div>
-          </div>
+          )}
 
           {/* Feature badges */}
           <div className="flex flex-wrap gap-2">
-            {(vehicle.hasAC !== false && vehicle.airConditioning !== false) && (
+            {!isRideshare && (vehicle.hasAC !== false && vehicle.airConditioning !== false) && (
               <Badge variant="outline" className="text-xs">❄️ AC</Badge>
             )}
-            {vehicle.transmission && (
+            {!isRideshare && vehicle.transmission && (
               <Badge variant="outline" className="text-xs">{vehicle.transmission}</Badge>
             )}
-            {vehicle.fuelType && (
+            {!isRideshare && vehicle.fuelType && (
               <Badge variant="outline" className="text-xs">⛽ {vehicle.fuelType}</Badge>
             )}
             {vehicle.acrissCode && (
               <Badge variant="secondary" className="text-xs">{vehicle.acrissCode}</Badge>
             )}
-            {/* Extra features from mock data */}
             {car.features?.map((f: string, i: number) => (
               <Badge key={i} variant="outline" className="text-xs text-green-700 border-green-300">
                 ✓ {f}
               </Badge>
             ))}
 
-            {/* FX-SmartSave Badge */}
             {showBadge && fxData && (
               <TooltipProvider>
                 <FxSmartSaveBadge
@@ -173,7 +204,7 @@ export function CarResultCard({ car, onBook }: CarResultCardProps) {
           </div>
 
           <Button onClick={() => onBook(car)} className="w-full">
-            Book Now — {formatCurrency(totalPrice, currency)}
+            {isRideshare ? 'Request Ride' : `Book Now — ${formatCurrency(totalPrice, currency)}`}
           </Button>
         </div>
       </CardContent>
