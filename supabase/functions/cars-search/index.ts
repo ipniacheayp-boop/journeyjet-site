@@ -7,7 +7,10 @@ const corsHeaders = {
 
 const RAPIDAPI_HOST = 'booking-com15.p.rapidapi.com';
 const RAPIDAPI_BASE = `https://${RAPIDAPI_HOST}/api/v1`;
-const UBER_AUTH_URL = 'https://auth.uber.com/oauth/v2/token';
+const UBER_AUTH_URLS = [
+  'https://login.uber.com/oauth/v2/token',
+  'https://auth.uber.com/oauth/v2/token',
+];
 const UBER_API_BASE = 'https://api.uber.com/v1.2';
 
 // Well-known city coordinates for fast fallback
