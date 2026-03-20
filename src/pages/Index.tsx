@@ -38,6 +38,9 @@ import {
   BadgeDollarSign,
   Star,
   Wallet,
+  User,
+  Plane,
+  TrendingDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
