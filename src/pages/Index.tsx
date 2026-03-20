@@ -331,7 +331,7 @@ const Index = () => {
       </motion.div>
 
       {/* Structured Search Widget Container */}
-      <div className="container mx-auto px-4 -mt-24 relative z-20">
+      <div className="container mx-auto px-4 mt-6 relative z-20">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
