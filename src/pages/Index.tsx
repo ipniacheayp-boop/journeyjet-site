@@ -26,6 +26,7 @@ import dealBusiness from "@/assets/deal-business.jpg";
 import dealStudents from "@/assets/deal-students.jpg";
 import dealAirlines from "@/assets/deal-airlines.jpg";
 import rewardsIllustration from "@/assets/rewards-illustration.png";
+import rewardsIllustration2 from "@/assets/reward.png";
 import {
   ArrowRight,
   Check,
@@ -571,7 +572,7 @@ const Index = () => {
                 transition={{ delay: 0.2, duration: 0.6 }}
                 className="flex justify-center"
               >
-                <img src={rewardsIllustration} alt="Rewards and benefits illustration" className="w-full max-w-md" />
+                <img src={rewardsIllustration2} alt="Rewards and benefits illustration" className="w-full max-w-md" />
               </motion.div>
 
               <motion.div
