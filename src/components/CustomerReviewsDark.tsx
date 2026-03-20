@@ -133,7 +133,7 @@ const CustomerReviewsDark = () => {
               {[...Array(5)].map((_, i) => (
                 <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
               ))}
-              <span className="text-white font-bold ml-1">4.9</span>
+              <span className="text-white font-bold ml-1">4.5</span>
             </div>
             <span className="w-px h-4 bg-white/20 hidden sm:block" />
             <span>
