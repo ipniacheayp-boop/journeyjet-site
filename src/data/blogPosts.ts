@@ -1291,7 +1291,7 @@ Flights are down. Prices are lower. The opportunity is now.
 
 "You don't need two weeks off. You need 24 hours and a flight that costs less than a nice dinner out. That is the whole point."
   `,
-    featuredImage: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=500&fit=crop",
+    featuredImage: "https://images.unsplash.com/photo-1493558103817-58b2924bce98?w=800&h=500&fit=crop",
     author: {
       name: "Travel Insights Team",
       avatar: "/avatars/5.png",
