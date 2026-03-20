@@ -14,7 +14,7 @@ const TrustBadges = () => {
     },
     {
       icon: ThumbsUp,
-      value: "4.8/5",
+      value: "4.5/5",
       label: "Average Rating",
       color: "text-emerald-600 dark:text-emerald-400",
       bg: "bg-emerald-50 dark:bg-emerald-500/10",
