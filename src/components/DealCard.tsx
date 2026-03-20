@@ -1,6 +1,5 @@
-import { ArrowRight, Calendar, Plane, Sparkles, Flame, TrendingUp, Star, Zap } from "lucide-react";
+import { ArrowRight, Calendar, Plane, Flame, TrendingUp, Star, Zap, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import type { Deal } from "@/data/mockDeals";
@@ -17,7 +16,6 @@ interface DealCardProps {
 const DealCard = ({ deal, onClick }: DealCardProps) => {
   const discountPercent = Math.round(((deal.originalPrice - deal.price) / deal.originalPrice) * 100);
 
-  // FX-SmartSave calculation for this deal
   const { data: fxData } = useFxSmartSave({
     productType: "flight",
     prices: [
@@ -30,12 +28,11 @@ const DealCard = ({ deal, onClick }: DealCardProps) => {
     travelDate: deal.departDate,
   });
 
-  // Determine ribbon type based on discount or other criteria
   const getRibbonConfig = () => {
-    if (discountPercent >= 40) return { label: "HOT DEAL", class: "bg-coral", icon: Flame };
-    if (discountPercent >= 25) return { label: "POPULAR", class: "bg-primary", icon: TrendingUp };
+    if (discountPercent >= 40) return { label: "HOT DEAL", class: "bg-rose-500", icon: Flame };
+    if (discountPercent >= 25) return { label: "POPULAR", class: "bg-blue-600", icon: TrendingUp };
     if (deal.price < 300) return { label: "BEST PRICE", class: "bg-emerald-600", icon: Star };
-    if (discountPercent >= 15) return { label: "FLASH DEAL", class: "bg-amber-600", icon: Zap };
+    if (discountPercent >= 15) return { label: "FLASH DEAL", class: "bg-amber-500", icon: Zap };
     return null;
   };
 
@@ -52,7 +49,6 @@ const DealCard = ({ deal, onClick }: DealCardProps) => {
     onClick?.();
   };
 
-  // Get proper image path
   const getImageSrc = () => {
     if (!deal.image) return "/deal-beach.jpg";
     if (deal.image.startsWith("http")) return deal.image;
@@ -60,9 +56,12 @@ const DealCard = ({ deal, onClick }: DealCardProps) => {
     return `/${deal.image}`;
   };
 
+  const originCity = deal.origin.split(" (")[0];
+  const destCity = deal.destination.split(" (")[0];
+
   return (
-    <Card
-      className="overflow-hidden h-full group cursor-pointer card-unified border-0 hover:shadow-lg transition-all duration-300"
+    <div
+      className="group relative overflow-hidden rounded-2xl border border-border bg-card hover:shadow-xl hover:border-primary/20 transition-all duration-300 cursor-pointer h-full flex flex-col"
       onClick={handleClick}
       role="button"
       tabIndex={0}
@@ -74,92 +73,85 @@ const DealCard = ({ deal, onClick }: DealCardProps) => {
       }}
       aria-label={`View deal: ${deal.title}`}
     >
-      <div className="relative h-52 overflow-hidden">
+      {/* Image */}
+      <div className="relative h-48 overflow-hidden shrink-0">
         <img
           src={getImageSrc()}
           alt={`${deal.title} - Flight deal from ${deal.origin} to ${deal.destination}`}
           loading="lazy"
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.src = "/deal-beach.jpg";
+            (e.target as HTMLImageElement).src = "/deal-beach.jpg";
           }}
         />
 
-        {/* Gradient Overlay - More vibrant */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-purple-900/20 to-transparent" />
+        {/* Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
 
-        {/* Ribbon Tag */}
+        {/* Ribbon */}
         {ribbon && (
           <motion.div
-            initial={{ x: 50, opacity: 0 }}
+            initial={{ x: 40, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className={`absolute -top-1 -right-1 ${ribbon.class} text-white px-4 py-1.5 text-xs font-bold rounded-bl-xl rounded-tr-xl shadow-lg flex items-center gap-1`}
+            transition={{ delay: 0.15 }}
+            className={`absolute top-0 right-0 ${ribbon.class} text-white px-3 py-1.5 text-[10px] font-bold rounded-bl-xl rounded-tr-2xl shadow-lg flex items-center gap-1 uppercase tracking-wide`}
           >
             <ribbon.icon className="w-3 h-3" />
             {ribbon.label}
           </motion.div>
         )}
 
-        {/* Discount Badge */}
+        {/* Discount badge */}
         <div className="absolute top-3 left-3">
-          <Badge className="bg-coral text-white font-bold text-sm px-3 py-1.5 shadow-md border-0 rounded-full">
-            -{discountPercent}% OFF
-          </Badge>
-        </div>
-
-        {/* Airline Badge */}
-        <Badge
-          variant="secondary"
-          className="absolute bottom-3 left-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm text-foreground font-medium text-xs px-3 py-1.5 shadow-md"
-        >
-          <Plane className="w-3 h-3 mr-1.5 text-primary" />
-          {deal.airline || "Multiple Airlines"}
-        </Badge>
-
-        {/* Cabin Class Badge */}
-        <Badge className="absolute bottom-3 right-3 bg-black/60 backdrop-blur-sm text-white border-white/20 font-medium text-xs">
-          {deal.cabinClass}
-        </Badge>
-      </div>
-
-      <CardContent className="p-5 space-y-4">
-        <h3 className="font-display font-bold text-lg line-clamp-2 group-hover:text-primary transition-colors">
-          {deal.title}
-        </h3>
-
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 dark:bg-slate-900 rounded-full border border-slate-200 dark:border-slate-800">
-            <span className="font-medium text-slate-700 dark:text-slate-300 truncate">
-              {deal.origin.split(" (")[0]}
-            </span>
-            <ArrowRight className="w-3.5 h-3.5 text-primary" />
-            <span className="font-medium text-slate-700 dark:text-slate-300 truncate">
-              {deal.destination.split(" (")[0]}
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Calendar className="w-4 h-4 text-slate-400" />
-          <span>
-            {format(new Date(deal.departDate), "MMM dd")} - {format(new Date(deal.returnDate), "MMM dd, yyyy")}
+          <span className="bg-rose-500 text-white font-bold text-xs px-2.5 py-1 rounded-full shadow">
+            -{discountPercent}%
           </span>
         </div>
 
-        {/* Price Section */}
-        <div className="pt-3 border-t border-slate-100 dark:border-slate-800">
-          <span className="text-xs text-muted-foreground uppercase tracking-wide">Starting from</span>
-          <div className="flex items-baseline gap-3 mt-1">
-            <span className="text-3xl font-black text-primary">${deal.price}</span>
+        {/* Route pill — bottom left over image */}
+        <div className="absolute bottom-3 left-3 flex items-center gap-1.5 bg-black/55 backdrop-blur-sm rounded-full px-3 py-1.5">
+          <MapPin className="w-3 h-3 text-white/70" />
+          <span className="text-white text-xs font-semibold">{originCity}</span>
+          <ArrowRight className="w-3 h-3 text-white/50" />
+          <span className="text-white text-xs font-semibold">{destCity}</span>
+        </div>
+
+        {/* Cabin badge */}
+        <span className="absolute bottom-3 right-3 text-[10px] font-semibold text-white/80 bg-black/40 backdrop-blur-sm border border-white/10 px-2 py-1 rounded-full">
+          {deal.cabinClass}
+        </span>
+      </div>
+
+      {/* Content */}
+      <div className="p-5 flex flex-col flex-1 gap-3">
+        {/* Title + airline */}
+        <div>
+          <h3 className="font-bold text-base leading-snug text-foreground line-clamp-2 group-hover:text-primary transition-colors mb-1">
+            {deal.title}
+          </h3>
+          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+            <Plane className="w-3 h-3 text-primary/60" />
+            {deal.airline || "Multiple Airlines"}
+          </div>
+        </div>
+
+        {/* Dates */}
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <Calendar className="w-3.5 h-3.5 text-slate-400" />
+          <span>
+            {format(new Date(deal.departDate), "MMM d")} → {format(new Date(deal.returnDate), "MMM d, yyyy")}
+          </span>
+        </div>
+
+        {/* Price */}
+        <div className="mt-auto pt-3 border-t border-border">
+          <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">From</span>
+          <div className="flex items-baseline gap-2.5 mt-0.5">
+            <span className="text-3xl font-black text-primary leading-none">${deal.price}</span>
             <span className="text-sm text-muted-foreground line-through">${deal.originalPrice}</span>
-            <span className="text-xs font-semibold text-emerald-500 dark:text-emerald-400">
-              Save ${deal.originalPrice - deal.price}
-            </span>
+            <span className="text-xs font-semibold text-emerald-500">Save ${deal.originalPrice - deal.price}</span>
           </div>
 
-          {/* FX-SmartSave Badge */}
           {fxData && fxData.savingsUSD >= 10 && (
             <TooltipProvider>
               <div className="mt-2">
@@ -175,18 +167,19 @@ const DealCard = ({ deal, onClick }: DealCardProps) => {
           )}
         </div>
 
+        {/* CTA */}
         <Button
-          className="w-full btn-premium"
+          className="w-full rounded-xl font-semibold bg-primary hover:bg-primary/90 gap-2 mt-1"
           onClick={(e) => {
             e.stopPropagation();
             handleClick();
           }}
           aria-label={`View ${deal.title} deal details`}
         >
-          View Deal <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+          View Deal <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
         </Button>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 
