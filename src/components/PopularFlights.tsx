@@ -128,7 +128,7 @@ const PopularFlights = () => {
                   <img
                     src={airline.logo}
                     alt={airline.name}
-                    className="h-7 md:h-9 w-auto object-contain group-hover:hover:opacity-100 max-w-[110px] md:max-w-[130px]"
+                    className="h-7 md:h-9 w-auto object-contain group-hover:opacity-100 max-w-[110px] md:max-w-[130px]"
                     loading="lazy"
                   />
                 </div>
