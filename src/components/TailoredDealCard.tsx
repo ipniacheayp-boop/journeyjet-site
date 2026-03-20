@@ -1,8 +1,7 @@
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Flame, Star, Sparkles, Zap, Users, Plane } from "lucide-react";
+import { ArrowRight, Flame, Star, Sparkles, Zap, Users, Plane, Clock } from "lucide-react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 export interface TailoredDeal {
   id: string;
@@ -16,72 +15,71 @@ interface TailoredDealCardProps {
   deal: TailoredDeal;
 }
 
-const getTagConfig = (tag: string) => {
-  switch (tag) {
-    case "HOT DEAL":
-      return { gradient: "from-red-500 via-rose-500 to-orange-500", icon: Flame };
-    case "BUDGET":
-      return { gradient: "from-emerald-500 via-teal-500 to-cyan-500", icon: Star };
-    case "SENIOR":
-      return { gradient: "from-purple-500 via-violet-500 to-pink-500", icon: Users };
-    case "PREMIUM":
-      return { gradient: "from-amber-500 via-yellow-500 to-orange-400", icon: Sparkles };
-    case "STUDENT":
-      return { gradient: "from-blue-500 via-indigo-500 to-purple-500", icon: Zap };
-    case "POPULAR":
-      return { gradient: "from-cyan-500 via-blue-500 to-purple-500", icon: Plane };
-    default:
-      return { gradient: "from-blue-500 to-cyan-500", icon: Star };
-  }
+const tagConfigs: Record<string, { color: string; bg: string; icon: React.ElementType; cta: string }> = {
+  "HOT DEAL": { color: "text-rose-500", bg: "bg-rose-500", icon: Flame, cta: "Grab This Deal" },
+  BUDGET: { color: "text-emerald-500", bg: "bg-emerald-600", icon: Star, cta: "Find Budget Flights" },
+  SENIOR: { color: "text-purple-500", bg: "bg-purple-600", icon: Users, cta: "Senior Deals" },
+  PREMIUM: { color: "text-amber-500", bg: "bg-amber-500", icon: Sparkles, cta: "Upgrade to Business" },
+  STUDENT: { color: "text-blue-500", bg: "bg-blue-600", icon: Zap, cta: "Student Savings" },
+  POPULAR: { color: "text-sky-500", bg: "bg-sky-600", icon: Plane, cta: "Browse Airlines" },
 };
 
+const defaultConfig = { color: "text-primary", bg: "bg-primary", icon: Star, cta: "View Deals" };
+
 const TailoredDealCard = ({ deal }: TailoredDealCardProps) => {
-  const tagConfig = getTagConfig(deal.tag);
-  const TagIcon = tagConfig.icon;
+  const cfg = tagConfigs[deal.tag] ?? defaultConfig;
+  const Icon = cfg.icon;
 
   return (
-    <motion.div whileHover={{ y: -8 }} transition={{ duration: 0.3 }} className="h-full">
-      <Card className="group overflow-hidden hover:shadow-colorful-lg transition-all duration-500 h-full border-0 card-colorful">
-        <div className="relative h-48 overflow-hidden">
-          <img
-            src={deal.image}
-            alt={deal.title}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-          />
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+    <motion.div
+      whileHover={{ y: -6, transition: { duration: 0.25 } }}
+      className="group relative overflow-hidden rounded-2xl border border-border bg-card hover:shadow-xl hover:border-primary/20 transition-all duration-300 h-full flex flex-col"
+    >
+      {/* Image */}
+      <div className="relative h-52 overflow-hidden shrink-0">
+        <img
+          src={deal.image}
+          alt={deal.title}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+        />
+        {/* gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-          {/* Colorful tag badge */}
-          <Badge
-            className={`absolute top-3 left-3 bg-gradient-to-r ${tagConfig.gradient} text-white font-bold text-xs px-3 py-1.5 shadow-lg border-0 flex items-center gap-1.5`}
-          >
-            <TagIcon className="w-3.5 h-3.5" />
-            {deal.tag}
-          </Badge>
+        {/* Tag badge */}
+        <div
+          className={`absolute top-0 left-0 ${cfg.bg} text-white px-3.5 py-2 text-[10px] font-bold uppercase tracking-wider rounded-br-2xl flex items-center gap-1.5 shadow-md`}
+        >
+          <Icon className="w-3 h-3" />
+          {deal.tag}
         </div>
-        <CardContent className="p-5 space-y-3">
-          <h3 className="font-bold text-lg group-hover:text-primary transition-colors">{deal.title}</h3>
-          <p className="text-sm text-muted-foreground line-clamp-2">{deal.description}</p>
-          <Button
-            variant="outline"
-            className={`w-full border-2 bg-gradient-to-r ${tagConfig.gradient} bg-clip-text text-transparent border-transparent bg-origin-border hover:text-foreground relative overflow-hidden group/btn`}
-            style={{
-              backgroundImage: `linear-gradient(hsl(var(--background)), hsl(var(--background))), linear-gradient(to right, var(--tw-gradient-stops))`,
-              backgroundOrigin: "border-box",
-              backgroundClip: "padding-box, border-box",
-            }}
-          >
-            <span
-              className={`absolute inset-0 bg-gradient-to-r ${tagConfig.gradient} opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300`}
-            />
 
-            <span className="relative z-10 flex items-center justify-center gap-2 text-foreground group-hover/btn:text-foreground transition-colors">
-              View More
-              <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-            </span>
-          </Button>
-        </CardContent>
-      </Card>
+        {/* Title over image */}
+        <div className="absolute bottom-0 left-0 right-0 p-4">
+          <h3 className="text-white font-bold text-base leading-snug drop-shadow">{deal.title}</h3>
+        </div>
+      </div>
+
+      {/* Body */}
+      <div className="p-5 flex flex-col flex-1 gap-4">
+        <p className="text-sm text-muted-foreground leading-relaxed flex-1">{deal.description}</p>
+
+        {/* Limited time note */}
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground/80">
+          <Clock className="w-3.5 h-3.5 text-amber-500" />
+          <span>Limited time offer · Terms apply</span>
+        </div>
+
+        {/* CTA */}
+        <Button
+          asChild
+          className={`w-full rounded-xl font-semibold gap-2 ${cfg.bg} hover:opacity-90 text-white border-0`}
+        >
+          <Link to="/deals">
+            {cfg.cta}
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+          </Link>
+        </Button>
+      </div>
     </motion.div>
   );
 };
