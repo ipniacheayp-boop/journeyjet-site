@@ -1,6 +1,6 @@
 import { Star, Quote, BadgeCheck, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
-import trustPilotImage from "/src/assets/trustpilot1.png";
+import trustPilotImage from "@/assets/trustpilot.png";
 import TrustpilotSlider from "@/components/ReviewSlider";
 import { Link } from "react-router-dom";
 
@@ -145,9 +145,53 @@ const CustomerReviewsDark = () => {
         </motion.div>
       </div>
 
-      {/* Marquee strip — full-width, edge-faded */}
+      {/* ── Mobile: Swipeable Carousel ── */}
+      <div className="flex w-full overflow-x-auto snap-x snap-mandatory px-4 pb-6 gap-4 md:hidden scrollbar-hide">
+        {reviews.map((review, index) => (
+          <div
+            key={`${review.id}-${index}`}
+            className="w-[280px] sm:w-[320px] snap-center flex-shrink-0 bg-white/5 backdrop-blur-sm rounded-2xl p-5 border border-white/8 transition-all flex flex-col gap-3"
+          >
+            {/* Stars + platform */}
+            <div className="flex items-center justify-between">
+              <div className="flex gap-0.5">{renderStars(review.rating)}</div>
+              <span
+                className={`text-[10px] font-semibold uppercase tracking-wide ${platformColor[review.platform] ?? "text-white/40"}`}
+              >
+                {review.platform}
+              </span>
+            </div>
+
+            {/* Quote icon + text */}
+            <div className="relative">
+              <Quote className="absolute -top-1 -left-1 w-5 h-5 text-white/15" aria-hidden="true" />
+              <p className="text-white/80 text-sm leading-relaxed pl-4">{review.text}</p>
+            </div>
+
+            {/* Reviewer */}
+            <div className="flex items-center gap-3 pt-1 mt-auto border-t border-white/8">
+              <img
+                src={review.image}
+                alt={review.name}
+                className="w-9 h-9 rounded-full object-cover border border-white/15 shrink-0"
+              />
+              <div className="min-w-0">
+                <div className="flex items-center gap-1">
+                  <span className="text-white text-xs font-semibold truncate">{review.name}</span>
+                  <BadgeCheck className="w-3.5 h-3.5 text-teal-400 shrink-0" aria-label="Verified" />
+                </div>
+                <span className="text-white/45 text-[10px]">
+                  {review.location} · {review.timeAgo}
+                </span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Desktop: Continuous Marquee ── */}
       <div
-        className="relative overflow-x-hidden group"
+        className="relative overflow-x-hidden hidden md:block group"
         style={{
           maskImage: "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
           WebkitMaskImage: "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
@@ -157,7 +201,7 @@ const CustomerReviewsDark = () => {
           {duplicatedReviews.map((review, index) => (
             <div
               key={`${review.id}-${index}`}
-              className="w-[300px] md:w-[330px] flex-shrink-0 bg-white/5 hover:bg-white/8 backdrop-blur-sm rounded-2xl p-5 border border-white/8 hover:border-white/16 transition-all duration-300 flex flex-col gap-3"
+              className="w-[330px] flex-shrink-0 bg-white/5 hover:bg-white/8 backdrop-blur-sm rounded-2xl p-5 border border-white/8 hover:border-white/16 transition-all duration-300 flex flex-col gap-3"
             >
               {/* Stars + platform */}
               <div className="flex items-center justify-between">
