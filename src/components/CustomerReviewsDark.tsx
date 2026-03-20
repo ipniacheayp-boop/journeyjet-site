@@ -1,6 +1,6 @@
 import { Star, Quote, BadgeCheck, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
-import trustPilotImage from "@/assets/trustpilot.png";
+import trustPilotImage from "@/assets/trustpilot1.png";
 import TrustpilotSlider from "@/components/ReviewSlider";
 import { Link } from "react-router-dom";
 
