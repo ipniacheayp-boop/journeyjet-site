@@ -137,6 +137,10 @@ const TravelChecklists = () => {
   const [completedItems, setCompletedItems] = useState<Set<string>>(new Set());
   const [isLoaded, setIsLoaded] = useState(false);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // Load from localeStorage
   useEffect(() => {
     const saved = localStorage.getItem("journeyjet_checklists");
