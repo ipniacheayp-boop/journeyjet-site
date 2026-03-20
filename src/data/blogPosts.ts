@@ -1076,7 +1076,7 @@ Flexibility wins. The earlier you act, the more you save.
   `,
     featuredImage: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=500&fit=crop",
     author: {
-      name: "Travel Insights Team",
+      name: "Xavier Toppo",
       avatar: "/avatars/4.png",
       bio: "Data-driven travel insights to help you save money and travel smarter.",
     },
@@ -1293,7 +1293,7 @@ Flights are down. Prices are lower. The opportunity is now.
   `,
     featuredImage: "https://images.unsplash.com/photo-1493558103817-58b2924bce98?w=800&h=500&fit=crop",
     author: {
-      name: "Travel Insights Team",
+      name: "Jonah Mitchell",
       avatar: "/avatars/5.png",
       bio: "Helping modern travelers explore smarter, faster, and more affordably.",
     },
