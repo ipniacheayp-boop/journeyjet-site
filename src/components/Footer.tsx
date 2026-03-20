@@ -37,6 +37,7 @@ const Footer = () => {
         { label: "Customer Support", href: "/support" },
         { label: "Flight Status", href: "/flight-status" },
         { label: "Online Check-in", href: "/support?topic=checkin" },
+        { label: "Travel Checklists", href: "/destinations-checklist" },
         { label: "Airline Baggage Fees", href: "/taxes-fees" },
         { label: "Travel Blog", href: "/blog" },
         { label: "Customer Reviews", href: "/reviews" },
@@ -132,14 +133,18 @@ const Footer = () => {
           <div className="flex flex-col gap-4 mb-6 pb-6 border-b border-white/10">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-3 text-xs text-white/50">
               <span className="font-semibold text-white/70">Trivoya Ventures LLC</span>
-              <span className="hidden sm:inline" aria-hidden="true">|</span>
+              <span className="hidden sm:inline" aria-hidden="true">
+                |
+              </span>
               <span>5900 Balcones Drive STE 100, Austin, TX 78731 USA</span>
             </div>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-3 text-xs text-white/50">
               <a href="tel:+18009634330" className="hover:text-white transition-colors">
                 📞 1-800-963-4330
               </a>
-              <span className="hidden sm:inline" aria-hidden="true">|</span>
+              <span className="hidden sm:inline" aria-hidden="true">
+                |
+              </span>
               <a href="mailto:Support@Tripile.com" className="hover:text-white transition-colors">
                 ✉️ Support@Tripile.com
               </a>
