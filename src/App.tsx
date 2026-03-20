@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import FlyBot from "@/components/FlyBot";
+import CookieConsentBanner from "@/components/CookieConsentBanner";
 import Index from "./pages/Index";
 import Deals from "./pages/Deals";
 import DealDetail from "./pages/DealDetail";
@@ -77,6 +78,7 @@ const App = () => (
         <BrowserRouter>
           <ErrorBoundary>
             <AuthProvider>
+              <CookieConsentBanner />
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/deals" element={<Deals />} />

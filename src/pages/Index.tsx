@@ -331,6 +331,78 @@ const Index = () => {
         </div>
       </motion.div>
 
+      {/* Eye-catching Offers Strip */}
+      <motion.div
+        initial={{ opacity: 0, y: 18 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-40px" }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+        className="container mx-auto px-4 relative z-20 mt-2 mb-6"
+      >
+        <div className="rounded-3xl border border-border/60 bg-gradient-to-r from-primary/10 via-indigo-500/10 to-cyan-500/10 shadow-lg overflow-hidden">
+          <div className="px-6 py-5">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+              <div>
+                <p className="text-xs font-semibold text-primary uppercase tracking-widest">Today’s Exclusive Savings</p>
+                <h2 className="font-display text-xl md:text-2xl font-bold mt-1">Book smarter and save more</h2>
+              </div>
+
+              <div className="flex flex-wrap gap-3 justify-center md:justify-end">
+                <div className="min-w-[240px] sm:min-w-[260px] rounded-2xl border border-border/60 bg-card/90 backdrop-blur-md overflow-hidden">
+                  <div className="relative">
+                    <img src={dealLastMinute} alt="Flights deal" className="h-28 w-full object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                    <div className="absolute left-4 top-3 rounded-full bg-primary/95 text-primary-foreground text-[11px] font-bold px-3 py-1 shadow-sm">
+                      Up to 30% less
+                    </div>
+                  </div>
+
+                  <div className="p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center">
+                          <TrendingDown className="w-5 h-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Flights</p>
+                          <p className="font-display text-xl font-extrabold text-foreground leading-tight">Instant savings</p>
+                        </div>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-2">Compare fares and unlock limited-time deals.</p>
+                  </div>
+                </div>
+
+                <div className="min-w-[240px] sm:min-w-[260px] rounded-2xl border border-border/60 bg-card/90 backdrop-blur-md overflow-hidden">
+                  <div className="relative">
+                    <img src={dealSeniors} alt="Senior citizen travel deal" className="h-28 w-full object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                    <div className="absolute left-4 top-3 rounded-full bg-coral/95 text-coral-foreground text-[11px] font-bold px-3 py-1 shadow-sm">
+                      About 50% off
+                    </div>
+                  </div>
+
+                  <div className="p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-10 h-10 rounded-xl bg-coral/15 flex items-center justify-center">
+                          <Users className="w-5 h-5 text-coral-foreground" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Senior Citizens</p>
+                          <p className="font-display text-xl font-extrabold text-foreground leading-tight">Enjoy special fares</p>
+                        </div>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-2">Eligibility-based offers for seniors.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
       {/* Structured Search Widget Container */}
       <div className="container mx-auto px-4 mt-6 relative z-20">
         <motion.div
