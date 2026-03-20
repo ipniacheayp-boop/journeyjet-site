@@ -396,6 +396,7 @@ serve(async (req) => {
     let carResults: any[] = [];
     if (carResponse.ok) {
       const carData = await carResponse.json();
+      console.log('📦 Booking.com raw response:', JSON.stringify(carData).substring(0, 500));
       const rawResults = carData.data?.search_results
         || carData.data?.cars
         || carData.data
@@ -406,7 +407,8 @@ serve(async (req) => {
       console.log('✅ Found', results.length, 'car rental results');
       carResults = results.map((car: any, i: number) => transformCarResult(car, i, pickUpDate, dropOffDate));
     } else {
-      console.warn('⚠️ Car rental search failed:', carResponse.status);
+      const errBody = await carResponse.text();
+      console.warn('⚠️ Car rental search failed:', carResponse.status, errBody.substring(0, 300));
     }
 
     // Process Uber estimates
