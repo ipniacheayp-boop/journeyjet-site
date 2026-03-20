@@ -604,8 +604,11 @@ const Index = () => {
       </section>
 
       {/* Premium CTA Section */}
-      <section className="py-20 relative overflow-hidden bg-primary">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSA2MCAwIEwgMCAwIDAgNjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-50" />
+      <section className="py-24 relative overflow-hidden bg-slate-950">
+        {/* Background glow orbs */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-blue-600/15 blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-indigo-500/12 blur-[90px] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(59,130,246,0.08),transparent_70%)]" />
 
         <div className="container mx-auto px-4 text-center relative z-10">
           <motion.div
@@ -614,30 +617,60 @@ const Index = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="font-display text-3xl md:text-5xl font-bold text-white mb-4">
-              Ready to Start Your Journey?
+            {/* Eyebrow */}
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/15 bg-white/5 text-xs font-semibold text-white/70 tracking-widest uppercase mb-8">
+              <Plane className="w-3.5 h-3.5 text-blue-400" />
+              Start Flying Smarter Today
+            </div>
+
+            <h2 className="font-display text-4xl md:text-6xl font-extrabold text-white mb-5 leading-tight">
+              Ready to Find Your
+              <span className="bg-gradient-to-r from-blue-400 via-sky-300 to-indigo-400 bg-clip-text text-transparent">
+                {" "}
+                Best Fare?
+              </span>
             </h2>
-            <p className="text-lg md:text-xl mb-8 text-white/90 max-w-2xl mx-auto">
-              Join millions of travelers who trust us to find the best deals
+            <p className="text-base md:text-lg mb-10 text-white/65 max-w-xl mx-auto leading-relaxed">
+              Compare 500+ airlines in seconds, unlock exclusive member deals, and book with zero hidden fees.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+
+            {/* CTAs */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <Link to="/account">
                 <Button
                   size="lg"
-                  className="gap-2 bg-white text-primary hover:bg-white/90 font-semibold rounded-xl shadow-lg"
+                  className="gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl shadow-[0_4px_32px_rgba(59,130,246,0.45)] hover:shadow-[0_6px_40px_rgba(59,130,246,0.6)] transition-all duration-200 hover:-translate-y-0.5 px-8"
                 >
-                  Sign Up Now <ArrowRight className="w-5 h-5" />
+                  Sign Up Free <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>
               <Link to="/deals">
                 <Button
                   size="lg"
                   variant="outline"
-                  className="bg-white/10 border-white/30 text-white hover:bg-white/20 rounded-xl"
+                  className="bg-white/5 border-white/20 text-white hover:bg-white/10 rounded-2xl px-8"
                 >
                   Browse All Deals
                 </Button>
               </Link>
+            </div>
+
+            {/* Quick proof stats */}
+            <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-white/50">
+              {[
+                { val: "2M+", label: "happy travelers" },
+                { val: "500+", label: "airlines compared" },
+                { val: "$0", label: "hidden fees" },
+                { val: "24/7", label: "expert support" },
+              ].map(({ val, label }, i) => (
+                <div key={val} className="flex items-center gap-3">
+                  {i > 0 && <span className="w-px h-4 bg-white/15" />}
+                  <div>
+                    <span className="font-extrabold text-white text-base">{val}</span>
+                    <span className="ml-1">{label}</span>
+                  </div>
+                </div>
+              ))}
             </div>
           </motion.div>
         </div>
