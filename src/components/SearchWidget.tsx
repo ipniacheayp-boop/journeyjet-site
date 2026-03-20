@@ -217,66 +217,68 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
   }, [searchParams]);
 
   return (
-    <div
-      id="search-widget"
-      className="w-full max-w-7xl mx-auto bg-card text-card-foreground rounded-2xl shadow-xl border border-border p-4 md:p-6"
-    >
+    <div className="w-full">
       <Tabs value={searchType} onValueChange={setSearchType} className="w-full">
-        {/* Minimal Search Bar */}
-        {/* <div className="mb-4">
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Search here…"
-              className="w-full h-10 pl-11 pr-4 rounded-full border-border bg-background/50 backdrop-blur-sm shadow-sm focus:shadow-md transition-shadow"
-            />
-          </div>
-        </div> */}
-
-        <TabsList className="grid w-full grid-cols-4 mb-3 h-9">
-          <TabsTrigger value="flights" className="flex items-center gap-2">
+        {/* Tab Bar */}
+        <TabsList className="grid w-full grid-cols-4 mb-5 h-12 bg-muted/60 dark:bg-muted/30 rounded-xl p-1 gap-1">
+          <TabsTrigger
+            value="flights"
+            className="flex items-center gap-2 rounded-lg h-10 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm dark:data-[state=active]:bg-slate-800 dark:data-[state=active]:text-primary"
+          >
             <Plane className="w-4 h-4" />
             <span className="hidden sm:inline">Flights</span>
           </TabsTrigger>
-          <TabsTrigger value="hotels" className="flex items-center gap-2">
+          <TabsTrigger
+            value="hotels"
+            className="flex items-center gap-2 rounded-lg h-10 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm dark:data-[state=active]:bg-slate-800 dark:data-[state=active]:text-primary"
+          >
             <Hotel className="w-4 h-4" />
             <span className="hidden sm:inline">Hotels</span>
           </TabsTrigger>
-          <TabsTrigger value="cars" className="flex items-center gap-2">
+          <TabsTrigger
+            value="cars"
+            className="flex items-center gap-2 rounded-lg h-10 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm dark:data-[state=active]:bg-slate-800 dark:data-[state=active]:text-primary"
+          >
             <Car className="w-4 h-4" />
             <span className="hidden sm:inline">Cars</span>
           </TabsTrigger>
-          <TabsTrigger value="cruise" className="flex items-center gap-2">
+          <TabsTrigger
+            value="cruise"
+            className="flex items-center gap-2 rounded-lg h-10 text-sm font-semibold data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm dark:data-[state=active]:bg-slate-800 dark:data-[state=active]:text-primary"
+          >
             <Ship className="w-4 h-4" />
             <span className="hidden sm:inline">Cruise</span>
           </TabsTrigger>
         </TabsList>
 
-        {/* FLIGHTS TAB */}
-        <TabsContent value="flights" className="space-y-2">
-          <RadioGroup value={tripType} onValueChange={setTripType} className="flex gap-3">
-            <div className="flex items-center space-x-1.5">
+        {/* ── FLIGHTS TAB ── */}
+        <TabsContent value="flights" className="space-y-4">
+          {/* Trip type selector */}
+          <RadioGroup value={tripType} onValueChange={setTripType} className="flex gap-4">
+            <div className="flex items-center space-x-2">
               <RadioGroupItem value="round-trip" id="round-trip" className="h-4 w-4" />
-              <Label htmlFor="round-trip" className="cursor-pointer text-sm">
+              <Label htmlFor="round-trip" className="cursor-pointer text-sm font-medium">
                 Round Trip
               </Label>
             </div>
-            <div className="flex items-center space-x-1.5">
+            <div className="flex items-center space-x-2">
               <RadioGroupItem value="one-way" id="one-way" className="h-4 w-4" />
-              <Label htmlFor="one-way" className="cursor-pointer text-sm">
+              <Label htmlFor="one-way" className="cursor-pointer text-sm font-medium">
                 One Way
               </Label>
             </div>
           </RadioGroup>
 
-          <form onSubmit={handleFlightSearch}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
-              <div className="space-y-1">
-                <Label htmlFor="flight-origin" className="text-sm">
+          <form onSubmit={handleFlightSearch} className="space-y-3">
+            {/* Row 1: Origin / Destination / Dates */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="flight-origin"
+                  className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                >
                   From
                 </Label>
-
                 <AirportDropdown
                   value={flightOrigin}
                   onChange={(value, iataCode) => {
@@ -284,14 +286,16 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     setFlightOriginCode(iataCode);
                   }}
                   placeholder="City or Airport"
-                  className={`pl-10 px-2 py-1 rounded-md border border-input bg-background text-foreground ${errors.origin ? "border-destructive" : ""}`}
+                  className={`pl-10 px-2 py-1 rounded-lg border border-input bg-background text-foreground h-11 ${errors.origin ? "border-destructive" : ""}`}
                 />
-
-                {errors.origin && <p className="text-sm text-destructive">{errors.origin}</p>}
+                {errors.origin && <p className="text-xs text-destructive">{errors.origin}</p>}
               </div>
 
-              <div className="space-y-1">
-                <Label htmlFor="flight-destination" className="text-sm">
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="flight-destination"
+                  className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                >
                   To
                 </Label>
                 <AirportDropdown
@@ -301,13 +305,16 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     setFlightDestinationCode(iataCode);
                   }}
                   placeholder="City or Airport"
-                  className={`pl-10 px-2 py-1 rounded-md border border-input bg-background text-foreground ${errors.origin ? "border-destructive" : ""}`}
+                  className={`pl-10 px-2 py-1 rounded-lg border border-input bg-background text-foreground h-11 ${errors.destination ? "border-destructive" : ""}`}
                 />
-                {errors.destination && <p className="text-sm text-destructive">{errors.destination}</p>}
+                {errors.destination && <p className="text-xs text-destructive">{errors.destination}</p>}
               </div>
 
-              <div className="space-y-1">
-                <Label htmlFor="depart-date" className="text-sm">
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="depart-date"
+                  className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                >
                   Depart
                 </Label>
                 <div className="relative">
@@ -317,16 +324,19 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     type="date"
                     value={departDate}
                     onChange={(e) => setDepartDate(e.target.value)}
-                    className={`pl-10 h-9 ${errors.departDate ? "border-destructive" : ""}`}
+                    className={`pl-10 h-11 rounded-lg ${errors.departDate ? "border-destructive" : ""}`}
                     min={new Date().toISOString().split("T")[0]}
                   />
                 </div>
-                {errors.departDate && <p className="text-sm text-destructive">{errors.departDate}</p>}
+                {errors.departDate && <p className="text-xs text-destructive">{errors.departDate}</p>}
               </div>
 
-              {tripType === "round-trip" && (
-                <div className="space-y-1">
-                  <Label htmlFor="return-date" className="text-sm">
+              {tripType === "round-trip" ? (
+                <div className="space-y-1.5">
+                  <Label
+                    htmlFor="return-date"
+                    className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                  >
                     Return
                   </Label>
                   <div className="relative">
@@ -336,18 +346,24 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                       type="date"
                       value={returnDate}
                       onChange={(e) => setReturnDate(e.target.value)}
-                      className={`pl-10 h-9 ${errors.returnDate ? "border-destructive" : ""}`}
+                      className={`pl-10 h-11 rounded-lg ${errors.returnDate ? "border-destructive" : ""}`}
                       min={departDate || new Date().toISOString().split("T")[0]}
                     />
                   </div>
-                  {errors.returnDate && <p className="text-sm text-destructive">{errors.returnDate}</p>}
+                  {errors.returnDate && <p className="text-xs text-destructive">{errors.returnDate}</p>}
                 </div>
+              ) : (
+                <div />
               )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
-              <div className="space-y-1">
-                <Label htmlFor="passengers" className="text-sm">
+            {/* Row 2: Passengers / Class / Submit */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="passengers"
+                  className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                >
                   Passengers
                 </Label>
                 <div className="relative">
@@ -356,54 +372,60 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     id="passengers"
                     value={passengers}
                     onChange={(e) => setPassengers(e.target.value)}
-                    className="w-full pl-10 pr-10 h-9 rounded-md border border-input bg-background text-foreground"
+                    className="w-full pl-10 pr-4 h-11 rounded-lg border border-input bg-background text-foreground text-sm"
                     aria-label="Number of passengers"
                   >
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
-                      <option key={num} value={num}>
-                        {num} {num === 1 ? "Passenger" : "Passengers"}
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => (
+                      <option key={n} value={n}>
+                        {n} {n === 1 ? "Passenger" : "Passengers"}
                       </option>
                     ))}
                   </select>
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <Label htmlFor="cabin-class" className="text-sm">
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="cabin-class"
+                  className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                >
                   Cabin Class
                 </Label>
-                <div className="relative">
-                  <select
-                    id="cabin-class"
-                    value={cabinClass}
-                    onChange={(e) => setCabinClass(e.target.value)}
-                    className="w-full px-3 pr-10 h-9 rounded-md border border-input bg-background"
-                    aria-label="Cabin class"
-                  >
-                    <option value="ECONOMY">Economy</option>
-                    <option value="PREMIUM_ECONOMY">Premium Economy</option>
-                    <option value="BUSINESS">Business</option>
-                    <option value="FIRST">First Class</option>
-                  </select>
-                </div>
+                <select
+                  id="cabin-class"
+                  value={cabinClass}
+                  onChange={(e) => setCabinClass(e.target.value)}
+                  className="w-full px-3 pr-4 h-11 rounded-lg border border-input bg-background text-sm"
+                  aria-label="Cabin class"
+                >
+                  <option value="ECONOMY">Economy</option>
+                  <option value="PREMIUM_ECONOMY">Premium Economy</option>
+                  <option value="BUSINESS">Business</option>
+                  <option value="FIRST">First Class</option>
+                </select>
               </div>
 
-              <div className="flex items-end">
-                <Button type="submit" className="w-full h-9 gap-2">
-                  <Search className="w-4 h-4" />
-                  Search Flights
-                </Button>
-              </div>
+              <Button
+                type="submit"
+                size="lg"
+                className="h-11 w-full gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all text-sm"
+              >
+                <Search className="w-4 h-4" />
+                Search Flights
+              </Button>
             </div>
           </form>
         </TabsContent>
 
-        {/* HOTELS TAB */}
-        <TabsContent value="hotels" className="space-y-2">
-          <form onSubmit={handleHotelSearch}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
-              <div className="space-y-1">
-                <Label htmlFor="city-code" className="text-sm">
+        {/* ── HOTELS TAB ── */}
+        <TabsContent value="hotels" className="space-y-4">
+          <form onSubmit={handleHotelSearch} className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="city-code"
+                  className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                >
                   City
                 </Label>
                 <AirportDropdown
@@ -413,13 +435,15 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     setCityCodeIATA(iataCode);
                   }}
                   placeholder="City or Airport"
-                  className={`pl-10 bg-background text-foreground px-2 py-1 rounded-md border border-input ${errors.cityCode ? "border-destructive" : ""}`}
+                  className={`pl-10 bg-background text-foreground px-2 py-1 rounded-lg border border-input h-11 ${errors.cityCode ? "border-destructive" : ""}`}
                 />
-                {errors.cityCode && <p className="text-sm text-destructive">{errors.cityCode}</p>}
+                {errors.cityCode && <p className="text-xs text-destructive">{errors.cityCode}</p>}
               </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="check-in" className="text-sm">
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="check-in"
+                  className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                >
                   Check-in
                 </Label>
                 <div className="relative">
@@ -429,15 +453,17 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     type="date"
                     value={checkInDate}
                     onChange={(e) => setCheckInDate(e.target.value)}
-                    className={`pl-10 h-9 ${errors.checkInDate ? "border-destructive" : ""}`}
+                    className={`pl-10 h-11 rounded-lg ${errors.checkInDate ? "border-destructive" : ""}`}
                     min={new Date().toISOString().split("T")[0]}
                   />
                 </div>
-                {errors.checkInDate && <p className="text-sm text-destructive">{errors.checkInDate}</p>}
+                {errors.checkInDate && <p className="text-xs text-destructive">{errors.checkInDate}</p>}
               </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="check-out" className="text-sm">
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="check-out"
+                  className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                >
                   Check-out
                 </Label>
                 <div className="relative">
@@ -447,15 +473,17 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     type="date"
                     value={checkOutDate}
                     onChange={(e) => setCheckOutDate(e.target.value)}
-                    className={`pl-10 h-9 ${errors.checkOutDate ? "border-destructive" : ""}`}
+                    className={`pl-10 h-11 rounded-lg ${errors.checkOutDate ? "border-destructive" : ""}`}
                     min={checkInDate || new Date().toISOString().split("T")[0]}
                   />
                 </div>
-                {errors.checkOutDate && <p className="text-sm text-destructive">{errors.checkOutDate}</p>}
+                {errors.checkOutDate && <p className="text-xs text-destructive">{errors.checkOutDate}</p>}
               </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="hotel-guests" className="text-sm">
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="hotel-guests"
+                  className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                >
                   Guests
                 </Label>
                 <div className="relative">
@@ -465,42 +493,42 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     value={hotelGuests}
                     aria-label="Number of guests"
                     onChange={(e) => setHotelGuests(e.target.value)}
-                    className="w-full pl-10 pr-10 h-9 rounded-md border border-input bg-background text-foreground"
+                    className="w-full pl-10 pr-4 h-11 rounded-lg border border-input bg-background text-foreground text-sm"
                   >
-                    {[1, 2, 3, 4, 5, 6].map((num) => (
-                      <option key={num} value={num}>
-                        {num} {num === 1 ? "Guest" : "Guests"}
+                    {[1, 2, 3, 4, 5, 6].map((n) => (
+                      <option key={n} value={n}>
+                        {n} {n === 1 ? "Guest" : "Guests"}
                       </option>
                     ))}
                   </select>
                 </div>
               </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
-              <div className="space-y-1">
-                <Label htmlFor="rooms" className="text-sm">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
+              <div className="space-y-1.5">
+                <Label htmlFor="rooms" className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                   Rooms
                 </Label>
-                <div className="relative">
-                  <select
-                    id="rooms"
-                    value={rooms}
-                    aria-label="Number of rooms"
-                    onChange={(e) => setRooms(e.target.value)}
-                    className="w-full px-3 pr-10 h-9 rounded-md border border-input bg-background"
-                  >
-                    {[1, 2, 3, 4, 5].map((num) => (
-                      <option key={num} value={num}>
-                        {num} {num === 1 ? "Room" : "Rooms"}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <select
+                  id="rooms"
+                  value={rooms}
+                  aria-label="Number of rooms"
+                  onChange={(e) => setRooms(e.target.value)}
+                  className="w-full px-3 pr-4 h-11 rounded-lg border border-input bg-background text-sm"
+                >
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <option key={n} value={n}>
+                      {n} {n === 1 ? "Room" : "Rooms"}
+                    </option>
+                  ))}
+                </select>
               </div>
-
-              <div className="md:col-span-2 flex items-end">
-                <Button type="submit" className="w-full h-9 gap-2">
+              <div className="md:col-span-2">
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="h-11 w-full gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all text-sm"
+                >
                   <Search className="w-4 h-4" />
                   Search Hotels
                 </Button>
@@ -509,12 +537,15 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
           </form>
         </TabsContent>
 
-        {/* CARS TAB */}
-        <TabsContent value="cars" className="space-y-2">
-          <form onSubmit={handleCarSearch}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
-              <div className="space-y-1">
-                <Label htmlFor="pickup-location" className="text-sm">
+        {/* ── CARS TAB ── */}
+        <TabsContent value="cars" className="space-y-4">
+          <form onSubmit={handleCarSearch} className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="pickup-location"
+                  className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                >
                   Pick-up Location
                 </Label>
                 <AirportDropdown
@@ -524,13 +555,15 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     setPickUpLocationCode(iataCode);
                   }}
                   placeholder="Airport or City"
-                  className={`pl-10 bg-background text-foreground px-2 py-1 rounded-md border border-input ${errors.pickUpLocation ? "border-destructive" : ""}`}
+                  className={`pl-10 bg-background text-foreground px-2 py-1 rounded-lg border border-input h-11 ${errors.pickUpLocation ? "border-destructive" : ""}`}
                 />
-                {errors.pickUpLocation && <p className="text-sm text-destructive">{errors.pickUpLocation}</p>}
+                {errors.pickUpLocation && <p className="text-xs text-destructive">{errors.pickUpLocation}</p>}
               </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="pickup-date" className="text-sm">
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="pickup-date"
+                  className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                >
                   Pick-up Date
                 </Label>
                 <div className="relative">
@@ -540,15 +573,17 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     type="date"
                     value={pickUpDate}
                     onChange={(e) => setPickUpDate(e.target.value)}
-                    className={`pl-10 h-9 ${errors.pickUpDate ? "border-destructive" : ""}`}
+                    className={`pl-10 h-11 rounded-lg ${errors.pickUpDate ? "border-destructive" : ""}`}
                     min={new Date().toISOString().split("T")[0]}
                   />
                 </div>
-                {errors.pickUpDate && <p className="text-sm text-destructive">{errors.pickUpDate}</p>}
+                {errors.pickUpDate && <p className="text-xs text-destructive">{errors.pickUpDate}</p>}
               </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="dropoff-date" className="text-sm">
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="dropoff-date"
+                  className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                >
                   Drop-off Date
                 </Label>
                 <div className="relative">
@@ -558,46 +593,50 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     type="date"
                     value={dropOffDate}
                     onChange={(e) => setDropOffDate(e.target.value)}
-                    className={`pl-10 h-9 ${errors.dropOffDate ? "border-destructive" : ""}`}
+                    className={`pl-10 h-11 rounded-lg ${errors.dropOffDate ? "border-destructive" : ""}`}
                     min={pickUpDate || new Date().toISOString().split("T")[0]}
                   />
                 </div>
-                {errors.dropOffDate && <p className="text-sm text-destructive">{errors.dropOffDate}</p>}
+                {errors.dropOffDate && <p className="text-xs text-destructive">{errors.dropOffDate}</p>}
               </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="driver-age" className="text-sm">
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="driver-age"
+                  className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                >
                   Driver Age
                 </Label>
-                <div className="relative">
-                  <Input
-                    id="driver-age"
-                    type="number"
-                    value={driverAge}
-                    onChange={(e) => setDriverAge(e.target.value)}
-                    min="18"
-                    max="99"
-                    className="h-9"
-                  />
-                </div>
+                <Input
+                  id="driver-age"
+                  type="number"
+                  value={driverAge}
+                  onChange={(e) => setDriverAge(e.target.value)}
+                  min="18"
+                  max="99"
+                  className="h-11 rounded-lg"
+                />
               </div>
             </div>
-
-            <div className="flex justify-end">
-              <Button type="submit" className="w-full md:w-auto h-9 gap-2">
-                <Search className="w-4 h-4" />
-                Search Cars
-              </Button>
-            </div>
+            <Button
+              type="submit"
+              size="lg"
+              className="h-11 w-full gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all text-sm"
+            >
+              <Search className="w-4 h-4" />
+              Search Cars
+            </Button>
           </form>
         </TabsContent>
 
-        {/* CRUISE TAB */}
-        <TabsContent value="cruise" className="space-y-2">
-          <form onSubmit={handleCruiseSearch}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
-              <div className="space-y-1">
-                <Label htmlFor="cruise-origin" className="text-sm">
+        {/* ── CRUISE TAB ── */}
+        <TabsContent value="cruise" className="space-y-4">
+          <form onSubmit={handleCruiseSearch} className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="cruise-origin"
+                  className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                >
                   Departure Port
                 </Label>
                 <div className="relative">
@@ -607,13 +646,15 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     placeholder="Port City"
                     value={cruiseOrigin}
                     onChange={(e) => setCruiseOrigin(e.target.value)}
-                    className="pl-10 h-9"
+                    className="pl-10 h-11 rounded-lg"
                   />
                 </div>
               </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="cruise-destination" className="text-sm">
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="cruise-destination"
+                  className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                >
                   Destination
                 </Label>
                 <div className="relative">
@@ -623,13 +664,15 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     placeholder="Destination Region"
                     value={cruiseDestination}
                     onChange={(e) => setCruiseDestination(e.target.value)}
-                    className="pl-10 h-9"
+                    className="pl-10 h-11 rounded-lg"
                   />
                 </div>
               </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="cruise-date" className="text-sm">
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="cruise-date"
+                  className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                >
                   Departure Date
                 </Label>
                 <div className="relative">
@@ -639,14 +682,16 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     type="date"
                     value={cruiseDate}
                     onChange={(e) => setCruiseDate(e.target.value)}
-                    className="pl-10 h-9"
+                    className="pl-10 h-11 rounded-lg"
                     min={new Date().toISOString().split("T")[0]}
                   />
                 </div>
               </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="cruise-passengers" className="text-sm">
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="cruise-passengers"
+                  className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                >
                   Passengers
                 </Label>
                 <div className="relative">
@@ -655,25 +700,26 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     id="cruise-passengers"
                     value={cruisePassengers}
                     onChange={(e) => setCruisePassengers(e.target.value)}
-                    className="w-full pl-10 pr-10 h-9 rounded-md border border-input bg-background text-foreground"
+                    className="w-full pl-10 pr-4 h-11 rounded-lg border border-input bg-background text-foreground text-sm"
                     aria-label="Number of passengers"
                   >
-                    {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
-                      <option key={num} value={num}>
-                        {num} {num === 1 ? "Passenger" : "Passengers"}
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+                      <option key={n} value={n}>
+                        {n} {n === 1 ? "Passenger" : "Passengers"}
                       </option>
                     ))}
                   </select>
                 </div>
               </div>
             </div>
-
-            <div className="flex justify-end">
-              <Button type="submit" className="w-full md:w-auto h-9 gap-2">
-                <Search className="w-4 h-4" />
-                Search Cruises
-              </Button>
-            </div>
+            <Button
+              type="submit"
+              size="lg"
+              className="h-11 w-full gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all text-sm"
+            >
+              <Search className="w-4 h-4" />
+              Search Cruises
+            </Button>
           </form>
         </TabsContent>
       </Tabs>
