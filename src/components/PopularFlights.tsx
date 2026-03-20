@@ -122,13 +122,13 @@ const PopularFlights = () => {
             <p className="text-center text-[11px] font-semibold text-muted-foreground/70 uppercase tracking-widest mb-6">
               Compare flights across 500+ airlines, including
             </p>
-            <div className="group flex flex-wrap justify-center items-center gap-x-10 gap-y-8 md:gap-x-14 ">
+            <div className="group flex flex-wrap justify-center items-center gap-x-10 gap-y-8 md:gap-x-14 opacity-80 ">
               {airlines.map((airline) => (
                 <div key={airline.name} className="flex items-center justify-center" title={airline.name}>
                   <img
                     src={airline.logo}
                     alt={airline.name}
-                    className="h-7 md:h-9 w-auto object-contain max-w-[110px] md:max-w-[130px] opacity-70 transition-opacity duration-300 group-hover:opacity-50 hover:opacity-100"
+                    className="h-7 md:h-9 w-auto object-contain max-w-[110px] md:max-w-[130px]"
                     loading="lazy"
                   />
                 </div>
