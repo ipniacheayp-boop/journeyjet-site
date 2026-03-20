@@ -554,53 +554,69 @@ const Index = () => {
       </Suspense>
 
       {/* Premium Rewards Section */}
-      <section className="py-20 bg-muted/50">
+      <section className="py-20 bg-background overflow-hidden">
         <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="glass-card rounded-3xl p-8 md:p-12 max-w-5xl mx-auto"
-          >
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-center mb-12">SIGN UP & UNLOCK REWARDS</h2>
-            <div className="grid md:grid-cols-2 gap-8 items-center">
+          <div className="max-w-5xl mx-auto rounded-3xl border border-border bg-card shadow-xl overflow-hidden">
+            <div className="grid md:grid-cols-2">
+              {/* Left: Illustration */}
               <motion.div
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.2, duration: 0.6 }}
-                className="flex justify-center"
+                transition={{ delay: 0.1, duration: 0.6 }}
+                className="relative bg-gradient-to-br from-primary/10 via-indigo-500/10 to-sky-500/10 flex items-center justify-center p-8 min-h-[260px]"
               >
-                <img src={rewardsIllustration2} alt="Rewards and benefits illustration" className="w-full max-w-md" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_60%,rgba(59,130,246,0.12),transparent_70%)]" />
+                <img
+                  src={rewardsIllustration2}
+                  alt="Rewards and benefits illustration"
+                  className="w-full max-w-lg relative z-10 drop-shadow-xl rounded-lg"
+                />
               </motion.div>
 
+              {/* Right: Content */}
               <motion.div
                 initial={{ opacity: 0, x: 30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.3, duration: 0.6 }}
-                className="space-y-6"
+                transition={{ delay: 0.2, duration: 0.6 }}
+                className="p-8 md:p-10 flex flex-col justify-center"
               >
-                <div className="grid grid-cols-2 gap-4">
-                  {["Members only Deals", "Lounge access", "Reward points", "Alerts & notifications"].map((benefit) => (
-                    <div key={benefit} className="flex items-start gap-2">
-                      <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mt-0.5 flex-shrink-0">
-                        <Check className="w-3 h-3 text-green-500" />
+                <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-2">Member Benefits</p>
+                <h2 className="font-display text-2xl md:text-3xl font-bold mb-3">
+                  Sign Up &amp; Unlock Exclusive Rewards
+                </h2>
+                <p className="text-sm text-muted-foreground mb-6">
+                  Join free and get instant access to member-only deals, price alerts, and travel perks — no credit card
+                  needed.
+                </p>
+
+                <div className="grid grid-cols-2 gap-3 mb-7">
+                  {[
+                    { label: "Members-only Deals", icon: "🎟️" },
+                    { label: "Airport Lounge Access", icon: "🛋️" },
+                    { label: "Reward Points", icon: "⭐" },
+                    { label: "Price Drop Alerts", icon: "🔔" },
+                    { label: "Priority Support", icon: "🎧" },
+                    { label: "FlexPay Installments", icon: "💳" },
+                  ].map(({ label, icon }) => (
+                    <div key={label} className="flex items-center gap-2.5">
+                      <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-xs shrink-0">
+                        {icon}
                       </div>
-                      <span className="text-foreground font-medium text-sm">{benefit}</span>
+                      <span className="text-sm font-medium text-foreground">{label}</span>
                     </div>
                   ))}
                 </div>
 
                 <Link to="/account" className="block">
-                  <Button size="lg" className="w-full text-lg font-bold btn-premium">
-                    Join Now For Free
+                  <Button size="lg" className="w-full font-bold rounded-xl btn-premium gap-2">
+                    Join Free — No Credit Card <ArrowRight className="w-4 h-4" />
                   </Button>
                 </Link>
               </motion.div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
