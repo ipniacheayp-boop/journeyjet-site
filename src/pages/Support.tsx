@@ -236,7 +236,7 @@ const Support = () => {
                   className={`transition-all duration-500 border-border bg-card/50 backdrop-blur-md group ${service.glow}`}
                 >
                   <CardHeader className="text-center pt-8">
-                    <div className="w-14 h-14 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-5 border border-border group-hover:border-primary/50 transition-colors shadow-sm">
+                    <div className="w-14 h-14 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-5 group-hover:border-primary/50 transition-colors shadow-sm">
                       <service.icon
                         className={`w-7 h-7 text-muted-foreground ${service.iconColor} transition-colors duration-500`}
                       />
