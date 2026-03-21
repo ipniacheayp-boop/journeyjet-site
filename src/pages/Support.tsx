@@ -94,14 +94,57 @@ const Support = () => {
       title: "Traveler Protection",
       description: "Add insurance coverage",
       glow: "hover:border-blue-500/50",
+      iconColor: "group-hover:text-blue-500",
     },
-    { icon: CheckSquare, title: "Web Check-In", description: "Check in online", glow: "hover:border-emerald-500/50" },
-    { icon: Briefcase, title: "Extra Baggage", description: "Add more luggage", glow: "hover:border-amber-500/50" },
-    { icon: PlusCircle, title: "Add a Seat", description: "Choose your seat", glow: "hover:border-purple-500/50" },
-    { icon: Hotel, title: "Add Hotel Room", description: "Book accommodation", glow: "hover:border-pink-500/50" },
-    { icon: Car, title: "Book Car Rental", description: "Rent a vehicle", glow: "hover:border-teal-500/50" },
-    { icon: Leaf, title: "Plant a Tree", description: "Offset carbon footprint", glow: "hover:border-green-500/50" },
-    { icon: Bus, title: "Airport Transfer", description: "Book ground transport", glow: "hover:border-orange-500/50" },
+    {
+      icon: CheckSquare,
+      title: "Web Check-In",
+      description: "Check in online",
+      glow: "hover:border-emerald-500/50",
+      iconColor: "group-hover:text-emerald-500",
+    },
+    {
+      icon: Briefcase,
+      title: "Extra Baggage",
+      description: "Add more luggage",
+      glow: "hover:border-amber-500/50",
+      iconColor: "group-hover:text-amber-500",
+    },
+    {
+      icon: PlusCircle,
+      title: "Add a Seat",
+      description: "Choose your seat",
+      glow: "hover:border-purple-500/50",
+      iconColor: "group-hover:text-purple-500",
+    },
+    {
+      icon: Hotel,
+      title: "Add Hotel Room",
+      description: "Book accommodation",
+      glow: "hover:border-pink-500/50",
+      iconColor: "group-hover:text-pink-500",
+    },
+    {
+      icon: Car,
+      title: "Book Car Rental",
+      description: "Rent a vehicle",
+      glow: "hover:border-teal-500/50",
+      iconColor: "group-hover:text-teal-500",
+    },
+    {
+      icon: Leaf,
+      title: "Plant a Tree",
+      description: "Offset carbon footprint",
+      glow: "hover:border-green-500/50",
+      iconColor: "group-hover:text-green-500",
+    },
+    {
+      icon: Bus,
+      title: "Airport Transfer",
+      description: "Book ground transport",
+      glow: "hover:border-orange-500/50",
+      iconColor: "group-hover:text-orange-500",
+    },
   ];
 
   return (
@@ -194,7 +237,9 @@ const Support = () => {
                 >
                   <CardHeader className="text-center pt-8">
                     <div className="w-14 h-14 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-5 border border-border group-hover:border-primary/50 transition-colors shadow-sm">
-                      <service.icon className="w-7 h-7 text-muted-foreground group-hover:text-primary transition-colors" />
+                      <service.icon
+                        className={`w-7 h-7 text-muted-foreground ${service.iconColor} transition-colors duration-500`}
+                      />
                     </div>
                     <CardTitle className="text-lg font-semibold text-foreground mb-2">{service.title}</CardTitle>
                     <CardDescription className="text-muted-foreground">{service.description}</CardDescription>
