@@ -190,7 +190,14 @@ const TravelChecklists = () => {
         {/* Hero Section */}
         <section className="relative pt-32 pb-20 bg-primary overflow-hidden">
           <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&q=80')] bg-cover bg-center opacity-10 mix-blend-overlay" />
-          <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/80 to-transparent" />
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{
+              backgroundImage: `url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=1600&auto=format&fit=crop')`,
+            }}
+          >
+            {/* <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/20 to-transparent" /> */}
+          </div>
 
           <div className="container mx-auto px-4 relative z-10 text-center">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl mx-auto">
