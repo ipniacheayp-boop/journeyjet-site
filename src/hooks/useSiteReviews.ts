@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/hooks/use-toast';
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 export interface SiteReview {
   id: string;
@@ -20,7 +20,12 @@ export interface SiteReview {
   travel_route?: string | null;
 }
 
-export const useSiteReviews = (filter: string = 'recent', includeDemo: boolean = false) => {
+export const useSiteReviews = (
+  filter: string = "recent",
+  includeDemo: boolean = false,
+  page: number = 1,
+  limit: number = 10,
+) => {
   const [reviews, setReviews] = useState<SiteReview[]>([]);
   const [loading, setLoading] = useState(true);
   const [averageRating, setAverageRating] = useState(0);
@@ -28,10 +33,11 @@ export const useSiteReviews = (filter: string = 'recent', includeDemo: boolean =
   const [ratingDistribution, setRatingDistribution] = useState<Record<number, number>>({});
 
   const fetchReviews = async (page: number = 1, limit: number = 50) => {
+    window.scrollTo(0, 600);
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('site-reviews-get', {
-        body: { 
+      const { data, error } = await supabase.functions.invoke("site-reviews-get", {
+        body: {
           filter,
           page,
           limit,
@@ -46,11 +52,11 @@ export const useSiteReviews = (filter: string = 'recent', includeDemo: boolean =
       setTotalReviews(data.totalReviews || 0);
       setRatingDistribution(data.ratingDistribution || {});
     } catch (error) {
-      console.error('Error fetching site reviews:', error);
+      console.error("Error fetching site reviews:", error);
       toast({
-        title: 'Error',
-        description: 'Failed to fetch reviews. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to fetch reviews. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -65,69 +71,76 @@ export const useSiteReviews = (filter: string = 'recent', includeDemo: boolean =
     allowAnonymous?: boolean;
   }) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
       if (!session) {
-        throw new Error('You must be logged in to submit a review');
+        throw new Error("You must be logged in to submit a review");
       }
 
-      const { data, error } = await supabase.functions.invoke('site-reviews-create', {
+      const { data, error } = await supabase.functions.invoke("site-reviews-create", {
         body: reviewData,
       });
 
       if (error) throw error;
 
       toast({
-        title: 'Success',
-        description: 'Review submitted — thank you!',
+        title: "Success",
+        description: "Review submitted — thank you!",
       });
 
       fetchReviews();
       return data;
     } catch (error: any) {
-      console.error('Error creating site review:', error);
+      console.error("Error creating site review:", error);
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to submit review. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description: error.message || "Failed to submit review. Please try again.",
+        variant: "destructive",
       });
       throw error;
     }
   };
 
-  const updateReview = async (reviewId: string, updateData: {
-    rating?: number;
-    title?: string;
-    body?: string;
-    isFeatured?: boolean;
-    isDeleted?: boolean;
-  }) => {
+  const updateReview = async (
+    reviewId: string,
+    updateData: {
+      rating?: number;
+      title?: string;
+      body?: string;
+      isFeatured?: boolean;
+      isDeleted?: boolean;
+    },
+  ) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
       if (!session) {
-        throw new Error('You must be logged in to update a review');
+        throw new Error("You must be logged in to update a review");
       }
 
-      const { data, error } = await supabase.functions.invoke('site-reviews-update', {
+      const { data, error } = await supabase.functions.invoke("site-reviews-update", {
         body: { ...updateData, reviewId },
       });
 
       if (error) throw error;
 
       toast({
-        title: 'Success',
-        description: 'Review updated successfully',
+        title: "Success",
+        description: "Review updated successfully",
       });
 
       fetchReviews();
       return data;
     } catch (error: any) {
-      console.error('Error updating site review:', error);
+      console.error("Error updating site review:", error);
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to update review. Please try again.',
-        variant: 'destructive',
+        title: "Error",
+        description: error.message || "Failed to update review. Please try again.",
+        variant: "destructive",
       });
       throw error;
     }
@@ -135,44 +148,46 @@ export const useSiteReviews = (filter: string = 'recent', includeDemo: boolean =
 
   const markHelpful = async (reviewId: string) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
       if (!session) {
-        throw new Error('You must be logged in to mark reviews as helpful');
+        throw new Error("You must be logged in to mark reviews as helpful");
       }
 
-      const { data, error } = await supabase.functions.invoke('site-reviews-helpful', {
+      const { data, error } = await supabase.functions.invoke("site-reviews-helpful", {
         body: { reviewId },
       });
 
       if (error) throw error;
 
       toast({
-        title: 'Success',
-        description: 'Thank you for your feedback!',
+        title: "Success",
+        description: "Thank you for your feedback!",
       });
 
       fetchReviews();
       return data;
     } catch (error: any) {
-      console.error('Error marking review as helpful:', error);
+      console.error("Error marking review as helpful:", error);
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to mark review as helpful.',
-        variant: 'destructive',
+        title: "Error",
+        description: error.message || "Failed to mark review as helpful.",
+        variant: "destructive",
       });
       throw error;
     }
   };
 
   useEffect(() => {
-    fetchReviews();
-  }, [filter, includeDemo]);
+    fetchReviews(page, limit);
+  }, [filter, includeDemo, page, limit]);
 
-  return { 
-    reviews, 
-    loading, 
-    averageRating, 
+  return {
+    reviews,
+    loading,
+    averageRating,
     totalReviews,
     ratingDistribution,
     refetch: fetchReviews,
