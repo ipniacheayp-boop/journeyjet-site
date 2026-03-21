@@ -28,7 +28,7 @@ const tools = [
     icon: Plane,
     title: "Flight Status Tracker",
     subtitle: "Track any US flight in real time — delays, gate changes, and arrivals.",
-    link: "/flightstatus",
+    link: "/flight-status",
     linkText: "Track a flight",
     gradient: "from-sky-500 to-blue-700",
     highlight: "#0ea5e9",
