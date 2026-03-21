@@ -1302,6 +1302,170 @@ Flights are down. Prices are lower. The opportunity is now.
     tags: ["micro-cation", "short trips", "travel 2026", "budget travel"],
     readTime: 9,
   },
+  {
+    id: "10",
+    slug: "flight-canceled-refund-guide-usa-2026",
+    title: "Flight Canceled? Here’s How to Get a Full Refund in the USA",
+    excerpt:
+      "Know your rights when your flight is canceled or delayed. This 2026 guide explains DOT refund rules, when you're entitled to cash refunds, and exactly how to claim your money.",
+    content: `
+# Flight Canceled? Here's How to Get a Full Refund in the USA  
+Know Your Rights as a U.S. Passenger — 2026 Complete Guide  
+
+You've been there. Bags packed. Ride to the airport arranged. You're standing at the gate — and then the departure board quietly flips to CANCELED. :contentReference[oaicite:0]{index=0}  
+
+In that one crushing moment, airlines are counting on a single thing: that you don't know your rights. :contentReference[oaicite:1]{index=1}  
+
+They'll slide a travel voucher across the counter with a polite apology and move on to the next frustrated passenger. And most travelers — exhausted, stressed, and unsure of their options — just accept it. :contentReference[oaicite:2]{index=2}  
+
+But here's what the airline won't tell you: if your flight is canceled or significantly changed, U.S. federal law clearly entitles you to a full cash refund — back to your original payment method. Not a voucher. Not airline miles. Not a future travel credit. Your actual money, returned to your card or account. :contentReference[oaicite:3]{index=3}  
+
+This guide breaks down the U.S. Department of Transportation's DOT refund rules in plain English — so the next time a gate agent hands you a coupon, you know exactly what to say and legally what you're owed. :contentReference[oaicite:4]{index=4}  
+
+---
+
+## 1. The Law Is Clearly on Your Side — What DOT Refund Rules Actually Say  
+
+Here's the foundation: the U.S. Department of Transportation has one clear, legally enforceable rule — and every airline operating in America has to follow it. :contentReference[oaicite:5]{index=5}  
+
+When an airline cancels your flight or makes a significant change to your itinerary, you are legally owed a full refund — to your original form of payment. This isn't a favor airlines choose to offer. It's a federal consumer protection requirement. :contentReference[oaicite:6]{index=6}  
+
+You are entitled to a refund when:  
+- Your flight is canceled by the airline — for any reason  
+- Your departure or arrival time is significantly changed  
+- The number of connections increases  
+- You are downgraded to a lower class  
+- Your airport is changed  
+- Your route is meaningfully altered  
+- Accessibility is impacted  
+
+**The Rule:** Your refund must go back to your original payment method — not credits or vouchers.  
+
+---
+
+## 2. Non-Refundable Ticket? You're Still Entitled  
+
+When your ticket says "non-refundable," it only applies if *you* cancel. :contentReference[oaicite:7]{index=7}  
+
+If the airline cancels or changes your flight, that label does not matter. :contentReference[oaicite:8]{index=8}  
+
+**Simple logic:**  
+- You cancel → no refund  
+- Airline cancels → full refund  
+
+---
+
+## 3. What Counts as a Significant Change?  
+
+DOT defines these as major changes:  
+- 3+ hour delay (domestic)  
+- 6+ hour delay (international)  
+- Extra connections  
+- Cabin downgrade  
+- Airport change  
+- Rerouting inconvenience  
+
+If you reject the new itinerary → you get a full refund. :contentReference[oaicite:9]{index=9}  
+
+---
+
+## 4. How to Actually Get Your Refund  
+
+**Step 1:** Decline the voucher  
+Say: *“I want a full cash refund to my original payment method.”*  
+
+**Step 2:** Submit refund request online  
+
+**Step 3:** Keep all proof  
+
+**Step 4:** Escalate to DOT (airconsumer.dot.gov)  
+
+**Step 5:** Chargeback if needed  
+
+Refund timeline:  
+- 7 days (credit card)  
+- 20 days (others) :contentReference[oaicite:10]{index=10}  
+
+---
+
+## 5. What to Say (Scripts That Work)  
+
+**At counter:**  
+"My flight was canceled. I want a full refund under DOT rules."  
+
+**On call/chat:**  
+"I’m requesting a refund for booking [ID]. Airline canceled my flight."  
+
+**Written complaint:**  
+"Requesting refund under DOT regulations for canceled flight."  
+
+---
+
+## 6. Rebooking vs Refund  
+
+You can:  
+- Accept rebooking  
+- OR take full refund  
+
+⚠ If you take the flight → refund may be lost  
+
+---
+
+## 7. Book Smarter  
+
+- Book directly  
+- Use credit card  
+- Save confirmations  
+- Enable alerts  
+- Understand fare rules  
+
+---
+
+# Bottom Line  
+
+Airlines are not doing you a favor. They are following the law. :contentReference[oaicite:11]{index=11}  
+
+You paid → you deserve your money back.  
+
+Next time they offer a voucher — say no. Ask for your refund.  
+
+---
+
+## Find Better Flights  
+
+Compare fares and book smarter at: https://tripile.com/  
+
+---
+
+## FAQ  
+
+**Does this apply to all airlines?**  
+Yes — all airlines flying in the US.  
+
+**How long for refund?**  
+7 days (card), 20 days (others)  
+
+**Rerouted flight refund?**  
+Yes, if significantly different  
+
+**Booked via third party?**  
+More complex, but same rights  
+
+**Accepted voucher already?**  
+You may still be able to claim refund  
+
+  `,
+    featuredImage: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&h=500&fit=crop",
+    author: {
+      name: "Travel Insights Team",
+      avatar: "/avatars/6.png",
+      bio: "Helping travelers understand their rights and make smarter travel decisions.",
+    },
+    publishedAt: "2026-03-21",
+    category: "Travel Tips",
+    tags: ["flight refund", "travel rights", "airlines", "usa travel"],
+    readTime: 8,
+  },
 ];
 
 export const getBlogBySlug = (slug: string): BlogPost | undefined => {
