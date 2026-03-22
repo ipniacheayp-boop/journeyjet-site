@@ -54,12 +54,13 @@ export function FlightResultCard({ flight, onBook }: FlightResultCardProps) {
           </div>
           <div className="text-right">
             <div className="flex items-center gap-2 justify-end mb-1 flex-wrap">
-              <Badge variant="default" className="bg-green-600 hover:bg-green-700 text-white">
-                🟢 Lowest Price
+              <Badge variant="default" className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                30% OFF
               </Badge>
             </div>
-            <div className="text-2xl font-bold text-primary">{formatCurrency(price, currency)}</div>
-            <p className="text-sm text-muted-foreground">{currency}</p>
+            <div className="text-sm text-muted-foreground line-through">{formatCurrency(marketPrice, currency)}</div>
+            <div className="text-2xl font-bold text-primary">{formatCurrency(Math.ceil(price), currency)}</div>
+            <p className="text-xs text-green-600 font-medium">You save {formatCurrency(savings, currency)}</p>
           </div>
         </div>
       </CardHeader>
