@@ -55,7 +55,7 @@ export function FlightResultCard({ flight, onBook }: FlightResultCardProps) {
           <div className="text-right">
             <div className="flex items-center gap-2 justify-end mb-1 flex-wrap">
               <Badge variant="default" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                30% OFF
+                50% OFF
               </Badge>
             </div>
             <div className="text-sm text-muted-foreground line-through">{formatCurrency(marketPrice, currency)}</div>
