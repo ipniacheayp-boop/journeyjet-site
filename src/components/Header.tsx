@@ -372,7 +372,7 @@ const Header = () => {
       >
         <div className="flex flex-col">
           <span className="text-sm font-bold tracking-tight">Call Us Now</span>
-          <span className="text-xs opacity-90 font-medium">1-800-221-5246</span>
+          <span className="text-xs opacity-90 font-medium">1-800-963-4330</span>
         </div>
         <div className="bg-white/20 p-2.5 rounded-full">
           <Phone className="w-5 h-5" />
