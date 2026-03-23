@@ -127,19 +127,60 @@ const UserLogin = () => {
   };
 
   const handleGoogleLogin = async () => {
+    const redirectUri = `${window.location.origin}/login`;
+    const openOAuthInNewTab = () => {
+      const oauthUrl = `/~oauth/initiate?provider=google&redirect_uri=${encodeURIComponent(redirectUri)}&prompt=select_account`;
+      window.open(oauthUrl, "_blank", "noopener,noreferrer");
+      toast({
+        title: "Continue sign in",
+        description: "Google sign-in opened in a new tab. Complete login there and return.",
+      });
+    };
+
     setLoading(true);
     try {
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+        redirect_uri: redirectUri,
+        extraParams: {
+          prompt: "select_account",
+        },
       });
 
-      if (result?.error) throw result.error;
+      if (result?.error) {
+        const isInIframe = (() => {
+          try {
+            return window.self !== window.top;
+          } catch {
+            return true;
+          }
+        })();
+
+        const shouldFallbackToNewTab =
+          isInIframe &&
+          /Sign in was cancelled|Popup was blocked|Preview mode/i.test(result.error.message || "");
+
+        if (shouldFallbackToNewTab) {
+          openOAuthInNewTab();
+          return;
+        }
+
+        throw result.error;
+      }
+
+      if (!result?.redirected) {
+        toast({
+          title: "Sign in successful!",
+          description: "Redirecting...",
+        });
+        navigate("/search-results");
+      }
     } catch (error: any) {
       toast({
         title: "Error",
         description: error.message,
         variant: "destructive",
       });
+    } finally {
       setLoading(false);
     }
   };
