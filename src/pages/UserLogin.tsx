@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
@@ -18,6 +18,25 @@ const UserLogin = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [selectedRole, setSelectedRole] = useState<UserRole>("user");
   const navigate = useNavigate();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        navigate("/account", { replace: true });
+      }
+    };
+    checkSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        navigate("/account", { replace: true });
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,7 +130,7 @@ const UserLogin = () => {
           });
 
           setTimeout(() => {
-            navigate("/search-results");
+            navigate("/account");
           }, 500);
         }
       }
@@ -172,7 +191,7 @@ const UserLogin = () => {
           title: "Sign in successful!",
           description: "Redirecting...",
         });
-        navigate("/search-results");
+        navigate("/account");
       }
     } catch (error: any) {
       toast({
