@@ -191,7 +191,7 @@ const UserLogin = () => {
           title: "Sign in successful!",
           description: "Redirecting...",
         });
-        navigate("/search-results");
+        navigate("/account");
       }
     } catch (error: any) {
       toast({
