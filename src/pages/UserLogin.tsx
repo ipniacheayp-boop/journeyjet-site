@@ -130,7 +130,7 @@ const UserLogin = () => {
           });
 
           setTimeout(() => {
-            navigate("/search-results");
+            navigate("/account");
           }, 500);
         }
       }
