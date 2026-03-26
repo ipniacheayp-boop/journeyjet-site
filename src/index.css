@@ -164,12 +164,18 @@ input[type="date"] {
 
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
     overflow-y: scroll;
     scrollbar-gutter: stable;
+    width: 100%;
   }
 
   body {
     @apply bg-background text-foreground antialiased;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden;
     font-feature-settings:
       "rlig" 1,
       "calt" 1;
