@@ -105,7 +105,7 @@ const renderStars = (rating: number) =>
     />
   ));
 
-const duplicatedReviews = [...reviews, ...reviews];
+
 
 const CustomerReviewsDark = () => {
   const [showReviewModal, setShowReviewModal] = useState(false);
