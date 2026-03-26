@@ -123,11 +123,11 @@ const CustomerReviewsDark = () => {
               {[...Array(5)].map((_, i) => (
                 <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
               ))}
-              <span className="text-white font-bold ml-1">4.5</span>
+              <span className="text-white font-bold ml-1">{averageRating.toFixed(1)}</span>
             </div>
             <span className="w-px h-4 bg-white/20 hidden sm:block" />
             <span>
-              <strong className="text-white">56,000+</strong> verified reviews
+              <strong className="text-white">{totalReviews.toLocaleString()}+</strong> verified reviews
             </span>
             <span className="w-px h-4 bg-white/20 hidden sm:block" />
             <span>#1 in US flight comparison</span>
