@@ -271,7 +271,7 @@ const FlyBot = () => {
           <img src={flyBotLogo} alt="FlyBot" className="h-full w-full object-contain" />
         </button>
       ) : (
-        <Card className="w-[400px] h-[600px] shadow-2xl animate-scale-in flex flex-col md:w-[400px] sm:w-[calc(100vw-48px)]">
+        <Card className="w-[400px] h-[600px] shadow-2xl animate-scale-in flex flex-col md:w-[400px] sm:w-[calc(100%-48px)]">
           {/* Header */}
           <CardHeader className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground rounded-t-lg pb-3 pt-3">
             <div className="flex items-center justify-between">
