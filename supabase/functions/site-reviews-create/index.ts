@@ -30,7 +30,7 @@ serve(async (req) => {
       );
     }
 
-    const { rating, title, body, displayName, allowAnonymous } = await req.json();
+    const { rating, title, body, displayName, allowAnonymous, country, bookingType } = await req.json();
 
     // Validate input
     if (!rating || rating < 1 || rating > 5) {
