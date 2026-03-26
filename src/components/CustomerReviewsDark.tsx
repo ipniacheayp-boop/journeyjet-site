@@ -108,6 +108,16 @@ const renderStars = (rating: number) =>
 const duplicatedReviews = [...reviews, ...reviews];
 
 const CustomerReviewsDark = () => {
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [userReviews, setUserReviews] = useState<typeof reviews>([]);
+
+  const allReviews = [...userReviews, ...reviews];
+  const duplicatedReviews = [...allReviews, ...allReviews];
+
+  const handleReviewAdded = (newReview: any) => {
+    setUserReviews((prev) => [newReview, ...prev]);
+  };
+
   return (
     <section className="py-16 md:py-24 bg-slate-950 overflow-hidden" aria-labelledby="reviews-dark-title">
       <div className="container mx-auto px-4">
