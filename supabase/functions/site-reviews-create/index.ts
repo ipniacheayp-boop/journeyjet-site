@@ -85,6 +85,8 @@ serve(async (req) => {
         title: title || null,
         body,
         rating,
+        country: country || null,
+        booking_type: bookingType || null,
       })
       .select()
       .single();
