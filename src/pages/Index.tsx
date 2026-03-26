@@ -317,7 +317,7 @@ const Index = () => {
           {[
             { icon: Users, value: "2M+", label: "Happy Travelers", color: "text-blue-500" },
             { icon: Plane, value: "500+", label: "Airlines Compared", color: "text-indigo-500" },
-            { icon: TrendingDown, value: "50%", label: "Max Savings", color: "text-green-500" },
+            { icon: TrendingDown, value: "46%", label: "Max Savings", color: "text-green-500" },
             { icon: Star, value: "4.5", label: "Average Rating", color: "text-amber-500" },
           ].map(({ icon: Icon, value, label, color }) => (
             <div key={label} className="flex flex-col items-center gap-1">
