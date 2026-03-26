@@ -1,8 +1,11 @@
-import { Star, Quote, BadgeCheck, ExternalLink } from "lucide-react";
+import { useState } from "react";
+import { Star, Quote, BadgeCheck, ExternalLink, PenLine } from "lucide-react";
 import { motion } from "framer-motion";
 import trustPilotImage from "@/assets/trustpilot1.png";
 import TrustpilotSlider from "@/components/ReviewSlider";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import WriteReviewModal from "@/components/WriteReviewModal";
 
 const reviews = [
   {
