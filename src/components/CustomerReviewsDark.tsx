@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Star, Quote, BadgeCheck, ExternalLink, PenLine } from "lucide-react";
 import { motion } from "framer-motion";
 import trustPilotImage from "@/assets/trustpilot1.png";
@@ -6,95 +6,33 @@ import TrustpilotSlider from "@/components/ReviewSlider";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import WriteReviewModal from "@/components/WriteReviewModal";
+import { supabase } from "@/integrations/supabase/client";
+import { formatDistanceToNow } from "date-fns";
 
-const reviews = [
-  {
-    id: 1,
-    name: "James K.",
-    location: "New York, USA",
-    timeAgo: "2 days ago",
-    rating: 5,
-    image: "avatars/1.png",
-    text: "Absolutely amazing experience! Found flights 40% cheaper than anywhere else. The booking process was seamless and customer support was incredibly helpful.",
-    platform: "Trustpilot",
-  },
-  {
-    id: 2,
-    name: "Sarah W.",
-    location: "London, UK",
-    timeAgo: "1 week ago",
-    rating: 5,
-    image: "avatars/2.png",
-    text: "Best travel booking site I've ever used. Price alerts saved me $300 on my trip to Europe. Highly recommend to everyone!",
-    platform: "Google",
-  },
-  {
-    id: 3,
-    name: "Michael T.",
-    location: "Toronto, Canada",
-    timeAgo: "3 days ago",
-    rating: 4,
-    image: "avatars/3.png",
-    text: "Great deals and easy to use interface. Booked my family vacation in minutes. The flight tracker feature is incredibly useful.",
-    platform: "Trustpilot",
-  },
-  {
-    id: 4,
-    name: "Emily R.",
-    location: "Sydney, Australia",
-    timeAgo: "5 days ago",
-    rating: 5,
-    image: "avatars/4.png",
-    text: "I've been using Tripile for years now. Never disappointed! Their customer service team goes above and beyond every time.",
-    platform: "Sitejabber",
-  },
-  {
-    id: 5,
-    name: "Raunak S.",
-    location: "Delhi, India",
-    timeAgo: "1 day ago",
-    rating: 5,
-    image: "avatars/5.png",
-    text: "Found an incredible last-minute deal for my anniversary trip. The mobile app notifications are a total game changer for price tracking!",
-    platform: "Google",
-  },
-  {
-    id: 6,
-    name: "Maria G.",
-    location: "Berlin, Germany",
-    timeAgo: "4 days ago",
-    rating: 5,
-    image: "avatars/6.png",
-    text: "Exceptional service from start to finish. The price comparison tool helped me save over €200 on my business trip.",
-    platform: "Trustpilot",
-  },
-  {
-    id: 7,
-    name: "David P.",
-    location: "Madrid, Spain",
-    timeAgo: "6 days ago",
-    rating: 5,
-    image: "avatars/7.png",
-    text: "Very impressed with the customer support. They helped me change my booking at the last minute with no hassle at all.",
-    platform: "Reviews.io",
-  },
-  {
-    id: 8,
-    name: "Linda C.",
-    location: "Chicago, USA",
-    timeAgo: "2 weeks ago",
-    rating: 4,
-    image: "avatars/8.png",
-    text: "Great platform for finding deals. The interface is intuitive and the booking confirmation was instant. Will definitely use again.",
-    platform: "Google",
-  },
-];
+interface DBReview {
+  id: string;
+  display_name: string;
+  rating: number;
+  body: string;
+  country: string | null;
+  booking_type: string | null;
+  created_at: string;
+}
+
+interface DisplayReview {
+  id: string;
+  name: string;
+  location: string;
+  timeAgo: string;
+  rating: number;
+  text: string;
+  platform: string;
+}
 
 const platformColor: Record<string, string> = {
   Trustpilot: "text-emerald-400",
   Google: "text-blue-400",
-  Sitejabber: "text-orange-400",
-  "Reviews.io": "text-violet-400",
+  Direct: "text-cyan-400",
 };
 
 const renderStars = (rating: number) =>
@@ -105,17 +43,56 @@ const renderStars = (rating: number) =>
     />
   ));
 
-
+const mapDBReview = (r: DBReview): DisplayReview => ({
+  id: r.id,
+  name: r.display_name,
+  location: r.country || "USA",
+  timeAgo: formatDistanceToNow(new Date(r.created_at), { addSuffix: true }),
+  rating: r.rating,
+  text: r.body,
+  platform: r.booking_type || "Direct",
+});
 
 const CustomerReviewsDark = () => {
   const [showReviewModal, setShowReviewModal] = useState(false);
-  const [userReviews, setUserReviews] = useState<typeof reviews>([]);
+  const [allReviews, setAllReviews] = useState<DisplayReview[]>([]);
+  const [totalReviews, setTotalReviews] = useState(0);
+  const [averageRating, setAverageRating] = useState(4.5);
+  const [loading, setLoading] = useState(true);
 
-  const allReviews = [...userReviews, ...reviews];
+  useEffect(() => {
+    fetchReviews();
+  }, []);
+
+  const fetchReviews = async () => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/site-reviews-get?filter=highest&limit=20`,
+        {
+          headers: {
+            'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+        }
+      );
+      const data = await response.json();
+      if (data.data) {
+        setAllReviews(data.data.map(mapDBReview));
+        setTotalReviews(data.totalReviews || 0);
+        setAverageRating(data.averageRating || 4.5);
+      }
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const duplicatedReviews = [...allReviews, ...allReviews];
 
   const handleReviewAdded = (newReview: any) => {
-    setUserReviews((prev) => [newReview, ...prev]);
+    const mapped = mapDBReview(newReview);
+    setAllReviews((prev) => [mapped, ...prev]);
+    setTotalReviews((prev) => prev + 1);
   };
 
   return (
@@ -146,11 +123,11 @@ const CustomerReviewsDark = () => {
               {[...Array(5)].map((_, i) => (
                 <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
               ))}
-              <span className="text-white font-bold ml-1">4.5</span>
+              <span className="text-white font-bold ml-1">{averageRating.toFixed(1)}</span>
             </div>
             <span className="w-px h-4 bg-white/20 hidden sm:block" />
             <span>
-              <strong className="text-white">56,000+</strong> verified reviews
+              <strong className="text-white">{totalReviews.toLocaleString()}+</strong> verified reviews
             </span>
             <span className="w-px h-4 bg-white/20 hidden sm:block" />
             <span>#1 in US flight comparison</span>
@@ -194,11 +171,9 @@ const CustomerReviewsDark = () => {
 
             {/* Reviewer */}
             <div className="flex items-center gap-3 pt-1 mt-auto border-t border-white/8">
-              <img
-                src={review.image}
-                alt={review.name}
-                className="w-9 h-9 rounded-full object-cover border border-white/15 shrink-0"
-              />
+              <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-sm shrink-0 border border-white/15">
+                {review.name[0]?.toUpperCase() || "?"}
+              </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-1">
                   <span className="text-white text-xs font-semibold truncate">{review.name}</span>
@@ -245,11 +220,9 @@ const CustomerReviewsDark = () => {
 
               {/* Reviewer */}
               <div className="flex items-center gap-3 pt-1 mt-auto border-t border-white/8">
-                <img
-                  src={review.image}
-                  alt={review.name}
-                  className="w-9 h-9 rounded-full object-cover border border-white/15 shrink-0"
-                />
+              <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-sm shrink-0 border border-white/15">
+                {review.name[0]?.toUpperCase() || "?"}
+              </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-1">
                     <span className="text-white text-xs font-semibold truncate">{review.name}</span>
