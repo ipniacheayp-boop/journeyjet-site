@@ -220,11 +220,9 @@ const CustomerReviewsDark = () => {
 
               {/* Reviewer */}
               <div className="flex items-center gap-3 pt-1 mt-auto border-t border-white/8">
-                <img
-                  src={review.image}
-                  alt={review.name}
-                  className="w-9 h-9 rounded-full object-cover border border-white/15 shrink-0"
-                />
+              <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-sm shrink-0 border border-white/15">
+                {review.name[0]?.toUpperCase() || "?"}
+              </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-1">
                     <span className="text-white text-xs font-semibold truncate">{review.name}</span>
