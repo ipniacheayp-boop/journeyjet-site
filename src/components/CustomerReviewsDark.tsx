@@ -1,8 +1,11 @@
-import { Star, Quote, BadgeCheck, ExternalLink } from "lucide-react";
+import { useState } from "react";
+import { Star, Quote, BadgeCheck, ExternalLink, PenLine } from "lucide-react";
 import { motion } from "framer-motion";
 import trustPilotImage from "@/assets/trustpilot1.png";
 import TrustpilotSlider from "@/components/ReviewSlider";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import WriteReviewModal from "@/components/WriteReviewModal";
 
 const reviews = [
   {
@@ -102,9 +105,19 @@ const renderStars = (rating: number) =>
     />
   ));
 
-const duplicatedReviews = [...reviews, ...reviews];
+
 
 const CustomerReviewsDark = () => {
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [userReviews, setUserReviews] = useState<typeof reviews>([]);
+
+  const allReviews = [...userReviews, ...reviews];
+  const duplicatedReviews = [...allReviews, ...allReviews];
+
+  const handleReviewAdded = (newReview: any) => {
+    setUserReviews((prev) => [newReview, ...prev]);
+  };
+
   return (
     <section className="py-16 md:py-24 bg-slate-950 overflow-hidden" aria-labelledby="reviews-dark-title">
       <div className="container mx-auto px-4">
@@ -143,11 +156,22 @@ const CustomerReviewsDark = () => {
             <span>#1 in US flight comparison</span>
           </div>
         </motion.div>
+
+        {/* Write a Review Button */}
+        <div className="text-center mt-6">
+          <Button
+            onClick={() => setShowReviewModal(true)}
+            className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6 gap-2"
+          >
+            <PenLine className="w-4 h-4" />
+            Write a Review
+          </Button>
+        </div>
       </div>
 
       {/* ── Mobile: Swipeable Carousel ── */}
       <div className="flex w-full overflow-x-auto snap-x snap-mandatory px-4 pb-6 gap-4 md:hidden scrollbar-hide">
-        {reviews.map((review, index) => (
+        {allReviews.map((review, index) => (
           <div
             key={`${review.id}-${index}`}
             className="w-[280px] sm:w-[320px] snap-center flex-shrink-0 bg-white/5 backdrop-blur-sm rounded-2xl p-5 border border-white/8 transition-all flex flex-col gap-3"
@@ -251,6 +275,12 @@ const CustomerReviewsDark = () => {
           <ExternalLink className="w-3.5 h-3.5" />
         </Link>
       </div>
+
+      <WriteReviewModal
+        open={showReviewModal}
+        onOpenChange={setShowReviewModal}
+        onReviewAdded={handleReviewAdded}
+      />
     </section>
   );
 };
