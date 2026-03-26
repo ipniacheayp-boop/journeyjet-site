@@ -317,7 +317,7 @@ const Index = () => {
           {[
             { icon: Users, value: "2M+", label: "Happy Travelers", color: "text-blue-500" },
             { icon: Plane, value: "500+", label: "Airlines Compared", color: "text-indigo-500" },
-            { icon: TrendingDown, value: "50%", label: "Max Savings", color: "text-green-500" },
+            { icon: TrendingDown, value: "46%", label: "Max Savings", color: "text-green-500" },
             { icon: Star, value: "4.5", label: "Average Rating", color: "text-amber-500" },
           ].map(({ icon: Icon, value, label, color }) => (
             <div key={label} className="flex flex-col items-center gap-1">
@@ -353,7 +353,7 @@ const Index = () => {
                     <img src={dealLastMinute} alt="Flights deal" className="h-28 w-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                     <div className="absolute left-4 top-3 rounded-full bg-primary/95 text-primary-foreground text-[11px] font-bold px-3 py-1 shadow-sm">
-                      Up to 50% less
+                      Up to 46% less
                     </div>
                   </div>
 
@@ -378,7 +378,7 @@ const Index = () => {
                     <img src={dealSeniors} alt="Senior citizen travel deal" className="h-28 w-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                     <div className="absolute left-4 top-3 rounded-full bg-coral/95 text-coral-foreground text-[11px] font-bold px-3 py-1 shadow-sm">
-                      About 50% off
+                      About 46% off
                     </div>
                   </div>
 
