@@ -156,6 +156,17 @@ const CustomerReviewsDark = () => {
             <span>#1 in US flight comparison</span>
           </div>
         </motion.div>
+
+        {/* Write a Review Button */}
+        <div className="text-center mt-6">
+          <Button
+            onClick={() => setShowReviewModal(true)}
+            className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6 gap-2"
+          >
+            <PenLine className="w-4 h-4" />
+            Write a Review
+          </Button>
+        </div>
       </div>
 
       {/* ── Mobile: Swipeable Carousel ── */}
