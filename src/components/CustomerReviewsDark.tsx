@@ -90,7 +90,9 @@ const CustomerReviewsDark = () => {
   const duplicatedReviews = [...allReviews, ...allReviews];
 
   const handleReviewAdded = (newReview: any) => {
-    setUserReviews((prev) => [newReview, ...prev]);
+    const mapped = mapDBReview(newReview);
+    setAllReviews((prev) => [mapped, ...prev]);
+    setTotalReviews((prev) => prev + 1);
   };
 
   return (
