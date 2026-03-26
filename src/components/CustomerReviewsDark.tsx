@@ -171,7 +171,7 @@ const CustomerReviewsDark = () => {
 
       {/* ── Mobile: Swipeable Carousel ── */}
       <div className="flex w-full overflow-x-auto snap-x snap-mandatory px-4 pb-6 gap-4 md:hidden scrollbar-hide">
-        {reviews.map((review, index) => (
+        {allReviews.map((review, index) => (
           <div
             key={`${review.id}-${index}`}
             className="w-[280px] sm:w-[320px] snap-center flex-shrink-0 bg-white/5 backdrop-blur-sm rounded-2xl p-5 border border-white/8 transition-all flex flex-col gap-3"
