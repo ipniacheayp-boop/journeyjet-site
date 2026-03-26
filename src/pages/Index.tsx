@@ -378,7 +378,7 @@ const Index = () => {
                     <img src={dealSeniors} alt="Senior citizen travel deal" className="h-28 w-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                     <div className="absolute left-4 top-3 rounded-full bg-coral/95 text-coral-foreground text-[11px] font-bold px-3 py-1 shadow-sm">
-                      About 50% off
+                      About 46% off
                     </div>
                   </div>
 
