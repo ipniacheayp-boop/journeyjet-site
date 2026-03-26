@@ -1,8 +1,10 @@
 User-agent: Googlebot
 Allow: /
+Crawl-delay: 1
 
 User-agent: Bingbot
 Allow: /
+Crawl-delay: 1
 
 User-agent: Twitterbot
 Allow: /
@@ -12,15 +14,32 @@ Allow: /
 
 User-agent: *
 Allow: /
+Crawl-delay: 2
 
 # Sitemap
-Sitemap: https://chyeap.lovable.app/sitemap.xml
+Sitemap: https://tripile.com/sitemap.xml
 
-# Crawl-delay for polite crawling
-Crawl-delay: 1
-
-# Disallow admin and private areas
+# Disallow admin, agent, and private areas
 Disallow: /admin/
+Disallow: /admin
 Disallow: /agent/
+Disallow: /agent
 Disallow: /payment/
+Disallow: /payment
+Disallow: /payment-options
+Disallow: /payment-success
+Disallow: /payment-cancel
+Disallow: /payment/processing
+Disallow: /payment/card
 Disallow: /api/
+Disallow: /login
+Disallow: /user/login
+Disallow: /admin/login
+Disallow: /agent/login
+Disallow: /account
+Disallow: /my-bookings
+Disallow: /booking/
+Disallow: /booking-confirmation
+Disallow: /agent-connect
+Disallow: /agent-will-connect
+Disallow: /error

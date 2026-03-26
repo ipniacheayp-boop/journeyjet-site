@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Core Pages -->
+  <url><loc>https://tripile.com/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>
+  <url><loc>https://tripile.com/deals</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
+  <url><loc>https://tripile.com/search-results</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/reviews</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/about</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/support</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/terms</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://tripile.com/privacy</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://tripile.com/careers</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://tripile.com/sitemap</loc><changefreq>weekly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://tripile.com/taxes-fees</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://tripile.com/cruise-deals</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/webcheck-in</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/flight-status</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/destinations-checklist</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+
+  <!-- Blog -->
+  <url><loc>https://tripile.com/blog</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/blog/smart-international-travel-cheap-international-flights</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/blog/hidden-gems-europe-2024</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/blog/travel-insurance-guide</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/blog/packing-carry-on-only</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/blog/best-travel-credit-cards-2024</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/blog/solo-travel-safety-tips</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/blog/how-to-find-cheap-flights-2026</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/blog/spring-break-2026-cheapest-destinations</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/blog/micro-cations-24-hour-travel-guide-2026</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/blog/flight-canceled-refund-guide-usa-2026</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+
+  <!-- Flights to Destinations - Domestic -->
+  <url><loc>https://tripile.com/flights-to/new-york</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/los-angeles</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/chicago</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/miami</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/san-francisco</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/las-vegas</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/orlando</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/atlanta</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/dallas</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/denver</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/seattle</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/boston</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/houston</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/phoenix</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/nashville</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/san-diego</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/tampa</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/portland</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/minneapolis</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/detroit</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/philadelphia</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/charlotte</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/salt-lake-city</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/honolulu</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/fort-lauderdale</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/washington-dc</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/baltimore</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/austin</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/raleigh</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/new-orleans</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+
+  <!-- Flights to Destinations - International -->
+  <url><loc>https://tripile.com/flights-to/london</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/paris</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/tokyo</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/dubai</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/cancun</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/barcelona</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/rome</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/amsterdam</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/bangkok</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/toronto</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/sydney</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/frankfurt</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/singapore</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/istanbul</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/seoul</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/mumbai</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/delhi</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/cape-town</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/athens</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/flights-to/lisbon</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+
+  <!-- Airlines -->
+  <url><loc>https://tripile.com/airlines/air-canada</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/air-france</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/air-india</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/alaska-airlines</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/allegiant-air</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/american-airlines</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/ana</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/breeze-airways</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/british-airways</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/cathay-pacific</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/delta-air-lines</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/easyjet</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/emirates</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/etihad-airways</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/frontier-airlines</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/hawaiian-airlines</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/iberia</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/japan-airlines</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/jetblue-airways</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/klm</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/korean-air</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/latam-airlines</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/lufthansa</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/qatar-airways</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/ryanair</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/singapore-airlines</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/southwest-airlines</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/spirit-airlines</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/sun-country-airlines</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/thai-airways</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/turkish-airlines</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/united-airlines</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://tripile.com/airlines/westjet</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+
+  <!-- Airport Landing Pages -->
+  <url><loc>https://tripile.com/airport/abilene-tx-abi</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/airport/albany-ny-alb</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/airport/albuquerque-nm-abq</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+</urlset>
