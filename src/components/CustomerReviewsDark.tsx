@@ -275,6 +275,12 @@ const CustomerReviewsDark = () => {
           <ExternalLink className="w-3.5 h-3.5" />
         </Link>
       </div>
+
+      <WriteReviewModal
+        open={showReviewModal}
+        onOpenChange={setShowReviewModal}
+        onReviewAdded={handleReviewAdded}
+      />
     </section>
   );
 };
