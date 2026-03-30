@@ -333,71 +333,171 @@ const Index = () => {
 
       {/* Eye-catching Offers Strip */}
       <motion.div
-        initial={{ opacity: 0, y: 18 }}
+        initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-40px" }}
-        transition={{ duration: 0.5, delay: 0.1 }}
+        transition={{ duration: 0.55, delay: 0.1 }}
         className="container mx-auto px-4 relative z-20 mt-2 mb-6"
       >
-        <div className="rounded-3xl border border-border/60 bg-gradient-to-r from-primary/10 via-indigo-500/10 to-cyan-500/10 shadow-lg overflow-hidden">
-          <div className="px-6 py-5">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-              <div>
-                <p className="text-xs font-semibold text-primary uppercase tracking-widest">Today’s Exclusive Savings</p>
-                <h2 className="font-display text-xl md:text-2xl font-bold mt-1">Book smarter and save more</h2>
-              </div>
+        {/* ── Outer wrapper: dark gradient shell ── */}
+        <div className="relative rounded-3xl overflow-hidden shadow-2xl bg-slate-900/20">
+          {/* Ambient glow orbs */}
+          <div className="pointer-events-none absolute -top-16 -left-16 w-72 h-72 rounded-full bg-blue-600/20 blur-[80px]" />
+          <div className="pointer-events-none absolute -bottom-16 -right-16 w-64 h-64 rounded-full bg-indigo-500/20 blur-[70px]" />
+          <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-40 rounded-full bg-sky-400/8 blur-[60px]" />
 
-              <div className="flex flex-wrap gap-3 justify-center md:justify-end">
-                <div className="min-w-[240px] sm:min-w-[260px] rounded-2xl border border-border/60 bg-card/90 backdrop-blur-md overflow-hidden">
-                  <div className="relative">
-                    <img src={dealLastMinute} alt="Flights deal" className="h-28 w-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                    <div className="absolute left-4 top-3 rounded-full bg-primary/95 text-primary-foreground text-[11px] font-bold px-3 py-1 shadow-sm">
-                      Up to 46% less
-                    </div>
+          <div className="relative z-10 px-6 pt-6 pb-5">
+            {/* ── Top bar: label + live badge + offer pills ── */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
+              <div className="flex items-center gap-3">
+                {/* Animated live badge */}
+                <span className="inline-flex items-center gap-1.5 bg-red-600/90 text-white text-[10px] font-extrabold tracking-widest uppercase px-3 py-1 rounded-full shadow-lg">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-white" />
+                  </span>
+                  Live Deals
+                </span>
+                <div>
+                  <p className="text-[10px] font-semibold text-indigo-300/80 uppercase tracking-widest">
+                    Today's Exclusive Savings
+                  </p>
+                  <h2 className="font-display text-lg md:text-xl font-extrabold text-white leading-tight">
+                    Book smarter — save <span className="text-sky-400">more</span>
+                  </h2>
+                </div>
+              </div>
+            </div>
+
+            {/* ── Deal cards row ── */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Card 1 — Flights */}
+              <motion.div
+                whileHover={{ y: -4, scale: 1.01 }}
+                transition={{ duration: 0.2 }}
+                className="group relative rounded-2xl overflow-hidden cursor-pointer"
+                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.10)" }}
+              >
+                {/* Image */}
+                <div className="relative h-36 overflow-hidden">
+                  <img
+                    src={dealLastMinute}
+                    alt="Last Minute Flights Deal"
+                    className="w-full h-full object-cover object-[center_70%] group-hover:scale-105 transition-all duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
+
+                  {/* Discount badge */}
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5">
+                    <span className="bg-blue-600 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full shadow-lg uppercase tracking-wide">
+                      Up to 46% off
+                    </span>
                   </div>
 
-                  <div className="p-4">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center">
-                          <TrendingDown className="w-5 h-5 text-primary" />
-                        </div>
-                        <div>
-                          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Flights</p>
-                          <p className="font-display text-xl font-extrabold text-foreground leading-tight">Instant savings</p>
-                        </div>
-                      </div>
-                    </div>
-                    <p className="text-sm text-muted-foreground mt-2">Compare fares and unlock limited-time deals.</p>
+                  {/* Save callout — bottom-right corner of image */}
+                  <div className="absolute bottom-3 right-3 bg-emerald-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+                    <BadgeDollarSign className="w-3 h-3" /> Save up to $50
                   </div>
                 </div>
 
-                <div className="min-w-[240px] sm:min-w-[260px] rounded-2xl border border-border/60 bg-card/90 backdrop-blur-md overflow-hidden">
-                  <div className="relative">
-                    <img src={dealSeniors} alt="Senior citizen travel deal" className="h-28 w-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                    <div className="absolute left-4 top-3 rounded-full bg-coral/95 text-coral-foreground text-[11px] font-bold px-3 py-1 shadow-sm">
-                      About 46% off
-                    </div>
+                {/* Body */}
+                <div className="p-4 flex items-start gap-3">
+                  <div className="shrink-0 w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center mt-0.5">
+                    <TrendingDown className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[10px] font-semibold text-blue-400/80 uppercase tracking-widest mb-0.5">
+                      Flights
+                    </p>
+                    <p className="font-display text-base font-extrabold text-white leading-tight mb-1">
+                      Instant Savings
+                    </p>
+                    <p className="text-xs text-white/50 leading-relaxed">
+                      Compare fares & unlock limited-time deals today.
+                    </p>
+                  </div>
+                  <Link
+                    to="/deals"
+                    className="shrink-0 mt-1 inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-600/20 border border-blue-500/30 text-blue-400 hover:bg-blue-600 hover:text-white transition-all duration-200"
+                  >
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </motion.div>
+
+              {/* Card 2 — Seniors */}
+              <motion.div
+                whileHover={{ y: -4, scale: 1.01 }}
+                transition={{ duration: 0.2 }}
+                className="group relative rounded-2xl overflow-hidden cursor-pointer"
+                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.10)" }}
+              >
+                {/* Image */}
+                <div className="relative h-36 overflow-hidden">
+                  <img
+                    src={dealSeniors}
+                    alt="Senior Citizens Travel Deal"
+                    className="w-full h-full object-cover object-[center_14%] group-hover:scale-105 transition-all duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
+
+                  {/* Discount badge */}
+                  <div className="absolute top-3 left-3">
+                    <span className="bg-rose-600 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full shadow-lg uppercase tracking-wide">
+                      Up to 46% off
+                    </span>
                   </div>
 
-                  <div className="p-4">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-10 h-10 rounded-xl bg-coral/15 flex items-center justify-center">
-                          <Users className="w-5 h-5 text-coral-foreground" />
-                        </div>
-                        <div>
-                          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Senior Citizens</p>
-                          <p className="font-display text-xl font-extrabold text-foreground leading-tight">Enjoy special fares</p>
-                        </div>
-                      </div>
-                    </div>
-                    <p className="text-sm text-muted-foreground mt-2">Eligibility-based offers for seniors.</p>
+                  {/* Save callout */}
+                  <div className="absolute bottom-3 right-3 bg-amber-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+                    <Wallet className="w-3 h-3" /> Save up to $60
                   </div>
                 </div>
+
+                {/* Body */}
+                <div className="p-4 flex items-start gap-3">
+                  <div className="shrink-0 w-10 h-10 rounded-xl bg-rose-600/20 border border-rose-500/30 flex items-center justify-center mt-0.5">
+                    <Users className="w-5 h-5 text-rose-400" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[10px] font-semibold text-rose-400/80 uppercase tracking-widest mb-0.5">
+                      Senior Citizens
+                    </p>
+                    <p className="font-display text-base font-extrabold text-white leading-tight mb-1">Special Fares</p>
+                    <p className="text-xs text-white/50 leading-relaxed">
+                      Eligibility-based offers crafted for seniors.
+                    </p>
+                  </div>
+                  <Link
+                    to="/deals"
+                    className="shrink-0 mt-1 inline-flex items-center justify-center w-8 h-8 rounded-full bg-rose-600/20 border border-rose-500/30 text-rose-400 hover:bg-rose-600 hover:text-white transition-all duration-200"
+                  >
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* ── Bottom trust strip ── */}
+            <div className="mt-4 pt-4 border-t border-white/8 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-4 text-[11px] text-white/40 font-medium">
+                {[
+                  { icon: ShieldCheck, label: "Best Price Guarantee" },
+                  { icon: Clock, label: "Limited Time Only" },
+                  { icon: CreditCard, label: "No Hidden Fees" },
+                ].map(({ icon: Icon, label }) => (
+                  <span key={label} className="inline-flex items-center gap-1.5">
+                    <Icon className="w-3.5 h-3.5 text-indigo-400/70" />
+                    {label}
+                  </span>
+                ))}
               </div>
+              <Link
+                to="/deals"
+                className="inline-flex items-center gap-1.5 text-[11px] font-bold text-sky-400 hover:text-sky-300 transition-colors duration-150"
+              >
+                See all deals <ChevronRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
           </div>
         </div>
