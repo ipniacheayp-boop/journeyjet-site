@@ -274,9 +274,9 @@ const Index = () => {
               }}
               className="group inline-flex items-center gap-3 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white text-base font-bold px-8 py-4 rounded-2xl shadow-[0_4px_32px_rgba(59,130,246,0.55)] hover:shadow-[0_6px_40px_rgba(59,130,246,0.7)] transition-all duration-200 hover:-translate-y-0.5"
             >
-              <Plane className="w-5 h-5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              <Plane className="w-5 h-5 transition-all duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:transition-all group-hover:duration-500 " />
               Find Your Next Flight
-              <ChevronRight className="w-4 h-4 opacity-70 group-hover:translate-x-1 transition-transform duration-200" />
+              <ChevronRight className="w-4 h-4 opacity-70 group-hover:translate-x-1 group-hover:transition-all group-hover:duration-500 transition-all duration-500" />
             </a>
 
             <Link
