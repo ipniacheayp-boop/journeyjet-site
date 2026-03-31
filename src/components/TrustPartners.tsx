@@ -99,7 +99,7 @@ const TrustPartners = () => {
               role="listitem"
               aria-label={partner.alt}
               title={partner.alt}
-              className="flex flex-col items-center gap-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl h-24 p-4 shadow-sm w-[120px]"
+              className="flex flex-col items-center gap-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl h-28 p-4 shadow-sm w-[130px]"
             >
               <img
                 src={partner.logo}
