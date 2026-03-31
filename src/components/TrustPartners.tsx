@@ -104,7 +104,7 @@ const TrustPartners = () => {
               <img
                 src={partner.logo}
                 alt={partner.alt}
-                className="h-8 w-auto object-contain opacity-70"
+                className="h-12 w-auto object-contain opacity-80"
                 loading="lazy"
                 decoding="async"
               />
