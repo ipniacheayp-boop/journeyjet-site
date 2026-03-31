@@ -507,6 +507,7 @@ const Booking = () => {
                       onSuccess={handlePaymentSuccess}
                       onError={handlePaymentError}
                       disabled={isProcessing}
+                      termsAccepted={acceptedTerms}
                     />
                   ) : (
                     <div className="flex justify-between items-center">
