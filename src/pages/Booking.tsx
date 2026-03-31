@@ -183,7 +183,7 @@ const Booking = () => {
     setValidatedPrice(validationResult.price || null);
     setValidatedCurrency(validationResult.currency || "USD");
 
-    await proceedToCheckout(
+    await createBookingAndPay(
       validationResult.validatedOffer || offer,
       validationResult.price || getPrice(offer),
       validationResult.currency || "USD",
@@ -191,8 +191,9 @@ const Booking = () => {
     );
   };
 
-  const proceedToCheckout = async (offerToBook: any, checkoutPrice: number, checkoutCurrency: string, expires?: string) => {
+  const createBookingAndPay = async (offerToBook: any, checkoutPrice: number, checkoutCurrency: string, expires?: string) => {
     try {
+      // Create the booking with pending_payment status
       const { data, error: fnError } = await supabase.functions.invoke("bookings-agent-assisted", {
         body: {
           productType: bookingType,
@@ -221,10 +222,14 @@ const Booking = () => {
       if (fnError) throw new Error(fnError.message || "Failed to create booking");
       if (!data.ok) throw new Error(data.message || "Booking creation failed");
 
+      // Store booking details and show Stripe payment form
+      setBookingId(data.bookingId);
+      setBookingReference(data.bookingReference);
+      setPaymentReady(true);
+
       sessionStorage.setItem("pendingBooking", JSON.stringify({
         bookingId: data.bookingId,
-        checkoutUrl: null,
-        amount: (checkoutPrice).toFixed(2),
+        amount: checkoutPrice.toFixed(2),
         currency: "USD",
         bookingType,
         agentId,
@@ -232,12 +237,28 @@ const Booking = () => {
         travelerInfo: { firstName: passengers[0].firstName, lastName: passengers[0].lastName, email: contact.email, phone: contact.phone },
       }));
 
-      toast.success("Booking confirmed! Our agent will contact you shortly.");
-      navigate(`/agent-will-connect?booking_id=${data.bookingId}`);
+      toast.success("Booking created! Complete payment below.");
     } catch (err: any) {
       toast.error(err.message || "Failed to create booking");
       clientRequestIdRef.current = generateClientRequestId();
     }
+  };
+
+  const handlePaymentSuccess = (paymentIntentId: string) => {
+    // Update session storage with payment info
+    const pending = sessionStorage.getItem("pendingBooking");
+    if (pending) {
+      const parsed = JSON.parse(pending);
+      parsed.paymentIntentId = paymentIntentId;
+      parsed.paymentStatus = "paid";
+      sessionStorage.setItem("pendingBooking", JSON.stringify(parsed));
+    }
+    navigate(`/booking-confirmation?booking_id=${bookingId}`);
+  };
+
+  const handlePaymentError = (error: string) => {
+    console.error("Payment error:", error);
+    // Don't navigate away - let user retry
   };
 
   const handlePriceChangeConfirm = async () => {
@@ -248,7 +269,7 @@ const Booking = () => {
       setValidatedPrice(priceChangeData.newPrice);
       setValidatedCurrency("USD");
       clientRequestIdRef.current = generateClientRequestId();
-      await proceedToCheckout(pendingPriceChangeOffer, priceChangeData.newPrice, "USD");
+      await createBookingAndPay(pendingPriceChangeOffer, priceChangeData.newPrice, "USD");
     }
   };
 
