@@ -98,10 +98,18 @@ const Booking = () => {
 
   const isProcessing = loading || validating;
 
+  // Extract flight destination info for hotel upsell
+  const flightSegments = offer?.itineraries?.[0]?.segments || [];
+  const lastFlightSegment = flightSegments[flightSegments.length - 1];
+  const destinationCode = lastFlightSegment?.arrival?.iataCode || "";
+  const arrivalDateRaw = lastFlightSegment?.arrival?.at || "";
+  const arrivalDate = arrivalDateRaw ? arrivalDateRaw.split("T")[0] : "";
+
   // Step validation
   const validateStep = (step: number): boolean => {
-    if (step === 0) return true; // Flight summary - always valid
-    if (step === 1) {
+    if (step === 0) return true; // Flight summary
+    if (step === 1) return true; // Hotel upsell - optional
+    if (step === 2) {
       // Validate passengers
       for (const p of passengers) {
         if (!p.firstName || !p.lastName || !p.dateOfBirth || !p.gender || !p.nationality ||
@@ -116,7 +124,7 @@ const Booking = () => {
       }
       return true;
     }
-    if (step === 2) return true; // Coupons - optional
+    if (step === 3) return true; // Coupons - optional
     return true;
   };
 
