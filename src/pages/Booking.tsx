@@ -204,6 +204,7 @@ const Booking = () => {
             passengers,
             coupon: appliedCoupon,
             discount,
+            hotelRequest: hotelUpsellData,
           },
           agentId,
           expiresAt: expires,
