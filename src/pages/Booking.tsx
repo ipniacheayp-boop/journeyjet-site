@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { Loader2, CheckCircle, ArrowLeft, ArrowRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { formatCurrency } from "@/lib/utils";
 import PriceChangeModal from "@/components/PriceChangeModal";
 import BookingStepper from "@/components/booking/BookingStepper";
 import FlightSummaryCard from "@/components/booking/FlightSummaryCard";
@@ -408,12 +409,17 @@ const Booking = () => {
                     </div>
 
                     {/* Hotel summary if selected */}
-                    {hotelUpsellData?.wantsHotel && (
+                    {hotelUpsellData?.wantsHotel && hotelUpsellData.selectedHotel && (
                       <div className="p-4 bg-muted/30 rounded-lg text-sm space-y-1">
-                        <p className="font-medium text-foreground">🏨 Hotel at {hotelUpsellData.destination}</p>
+                        <p className="font-medium text-foreground">
+                          🏨 {hotelUpsellData.selectedHotel.hotel?.name || "Hotel"} — {destinationCode}
+                        </p>
                         <p className="text-muted-foreground">
                           {hotelUpsellData.checkInDate} → {hotelUpsellData.checkOutDate} • {hotelUpsellData.rooms} Room{hotelUpsellData.rooms > 1 ? "s" : ""} • {hotelUpsellData.adults} Adult{hotelUpsellData.adults > 1 ? "s" : ""}
                           {hotelUpsellData.children > 0 && `, ${hotelUpsellData.children} Child${hotelUpsellData.children > 1 ? "ren" : ""}`}
+                        </p>
+                        <p className="font-medium text-primary">
+                          Hotel: {formatCurrency(parseFloat(hotelUpsellData.selectedHotel.offers?.[0]?.price?.total || "0"), hotelUpsellData.selectedHotel.offers?.[0]?.price?.currency || "USD")}
                         </p>
                         {hotelUpsellData.preferences.length > 0 && (
                           <p className="text-muted-foreground">Preferences: {hotelUpsellData.preferences.join(", ")}</p>
