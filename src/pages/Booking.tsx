@@ -301,14 +301,29 @@ const Booking = () => {
                   <FlightSummaryCard offer={offer} />
                   <div className="flex justify-end">
                     <Button onClick={goNext} size="lg" className="gap-2">
-                      Continue to Passengers <ArrowRight className="w-4 h-4" />
+                      Continue <ArrowRight className="w-4 h-4" />
                     </Button>
                   </div>
                 </>
               )}
 
-              {/* Step 1: Passengers */}
-              {currentStep === 1 && (
+              {/* Step 1: Hotel Upsell */}
+              {currentStep === 1 && bookingType === "flights" && (
+                <HotelUpsellStep
+                  destinationCode={destinationCode}
+                  arrivalDate={arrivalDate}
+                  onComplete={(data) => {
+                    setHotelUpsellData(data);
+                    goNext();
+                  }}
+                  onSkip={() => {
+                    setHotelUpsellData(null);
+                    goNext();
+                  }}
+                  disabled={isProcessing}
+                />
+              )}
+              {currentStep === 1 && bookingType !== "flights" && (
                 <>
                   <PassengerForm
                     passengers={passengers}
@@ -328,8 +343,29 @@ const Booking = () => {
                 </>
               )}
 
-              {/* Step 2: Coupons */}
+              {/* Step 2: Passengers */}
               {currentStep === 2 && (
+                <>
+                  <PassengerForm
+                    passengers={passengers}
+                    contact={contact}
+                    onPassengersChange={setPassengers}
+                    onContactChange={setContact}
+                    disabled={isProcessing}
+                  />
+                  <div className="flex justify-between">
+                    <Button variant="outline" onClick={goBack} className="gap-2">
+                      <ArrowLeft className="w-4 h-4" /> Back
+                    </Button>
+                    <Button onClick={goNext} size="lg" className="gap-2">
+                      Continue to Coupons <ArrowRight className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </>
+              )}
+
+              {/* Step 3: Coupons */}
+              {currentStep === 3 && (
                 <>
                   <CouponSection
                     totalPrice={total * passengers.length}
