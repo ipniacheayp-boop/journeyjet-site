@@ -16,8 +16,9 @@ import FlightSummaryCard from "@/components/booking/FlightSummaryCard";
 import PassengerForm, { type Passenger, type ContactDetails } from "@/components/booking/PassengerForm";
 import CouponSection from "@/components/booking/CouponSection";
 import PriceSummaryCard from "@/components/booking/PriceSummaryCard";
+import HotelUpsellStep, { type HotelUpsellData } from "@/components/booking/HotelUpsellStep";
 
-const STEPS = ["Flight", "Passengers", "Coupons", "Payment"];
+const STEPS = ["Flight", "Hotel", "Passengers", "Coupons", "Payment"];
 
 const emptyPassenger: Passenger = {
   firstName: "", lastName: "", dateOfBirth: "", gender: "", nationality: "",
