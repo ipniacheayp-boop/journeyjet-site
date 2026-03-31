@@ -30,6 +30,7 @@ export interface HotelUpsellData {
 interface HotelUpsellStepProps {
   destinationCode: string;
   arrivalDate: string;
+  departureDate?: string;
   onComplete: (data: HotelUpsellData) => void;
   onSkip: () => void;
   disabled?: boolean;
@@ -45,10 +46,10 @@ const PREFERENCES = [
 
 type Phase = "prompt" | "search" | "results" | "selected";
 
-const HotelUpsellStep = ({ destinationCode, arrivalDate, onComplete, onSkip, disabled }: HotelUpsellStepProps) => {
+const HotelUpsellStep = ({ destinationCode, arrivalDate, departureDate, onComplete, onSkip, disabled }: HotelUpsellStepProps) => {
   const [phase, setPhase] = useState<Phase>("prompt");
   const [checkInDate, setCheckInDate] = useState(arrivalDate || "");
-  const [checkOutDate, setCheckOutDate] = useState("");
+  const [checkOutDate, setCheckOutDate] = useState(departureDate || "");
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
   const [rooms, setRooms] = useState(1);
@@ -186,6 +187,7 @@ const HotelUpsellStep = ({ destinationCode, arrivalDate, onComplete, onSkip, dis
                 <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input id="checkout" type="date" value={checkOutDate} onChange={(e) => setCheckOutDate(e.target.value)} min={checkInDate} className="pl-10" />
               </div>
+              {departureDate && <p className="text-xs text-muted-foreground">Auto-filled from return flight</p>}
             </div>
           </div>
 
