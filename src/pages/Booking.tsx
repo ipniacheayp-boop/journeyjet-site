@@ -18,6 +18,7 @@ import PassengerForm, { type Passenger, type ContactDetails } from "@/components
 import CouponSection from "@/components/booking/CouponSection";
 import PriceSummaryCard from "@/components/booking/PriceSummaryCard";
 import HotelUpsellStep, { type HotelUpsellData } from "@/components/booking/HotelUpsellStep";
+import StripePaymentForm from "@/components/booking/StripePaymentForm";
 
 const STEPS = ["Flight", "Hotel", "Passengers", "Coupons", "Payment"];
 
@@ -47,6 +48,11 @@ const Booking = () => {
 
   // Hotel upsell state
   const [hotelUpsellData, setHotelUpsellData] = useState<HotelUpsellData | null>(null);
+
+  // Stripe payment state
+  const [bookingId, setBookingId] = useState<string | null>(null);
+  const [bookingReference, setBookingReference] = useState<string | null>(null);
+  const [paymentReady, setPaymentReady] = useState(false);
 
   // Price validation state
   const clientRequestIdRef = useRef<string>("");
@@ -177,7 +183,7 @@ const Booking = () => {
     setValidatedPrice(validationResult.price || null);
     setValidatedCurrency(validationResult.currency || "USD");
 
-    await proceedToCheckout(
+    await createBookingAndPay(
       validationResult.validatedOffer || offer,
       validationResult.price || getPrice(offer),
       validationResult.currency || "USD",
@@ -185,8 +191,9 @@ const Booking = () => {
     );
   };
 
-  const proceedToCheckout = async (offerToBook: any, checkoutPrice: number, checkoutCurrency: string, expires?: string) => {
+  const createBookingAndPay = async (offerToBook: any, checkoutPrice: number, checkoutCurrency: string, expires?: string) => {
     try {
+      // Create the booking with pending_payment status
       const { data, error: fnError } = await supabase.functions.invoke("bookings-agent-assisted", {
         body: {
           productType: bookingType,
@@ -215,10 +222,14 @@ const Booking = () => {
       if (fnError) throw new Error(fnError.message || "Failed to create booking");
       if (!data.ok) throw new Error(data.message || "Booking creation failed");
 
+      // Store booking details and show Stripe payment form
+      setBookingId(data.bookingId);
+      setBookingReference(data.bookingReference);
+      setPaymentReady(true);
+
       sessionStorage.setItem("pendingBooking", JSON.stringify({
         bookingId: data.bookingId,
-        checkoutUrl: null,
-        amount: (checkoutPrice).toFixed(2),
+        amount: checkoutPrice.toFixed(2),
         currency: "USD",
         bookingType,
         agentId,
@@ -226,12 +237,28 @@ const Booking = () => {
         travelerInfo: { firstName: passengers[0].firstName, lastName: passengers[0].lastName, email: contact.email, phone: contact.phone },
       }));
 
-      toast.success("Booking confirmed! Our agent will contact you shortly.");
-      navigate(`/agent-will-connect?booking_id=${data.bookingId}`);
+      toast.success("Booking created! Complete payment below.");
     } catch (err: any) {
       toast.error(err.message || "Failed to create booking");
       clientRequestIdRef.current = generateClientRequestId();
     }
+  };
+
+  const handlePaymentSuccess = (paymentIntentId: string) => {
+    // Update session storage with payment info
+    const pending = sessionStorage.getItem("pendingBooking");
+    if (pending) {
+      const parsed = JSON.parse(pending);
+      parsed.paymentIntentId = paymentIntentId;
+      parsed.paymentStatus = "paid";
+      sessionStorage.setItem("pendingBooking", JSON.stringify(parsed));
+    }
+    navigate(`/booking-confirmation?booking_id=${bookingId}`);
+  };
+
+  const handlePaymentError = (error: string) => {
+    console.error("Payment error:", error);
+    // Don't navigate away - let user retry
   };
 
   const handlePriceChangeConfirm = async () => {
@@ -242,7 +269,7 @@ const Booking = () => {
       setValidatedPrice(priceChangeData.newPrice);
       setValidatedCurrency("USD");
       clientRequestIdRef.current = generateClientRequestId();
-      await proceedToCheckout(pendingPriceChangeOffer, priceChangeData.newPrice, "USD");
+      await createBookingAndPay(pendingPriceChangeOffer, priceChangeData.newPrice, "USD");
     }
   };
 
@@ -390,64 +417,98 @@ const Booking = () => {
 
               {/* Step 4: Payment */}
               {currentStep === 4 && (
-                <Card className="bg-card border-border">
-                  <CardContent className="p-6 space-y-6">
-                    <h2 className="text-xl font-semibold text-foreground">Confirm & Pay</h2>
+                <div className="space-y-6">
+                  {/* Booking Summary */}
+                  <Card className="bg-card border-border">
+                    <CardContent className="p-6 space-y-4">
+                      <h2 className="text-xl font-semibold text-foreground">Booking Summary</h2>
 
-                    {/* Mini flight summary */}
-                    <div className="p-4 bg-muted/30 rounded-lg text-sm space-y-1">
-                      <p className="font-medium text-foreground">
-                        ✈️ {offer.itineraries?.[0]?.segments?.[0]?.departure?.iataCode} →{" "}
-                        {offer.itineraries?.[0]?.segments?.slice(-1)[0]?.arrival?.iataCode}
-                      </p>
-                      <p className="text-muted-foreground">
-                        {passengers.length} Passenger{passengers.length > 1 ? "s" : ""} •{" "}
-                        {passengers[0].firstName} {passengers[0].lastName}
-                        {passengers.length > 1 && ` + ${passengers.length - 1} more`}
-                      </p>
-                      <p className="text-muted-foreground">{contact.email} • {contact.phone}</p>
-                    </div>
-
-                    {/* Hotel summary if selected */}
-                    {hotelUpsellData?.wantsHotel && hotelUpsellData.selectedHotel && (
+                      {/* Flight summary */}
                       <div className="p-4 bg-muted/30 rounded-lg text-sm space-y-1">
                         <p className="font-medium text-foreground">
-                          🏨 {hotelUpsellData.selectedHotel.hotel?.name || "Hotel"} — {destinationCode}
+                          ✈️ {offer.itineraries?.[0]?.segments?.[0]?.departure?.iataCode} →{" "}
+                          {offer.itineraries?.[0]?.segments?.slice(-1)[0]?.arrival?.iataCode}
                         </p>
                         <p className="text-muted-foreground">
-                          {hotelUpsellData.checkInDate} → {hotelUpsellData.checkOutDate} • {hotelUpsellData.rooms} Room{hotelUpsellData.rooms > 1 ? "s" : ""} • {hotelUpsellData.adults} Adult{hotelUpsellData.adults > 1 ? "s" : ""}
-                          {hotelUpsellData.children > 0 && `, ${hotelUpsellData.children} Child${hotelUpsellData.children > 1 ? "ren" : ""}`}
+                          {passengers.length} Passenger{passengers.length > 1 ? "s" : ""} •{" "}
+                          {passengers[0].firstName} {passengers[0].lastName}
+                          {passengers.length > 1 && ` + ${passengers.length - 1} more`}
                         </p>
-                        <p className="font-medium text-primary">
-                          Hotel: {formatCurrency(parseFloat(hotelUpsellData.selectedHotel.offers?.[0]?.price?.total || "0"), hotelUpsellData.selectedHotel.offers?.[0]?.price?.currency || "USD")}
-                        </p>
-                        {hotelUpsellData.preferences.length > 0 && (
-                          <p className="text-muted-foreground">Preferences: {hotelUpsellData.preferences.join(", ")}</p>
+                        <p className="text-muted-foreground">{contact.email} • {contact.phone}</p>
+                      </div>
+
+                      {/* Hotel summary */}
+                      {hotelUpsellData?.wantsHotel && hotelUpsellData.selectedHotel && (
+                        <div className="p-4 bg-muted/30 rounded-lg text-sm space-y-1">
+                          <p className="font-medium text-foreground">
+                            🏨 {hotelUpsellData.selectedHotel.hotel?.name || "Hotel"} — {destinationCode}
+                          </p>
+                          <p className="text-muted-foreground">
+                            {hotelUpsellData.checkInDate} → {hotelUpsellData.checkOutDate} • {hotelUpsellData.rooms} Room{hotelUpsellData.rooms > 1 ? "s" : ""} • {hotelUpsellData.adults} Adult{hotelUpsellData.adults > 1 ? "s" : ""}
+                            {hotelUpsellData.children > 0 && `, ${hotelUpsellData.children} Child${hotelUpsellData.children > 1 ? "ren" : ""}`}
+                          </p>
+                          <p className="font-medium text-primary">
+                            Hotel: {formatCurrency(parseFloat(hotelUpsellData.selectedHotel.offers?.[0]?.price?.total || "0"), hotelUpsellData.selectedHotel.offers?.[0]?.price?.currency || "USD")}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Price breakdown */}
+                      <div className="p-4 bg-muted/30 rounded-lg text-sm space-y-2">
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Flight ({passengers.length}x)</span>
+                          <span className="text-foreground">{formatCurrency(price * passengers.length, currency)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Taxes & Fees</span>
+                          <span className="text-foreground">{formatCurrency(taxes * passengers.length, currency)}</span>
+                        </div>
+                        {discount > 0 && (
+                          <div className="flex justify-between text-green-600">
+                            <span>Discount ({appliedCoupon})</span>
+                            <span>-{formatCurrency(discount, currency)}</span>
+                          </div>
                         )}
+                        <div className="border-t border-border pt-2 flex justify-between font-bold text-base">
+                          <span className="text-foreground">Total</span>
+                          <span className="text-primary">{formatCurrency(finalTotal, currency)}</span>
+                        </div>
                       </div>
-                    )}
+                    </CardContent>
+                  </Card>
 
-                    {/* Terms */}
-                    <div className="flex items-start space-x-3 p-4 bg-muted/50 rounded-lg">
-                      <Checkbox
-                        id="terms"
-                        checked={acceptedTerms}
-                        disabled={isProcessing}
-                        onCheckedChange={(checked) => setAcceptedTerms(checked as boolean)}
-                      />
-                      <div className="space-y-1">
-                        <label htmlFor="terms" className="text-sm font-medium leading-none">
-                          I agree to the{" "}
-                          <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                            Terms & Conditions
-                          </a>
-                        </label>
-                        <p className="text-xs text-muted-foreground">
-                          You must accept the Terms & Conditions before booking.
-                        </p>
-                      </div>
+                  {/* Terms */}
+                  <div className="flex items-start space-x-3 p-4 bg-muted/50 rounded-lg">
+                    <Checkbox
+                      id="terms"
+                      checked={acceptedTerms}
+                      disabled={isProcessing || paymentReady}
+                      onCheckedChange={(checked) => setAcceptedTerms(checked as boolean)}
+                    />
+                    <div className="space-y-1">
+                      <label htmlFor="terms" className="text-sm font-medium leading-none">
+                        I agree to the{" "}
+                        <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                          Terms & Conditions
+                        </a>
+                      </label>
+                      <p className="text-xs text-muted-foreground">
+                        You must accept the Terms & Conditions before booking.
+                      </p>
                     </div>
+                  </div>
 
+                  {/* Stripe Payment Form — shown after booking is created */}
+                  {paymentReady && bookingId ? (
+                    <StripePaymentForm
+                      bookingId={bookingId}
+                      amount={finalTotal}
+                      currency={currency}
+                      onSuccess={handlePaymentSuccess}
+                      onError={handlePaymentError}
+                      disabled={isProcessing}
+                    />
+                  ) : (
                     <div className="flex justify-between items-center">
                       <Button variant="outline" onClick={goBack} className="gap-2">
                         <ArrowLeft className="w-4 h-4" /> Back
@@ -461,22 +522,21 @@ const Booking = () => {
                         {isProcessing ? (
                           <>
                             <Loader2 className="w-4 h-4 animate-spin" />
-                            {validating ? "Validating Price..." : "Confirming Booking..."}
+                            {validating ? "Validating Price..." : "Creating Booking..."}
                           </>
                         ) : (
-                          "Continue to Payment"
+                          "Proceed to Payment"
                         )}
                       </Button>
                     </div>
+                  )}
 
-                    {validatedOffer && (
-                      <div className="flex items-center gap-2 text-sm text-green-600">
-                        <CheckCircle className="h-4 w-4" />
-                        <span>Price validated with provider</span>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                  {paymentReady && (
+                    <Button variant="ghost" onClick={goBack} className="gap-2 text-muted-foreground">
+                      <ArrowLeft className="w-4 h-4" /> Back to Review
+                    </Button>
+                  )}
+                </div>
               )}
             </div>
 
