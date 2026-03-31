@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Lock } from "lucide-react";
+import godaddyLogo from "@/assets/trust/godaddy.png";
 
 export const FEATURE_SHOW_TRUST_BADGES = true;
 
@@ -10,49 +11,42 @@ const partners = [
     name: "IATA",
     logo: "https://upload.wikimedia.org/wikipedia/commons/f/f7/IATAlogo.svg",
     alt: "IATA – International Air Transport Association",
-    href: "https://www.iata.org/",
     label: "IATA Member",
   },
   {
     name: "ASTA",
     logo: "https://holidayplanners.com/wp-content/uploads/2014/12/ASTA-logo.jpg",
     alt: "ASTA – American Society of Travel Advisors",
-    href: "https://www.asta.org/",
     label: "ASTA Accredited",
   },
   {
     name: "TRUE",
     logo: "https://www.ccra.com/wp-content/uploads/2020/11/TRUE-Logo-4.png",
     alt: "TRUE – Travel Retailer Universal Enumeration",
-    href: "https://trueaccreditation.org/",
     label: "TRUE Accredited",
   },
   {
     name: "Cloudflare",
     logo: "https://upload.wikimedia.org/wikipedia/commons/4/4b/Cloudflare_Logo.svg",
     alt: "Protected by Cloudflare",
-    href: "https://www.cloudflare.com/",
     label: "Cloudflare Protected",
   },
   {
     name: "GoDaddy",
-    logo: "https://seal.godaddy.com/images/3/en/siteseal_gd_3_h_l_m.gif",
+    logo: godaddyLogo,
     alt: "GoDaddy Verified & Secured",
-    href: "https://www.godaddy.com/web-security/website-security",
     label: "SSL Verified",
   },
   {
     name: "FlexPay",
     logo: "https://cdn.document360.io/ff52d920-99b4-4c2b-9b32-5d5fe9700cb0/Images/Documentation/FlexpayLogo-FullColor-V(1).png",
     alt: "FlexPay – Buy Now Pay Later",
-    href: "https://www.upgrade.com/flex-pay/",
     label: "FlexPay Partner",
   },
   {
     name: "Amazon Pay",
     logo: "https://i.pinimg.com/736x/e4/59/c4/e459c4e28958ca826d22ff37b89162ee.jpg",
     alt: "Amazon Pay Accepted",
-    href: "https://pay.amazon.com/",
     label: "Amazon Pay",
   },
 ];
@@ -75,7 +69,6 @@ const TrustPartners = () => {
       aria-labelledby="trust-partners-heading"
     >
       <div className="container mx-auto px-4">
-        {/* Header */}
         <div className="text-center mb-8">
           <p
             id="trust-partners-heading"
@@ -90,7 +83,6 @@ const TrustPartners = () => {
           </p>
         </div>
 
-        {/* Partner cards */}
         <motion.div
           className="flex flex-wrap items-center justify-center gap-3 md:gap-6"
           variants={containerVariants}
@@ -101,32 +93,28 @@ const TrustPartners = () => {
           aria-label="Accreditation and security partners"
         >
           {partners.map((partner) => (
-            <motion.a
+            <motion.div
               key={partner.name}
-              href={partner.href}
-              target="_blank"
-              rel="noopener noreferrer"
               variants={itemVariants}
               role="listitem"
               aria-label={partner.alt}
               title={partner.alt}
-              className="group flex flex-col items-center gap-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl h-24 p-4 shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-200 w-[120px]"
+              className="flex flex-col items-center gap-2 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl h-24 p-4 shadow-sm w-[120px]"
             >
               <img
                 src={partner.logo}
                 alt={partner.alt}
-                className="h-8 w-auto object-contain opacity-70 group-hover:opacity-100 transition-opacity"
+                className="h-8 w-auto object-contain opacity-70"
                 loading="lazy"
                 decoding="async"
               />
               <span className="text-[10px] font-semibold text-muted-foreground text-center leading-tight">
                 {partner.label}
               </span>
-            </motion.a>
+            </motion.div>
           ))}
         </motion.div>
 
-        {/* SSL note */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
