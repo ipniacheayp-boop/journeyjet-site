@@ -112,6 +112,12 @@ const Booking = () => {
   const arrivalDateRaw = lastFlightSegment?.arrival?.at || "";
   const arrivalDate = arrivalDateRaw ? arrivalDateRaw.split("T")[0] : "";
 
+  // Extract return date for hotel check-out (from return itinerary or search params)
+  const returnSegments = offer?.itineraries?.[1]?.segments || [];
+  const returnFirstSegment = returnSegments[0];
+  const returnDateRaw = returnFirstSegment?.departure?.at || "";
+  const returnDate = returnDateRaw ? returnDateRaw.split("T")[0] : "";
+
   // Step validation
   const validateStep = (step: number): boolean => {
     if (step === 0) return true; // Flight summary
