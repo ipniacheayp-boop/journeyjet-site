@@ -18,6 +18,7 @@ import PassengerForm, { type Passenger, type ContactDetails } from "@/components
 import CouponSection from "@/components/booking/CouponSection";
 import PriceSummaryCard from "@/components/booking/PriceSummaryCard";
 import HotelUpsellStep, { type HotelUpsellData } from "@/components/booking/HotelUpsellStep";
+import StripePaymentForm from "@/components/booking/StripePaymentForm";
 
 const STEPS = ["Flight", "Hotel", "Passengers", "Coupons", "Payment"];
 
