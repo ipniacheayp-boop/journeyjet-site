@@ -1,12 +1,12 @@
 import { cn } from "@/lib/utils";
-import { Check, Plane, Users, Tag, CreditCard } from "lucide-react";
+import { Check, Plane, Hotel, Users, Tag, CreditCard } from "lucide-react";
 
 interface BookingStepperProps {
   currentStep: number;
   steps: string[];
 }
 
-const stepIcons = [Plane, Users, Tag, CreditCard];
+const stepIcons = [Plane, Hotel, Users, Tag, CreditCard];
 
 const BookingStepper = ({ currentStep, steps }: BookingStepperProps) => {
   return (

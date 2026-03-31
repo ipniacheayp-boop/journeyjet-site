@@ -16,8 +16,9 @@ import FlightSummaryCard from "@/components/booking/FlightSummaryCard";
 import PassengerForm, { type Passenger, type ContactDetails } from "@/components/booking/PassengerForm";
 import CouponSection from "@/components/booking/CouponSection";
 import PriceSummaryCard from "@/components/booking/PriceSummaryCard";
+import HotelUpsellStep, { type HotelUpsellData } from "@/components/booking/HotelUpsellStep";
 
-const STEPS = ["Flight", "Passengers", "Coupons", "Payment"];
+const STEPS = ["Flight", "Hotel", "Passengers", "Coupons", "Payment"];
 
 const emptyPassenger: Passenger = {
   firstName: "", lastName: "", dateOfBirth: "", gender: "", nationality: "",
@@ -42,6 +43,9 @@ const Booking = () => {
   // Coupon state
   const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
   const [discount, setDiscount] = useState(0);
+
+  // Hotel upsell state
+  const [hotelUpsellData, setHotelUpsellData] = useState<HotelUpsellData | null>(null);
 
   // Price validation state
   const clientRequestIdRef = useRef<string>("");
@@ -94,10 +98,18 @@ const Booking = () => {
 
   const isProcessing = loading || validating;
 
+  // Extract flight destination info for hotel upsell
+  const flightSegments = offer?.itineraries?.[0]?.segments || [];
+  const lastFlightSegment = flightSegments[flightSegments.length - 1];
+  const destinationCode = lastFlightSegment?.arrival?.iataCode || "";
+  const arrivalDateRaw = lastFlightSegment?.arrival?.at || "";
+  const arrivalDate = arrivalDateRaw ? arrivalDateRaw.split("T")[0] : "";
+
   // Step validation
   const validateStep = (step: number): boolean => {
-    if (step === 0) return true; // Flight summary - always valid
-    if (step === 1) {
+    if (step === 0) return true; // Flight summary
+    if (step === 1) return true; // Hotel upsell - optional
+    if (step === 2) {
       // Validate passengers
       for (const p of passengers) {
         if (!p.firstName || !p.lastName || !p.dateOfBirth || !p.gender || !p.nationality ||
@@ -112,7 +124,7 @@ const Booking = () => {
       }
       return true;
     }
-    if (step === 2) return true; // Coupons - optional
+    if (step === 3) return true; // Coupons - optional
     return true;
   };
 
@@ -192,6 +204,7 @@ const Booking = () => {
             passengers,
             coupon: appliedCoupon,
             discount,
+            hotelRequest: hotelUpsellData,
           },
           agentId,
           expiresAt: expires,
@@ -289,14 +302,29 @@ const Booking = () => {
                   <FlightSummaryCard offer={offer} />
                   <div className="flex justify-end">
                     <Button onClick={goNext} size="lg" className="gap-2">
-                      Continue to Passengers <ArrowRight className="w-4 h-4" />
+                      Continue <ArrowRight className="w-4 h-4" />
                     </Button>
                   </div>
                 </>
               )}
 
-              {/* Step 1: Passengers */}
-              {currentStep === 1 && (
+              {/* Step 1: Hotel Upsell */}
+              {currentStep === 1 && bookingType === "flights" && (
+                <HotelUpsellStep
+                  destinationCode={destinationCode}
+                  arrivalDate={arrivalDate}
+                  onComplete={(data) => {
+                    setHotelUpsellData(data);
+                    goNext();
+                  }}
+                  onSkip={() => {
+                    setHotelUpsellData(null);
+                    goNext();
+                  }}
+                  disabled={isProcessing}
+                />
+              )}
+              {currentStep === 1 && bookingType !== "flights" && (
                 <>
                   <PassengerForm
                     passengers={passengers}
@@ -316,8 +344,29 @@ const Booking = () => {
                 </>
               )}
 
-              {/* Step 2: Coupons */}
+              {/* Step 2: Passengers */}
               {currentStep === 2 && (
+                <>
+                  <PassengerForm
+                    passengers={passengers}
+                    contact={contact}
+                    onPassengersChange={setPassengers}
+                    onContactChange={setContact}
+                    disabled={isProcessing}
+                  />
+                  <div className="flex justify-between">
+                    <Button variant="outline" onClick={goBack} className="gap-2">
+                      <ArrowLeft className="w-4 h-4" /> Back
+                    </Button>
+                    <Button onClick={goNext} size="lg" className="gap-2">
+                      Continue to Coupons <ArrowRight className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </>
+              )}
+
+              {/* Step 3: Coupons */}
+              {currentStep === 3 && (
                 <>
                   <CouponSection
                     totalPrice={total * passengers.length}
@@ -338,8 +387,8 @@ const Booking = () => {
                 </>
               )}
 
-              {/* Step 3: Payment */}
-              {currentStep === 3 && (
+              {/* Step 4: Payment */}
+              {currentStep === 4 && (
                 <Card className="bg-card border-border">
                   <CardContent className="p-6 space-y-6">
                     <h2 className="text-xl font-semibold text-foreground">Confirm & Pay</h2>
@@ -347,7 +396,7 @@ const Booking = () => {
                     {/* Mini flight summary */}
                     <div className="p-4 bg-muted/30 rounded-lg text-sm space-y-1">
                       <p className="font-medium text-foreground">
-                        {offer.itineraries?.[0]?.segments?.[0]?.departure?.iataCode} →{" "}
+                        ✈️ {offer.itineraries?.[0]?.segments?.[0]?.departure?.iataCode} →{" "}
                         {offer.itineraries?.[0]?.segments?.slice(-1)[0]?.arrival?.iataCode}
                       </p>
                       <p className="text-muted-foreground">
@@ -357,6 +406,20 @@ const Booking = () => {
                       </p>
                       <p className="text-muted-foreground">{contact.email} • {contact.phone}</p>
                     </div>
+
+                    {/* Hotel summary if selected */}
+                    {hotelUpsellData?.wantsHotel && (
+                      <div className="p-4 bg-muted/30 rounded-lg text-sm space-y-1">
+                        <p className="font-medium text-foreground">🏨 Hotel at {hotelUpsellData.destination}</p>
+                        <p className="text-muted-foreground">
+                          {hotelUpsellData.checkInDate} → {hotelUpsellData.checkOutDate} • {hotelUpsellData.rooms} Room{hotelUpsellData.rooms > 1 ? "s" : ""} • {hotelUpsellData.adults} Adult{hotelUpsellData.adults > 1 ? "s" : ""}
+                          {hotelUpsellData.children > 0 && `, ${hotelUpsellData.children} Child${hotelUpsellData.children > 1 ? "ren" : ""}`}
+                        </p>
+                        {hotelUpsellData.preferences.length > 0 && (
+                          <p className="text-muted-foreground">Preferences: {hotelUpsellData.preferences.join(", ")}</p>
+                        )}
+                      </div>
+                    )}
 
                     {/* Terms */}
                     <div className="flex items-start space-x-3 p-4 bg-muted/50 rounded-lg">
