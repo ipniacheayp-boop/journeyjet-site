@@ -30,6 +30,7 @@ export interface HotelUpsellData {
 interface HotelUpsellStepProps {
   destinationCode: string;
   arrivalDate: string;
+  departureDate?: string;
   onComplete: (data: HotelUpsellData) => void;
   onSkip: () => void;
   disabled?: boolean;
