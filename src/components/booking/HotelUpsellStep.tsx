@@ -187,6 +187,7 @@ const HotelUpsellStep = ({ destinationCode, arrivalDate, departureDate, onComple
                 <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input id="checkout" type="date" value={checkOutDate} onChange={(e) => setCheckOutDate(e.target.value)} min={checkInDate} className="pl-10" />
               </div>
+              {departureDate && <p className="text-xs text-muted-foreground">Auto-filled from return flight</p>}
             </div>
           </div>
 
