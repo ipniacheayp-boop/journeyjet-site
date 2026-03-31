@@ -49,6 +49,11 @@ const Booking = () => {
   // Hotel upsell state
   const [hotelUpsellData, setHotelUpsellData] = useState<HotelUpsellData | null>(null);
 
+  // Stripe payment state
+  const [bookingId, setBookingId] = useState<string | null>(null);
+  const [bookingReference, setBookingReference] = useState<string | null>(null);
+  const [paymentReady, setPaymentReady] = useState(false);
+
   // Price validation state
   const clientRequestIdRef = useRef<string>("");
   const [validatedOffer, setValidatedOffer] = useState<any>(null);
