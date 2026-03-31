@@ -44,6 +44,9 @@ const Booking = () => {
   const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
   const [discount, setDiscount] = useState(0);
 
+  // Hotel upsell state
+  const [hotelUpsellData, setHotelUpsellData] = useState<HotelUpsellData | null>(null);
+
   // Price validation state
   const clientRequestIdRef = useRef<string>("");
   const [validatedOffer, setValidatedOffer] = useState<any>(null);
