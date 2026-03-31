@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { Loader2, CheckCircle, ArrowLeft, ArrowRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { formatCurrency } from "@/lib/utils";
 import PriceChangeModal from "@/components/PriceChangeModal";
 import BookingStepper from "@/components/booking/BookingStepper";
 import FlightSummaryCard from "@/components/booking/FlightSummaryCard";
