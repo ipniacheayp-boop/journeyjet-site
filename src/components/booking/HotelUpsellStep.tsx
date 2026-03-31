@@ -46,10 +46,10 @@ const PREFERENCES = [
 
 type Phase = "prompt" | "search" | "results" | "selected";
 
-const HotelUpsellStep = ({ destinationCode, arrivalDate, onComplete, onSkip, disabled }: HotelUpsellStepProps) => {
+const HotelUpsellStep = ({ destinationCode, arrivalDate, departureDate, onComplete, onSkip, disabled }: HotelUpsellStepProps) => {
   const [phase, setPhase] = useState<Phase>("prompt");
   const [checkInDate, setCheckInDate] = useState(arrivalDate || "");
-  const [checkOutDate, setCheckOutDate] = useState("");
+  const [checkOutDate, setCheckOutDate] = useState(departureDate || "");
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
   const [rooms, setRooms] = useState(1);
