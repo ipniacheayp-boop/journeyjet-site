@@ -386,8 +386,8 @@ const Booking = () => {
                 </>
               )}
 
-              {/* Step 3: Payment */}
-              {currentStep === 3 && (
+              {/* Step 4: Payment */}
+              {currentStep === 4 && (
                 <Card className="bg-card border-border">
                   <CardContent className="p-6 space-y-6">
                     <h2 className="text-xl font-semibold text-foreground">Confirm & Pay</h2>
@@ -395,7 +395,7 @@ const Booking = () => {
                     {/* Mini flight summary */}
                     <div className="p-4 bg-muted/30 rounded-lg text-sm space-y-1">
                       <p className="font-medium text-foreground">
-                        {offer.itineraries?.[0]?.segments?.[0]?.departure?.iataCode} →{" "}
+                        ✈️ {offer.itineraries?.[0]?.segments?.[0]?.departure?.iataCode} →{" "}
                         {offer.itineraries?.[0]?.segments?.slice(-1)[0]?.arrival?.iataCode}
                       </p>
                       <p className="text-muted-foreground">
@@ -405,6 +405,20 @@ const Booking = () => {
                       </p>
                       <p className="text-muted-foreground">{contact.email} • {contact.phone}</p>
                     </div>
+
+                    {/* Hotel summary if selected */}
+                    {hotelUpsellData?.wantsHotel && (
+                      <div className="p-4 bg-muted/30 rounded-lg text-sm space-y-1">
+                        <p className="font-medium text-foreground">🏨 Hotel at {hotelUpsellData.destination}</p>
+                        <p className="text-muted-foreground">
+                          {hotelUpsellData.checkInDate} → {hotelUpsellData.checkOutDate} • {hotelUpsellData.rooms} Room{hotelUpsellData.rooms > 1 ? "s" : ""} • {hotelUpsellData.adults} Adult{hotelUpsellData.adults > 1 ? "s" : ""}
+                          {hotelUpsellData.children > 0 && `, ${hotelUpsellData.children} Child${hotelUpsellData.children > 1 ? "ren" : ""}`}
+                        </p>
+                        {hotelUpsellData.preferences.length > 0 && (
+                          <p className="text-muted-foreground">Preferences: {hotelUpsellData.preferences.join(", ")}</p>
+                        )}
+                      </div>
+                    )}
 
                     {/* Terms */}
                     <div className="flex items-start space-x-3 p-4 bg-muted/50 rounded-lg">
