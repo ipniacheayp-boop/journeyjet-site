@@ -347,6 +347,7 @@ const Booking = () => {
                 <HotelUpsellStep
                   destinationCode={destinationCode}
                   arrivalDate={arrivalDate}
+                  departureDate={returnDate}
                   onComplete={(data) => {
                     setHotelUpsellData(data);
                     goNext();
