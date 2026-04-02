@@ -50,6 +50,7 @@ const Footer = () => {
         { label: "About Us", href: "/about" },
         { label: "Contact Us", href: "/support#contact" },
         { label: "Site Map", href: "/sitemap" },
+        { label: "Careers", href: "/careers" },
       ],
     },
     {
