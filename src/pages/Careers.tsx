@@ -55,10 +55,13 @@ const Careers = () => {
           <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed max-w-2xl mx-auto">
             Join our team and help build seamless travel experiences for global customers.
           </p>
-          <Button size="lg" onClick={scrollToPositions} className="gap-2">
+          <button
+            onClick={scrollToPositions}
+            className="inline-flex items-center gap-2 px-8 py-3.5 text-base font-semibold text-white rounded-full bg-gradient-to-r from-[hsl(217,90%,60%)] to-[hsl(224,76%,53%)] hover:from-[hsl(217,90%,55%)] hover:to-[hsl(224,76%,48%)] hover:scale-[1.02] transition-all duration-200 shadow-md hover:shadow-lg"
+          >
             Explore Opportunities
             <ArrowDown className="w-4 h-4" />
-          </Button>
+          </button>
         </div>
       </section>
 
