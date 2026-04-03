@@ -236,7 +236,7 @@ const SchedulesTab = ({ airportOptions }: { airportOptions: DropdownOption[] }) 
 const FutureSchedulesTab = ({ airportOptions }: { airportOptions: DropdownOption[] }) => {
   const [airport, setAirport] = useState("");
   const [type, setType] = useState("departure");
-  const [date, setDate] = useState(() => { const d = new Date(); d.setDate(d.getDate() + 1); return d.toISOString().split("T")[0]; });
+  const [date, setDate] = useState(() => { const d = new Date(); d.setDate(d.getDate() + 8); return d.toISOString().split("T")[0]; });
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -250,6 +250,7 @@ const FutureSchedulesTab = ({ airportOptions }: { airportOptions: DropdownOption
       });
       if (e) throw new Error(e.message);
       if (data.error) { setError(data.error); setResults([]); return; }
+      if (data.message) { setError(data.message); setResults([]); return; }
       setResults(data.schedules || []);
       if ((data.schedules || []).length === 0) setError("No future schedules found.");
     } catch (err: any) { setError(err.message); } finally { setLoading(false); }
