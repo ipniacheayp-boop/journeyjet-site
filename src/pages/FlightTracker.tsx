@@ -250,6 +250,7 @@ const FutureSchedulesTab = ({ airportOptions }: { airportOptions: DropdownOption
       });
       if (e) throw new Error(e.message);
       if (data.error) { setError(data.error); setResults([]); return; }
+      if (data.message) { setError(data.message); setResults([]); return; }
       setResults(data.schedules || []);
       if ((data.schedules || []).length === 0) setError("No future schedules found.");
     } catch (err: any) { setError(err.message); } finally { setLoading(false); }
