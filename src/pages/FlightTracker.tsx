@@ -123,7 +123,7 @@ const AutocompleteInput = ({
         onChange={(e) => { onChange(e.target.value); setOpen(true); setHlIdx(-1); }}
         onFocus={() => setOpen(true)} onKeyDown={handleKey} className="pl-9 pr-9" />
       {open && filtered.length > 0 && (
-        <div ref={lRef} className="absolute z-50 w-full mt-1 bg-background border border-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
+        <div ref={lRef} className="absolute z-[1000] w-full mt-1 bg-background border border-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
           {filtered.slice(0, 50).map((o, i) => (
             <button key={o.value + i} type="button"
               onClick={() => { onChange(o.value); setOpen(false); }}
