@@ -55,6 +55,7 @@ import FlightStatus from "./pages/FlightStatus";
 import FlightsToDestination from "./pages/FlightsToDestination";
 import AirlinePage from "./pages/AirlinePage";
 import TravelChecklists from "@/pages/TravelChecklists";
+import FlightTracker from "@/pages/FlightTracker";
 
 const FlybotWrapper = () => {
   const location = useLocation();
