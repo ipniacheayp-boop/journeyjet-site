@@ -130,6 +130,7 @@ const App = () => (
                 <Route path="/cheap-car-rentals-in-:slug" element={<CarRentalCityPage />} />
                 <Route path="/webcheck-in" element={<WebCheckIn />} />
                 <Route path="/flight-status" element={<FlightStatus />} />
+                <Route path="/flight-tracker" element={<FlightTracker />} />
                 <Route path="/flights-to/:slug" element={<FlightsToDestination />} />
                 <Route path="/airlines/:slug" element={<AirlinePage />} />
                 <Route path="*" element={<NotFound />} />
