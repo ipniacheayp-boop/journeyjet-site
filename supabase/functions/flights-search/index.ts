@@ -110,7 +110,7 @@ serve(async (req) => {
       const pollUrl = `${KAYAK_BASE_URL}${POLL_ENDPOINT}?apiKey=${apiKey}&userTrackId=${userTrackId}&cluster=${cluster}`;
       const pollRes = await fetch(pollUrl, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: kayakHeaders,
         body: JSON.stringify({ searchId }),
       });
 
