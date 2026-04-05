@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import Header from "@/components/Header";
@@ -12,6 +12,7 @@ import { useCarSearch } from "@/hooks/useCarSearch";
 import FlightResultCard from "@/components/FlightResultCard";
 import HotelResultCard from "@/components/HotelResultCard";
 import CarResultCard from "@/components/CarResultCard";
+import { FlightTimeFilter, getTimeSlot, type TimeSlot } from "@/components/flights/FlightTimeFilter";
 import { toast } from "sonner";
 
 const SearchResults = () => {
