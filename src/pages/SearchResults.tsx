@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import Header from "@/components/Header";
@@ -12,6 +12,7 @@ import { useCarSearch } from "@/hooks/useCarSearch";
 import FlightResultCard from "@/components/FlightResultCard";
 import HotelResultCard from "@/components/HotelResultCard";
 import CarResultCard from "@/components/CarResultCard";
+import { FlightTimeFilter, getTimeSlot, type TimeSlot } from "@/components/flights/FlightTimeFilter";
 import { toast } from "sonner";
 
 const SearchResults = () => {
@@ -26,6 +27,27 @@ const SearchResults = () => {
   const { searchHotels } = useHotelSearch();
   const { searchCars } = useCarSearch();
   const [showCallPopup, setShowCallPopup] = useState(false);
+  const [timeFilter, setTimeFilter] = useState<TimeSlot>("all");
+
+  const timeCounts = useMemo(() => {
+    const counts: Record<TimeSlot, number> = { all: 0, morning: 0, afternoon: 0, evening: 0, night: 0 };
+    if (type !== "flights") return counts;
+    results.forEach((f) => {
+      const dep = f.itineraries?.[0]?.segments?.[0]?.departure?.at;
+      const slot = getTimeSlot(dep);
+      counts[slot]++;
+      counts.all++;
+    });
+    return counts;
+  }, [results, type]);
+
+  const filteredResults = useMemo(() => {
+    if (type !== "flights" || timeFilter === "all") return results;
+    return results.filter((f) => {
+      const dep = f.itineraries?.[0]?.segments?.[0]?.departure?.at;
+      return getTimeSlot(dep) === timeFilter;
+    });
+  }, [results, timeFilter, type]);
 
   useEffect(() => {
     performSearch();
@@ -155,7 +177,10 @@ const SearchResults = () => {
           <div className="mb-8">
             <h1 className="font-display text-4xl font-bold mb-2 capitalize text-foreground">{type} Search Results</h1>
             <p className="text-muted-foreground">
-              {loading ? "Finding the best available price for you..." : `Found ${results.length} result(s)`}
+              {loading ? "Finding the best available price for you..." : 
+                type === "flights" && timeFilter !== "all" 
+                  ? `Showing ${filteredResults.length} of ${results.length} result(s)` 
+                  : `Found ${results.length} result(s)`}
             </p>
           </div>
 
@@ -208,13 +233,26 @@ const SearchResults = () => {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {type === "flights" &&
-                results.map((flight, i) => <FlightResultCard key={i} flight={flight} onBook={handleBook} />)}
-              {type === "hotels" &&
-                results.map((hotel, i) => <HotelResultCard key={i} hotel={hotel} onBook={handleBook} />)}
-              {type === "cars" && results.map((car, i) => <CarResultCard key={i} car={car} onBook={handleBook} />)}
-            </div>
+            <>
+              {type === "flights" && results.length > 0 && (
+                <FlightTimeFilter selected={timeFilter} onSelect={setTimeFilter} counts={timeCounts} />
+              )}
+              {filteredResults.length === 0 && type === "flights" ? (
+                <Card className="bg-card border-border">
+                  <CardContent className="py-8 text-center">
+                    <p className="text-muted-foreground">No flights for this time slot. Try a different time preference.</p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {type === "flights" &&
+                    filteredResults.map((flight, i) => <FlightResultCard key={i} flight={flight} onBook={handleBook} />)}
+                  {type === "hotels" &&
+                    filteredResults.map((hotel, i) => <HotelResultCard key={i} hotel={hotel} onBook={handleBook} />)}
+                  {type === "cars" && filteredResults.map((car, i) => <CarResultCard key={i} car={car} onBook={handleBook} />)}
+                </div>
+              )}
+            </>
           )}
         </div>
       </main>
