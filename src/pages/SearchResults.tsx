@@ -71,15 +71,10 @@ const SearchResults = () => {
           currencyCode: "USD",
         });
 
-        console.log("🔍 Search environment:", data?.meta?.environment || "unknown");
+        console.log("🔍 Search provider:", data?.meta?.provider || "unknown");
         console.log("📊 Results received:", data?.data?.length || 0);
 
         setResults(data?.data || []);
-
-        // Store environment info for UI
-        if (data?.meta?.environment) {
-          sessionStorage.setItem("flight_search_env", data.meta.environment);
-        }
       } else if (type === "hotels") {
         const cityCode = searchParams.get("cityCode") || "";
         const checkInDate = searchParams.get("checkInDate") || "";
@@ -201,29 +196,11 @@ const SearchResults = () => {
                   <p className="text-lg font-semibold mb-2">No results found</p>
                   <p className="text-muted-foreground mb-4">
                     {type === "flights"
-                      ? sessionStorage.getItem("flight_search_env") === "test"
-                        ? "No flights found. The test environment has limited route availability."
-                        : "No flights available for this route and dates. Try different dates or check nearby airports."
+                      ? "No flights available for this route and dates. Try different dates or check nearby airports."
                       : type === "hotels"
                         ? "No hotels found for the selected city and dates. Try different dates or locations."
                         : "No vehicles found for the selected location and dates. Try different dates or locations."}
-                  </p>
-                  {type === "flights" && sessionStorage.getItem("flight_search_env") === "test" && (
-                    <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mb-6 text-left">
-                      <p className="font-medium mb-2 text-sm text-amber-900 dark:text-amber-100">
-                        ⚠️ Test Environment - Limited Data
-                      </p>
-                      <p className="text-sm text-amber-800 dark:text-amber-200 mb-2">
-                        You're using the Amadeus test API which only supports specific routes and dates:
-                      </p>
-                      <ul className="text-sm text-amber-700 dark:text-amber-300 space-y-1">
-                        <li>• New York (JFK) → Los Angeles (LAX)</li>
-                        <li>• Madrid (MAD) → Paris (CDG)</li>
-                        <li>• London (LHR) → New York (JFK)</li>
-                        <li>• Dates: 7-14 days from today</li>
-                      </ul>
-                    </div>
-                  )}
+                   </p>
                   <Button onClick={() => (window.location.href = "/")} size="lg">
                     Start a New Search
                   </Button>
