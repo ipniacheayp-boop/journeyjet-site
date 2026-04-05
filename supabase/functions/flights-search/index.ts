@@ -2,103 +2,11 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "Authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "Authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// In-memory cache for Amadeus access token (cleared on each deploy)
-let cachedToken: { token: string; expiresAt: number } | null = null;
-
-// Determine which API endpoint to use based on environment
-const USE_PROD_APIS = Deno.env.get("USE_PROD_APIS") === "true";
-const AMADEUS_BASE_URL = USE_PROD_APIS ? "https://api.amadeus.com" : "https://test.api.amadeus.com";
-
-// Validate credentials exist and are not empty
-function validateCredentials(): { valid: boolean; error?: string } {
-  const apiKey = Deno.env.get("AMADEUS_API_KEY");
-  const apiSecret = Deno.env.get("AMADEUS_API_SECRET");
-
-  if (!apiKey || apiKey.trim() === "") {
-    return { valid: false, error: "AMADEUS_API_KEY is missing or empty" };
-  }
-  if (!apiSecret || apiSecret.trim() === "") {
-    return { valid: false, error: "AMADEUS_API_SECRET is missing or empty" };
-  }
-  
-  return { valid: true };
-}
-
-// Validate environment configuration
-function validateEnvironment(): { valid: boolean; warning?: string } {
-  const useProdApis = Deno.env.get("USE_PROD_APIS");
-  
-  if (useProdApis !== "true" && useProdApis !== "false") {
-    return { 
-      valid: true, 
-      warning: `USE_PROD_APIS not explicitly set (value: "${useProdApis}"), defaulting to TEST environment` 
-    };
-  }
-  
-  return { valid: true };
-}
-
-// Force clear cached token (call on 401 errors)
-function invalidateToken(): void {
-  cachedToken = null;
-  console.log("🔄 Token cache invalidated");
-}
-
-async function getAmadeusToken(forceRefresh = false): Promise<string> {
-  // Force refresh if requested or if token is expired
-  if (forceRefresh) {
-    invalidateToken();
-  }
-  
-  // Check if we have a valid cached token
-  if (cachedToken && cachedToken.expiresAt > Date.now()) {
-    return cachedToken.token;
-  }
-
-  const apiKey = Deno.env.get("AMADEUS_API_KEY");
-  const apiSecret = Deno.env.get("AMADEUS_API_SECRET");
-
-  // This should never happen due to validateCredentials, but double-check
-  if (!apiKey || !apiSecret) {
-    throw new Error("Amadeus API credentials not configured");
-  }
-
-  console.log(`🔑 Authenticating with Amadeus (${USE_PROD_APIS ? "PRODUCTION" : "TEST"} mode)`);
-  console.log("✓ Amadeus credentials loaded successfully");
-  
-  const authResponse = await fetch(`${AMADEUS_BASE_URL}/v1/security/oauth2/token`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: `grant_type=client_credentials&client_id=${encodeURIComponent(apiKey)}&client_secret=${encodeURIComponent(apiSecret)}`,
-  });
-
-  if (!authResponse.ok) {
-    const errorText = await authResponse.text();
-    console.error("❌ Amadeus auth error:", authResponse.status, errorText);
-    
-    // If auth fails, ensure we don't cache anything
-    invalidateToken();
-    
-    throw new Error(`Failed to authenticate with Amadeus API: ${authResponse.status}`);
-  }
-
-  const authData = await authResponse.json();
-
-  // Cache token for 25 minutes (tokens expire in 30 min, give 5 min buffer)
-  cachedToken = {
-    token: authData.access_token,
-    expiresAt: Date.now() + 25 * 60 * 1000,
-  };
-
-  console.log("✅ New Amadeus OAuth token generated successfully");
-  
-  return authData.access_token;
-}
+const KAYAK_BASE_URL = "https://www.kayak.com";
+const POLL_ENDPOINT = "/i/api/affiliate/search/flight/v1/poll";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -106,141 +14,227 @@ serve(async (req) => {
   }
 
   try {
-    // Step 1: Validate credentials exist
-    const credentialCheck = validateCredentials();
-    if (!credentialCheck.valid) {
-      console.error("❌ Credential validation failed:", credentialCheck.error);
+    const apiKey = Deno.env.get("KAYAK_API_KEY");
+    if (!apiKey) {
       return new Response(
-        JSON.stringify({ 
-          error: "Flight search temporarily unavailable. Authentication misconfigured.",
-          code: "AUTH_MISCONFIGURED"
-        }),
+        JSON.stringify({ error: "KAYAK_API_KEY is not configured" }),
         { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Step 2: Validate environment configuration
-    const envCheck = validateEnvironment();
-    if (envCheck.warning) {
-      console.warn("⚠️", envCheck.warning);
-    }
-
-    console.log(`🔧 Using Amadeus ${USE_PROD_APIS ? "PRODUCTION" : "TEST"} API: ${AMADEUS_BASE_URL}`);
-
-    const { originLocationCode, destinationLocationCode, departureDate, returnDate, adults, travelClass } =
-      await req.json();
-
-    console.log("📥 Flight search request:", {
-      originLocationCode,
-      destinationLocationCode,
-      departureDate,
-      returnDate,
-      adults,
-      travelClass,
-    });
+    const { originLocationCode, destinationLocationCode, departureDate, returnDate, adults, travelClass } = await req.json();
 
     if (!originLocationCode || !destinationLocationCode || !departureDate || !adults) {
-      console.error("❌ Missing required parameters");
       return new Response(
-        JSON.stringify({
-          error:
-            "Missing required parameters: originLocationCode (3-letter code), destinationLocationCode (3-letter code), departureDate, adults",
-        }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        JSON.stringify({ error: "Missing required parameters" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Validate IATA codes are 3 letters
-    if (originLocationCode.length !== 3 || destinationLocationCode.length !== 3) {
-      console.error("❌ Invalid IATA codes - must be 3 letters:", { originLocationCode, destinationLocationCode });
-      return new Response(
-        JSON.stringify({
-          error: "Airport codes must be 3-letter IATA codes (e.g., JFK, LAX, LHR)",
-          hint: `Origin: ${originLocationCode} (${originLocationCode.length} chars), Destination: ${destinationLocationCode} (${destinationLocationCode.length} chars)`,
-        }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
-    }
+    // Map travel class
+    const cabinMap: Record<string, string> = {
+      ECONOMY: "economy", PREMIUM_ECONOMY: "premiumEconomy",
+      BUSINESS: "business", FIRST: "first",
+    };
+    const cabin = cabinMap[travelClass || "ECONOMY"] || "economy";
 
-    // Get token (will fetch new one if needed)
-    let token = await getAmadeusToken();
-    console.log("✅ Amadeus token obtained");
+    // Build passengers array
+    const passengers: string[] = [];
+    for (let i = 0; i < (adults || 1); i++) passengers.push("ADT");
 
-    // Build query parameters
-    const params = new URLSearchParams({
-      originLocationCode: originLocationCode.toUpperCase(),
-      destinationLocationCode: destinationLocationCode.toUpperCase(),
-      departureDate,
-      adults: adults.toString(),
-      max: "50",
-      currencyCode: "USD",
-    });
+    // Build legs
+    const legs: any[] = [
+      {
+        origin: { locationType: "airports", airports: [originLocationCode.toUpperCase()] },
+        destination: { locationType: "airports", airports: [destinationLocationCode.toUpperCase()] },
+        date: departureDate,
+        flex: "exact",
+      },
+    ];
 
     if (returnDate) {
-      params.append("returnDate", returnDate);
+      legs.push({
+        origin: { locationType: "airports", airports: [destinationLocationCode.toUpperCase()] },
+        destination: { locationType: "airports", airports: [originLocationCode.toUpperCase()] },
+        date: returnDate,
+        flex: "exact",
+      });
     }
 
-    if (travelClass) {
-      params.append("travelClass", travelClass);
-    }
+    const userTrackId = crypto.randomUUID();
+    const searchBody = { searchStartParameters: { cabin, passengers, legs } };
 
-    console.log("🔍 Searching flights with params:", params.toString());
-    console.log(`📍 API Endpoint: ${AMADEUS_BASE_URL}/v2/shopping/flight-offers`);
+    console.log("🔍 Starting KAYAK flight search:", JSON.stringify(searchBody));
 
-    let flightResponse = await fetch(`${AMADEUS_BASE_URL}/v2/shopping/flight-offers?${params.toString()}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+    // Step 1: Start the search
+    const startUrl = `${KAYAK_BASE_URL}${POLL_ENDPOINT}?apiKey=${apiKey}&userTrackId=${userTrackId}`;
+    const startRes = await fetch(startUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(searchBody),
     });
 
-    // Handle 401 - token might be stale, try to refresh once
-    if (flightResponse.status === 401) {
-      console.warn("⚠️ Got 401, refreshing token and retrying...");
-      token = await getAmadeusToken(true); // Force refresh
-      
-      flightResponse = await fetch(`${AMADEUS_BASE_URL}/v2/shopping/flight-offers?${params.toString()}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+    if (!startRes.ok) {
+      const errText = await startRes.text();
+      console.error("❌ KAYAK search start error:", startRes.status, errText);
+      return new Response(
+        JSON.stringify({ error: "Failed to start flight search", details: errText }),
+        { status: startRes.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    let pollData = await startRes.json();
+    const searchId = pollData.searchId;
+    const cluster = pollData.cluster;
+
+    console.log("📡 Search started, searchId:", searchId, "cluster:", cluster, "status:", pollData.status);
+
+    // Step 2: Poll until complete (max 15 attempts, 2s apart)
+    let attempts = 0;
+    const maxAttempts = 15;
+
+    while (pollData.status !== "complete" && attempts < maxAttempts) {
+      attempts++;
+      await new Promise(r => setTimeout(r, 2000));
+
+      const pollUrl = `${KAYAK_BASE_URL}${POLL_ENDPOINT}?apiKey=${apiKey}&userTrackId=${userTrackId}&cluster=${cluster}`;
+      const pollRes = await fetch(pollUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ searchId }),
+      });
+
+      if (!pollRes.ok) {
+        const errText = await pollRes.text();
+        console.error(`❌ Poll attempt ${attempts} failed:`, pollRes.status, errText);
+        continue;
+      }
+
+      pollData = await pollRes.json();
+      console.log(`📡 Poll attempt ${attempts}: status=${pollData.status}, results=${pollData.results?.length || 0}`);
+    }
+
+    // Step 3: Normalize KAYAK response to Amadeus-like format for frontend compatibility
+    const normalizedResults = normalizeKayakToAmadeus(pollData);
+
+    console.log("✅ Flight search complete:", normalizedResults.length, "offers normalized");
+
+    return new Response(
+      JSON.stringify({
+        data: normalizedResults,
+        meta: { environment: "kayak-affiliate", provider: "kayak" },
+        _raw: {
+          searchId,
+          cluster,
+          currency: pollData.currency,
+          airlines: pollData.airlines,
+          airports: pollData.airports,
+          providers: pollData.providers,
         },
-      });
-    }
-
-    console.log("📡 Amadeus API response status:", flightResponse.status);
-
-    if (!flightResponse.ok) {
-      const error = await flightResponse.text();
-      console.error("❌ Amadeus flight search error (status:", flightResponse.status, "):", error);
-      return new Response(JSON.stringify({ error: "Failed to search flights", details: error }), {
-        status: flightResponse.status,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const flightData = await flightResponse.json();
-    console.log("✅ Flight search response:", flightData.data?.length || 0, "offers found");
-
-    // Add metadata about which environment was used
-    if (flightData.meta) {
-      flightData.meta.environment = USE_PROD_APIS ? "production" : "test";
-    }
-
-    // Sort flights by price (ascending) to show cheapest first
-    if (flightData.data && Array.isArray(flightData.data)) {
-      flightData.data.sort((a: any, b: any) => {
-        const priceA = parseFloat(a.price?.total || a.price?.grandTotal || "999999");
-        const priceB = parseFloat(b.price?.total || b.price?.grandTotal || "999999");
-        return priceA - priceB;
-      });
-    }
-
-    return new Response(JSON.stringify(flightData), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+      }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   } catch (error) {
     console.error("❌ Error in flights-search:", error);
-    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error occurred" }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   }
 });
+
+function normalizeKayakToAmadeus(kayakData: any): any[] {
+  if (!kayakData?.results || !Array.isArray(kayakData.results)) return [];
+
+  const legs = kayakData.legs || {};
+  const segments = kayakData.segments || {};
+  const airlines = kayakData.airlines || {};
+  const airports = kayakData.airports || {};
+  const currency = kayakData.currency || "USD";
+
+  return kayakData.results.map((result: any) => {
+    const bestOption = result.bookingOptions?.[0];
+    const price = bestOption?.displayPrice?.price || 0;
+
+    // Build itineraries from legs
+    const itineraries = (result.legs || []).map((legRef: any) => {
+      const leg = legs[legRef.id];
+      if (!leg) return null;
+
+      const legSegments = (leg.segments || []).map((segRef: any) => {
+        const seg = segments[segRef.id];
+        if (!seg) return null;
+
+        const airlineInfo = airlines[seg.airline];
+        return {
+          departure: {
+            iataCode: seg.origin,
+            at: seg.departureTime,
+            terminal: "",
+          },
+          arrival: {
+            iataCode: seg.destination,
+            at: seg.arrivalTime,
+            terminal: "",
+          },
+          carrierCode: seg.airline,
+          number: seg.flightNumber,
+          aircraft: { code: seg.equipmentTypeName || "" },
+          duration: `PT${Math.floor(seg.duration / 60)}H${seg.duration % 60}M`,
+          operating: { carrierCode: seg.airline },
+          _airlineName: airlineInfo?.displayName || seg.airline,
+          _airlineLogo: airlineInfo?.logoUrl || "",
+        };
+      }).filter(Boolean);
+
+      return {
+        duration: `PT${Math.floor(leg.duration / 60)}H${leg.duration % 60}M`,
+        segments: legSegments,
+      };
+    }).filter(Boolean);
+
+    // Build fare details
+    const cabin = bestOption?.segmentFares?.[0]?.cabin?.displayName || "Economy";
+    const fareFamilyName = bestOption?.fareFamilies?.[0]?.displayName || "";
+
+    // Booking URL
+    const bookingUrl = bestOption?.bookingUrl || "";
+
+    // Badges
+    const badges = (bestOption?.badges || []).map((b: any) => b.displayName);
+
+    // Baggage fees
+    const fees = bestOption?.fees || {};
+
+    return {
+      id: result.id,
+      price: {
+        total: String(price),
+        grandTotal: String(price),
+        currency,
+        base: String(fees.basePrice?.price || price),
+      },
+      itineraries,
+      travelerPricings: [
+        {
+          fareDetailsBySegment: (bestOption?.segmentFares || []).map((sf: any) => ({
+            cabin: sf.cabin?.displayName || cabin,
+            class: sf.cabin?.code || "economy",
+          })),
+        },
+      ],
+      _kayak: {
+        bookingUrl,
+        badges,
+        fareFamilyName,
+        providerCode: bestOption?.providerCode || "",
+        providerName: kayakData.providers?.[bestOption?.providerCode]?.displayName || "",
+        providerLogo: kayakData.providers?.[bestOption?.providerCode]?.logoUrls?.imageUrl || "",
+        allBookingOptions: result.bookingOptions || [],
+        fees,
+        amenities: bestOption?.fareFamilies?.[0]?.amenities || [],
+        qualityItems: bestOption?.segmentFares?.[0]?.qualityItems || [],
+      },
+    };
+  });
+}
