@@ -177,7 +177,10 @@ const SearchResults = () => {
           <div className="mb-8">
             <h1 className="font-display text-4xl font-bold mb-2 capitalize text-foreground">{type} Search Results</h1>
             <p className="text-muted-foreground">
-              {loading ? "Finding the best available price for you..." : `Found ${results.length} result(s)`}
+              {loading ? "Finding the best available price for you..." : 
+                type === "flights" && timeFilter !== "all" 
+                  ? `Showing ${filteredResults.length} of ${results.length} result(s)` 
+                  : `Found ${results.length} result(s)`}
             </p>
           </div>
 
