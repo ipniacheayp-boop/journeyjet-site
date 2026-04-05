@@ -71,15 +71,10 @@ const SearchResults = () => {
           currencyCode: "USD",
         });
 
-        console.log("🔍 Search environment:", data?.meta?.environment || "unknown");
+        console.log("🔍 Search provider:", data?.meta?.provider || "unknown");
         console.log("📊 Results received:", data?.data?.length || 0);
 
         setResults(data?.data || []);
-
-        // Store environment info for UI
-        if (data?.meta?.environment) {
-          sessionStorage.setItem("flight_search_env", data.meta.environment);
-        }
       } else if (type === "hotels") {
         const cityCode = searchParams.get("cityCode") || "";
         const checkInDate = searchParams.get("checkInDate") || "";
