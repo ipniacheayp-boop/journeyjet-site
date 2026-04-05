@@ -64,13 +64,23 @@ serve(async (req) => {
     const userTrackId = crypto.randomUUID();
     const searchBody = { searchStartParameters: { cabin, passengers, legs } };
 
+    // Extract client IP for KAYAK required header
+    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() 
+      || req.headers.get("x-real-ip") 
+      || "0.0.0.0";
+
+    const kayakHeaders = {
+      "Content-Type": "application/json",
+      "x-original-client-ip": clientIp,
+    };
+
     console.log("🔍 Starting KAYAK flight search:", JSON.stringify(searchBody));
 
     // Step 1: Start the search
     const startUrl = `${KAYAK_BASE_URL}${POLL_ENDPOINT}?apiKey=${apiKey}&userTrackId=${userTrackId}`;
     const startRes = await fetch(startUrl, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: kayakHeaders,
       body: JSON.stringify(searchBody),
     });
 
@@ -100,7 +110,7 @@ serve(async (req) => {
       const pollUrl = `${KAYAK_BASE_URL}${POLL_ENDPOINT}?apiKey=${apiKey}&userTrackId=${userTrackId}&cluster=${cluster}`;
       const pollRes = await fetch(pollUrl, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: kayakHeaders,
         body: JSON.stringify({ searchId }),
       });
 
