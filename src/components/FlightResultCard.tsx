@@ -46,12 +46,8 @@ export function FlightResultCard({ flight, onBook }: FlightResultCardProps) {
 
   const stopCount = (flight.itineraries?.[0]?.segments?.length || 1) - 1;
 
-  const handleBookKayak = () => {
-    if (kayak?.bookingUrl) {
-      window.open(kayak.bookingUrl, "_blank");
-    } else {
-      onBook(flight);
-    }
+  const handleBook = () => {
+    onBook(flight);
   };
 
   return (
@@ -183,12 +179,8 @@ export function FlightResultCard({ flight, onBook }: FlightResultCardProps) {
             </p>
           )}
 
-          <Button onClick={handleBookKayak} className="w-full gap-2">
-            {kayak?.bookingUrl ? (
-              <>Book on {kayak.providerName || "Provider"} <ExternalLink className="w-4 h-4" /></>
-            ) : (
-              "Book Now"
-            )}
+          <Button onClick={handleBook} className="w-full">
+            Book Now
           </Button>
         </div>
       </CardContent>
