@@ -5,7 +5,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const KAYAK_BASE_URL = "https://www.kayak.com";
+const KAYAK_BASE_URL = "https://sandbox-en-us.kayakaffiliates.com";
 const POLL_ENDPOINT = "/i/api/affiliate/search/flight/v1/poll";
 
 serve(async (req) => {

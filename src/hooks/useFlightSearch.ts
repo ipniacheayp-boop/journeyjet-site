@@ -107,9 +107,7 @@ export const useFlightSearch = () => {
       console.error('❌ Search error:', errorMessage);
       setError(errorMessage);
       setRetryState({ isRetrying: false, currentAttempt: 0, maxAttempts: MAX_RETRIES + 1 });
-      if (!errorMessage.includes('temporarily unavailable')) {
-        navigate('/error');
-      }
+      // Don't redirect to error page - let SearchResults handle the error display
       throw err;
     } finally {
       setLoading(false);
