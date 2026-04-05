@@ -27,6 +27,27 @@ const SearchResults = () => {
   const { searchHotels } = useHotelSearch();
   const { searchCars } = useCarSearch();
   const [showCallPopup, setShowCallPopup] = useState(false);
+  const [timeFilter, setTimeFilter] = useState<TimeSlot>("all");
+
+  const timeCounts = useMemo(() => {
+    const counts: Record<TimeSlot, number> = { all: 0, morning: 0, afternoon: 0, evening: 0, night: 0 };
+    if (type !== "flights") return counts;
+    results.forEach((f) => {
+      const dep = f.itineraries?.[0]?.segments?.[0]?.departure?.at;
+      const slot = getTimeSlot(dep);
+      counts[slot]++;
+      counts.all++;
+    });
+    return counts;
+  }, [results, type]);
+
+  const filteredResults = useMemo(() => {
+    if (type !== "flights" || timeFilter === "all") return results;
+    return results.filter((f) => {
+      const dep = f.itineraries?.[0]?.segments?.[0]?.departure?.at;
+      return getTimeSlot(dep) === timeFilter;
+    });
+  }, [results, timeFilter, type]);
 
   useEffect(() => {
     performSearch();
