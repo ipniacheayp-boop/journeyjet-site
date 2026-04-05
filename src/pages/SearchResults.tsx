@@ -230,13 +230,26 @@ const SearchResults = () => {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {type === "flights" &&
-                results.map((flight, i) => <FlightResultCard key={i} flight={flight} onBook={handleBook} />)}
-              {type === "hotels" &&
-                results.map((hotel, i) => <HotelResultCard key={i} hotel={hotel} onBook={handleBook} />)}
-              {type === "cars" && results.map((car, i) => <CarResultCard key={i} car={car} onBook={handleBook} />)}
-            </div>
+            <>
+              {type === "flights" && results.length > 0 && (
+                <FlightTimeFilter selected={timeFilter} onSelect={setTimeFilter} counts={timeCounts} />
+              )}
+              {filteredResults.length === 0 && type === "flights" ? (
+                <Card className="bg-card border-border">
+                  <CardContent className="py-8 text-center">
+                    <p className="text-muted-foreground">No flights for this time slot. Try a different time preference.</p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {type === "flights" &&
+                    filteredResults.map((flight, i) => <FlightResultCard key={i} flight={flight} onBook={handleBook} />)}
+                  {type === "hotels" &&
+                    filteredResults.map((hotel, i) => <HotelResultCard key={i} hotel={hotel} onBook={handleBook} />)}
+                  {type === "cars" && filteredResults.map((car, i) => <CarResultCard key={i} car={car} onBook={handleBook} />)}
+                </div>
+              )}
+            </>
           )}
         </div>
       </main>
