@@ -107,27 +107,67 @@ export const airlinesData: AirlineInfo[] = [
   { name: "WestJet", slug: "westjet", code: "WS", country: "Canada" },
 ];
 
+export interface StateAirportGroup {
+  state: string;
+  slug: string;
+  airports: Destination[];
+}
+
+export const usaStateAirports: StateAirportGroup[] = [
+  {
+    state: "Texas",
+    slug: "texas",
+    airports: [
+      { city: "Dallas-Fort Worth", slug: "dallas-fort-worth", iataCode: "DFW", country: "US", type: "international" },
+      { city: "Houston", slug: "houston", iataCode: "IAH", country: "US", type: "international" },
+      { city: "Dallas", slug: "dallas-love-field", iataCode: "DAL", country: "US", type: "domestic" },
+      { city: "Austin", slug: "austin", iataCode: "AUS", country: "US", type: "international" },
+      { city: "Houston", slug: "houston-hobby", iataCode: "HOU", country: "US", type: "domestic" },
+      { city: "San Antonio", slug: "san-antonio", iataCode: "SAT", country: "US", type: "international" },
+
+      { city: "El Paso", slug: "el-paso", iataCode: "ELP", country: "US", type: "domestic" },
+      { city: "Midland", slug: "midland", iataCode: "MAF", country: "US", type: "domestic" },
+      { city: "Lubbock", slug: "lubbock", iataCode: "LBB", country: "US", type: "domestic" },
+      { city: "McAllen", slug: "mcallen", iataCode: "MFE", country: "US", type: "domestic" },
+      { city: "Amarillo", slug: "amarillo", iataCode: "AMA", country: "US", type: "domestic" },
+      { city: "Corpus Christi", slug: "corpus-christi", iataCode: "CRP", country: "US", type: "domestic" },
+      { city: "Harlingen", slug: "harlingen", iataCode: "HRL", country: "US", type: "domestic" },
+      { city: "Killeen", slug: "killeen", iataCode: "GRK", country: "US", type: "domestic" },
+      { city: "Brownsville", slug: "brownsville", iataCode: "BRO", country: "US", type: "domestic" },
+      { city: "Laredo", slug: "laredo", iataCode: "LRD", country: "US", type: "domestic" },
+
+      { city: "Abilene", slug: "abilene", iataCode: "ABI", country: "US", type: "domestic" },
+      { city: "College Station", slug: "college-station", iataCode: "CLL", country: "US", type: "domestic" },
+      { city: "Waco", slug: "waco", iataCode: "ACT", country: "US", type: "domestic" },
+      { city: "San Angelo", slug: "san-angelo", iataCode: "SJT", country: "US", type: "domestic" },
+      { city: "Tyler", slug: "tyler", iataCode: "TYR", country: "US", type: "domestic" },
+      { city: "Wichita Falls", slug: "wichita-falls", iataCode: "SPS", country: "US", type: "domestic" },
+      { city: "Beaumont", slug: "beaumont", iataCode: "BPT", country: "US", type: "domestic" },
+      { city: "Longview", slug: "longview", iataCode: "longview", iataCode: "GGG", country: "US", type: "domestic" },
+      { city: "Texarkana", slug: "texarkana", iataCode: "TXK", country: "US", type: "domestic" },
+    ],
+  },
+];
+
 // Legacy compat
-export const airlines = airlinesData.map(a => a.name);
+export const airlines = airlinesData.map((a) => a.name);
 
 export function getAirlineBySlug(slug: string): AirlineInfo | undefined {
-  return airlinesData.find(a => a.slug === slug);
+  return airlinesData.find((a) => a.slug === slug);
 }
 
 export function getDestinationBySlug(slug: string): Destination | undefined {
   // Direct slug match first
-  const direct = popularDestinations.find(d => d.slug === slug);
+  const direct = popularDestinations.find((d) => d.slug === slug);
   if (direct) return direct;
 
   // Fuzzy match: try matching by country name (e.g., "india" -> Delhi)
   const normalized = slug.replace(/-/g, " ").toLowerCase();
-  const byCountry = popularDestinations.find(
-    d => d.country.toLowerCase() === normalized
-  );
+  const byCountry = popularDestinations.find((d) => d.country.toLowerCase() === normalized);
   if (byCountry) return byCountry;
 
   // Try partial city name match
   return popularDestinations.find(
-    d => d.city.toLowerCase().includes(normalized) || normalized.includes(d.city.toLowerCase())
+    (d) => d.city.toLowerCase().includes(normalized) || normalized.includes(d.city.toLowerCase()),
   );
 }
