@@ -33,7 +33,7 @@ At Tripile.com, we focus on helping travelers book smarter, not faster. With liv
 
 ## Introduction: Why Smart Travel Matters More Than Ever
 
-Many people delay or cancel international travel because they believe it’s too expensive. In reality, most travelers overpay simply because they don’t know *when* or *how* to book.
+Many people delay or cancel international travel because they believe it’s too expensive. In reality, most travelers overpay simply because they don’t know when or how to book.
 
 Airlines change prices multiple times a day. The same flight can cost vastly different amounts depending on timing, demand, and availability. Smart travelers don’t guess—they plan, compare, and track.
 
@@ -1333,7 +1333,7 @@ The Rule: Your refund must go back to your original payment method — not credi
 
 ## 2. Non-Refundable Ticket? You're Still Entitled  
 
-When your ticket says "non-refundable," it only applies if *you* cancel. :contentReference[oaicite:7]{index=7}  
+When your ticket says "non-refundable," it only applies if you cancel. :contentReference[oaicite:7]{index=7}  
 
 If the airline cancels or changes your flight, that label does not matter. :contentReference[oaicite:8]{index=8}  
 
@@ -1360,7 +1360,7 @@ If you reject the new itinerary → you get a full refund. :contentReference[oai
 ## 4. How to Actually Get Your Refund  
 
 Step 1: Decline the voucher  
-Say: *“I want a full cash refund to my original payment method.”*  
+Say: “I want a full cash refund to my original payment method.”  
 
 Step 2: Submit refund request online  
 
