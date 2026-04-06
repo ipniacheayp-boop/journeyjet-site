@@ -143,7 +143,7 @@ export const usaStateAirports: StateAirportGroup[] = [
       { city: "Tyler", slug: "tyler", iataCode: "TYR", country: "US", type: "domestic" },
       { city: "Wichita Falls", slug: "wichita-falls", iataCode: "SPS", country: "US", type: "domestic" },
       { city: "Beaumont", slug: "beaumont", iataCode: "BPT", country: "US", type: "domestic" },
-      { city: "Longview", slug: "longview", iataCode: "longview", iataCode: "GGG", country: "US", type: "domestic" },
+      { city: "Longview", slug: "longview", iataCode: "GGG", country: "US", type: "domestic" },
       { city: "Texarkana", slug: "texarkana", iataCode: "TXK", country: "US", type: "domestic" },
     ],
   },
