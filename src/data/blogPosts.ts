@@ -236,7 +236,7 @@ Your next international adventure starts with a smarter choice.
     `,
     featuredImage: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&h=500&fit=crop",
     author: {
-      name: "Sarah Mitchell",
+      name: "Jake Hughs",
       avatar: "/avatars/1.png",
       bio: "Travel editor with 10+ years of experience finding the best flight deals.",
     },
