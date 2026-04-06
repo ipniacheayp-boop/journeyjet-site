@@ -301,7 +301,7 @@ Each of these destinations offers something unique that you simply won't find in
     featuredImage: "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&h=500&fit=crop",
     author: {
       name: "James Wilson",
-      avatar: "/avatars/2.png",
+      avatar: "/avatars/22.png",
       bio: "European travel specialist who has visited 45 countries and counting.",
     },
     publishedAt: "2024-01-10",
@@ -362,7 +362,7 @@ Protect your investment and your health—the right travel insurance gives you p
     featuredImage: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=500&fit=crop",
     author: {
       name: "Emily Chen",
-      avatar: "/avatars/3.png",
+      avatar: "/avatars/32.png",
       bio: "Insurance expert helping travelers make smart protection decisions.",
     },
     publishedAt: "2024-01-05",
@@ -436,7 +436,7 @@ Start small with a weekend trip, then gradually extend. Soon you'll wonder why y
     featuredImage: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&h=500&fit=crop",
     author: {
       name: "Mike Torres",
-      avatar: "/avatars/4.png",
+      avatar: "/avatars/42.png",
       bio: "Minimalist traveler who has visited 30 countries with just a backpack.",
     },
     publishedAt: "2024-01-02",
@@ -504,7 +504,7 @@ Choose the card that matches your travel patterns and start earning your way to 
     featuredImage: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=500&fit=crop",
     author: {
       name: "Tristan David",
-      avatar: "/avatars/1.png",
+      avatar: "/avatars/12.png",
       bio: "Travel editor with 10+ years of experience finding the best flight deals.",
     },
     publishedAt: "2023-12-28",
@@ -585,7 +585,7 @@ Solo travel builds confidence, independence, and resilience. With smart precauti
     featuredImage: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&h=500&fit=crop",
     author: {
       name: "Amanda Foster",
-      avatar: "/avatars/5.png",
+      avatar: "/avatars/52.png",
       bio: "Solo travel advocate who has explored 50+ countries independently.",
     },
     publishedAt: "2023-12-20",
@@ -807,7 +807,7 @@ Start today, and make your next trip cheaper, longer, and unforgettable.
     featuredImage: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=500&fit=crop",
     author: {
       name: "Sarah Adams",
-      avatar: "/avatars/6.png",
+      avatar: "/avatars/62.png",
       bio: "Travel-focused writer sharing practical strategies to help people save money on flights and travel smarter.",
     },
     publishedAt: "2026-02-01",
@@ -1077,7 +1077,7 @@ Flexibility wins. The earlier you act, the more you save.
     featuredImage: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=500&fit=crop",
     author: {
       name: "Xavier Toppo",
-      avatar: "/avatars/4.png",
+      avatar: "/avatars/42.png",
       bio: "Data-driven travel insights to help you save money and travel smarter.",
     },
     publishedAt: "2026-03-18",
@@ -1294,7 +1294,7 @@ Flights are down. Prices are lower. The opportunity is now.
     featuredImage: "https://images.unsplash.com/photo-1493558103817-58b2924bce98?w=800&h=500&fit=crop",
     author: {
       name: "Jonah Mitchell",
-      avatar: "/avatars/5.png",
+      avatar: "/avatars/52.png",
       bio: "Helping modern travelers explore smarter, faster, and more affordably.",
     },
     publishedAt: "2026-02-20",
@@ -1458,7 +1458,7 @@ You may still be able to claim refund
     featuredImage: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&h=500&fit=crop",
     author: {
       name: "Travel Insights Team",
-      avatar: "/avatars/6.png",
+      avatar: "/avatars/62.png",
       bio: "Helping travelers understand their rights and make smarter travel decisions.",
     },
     publishedAt: "2026-03-21",
