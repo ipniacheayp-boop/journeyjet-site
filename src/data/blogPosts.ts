@@ -28,7 +28,7 @@ export const blogPosts: BlogPost[] = [
 
 International travel doesn’t have to be expensive. While flight prices often seem unpredictable, the truth is that airfare follows patterns. Travelers who understand these patterns—and use the right tools—can consistently find cheap international flights without compromising comfort or convenience.
 
-At **Tripile.com**, we focus on helping travelers book smarter, not faster. With live comparisons, flexible-date tools, and reliable price tracking, international travel becomes affordable and stress-free.
+At Tripile.com, we focus on helping travelers book smarter, not faster. With live comparisons, flexible-date tools, and reliable price tracking, international travel becomes affordable and stress-free.
 
 
 ## Introduction: Why Smart Travel Matters More Than Ever
@@ -65,7 +65,7 @@ Smart booking focuses on:
 - Watching demand trends
 - Booking when data suggests the best value
 
-For international flights, the sweet spot is usually **8–12 weeks before departure**, but this varies by destination, season, and airline.
+For international flights, the sweet spot is usually 8–12 weeks before departure, but this varies by destination, season, and airline.
 
 Smart booking combines timing with flexibility and comparison—giving travelers control instead of guesswork.
 
@@ -146,10 +146,10 @@ Small conveniences make a big difference, especially during international trips.
 Myth 1: Booking very early is always cheapest
 Prices fluctuate. Monitoring fares often beats blind early booking.
 
-Myth 2: Incognito mode guarantees cheaper prices**  
+Myth 2: Incognito mode guarantees cheaper prices  
 It improves privacy, but real savings come from comparing airlines and dates.
 
-Myth 3: Weekend flights are always expensive**  
+Myth 3: Weekend flights are always expensive  
 Pricing depends more on demand than the day itself. Some weekend flights are cheaper if booked smartly.
 
 Understanding these myths helps travelers avoid costly assumptions.
@@ -175,7 +175,7 @@ After a few days:
 - Compared airlines and layover options
 - Used price alerts to monitor drops  
 
-The final ticket cost **₹38,000**, saving **₹17,000** with minimal effort.
+The final ticket cost ₹38,000, saving ₹17,000 with minimal effort.
 
 ### Key lessons from this experience:
 - Daily comparison helps
@@ -331,9 +331,9 @@ A single medical emergency abroad can cost tens of thousands of dollars. Trip ca
 
 ## What's Often Overlooked
 
-1. **Pre-existing conditions** - Many policies exclude them unless you buy within 14-21 days of your first trip payment
-2. **Adventure activities** - Skiing, scuba diving, and other activities often require additional coverage
-3. **Cancel for any reason** - Standard policies only cover specific reasons; CFAR gives you flexibility
+1. Pre-existing conditions - Many policies exclude them unless you buy within 14-21 days of your first trip payment
+2. Adventure activities - Skiing, scuba diving, and other activities often require additional coverage
+3. Cancel for any reason - Standard policies only cover specific reasons; CFAR gives you flexibility
 
 ## When to Skip It
 
@@ -446,9 +446,9 @@ The right travel credit card can dramatically reduce your travel costs. Here's o
 ## Understanding Travel Rewards
 
 ### Points vs. Miles vs. Cash Back
-- **Points**: Flexible, transferable to multiple programs
-- **Miles**: Tied to specific airlines but often offer great value
-- **Cash Back**: Simple and straightforward, no blackout dates
+- Points: Flexible, transferable to multiple programs
+- Miles: Tied to specific airlines but often offer great value
+- Cash Back: Simple and straightforward, no blackout dates
 
 ## Top Cards for Different Travelers
 
@@ -466,11 +466,11 @@ Hotel cards offer elite status, free nights, and property credits.
 
 ## Key Features to Consider
 
-1. **Sign-up bonus** - Often worth $500-$1,000+ in travel value
-2. **Annual fee** - Make sure the benefits outweigh the cost
-3. **Earning rates** - Higher rates on travel and dining
-4. **Transfer partners** - More options mean more flexibility
-5. **Travel protections** - Trip delay, cancellation, and rental car coverage
+1. Sign-up bonus - Often worth $500-$1,000+ in travel value
+2. Annual fee - Make sure the benefits outweigh the cost
+3. Earning rates - Higher rates on travel and dining
+4. Transfer partners - More options mean more flexibility
+5. Travel protections - Trip delay, cancellation, and rental car coverage
 
 ## Maximizing Your Rewards
 
@@ -590,7 +590,7 @@ Solo travel builds confidence, independence, and resilience. With smart precauti
     content: `
 # How to Find Cheap Flights in 2026: Expert Travel Booking Guide
 
-**Meta Description:** Learn how to find cheap flights and save 30-50% on airfare with proven strategies from travel experts. Compare flight deals, use price alerts, and book smarter for your next trip.
+Meta Description: Learn how to find cheap flights and save 30-50% on airfare with proven strategies from travel experts. Compare flight deals, use price alerts, and book smarter for your next trip.
 
 Traveling doesn’t have to be expensive. With the right flight booking strategies, you can save up to 30–50% on airfare and use that money for hotels, food, and experiences instead.
 
@@ -754,32 +754,32 @@ Begin comparing flights today and access the most competitive airfare options. B
 
 ## FAQ – Cheap Flights
 
-**Q1. When is the best time to book flights?**  
+Q1. When is the best time to book flights?  
 International: 2–4 months in advance  
 Domestic: 3–6 weeks ahead  
 
-**Q2. Are midweek flights cheaper?**  
+Q2. Are midweek flights cheaper?  
 Yes, Tuesday and Wednesday flights are generally 20–40% cheaper.
 
-**Q3. Is Tripile.com reliable?**  
+Q3. Is Tripile.com reliable?  
 Yes. It compares multiple airlines and platforms and highlights hidden fees.
 
-**Q4. How can I find cheap last-minute flights?**  
+Q4. How can I find cheap last-minute flights?  
 Use deal-focused platforms, check budget airlines, and stay flexible.
 
-**Q5. Are budget airlines safe?**  
+Q5. Are budget airlines safe?  
 Yes. Always review baggage policies and fees.
 
-**Q6. Should I book via travel agents or online platforms?**  
+Q6. Should I book via travel agents or online platforms?  
 Online platforms usually offer better rates and transparency.
 
-**Q7. How do I avoid cancellation charges?**  
+Q7. How do I avoid cancellation charges?  
 Read policies carefully and consider flexible fares or insurance.
 
-**Q8. Does season affect flight prices?**  
+Q8. Does season affect flight prices?  
 Yes. Low and shoulder seasons are often 20–50% cheaper.
 
-**Q9. Can loyalty programs or cashback apps help?**  
+Q9. Can loyalty programs or cashback apps help?  
 Absolutely. Over time, they significantly reduce travel costs.
 
 ---
@@ -822,7 +822,7 @@ On March 16, 2026, Dollar Flight Club published its Spring 2026 Travel Price Rep
 
 The headline finding was hard to ignore:
 
-**14 of the 20 most popular international spring break destinations are cheaper in 2026 than they were at the same point in 2025.**
+14 of the 20 most popular international spring break destinations are cheaper in 2026 than they were at the same point in 2025.
 
 Dollar Flight Club, March 2026:
 - Cancún down 35% ($251 avg)
@@ -835,7 +835,7 @@ Meanwhile, domestic routes are also cheaper:
 - Florida flights under $100 round trip
 - Domestic routes down 8–12% vs 2025
 
-The Points Guy identifies **43 days before departure** as the cheapest booking point — meaning **now is the time to book.**
+The Points Guy identifies 43 days before departure as the cheapest booking point — meaning now is the time to book.
 
 > "Spring 2026 is one of the better booking windows we have seen since pre-pandemic pricing normalized." — Dollar Flight Club
 
@@ -852,13 +852,13 @@ No destination dropped more than Cancún.
 - Down from $389 → $251
 - Save ~$138 per ticket
 
-**What to Do:**
+What to Do:
 - Hotel Zone beaches & all-inclusives (~$120/night)
 - Isla Mujeres snorkeling
 - Chichén Itzá day trip
 - Cenote swimming
 
-**Pro Tips:**
+Pro Tips:
 - All-inclusive = cheaper overall
 - Fly midweek to save $40–$80
 
@@ -870,13 +870,13 @@ No destination dropped more than Cancún.
 
 The most booked spring break city in the US.
 
-**What to Do:**
+What to Do:
 - Disney World & Universal
 - Blue Spring State Park
 - International Drive dining
 - Everglades day trip
 
-**Pro Tips:**
+Pro Tips:
 - Stay in Kissimmee (30–40% cheaper)
 - Visit parks on weekdays
 
@@ -888,13 +888,13 @@ The most booked spring break city in the US.
 
 Caribbean without international hassle.
 
-**What to Do:**
+What to Do:
 - Old San Juan walk
 - Flamenco Beach
 - El Yunque rainforest
 - Local food scene
 
-**Pro Tips:**
+Pro Tips:
 - Stay in Condado/Miramar
 - Combine with Culebra or Vieques
 
@@ -906,13 +906,13 @@ Caribbean without international hassle.
 
 Entertainment + affordability.
 
-**What to Do:**
+What to Do:
 - The Strip attractions
 - Pool parties
 - Red Rock Canyon
 - Live shows
 
-**Pro Tips:**
+Pro Tips:
 - Stay midweek (huge savings)
 - Fly instead of drive from LA
 
@@ -924,13 +924,13 @@ Entertainment + affordability.
 
 Still one of the most searched destinations.
 
-**What to Do:**
+What to Do:
 - South Beach
 - Wynwood Walls
 - Little Havana
 - Everglades
 
-**Pro Tips:**
+Pro Tips:
 - Fly to Fort Lauderdale (save $60–$100)
 - Stay in Brickell or Midtown
 
@@ -942,13 +942,13 @@ Still one of the most searched destinations.
 
 Unique island vibe in the US.
 
-**What to Do:**
+What to Do:
 - Mallory Square sunset
 - Reef snorkeling
 - Bike the island
 - Hemingway House
 
-**Pro Tips:**
+Pro Tips:
 - Stay off Duval Street
 - Drive the Overseas Highway
 
@@ -960,13 +960,13 @@ Unique island vibe in the US.
 
 Top beach destination in 15 states.
 
-**What to Do:**
+What to Do:
 - Henderson Beach
 - Fishing charters
 - Dolphin cruises
 - Paddleboarding
 
-**Pro Tips:**
+Pro Tips:
 - Rent condos for groups
 - Consider Fort Walton Beach
 
@@ -978,13 +978,13 @@ Top beach destination in 15 states.
 
 Perfect mix of desert + ocean.
 
-**What to Do:**
+What to Do:
 - Whale watching
 - El Medano Beach
 - El Arco snorkeling
 - Art district
 
-**Pro Tips:**
+Pro Tips:
 - Stay in San José del Cabo
 - Book whale tours early
 
@@ -996,13 +996,13 @@ Perfect mix of desert + ocean.
 
 Down 27% — best value destination.
 
-**What to Do:**
+What to Do:
 - Medellín cable cars
 - Coffee tours
 - Bogotá Gold Museum
 - Guatapé
 
-**Pro Tips:**
+Pro Tips:
 - Budget $45–$70/day
 - Stay in El Poblado
 
@@ -1014,13 +1014,13 @@ Down 27% — best value destination.
 
 360 sunny days per year.
 
-**What to Do:**
+What to Do:
 - Eagle Beach
 - Shipwreck snorkeling
 - Flamingo Beach
 - National park tours
 
-**Pro Tips:**
+Pro Tips:
 - Book packages (save 15–20%)
 - Choose beach location wisely
 
@@ -1029,10 +1029,10 @@ Down 27% — best value destination.
 # How to Book Spring Break for Less
 
 ## 1. Book Now
-Best window: **28–61 days before departure**
+Best window: 28–61 days before departure
 
 ## 2. Fly Midweek
-Save **15–25%**
+Save 15–25%
 
 ## 3. Use Alternative Airports
 Examples:
@@ -1040,7 +1040,7 @@ Examples:
 - OAK vs SFO
 
 ## 4. Take Early or Late Flights
-Save **$40–$120**
+Save $40–$120
 
 ## 5. Set Price Alerts
 Book immediately when prices drop
@@ -1118,9 +1118,9 @@ Nassau's Old Town is walkable from the cruise pier in under 10 minutes. The fish
 - 🏛 Queen's Staircase — 66 steps carved by slaves from solid limestone — free, 10-min walk from downtown  
 - 🍤 Arawak Cay Fish Fry — where Nassau actually eats — cracked conch from $8, local atmosphere  
 
-**PRO TIP:** Fly into Fort Lauderdale (FLL) not Miami (MIA) for Nassau routes — fares are consistently $30–$60 cheaper and the flight time is identical. FLL is Expedia's most affordable mainstream US airport for Caribbean routes.  
+PRO TIP: Fly into Fort Lauderdale (FLL) not Miami (MIA) for Nassau routes — fares are consistently $30–$60 cheaper and the flight time is identical. FLL is Expedia's most affordable mainstream US airport for Caribbean routes.  
 
-**PRO TIP:** For a true 24-hour micro-cation: fly out Friday evening, stay one night at Baha Mar or a budget guesthouse downtown ($80–$250), beach Saturday morning, fly home Saturday afternoon. Total trip cost including flight and hotel: $200–$400 per person.
+PRO TIP: For a true 24-hour micro-cation: fly out Friday evening, stay one night at Baha Mar or a budget guesthouse downtown ($80–$250), beach Saturday morning, fly home Saturday afternoon. Total trip cost including flight and hotel: $200–$400 per person.
 
 ---
 
@@ -1140,9 +1140,9 @@ No currency exchange anxiety needed — most Toronto establishments accept US cr
 - 🌮 Kensington Market — the most eclectic neighborhood in Canada — street food from $5 CAD  
 - 🌆 CN Tower EdgeWalk or LookOut — iconic Toronto views — book online to skip the queue  
 
-**PRO TIP:** Take the UP Express train from Toronto Pearson Airport (YYZ) to Union Station downtown — 25 minutes, $12 CAD (~$9 USD). Faster and cheaper than a cab. Runs every 15 minutes.  
+PRO TIP: Take the UP Express train from Toronto Pearson Airport (YYZ) to Union Station downtown — 25 minutes, $12 CAD (~$9 USD). Faster and cheaper than a cab. Runs every 15 minutes.  
 
-**PRO TIP:** For a one-neighborhood micro-cation, pick Kensington Market + Chinatown. They are adjacent, walkable, and pack more sensory experience per hour than anywhere else in the city. Best between 11am and 4pm.
+PRO TIP: For a one-neighborhood micro-cation, pick Kensington Market + Chinatown. They are adjacent, walkable, and pack more sensory experience per hour than anywhere else in the city. Best between 11am and 4pm.
 
 ---
 
@@ -1162,9 +1162,9 @@ Flights from New York (JFK/EWR/LGA) and the East Coast appear under $199 consist
 - 🌊 Condado Beach afternoon — 20 minutes from Old San Juan by Uber — calm Atlantic swimming  
 - 🌅 Sunset from the San Cristóbal ramparts — the best free view in the Caribbean — golden hour is extraordinary here  
 
-**PRO TIP:** The micro-cation formula for San Juan: arrive Friday evening, check into a boutique hotel in Old San Juan ($120–$180/night), walk the streets at night — they come alive after 9pm — and spend Saturday exploring the fortresses and Condado Beach before a Sunday morning flight home.  
+PRO TIP: The micro-cation formula for San Juan: arrive Friday evening, check into a boutique hotel in Old San Juan ($120–$180/night), walk the streets at night — they come alive after 9pm — and spend Saturday exploring the fortresses and Condado Beach before a Sunday morning flight home.  
 
-**PRO TIP:** Avoid renting a car. Old San Juan is completely walkable and Uber works everywhere in San Juan. Parking in Old San Juan is difficult and unnecessary for a 24-hour visit.
+PRO TIP: Avoid renting a car. Old San Juan is completely walkable and Uber works everywhere in San Juan. Parking in Old San Juan is difficult and unnecessary for a 24-hour visit.
 
 ---
 
@@ -1184,9 +1184,9 @@ A note on logistics: Canada requires a passport for Americans flying in. Apply i
 - 🛍 Mile End neighborhood — the hippest neighborhood in Canada — vintage, coffee, art, murals  
 - 🍷 Old Montreal dinner — some of North America's best French-Canadian cuisine from $20/person  
 
-**PRO TIP:** Take the STM Metro from Montreal-Trudeau Airport (YUL) to downtown — $3.50 CAD (~$2.60 USD), 25 minutes. Exit at Square-Victoria for direct access to Old Montreal. Faster than a cab in traffic.  
+PRO TIP: Take the STM Metro from Montreal-Trudeau Airport (YUL) to downtown — $3.50 CAD (~$2.60 USD), 25 minutes. Exit at Square-Victoria for direct access to Old Montreal. Faster than a cab in traffic.  
 
-**PRO TIP:** Montreal's best micro-cation formula: arrive Saturday morning, spend the day in Old Montreal and Mile End, stay one night at a boutique hotel in Plateau-Mont-Royal ($90–$150/night), fly home Sunday afternoon. The city is at its best on a weekend.
+PRO TIP: Montreal's best micro-cation formula: arrive Saturday morning, spend the day in Old Montreal and Mile End, stay one night at a boutique hotel in Plateau-Mont-Royal ($90–$150/night), fly home Sunday afternoon. The city is at its best on a weekend.
 
 ---
 
@@ -1206,9 +1206,9 @@ The 24-hour Chicago formula is well-established among experienced micro-cation t
 - 🍕 Deep-dish at Lou Malnati's or Pequod's — the great Chicago debate — both are correct answers  
 - 🌊 Lakefront Trail — 26 miles of public waterfront — walk or rent a Divvy bike from $1  
 
-**PRO TIP:** Fly into Midway (MDW) instead of O'Hare (ORD). Orange Line train to downtown is 30 minutes and $2.50. Hotel rates in the South Loop near Midway are 25–30% cheaper than the Magnificent Mile with identical transit access.  
+PRO TIP: Fly into Midway (MDW) instead of O'Hare (ORD). Orange Line train to downtown is 30 minutes and $2.50. Hotel rates in the South Loop near Midway are 25–30% cheaper than the Magnificent Mile with identical transit access.  
 
-**PRO TIP:** Chicago's Cloud Gate (The Bean) in Millennium Park is free. Arrive before 8am for photos without crowds. The reflections at golden hour are worth the early alarm.
+PRO TIP: Chicago's Cloud Gate (The Bean) in Millennium Park is free. Arrive before 8am for photos without crowds. The reflections at golden hour are worth the early alarm.
 
 ---
 
@@ -1228,9 +1228,9 @@ Flights from New York run $150–$200 round trip on most carriers. From Dallas, 
 - 🥖 Po-boy at Parkway Bakery — the best sandwich in the South — $12, roast beef, debris  
 - 🏘 Garden District walking tour — free — antebellum mansions and Southern Gothic atmosphere  
 
-**PRO TIP:** Frenchmen Street, not Bourbon Street. The Spotted Cat, The Maison, Bamboula's — live jazz, local crowd, no cover charge. Bourbon Street is loud and expensive and not where New Orleans actually happens.  
+PRO TIP: Frenchmen Street, not Bourbon Street. The Spotted Cat, The Maison, Bamboula's — live jazz, local crowd, no cover charge. Bourbon Street is loud and expensive and not where New Orleans actually happens.  
 
-**PRO TIP:** New Orleans is most walkable east of the French Quarter and through the Marigny into the Bywater. Stay in the Marigny neighborhood for 25–35% lower hotel rates than the French Quarter while walking distance to everything that matters.
+PRO TIP: New Orleans is most walkable east of the French Quarter and through the Marigny into the Bywater. Stay in the Marigny neighborhood for 25–35% lower hotel rates than the French Quarter while walking distance to everything that matters.
 
 ---
 
@@ -1327,7 +1327,7 @@ You are entitled to a refund when:
 - Your route is meaningfully altered  
 - Accessibility is impacted  
 
-**The Rule:** Your refund must go back to your original payment method — not credits or vouchers.  
+The Rule: Your refund must go back to your original payment method — not credits or vouchers.  
 
 ---
 
@@ -1337,7 +1337,7 @@ When your ticket says "non-refundable," it only applies if *you* cancel. :conten
 
 If the airline cancels or changes your flight, that label does not matter. :contentReference[oaicite:8]{index=8}  
 
-**Simple logic:**  
+Simple logic:  
 - You cancel → no refund  
 - Airline cancels → full refund  
 
@@ -1359,16 +1359,16 @@ If you reject the new itinerary → you get a full refund. :contentReference[oai
 
 ## 4. How to Actually Get Your Refund  
 
-**Step 1:** Decline the voucher  
+Step 1: Decline the voucher  
 Say: *“I want a full cash refund to my original payment method.”*  
 
-**Step 2:** Submit refund request online  
+Step 2: Submit refund request online  
 
-**Step 3:** Keep all proof  
+Step 3: Keep all proof  
 
-**Step 4:** Escalate to DOT (airconsumer.dot.gov)  
+Step 4: Escalate to DOT (airconsumer.dot.gov)  
 
-**Step 5:** Chargeback if needed  
+Step 5: Chargeback if needed  
 
 Refund timeline:  
 - 7 days (credit card)  
@@ -1378,13 +1378,13 @@ Refund timeline:
 
 ## 5. What to Say (Scripts That Work)  
 
-**At counter:**  
+At counter:  
 "My flight was canceled. I want a full refund under DOT rules."  
 
-**On call/chat:**  
+On call/chat:  
 "I’m requesting a refund for booking [ID]. Airline canceled my flight."  
 
-**Written complaint:**  
+Written complaint:  
 "Requesting refund under DOT regulations for canceled flight."  
 
 ---
@@ -1427,19 +1427,19 @@ Compare fares and book smarter at: https://tripile.com/
 
 ## FAQ  
 
-**Does this apply to all airlines?**  
+Does this apply to all airlines?  
 Yes — all airlines flying in the US.  
 
-**How long for refund?**  
+How long for refund?  
 7 days (card), 20 days (others)  
 
-**Rerouted flight refund?**  
+Rerouted flight refund?  
 Yes, if significantly different  
 
-**Booked via third party?**  
+Booked via third party?  
 More complex, but same rights  
 
-**Accepted voucher already?**  
+Accepted voucher already?  
 You may still be able to claim refund  
 
   `,
