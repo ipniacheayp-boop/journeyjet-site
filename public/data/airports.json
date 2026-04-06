@@ -21,11 +21,25 @@
     "country": "United States"
   },
   {
+    "iataCode": "ABI",
+    "icaoCode": "KABI",
+    "airportName": "Abilene Regional Airport",
+    "city": "Abilene",
+    "country": "United States"
+  },
+  {
     "iataCode": "ABS",
     "icaoCode": "HEBL",
     "airportName": "Abu Simbel Airport",
     "city": "Abu Simbel",
     "country": "Egypt"
+  },
+  {
+    "iataCode": "ABY",
+    "icaoCode": "KABY",
+    "airportName": "Southwest Georgia Regional Airport",
+    "city": "Albany",
+    "country": "United States"
   },
   {
     "iataCode": "ABZ",
@@ -35,18 +49,67 @@
     "country": "United Kingdom"
   },
   {
-    "iataCode": "AUH",
-    "icaoCode": "OMAA",
-    "airportName": "Abu Dhabi International Airport",
-    "city": "Abu Dhabi",
-    "country": "United Arab Emirates"
-  },
-  {
     "iataCode": "ACC",
     "icaoCode": "DGAA",
     "airportName": "Kotoka International Airport",
     "city": "Accra",
     "country": "Ghana"
+  },
+  {
+    "iataCode": "ACT",
+    "icaoCode": "KACT",
+    "airportName": "Waco Regional Airport",
+    "city": "Waco",
+    "country": "United States"
+  },
+  {
+    "iataCode": "ACV",
+    "icaoCode": "KACV",
+    "airportName": "Arcata-Eureka Airport",
+    "city": "Arcata",
+    "country": "United States"
+  },
+  {
+    "iataCode": "AGS",
+    "icaoCode": "KAGS",
+    "airportName": "Augusta Regional Airport",
+    "city": "Augusta",
+    "country": "United States"
+  },
+  {
+    "iataCode": "AHN",
+    "icaoCode": "KAHN",
+    "airportName": "Athens-Ben Epps Airport",
+    "city": "Athens",
+    "country": "United States"
+  },
+  {
+    "iataCode": "ALB",
+    "icaoCode": "KALB",
+    "airportName": "Albany International Airport",
+    "city": "Albany",
+    "country": "United States"
+  },
+  {
+    "iataCode": "ALW",
+    "icaoCode": "KALW",
+    "airportName": "Walla Walla Regional Airport",
+    "city": "Walla Walla",
+    "country": "United States"
+  },
+  {
+    "iataCode": "AMA",
+    "icaoCode": "KAMA",
+    "airportName": "Rick Husband Amarillo International Airport",
+    "city": "Amarillo",
+    "country": "United States"
+  },
+  {
+    "iataCode": "AMD",
+    "icaoCode": "VAAH",
+    "airportName": "Sardar Vallabhbhai Patel International Airport",
+    "city": "Ahmedabad",
+    "country": "India"
   },
   {
     "iataCode": "AMS",
@@ -56,10 +119,10 @@
     "country": "Netherlands"
   },
   {
-    "iataCode": "ATL",
-    "icaoCode": "KATL",
-    "airportName": "Hartsfield-Jackson Atlanta International Airport",
-    "city": "Atlanta",
+    "iataCode": "ART",
+    "icaoCode": "KART",
+    "airportName": "Watertown International Airport",
+    "city": "Watertown",
     "country": "United States"
   },
   {
@@ -70,6 +133,27 @@
     "country": "Greece"
   },
   {
+    "iataCode": "ATL",
+    "icaoCode": "KATL",
+    "airportName": "Hartsfield-Jackson Atlanta International Airport",
+    "city": "Atlanta",
+    "country": "United States"
+  },
+  {
+    "iataCode": "AUH",
+    "icaoCode": "OMAA",
+    "airportName": "Abu Dhabi International Airport",
+    "city": "Abu Dhabi",
+    "country": "United Arab Emirates"
+  },
+  {
+    "iataCode": "AUS",
+    "icaoCode": "KAUS",
+    "airportName": "Austin-Bergstrom International Airport",
+    "city": "Austin",
+    "country": "United States"
+  },
+  {
     "iataCode": "BCN",
     "icaoCode": "LEBL",
     "airportName": "Barcelona-El Prat Airport",
@@ -77,11 +161,53 @@
     "country": "Spain"
   },
   {
+    "iataCode": "BFL",
+    "icaoCode": "KBFL",
+    "airportName": "Meadows Field Airport",
+    "city": "Bakersfield",
+    "country": "United States"
+  },
+  {
+    "iataCode": "BGM",
+    "icaoCode": "KBGM",
+    "airportName": "Greater Binghamton Airport",
+    "city": "Binghamton",
+    "country": "United States"
+  },
+  {
     "iataCode": "BKK",
     "icaoCode": "VTBS",
     "airportName": "Suvarnabhumi Airport",
     "city": "Bangkok",
     "country": "Thailand"
+  },
+  {
+    "iataCode": "BLI",
+    "icaoCode": "KBLI",
+    "airportName": "Bellingham International Airport",
+    "city": "Bellingham",
+    "country": "United States"
+  },
+  {
+    "iataCode": "BLR",
+    "icaoCode": "VOBL",
+    "airportName": "Kempegowda International Airport",
+    "city": "Bangalore",
+    "country": "India"
+  },
+  {
+    "iataCode": "BLV",
+    "icaoCode": "KBLV",
+    "airportName": "MidAmerica St. Louis Airport",
+    "city": "Belleville",
+    "country": "United States"
+  },
+  {
+    "iataCode": "BMI",
+    "icaoCode": "KBMI",
+    "airportName": "Central Illinois Regional Airport",
+    "city": "Bloomington",
+    "country": "United States"
   },
   {
     "iataCode": "BOM",
@@ -98,11 +224,53 @@
     "country": "United States"
   },
   {
+    "iataCode": "BPT",
+    "icaoCode": "KBPT",
+    "airportName": "Jack Brooks Regional Airport",
+    "city": "Beaumont",
+    "country": "United States"
+  },
+  {
     "iataCode": "BQH",
     "icaoCode": "EGKB",
     "airportName": "London Biggin Hill Airport",
     "city": "London",
     "country": "United Kingdom"
+  },
+  {
+    "iataCode": "BQK",
+    "icaoCode": "KBQK",
+    "airportName": "Brunswick Golden Isles Airport",
+    "city": "Brunswick",
+    "country": "United States"
+  },
+  {
+    "iataCode": "BRO",
+    "icaoCode": "KBRO",
+    "airportName": "Brownsville South Padre Island International Airport",
+    "city": "Brownsville",
+    "country": "United States"
+  },
+  {
+    "iataCode": "BUF",
+    "icaoCode": "KBUF",
+    "airportName": "Buffalo Niagara International Airport",
+    "city": "Buffalo",
+    "country": "United States"
+  },
+  {
+    "iataCode": "BUR",
+    "icaoCode": "KBUR",
+    "airportName": "Hollywood Burbank Airport",
+    "city": "Burbank",
+    "country": "United States"
+  },
+  {
+    "iataCode": "CCU",
+    "icaoCode": "VECC",
+    "airportName": "Netaji Subhas Chandra Bose International Airport",
+    "city": "Kolkata",
+    "country": "India"
   },
   {
     "iataCode": "CDG",
@@ -112,11 +280,81 @@
     "country": "France"
   },
   {
+    "iataCode": "CLL",
+    "icaoCode": "KCLL",
+    "airportName": "Easterwood Airport",
+    "city": "College Station",
+    "country": "United States"
+  },
+  {
+    "iataCode": "CLM",
+    "icaoCode": "KCLM",
+    "airportName": "William R. Fairchild International Airport",
+    "city": "Port Angeles",
+    "country": "United States"
+  },
+  {
+    "iataCode": "CMI",
+    "icaoCode": "KCMI",
+    "airportName": "University of Illinois Willard Airport",
+    "city": "Champaign",
+    "country": "United States"
+  },
+  {
+    "iataCode": "COK",
+    "icaoCode": "VOCI",
+    "airportName": "Cochin International Airport",
+    "city": "Kochi",
+    "country": "India"
+  },
+  {
+    "iataCode": "CRP",
+    "icaoCode": "KCRP",
+    "airportName": "Corpus Christi International Airport",
+    "city": "Corpus Christi",
+    "country": "United States"
+  },
+  {
+    "iataCode": "CSG",
+    "icaoCode": "KCSG",
+    "airportName": "Columbus Metropolitan Airport",
+    "city": "Columbus",
+    "country": "United States"
+  },
+  {
+    "iataCode": "DAB",
+    "icaoCode": "KDAB",
+    "airportName": "Daytona Beach International Airport",
+    "city": "Daytona Beach",
+    "country": "United States"
+  },
+  {
+    "iataCode": "DAL",
+    "icaoCode": "KDAL",
+    "airportName": "Dallas Love Field",
+    "city": "Dallas",
+    "country": "United States"
+  },
+  {
+    "iataCode": "DEC",
+    "icaoCode": "KDEC",
+    "airportName": "Decatur Airport",
+    "city": "Decatur",
+    "country": "United States"
+  },
+  {
     "iataCode": "DEL",
     "icaoCode": "VIDP",
     "airportName": "Indira Gandhi International Airport",
     "city": "New Delhi",
     "country": "India"
+  },
+  {
+    "iataCode": "DFW",
+    "icaoCode": "KDFW",
+    "airportName": "Dallas/Fort Worth International Airport",
+    "city": "Dallas-Fort Worth",
+    "country": "United States"
   },
   {
     "iataCode": "DXB",
@@ -126,11 +364,109 @@
     "country": "United Arab Emirates"
   },
   {
+    "iataCode": "EAT",
+    "icaoCode": "KEAT",
+    "airportName": "Pangborn Memorial Airport",
+    "city": "Wenatchee",
+    "country": "United States"
+  },
+  {
+    "iataCode": "ECP",
+    "icaoCode": "KECP",
+    "airportName": "Northwest Florida Beaches International Airport",
+    "city": "Panama City",
+    "country": "United States"
+  },
+  {
+    "iataCode": "ELM",
+    "icaoCode": "KELM",
+    "airportName": "Elmira Corning Regional Airport",
+    "city": "Elmira",
+    "country": "United States"
+  },
+  {
+    "iataCode": "ELP",
+    "icaoCode": "KELP",
+    "airportName": "El Paso International Airport",
+    "city": "El Paso",
+    "country": "United States"
+  },
+  {
+    "iataCode": "EWR",
+    "icaoCode": "KEWR",
+    "airportName": "Newark Liberty International Airport",
+    "city": "Newark",
+    "country": "United States"
+  },
+  {
+    "iataCode": "EYW",
+    "icaoCode": "KEYW",
+    "airportName": "Key West International Airport",
+    "city": "Key West",
+    "country": "United States"
+  },
+  {
+    "iataCode": "FAT",
+    "icaoCode": "KFAT",
+    "airportName": "Fresno Yosemite International Airport",
+    "city": "Fresno",
+    "country": "United States"
+  },
+  {
+    "iataCode": "FLL",
+    "icaoCode": "KFLL",
+    "airportName": "Fort Lauderdale-Hollywood International Airport",
+    "city": "Fort Lauderdale",
+    "country": "United States"
+  },
+  {
     "iataCode": "FRA",
     "icaoCode": "EDDF",
     "airportName": "Frankfurt Airport",
     "city": "Frankfurt",
     "country": "Germany"
+  },
+  {
+    "iataCode": "FRD",
+    "icaoCode": "KFHR",
+    "airportName": "Friday Harbor Airport",
+    "city": "Friday Harbor",
+    "country": "United States"
+  },
+  {
+    "iataCode": "GEG",
+    "icaoCode": "KGEG",
+    "airportName": "Spokane International Airport",
+    "city": "Spokane",
+    "country": "United States"
+  },
+  {
+    "iataCode": "GGG",
+    "icaoCode": "KGGG",
+    "airportName": "East Texas Regional Airport",
+    "city": "Longview",
+    "country": "United States"
+  },
+  {
+    "iataCode": "GNV",
+    "icaoCode": "KGNV",
+    "airportName": "Gainesville Regional Airport",
+    "city": "Gainesville",
+    "country": "United States"
+  },
+  {
+    "iataCode": "GOI",
+    "icaoCode": "VOGO",
+    "airportName": "Goa International Airport",
+    "city": "Goa",
+    "country": "India"
+  },
+  {
+    "iataCode": "GRK",
+    "icaoCode": "KGRK",
+    "airportName": "Killeen-Fort Hood Regional Airport",
+    "city": "Killeen",
+    "country": "United States"
   },
   {
     "iataCode": "HKG",
@@ -147,11 +483,53 @@
     "country": "Japan"
   },
   {
+    "iataCode": "HOU",
+    "icaoCode": "KHOU",
+    "airportName": "William P. Hobby Airport",
+    "city": "Houston",
+    "country": "United States"
+  },
+  {
+    "iataCode": "HPN",
+    "icaoCode": "KHPN",
+    "airportName": "Westchester County Airport",
+    "city": "White Plains",
+    "country": "United States"
+  },
+  {
+    "iataCode": "HRL",
+    "icaoCode": "KHRL",
+    "airportName": "Valley International Airport",
+    "city": "Harlingen",
+    "country": "United States"
+  },
+  {
+    "iataCode": "HYD",
+    "icaoCode": "VOHS",
+    "airportName": "Rajiv Gandhi International Airport",
+    "city": "Hyderabad",
+    "country": "India"
+  },
+  {
+    "iataCode": "IAH",
+    "icaoCode": "KIAH",
+    "airportName": "George Bush Intercontinental Airport",
+    "city": "Houston",
+    "country": "United States"
+  },
+  {
     "iataCode": "ICN",
     "icaoCode": "RKSI",
     "airportName": "Incheon International Airport",
     "city": "Seoul",
     "country": "South Korea"
+  },
+  {
+    "iataCode": "ISP",
+    "icaoCode": "KISP",
+    "airportName": "Long Island MacArthur Airport",
+    "city": "Islip",
+    "country": "United States"
   },
   {
     "iataCode": "IST",
@@ -161,6 +539,20 @@
     "country": "Turkey"
   },
   {
+    "iataCode": "ITH",
+    "icaoCode": "KITH",
+    "airportName": "Ithaca Tompkins International Airport",
+    "city": "Ithaca",
+    "country": "United States"
+  },
+  {
+    "iataCode": "JAX",
+    "icaoCode": "KJAX",
+    "airportName": "Jacksonville International Airport",
+    "city": "Jacksonville",
+    "country": "United States"
+  },
+  {
     "iataCode": "JFK",
     "icaoCode": "KJFK",
     "airportName": "John F. Kennedy International Airport",
@@ -168,18 +560,18 @@
     "country": "United States"
   },
   {
-    "iataCode": "LHR",
-    "icaoCode": "EGLL",
-    "airportName": "London Heathrow Airport",
-    "city": "London",
-    "country": "United Kingdom"
+    "iataCode": "LAX",
+    "icaoCode": "KLAX",
+    "airportName": "Los Angeles International Airport",
+    "city": "Los Angeles",
+    "country": "United States"
   },
   {
-    "iataCode": "LGW",
-    "icaoCode": "EGKK",
-    "airportName": "London Gatwick Airport",
-    "city": "London",
-    "country": "United Kingdom"
+    "iataCode": "LBB",
+    "icaoCode": "KLBB",
+    "airportName": "Lubbock Preston Smith International Airport",
+    "city": "Lubbock",
+    "country": "United States"
   },
   {
     "iataCode": "LCY",
@@ -189,23 +581,30 @@
     "country": "United Kingdom"
   },
   {
-    "iataCode": "STN",
-    "icaoCode": "EGSS",
-    "airportName": "London Stansted Airport",
+    "iataCode": "LGA",
+    "icaoCode": "KLGA",
+    "airportName": "LaGuardia Airport",
+    "city": "New York",
+    "country": "United States"
+  },
+  {
+    "iataCode": "LGB",
+    "icaoCode": "KLGB",
+    "airportName": "Long Beach Airport",
+    "city": "Long Beach",
+    "country": "United States"
+  },
+  {
+    "iataCode": "LGW",
+    "icaoCode": "EGKK",
+    "airportName": "London Gatwick Airport",
     "city": "London",
     "country": "United Kingdom"
   },
   {
-    "iataCode": "LTN",
-    "icaoCode": "EGGW",
-    "airportName": "London Luton Airport",
-    "city": "London",
-    "country": "United Kingdom"
-  },
-  {
-    "iataCode": "QQS",
-    "icaoCode": "",
-    "airportName": "St Pancras International Railway Station",
+    "iataCode": "LHR",
+    "icaoCode": "EGLL",
+    "airportName": "London Heathrow Airport",
     "city": "London",
     "country": "United Kingdom"
   },
@@ -217,24 +616,108 @@
     "country": "United Kingdom"
   },
   {
-    "iataCode": "LAX",
-    "icaoCode": "KLAX",
-    "airportName": "Los Angeles International Airport",
-    "city": "Los Angeles",
+    "iataCode": "LRD",
+    "icaoCode": "KLRD",
+    "airportName": "Laredo International Airport",
+    "city": "Laredo",
     "country": "United States"
+  },
+  {
+    "iataCode": "LTN",
+    "icaoCode": "EGGW",
+    "airportName": "London Luton Airport",
+    "city": "London",
+    "country": "United Kingdom"
+  },
+  {
+    "iataCode": "MAA",
+    "icaoCode": "VOMM",
+    "airportName": "Chennai International Airport",
+    "city": "Chennai",
+    "country": "India"
   },
   {
     "iataCode": "MAD",
     "icaoCode": "LEMD",
-    "airportName": "Adolfo Suárez Madrid-Barajas Airport",
+    "airportName": "Adolfo Su\u00e1rez Madrid-Barajas Airport",
     "city": "Madrid",
     "country": "Spain"
+  },
+  {
+    "iataCode": "MAF",
+    "icaoCode": "KMAF",
+    "airportName": "Midland International Air & Space Port",
+    "city": "Midland",
+    "country": "United States"
+  },
+  {
+    "iataCode": "MCN",
+    "icaoCode": "KMCN",
+    "airportName": "Middle Georgia Regional Airport",
+    "city": "Macon",
+    "country": "United States"
+  },
+  {
+    "iataCode": "MCO",
+    "icaoCode": "KMCO",
+    "airportName": "Orlando International Airport",
+    "city": "Orlando",
+    "country": "United States"
+  },
+  {
+    "iataCode": "MDW",
+    "icaoCode": "KMDW",
+    "airportName": "Chicago Midway International Airport",
+    "city": "Chicago",
+    "country": "United States"
+  },
+  {
+    "iataCode": "MFE",
+    "icaoCode": "KMFE",
+    "airportName": "McAllen Miller International Airport",
+    "city": "McAllen",
+    "country": "United States"
   },
   {
     "iataCode": "MIA",
     "icaoCode": "KMIA",
     "airportName": "Miami International Airport",
     "city": "Miami",
+    "country": "United States"
+  },
+  {
+    "iataCode": "MLB",
+    "icaoCode": "KMLB",
+    "airportName": "Melbourne Orlando International Airport",
+    "city": "Melbourne",
+    "country": "United States"
+  },
+  {
+    "iataCode": "MLI",
+    "icaoCode": "KMLI",
+    "airportName": "Quad City International Airport",
+    "city": "Moline",
+    "country": "United States"
+  },
+  {
+    "iataCode": "MMH",
+    "icaoCode": "KMMH",
+    "airportName": "Mammoth Yosemite Airport",
+    "city": "Mammoth Lakes",
+    "country": "United States"
+  },
+  {
+    "iataCode": "MRY",
+    "icaoCode": "KMRY",
+    "airportName": "Monterey Regional Airport",
+    "city": "Monterey",
+    "country": "United States"
+  },
+  {
+    "iataCode": "MWA",
+    "icaoCode": "KMWA",
+    "airportName": "Veterans Airport of Southern Illinois",
+    "city": "Marion",
     "country": "United States"
   },
   {
@@ -245,10 +728,178 @@
     "country": "Japan"
   },
   {
+    "iataCode": "OAK",
+    "icaoCode": "KOAK",
+    "airportName": "Oakland International Airport",
+    "city": "Oakland",
+    "country": "United States"
+  },
+  {
+    "iataCode": "ONT",
+    "icaoCode": "KONT",
+    "airportName": "Ontario International Airport",
+    "city": "Ontario",
+    "country": "United States"
+  },
+  {
     "iataCode": "ORD",
     "icaoCode": "KORD",
     "airportName": "O'Hare International Airport",
     "city": "Chicago",
+    "country": "United States"
+  },
+  {
+    "iataCode": "PBG",
+    "icaoCode": "KPBG",
+    "airportName": "Plattsburgh International Airport",
+    "city": "Plattsburgh",
+    "country": "United States"
+  },
+  {
+    "iataCode": "PBI",
+    "icaoCode": "KPBI",
+    "airportName": "Palm Beach International Airport",
+    "city": "West Palm Beach",
+    "country": "United States"
+  },
+  {
+    "iataCode": "PGD",
+    "icaoCode": "KPGD",
+    "airportName": "Punta Gorda Airport",
+    "city": "Punta Gorda",
+    "country": "United States"
+  },
+  {
+    "iataCode": "PIA",
+    "icaoCode": "KPIA",
+    "airportName": "General Wayne A. Downing Peoria International Airport",
+    "city": "Peoria",
+    "country": "United States"
+  },
+  {
+    "iataCode": "PIE",
+    "icaoCode": "KPIE",
+    "airportName": "St. Pete-Clearwater International Airport",
+    "city": "St. Petersburg",
+    "country": "United States"
+  },
+  {
+    "iataCode": "PNQ",
+    "icaoCode": "VAPO",
+    "airportName": "Pune Airport",
+    "city": "Pune",
+    "country": "India"
+  },
+  {
+    "iataCode": "PNS",
+    "icaoCode": "KPNS",
+    "airportName": "Pensacola International Airport",
+    "city": "Pensacola",
+    "country": "United States"
+  },
+  {
+    "iataCode": "PSC",
+    "icaoCode": "KPSC",
+    "airportName": "Tri-Cities Airport",
+    "city": "Pasco",
+    "country": "United States"
+  },
+  {
+    "iataCode": "PSP",
+    "icaoCode": "KPSP",
+    "airportName": "Palm Springs International Airport",
+    "city": "Palm Springs",
+    "country": "United States"
+  },
+  {
+    "iataCode": "PUW",
+    "icaoCode": "KPUW",
+    "airportName": "Pullman-Moscow Regional Airport",
+    "city": "Pullman",
+    "country": "United States"
+  },
+  {
+    "iataCode": "QQS",
+    "icaoCode": "",
+    "airportName": "St Pancras International Railway Station",
+    "city": "London",
+    "country": "United Kingdom"
+  },
+  {
+    "iataCode": "RDD",
+    "icaoCode": "KRDD",
+    "airportName": "Redding Municipal Airport",
+    "city": "Redding",
+    "country": "United States"
+  },
+  {
+    "iataCode": "RFD",
+    "icaoCode": "KRFD",
+    "airportName": "Chicago Rockford International Airport",
+    "city": "Rockford",
+    "country": "United States"
+  },
+  {
+    "iataCode": "ROC",
+    "icaoCode": "KROC",
+    "airportName": "Greater Rochester International Airport",
+    "city": "Rochester",
+    "country": "United States"
+  },
+  {
+    "iataCode": "RSW",
+    "icaoCode": "KRSW",
+    "airportName": "Southwest Florida International Airport",
+    "city": "Fort Myers",
+    "country": "United States"
+  },
+  {
+    "iataCode": "SAN",
+    "icaoCode": "KSAN",
+    "airportName": "San Diego International Airport",
+    "city": "San Diego",
+    "country": "United States"
+  },
+  {
+    "iataCode": "SAT",
+    "icaoCode": "KSAT",
+    "airportName": "San Antonio International Airport",
+    "city": "San Antonio",
+    "country": "United States"
+  },
+  {
+    "iataCode": "SAV",
+    "icaoCode": "KSAV",
+    "airportName": "Savannah/Hilton Head International Airport",
+    "city": "Savannah",
+    "country": "United States"
+  },
+  {
+    "iataCode": "SBA",
+    "icaoCode": "KSBA",
+    "airportName": "Santa Barbara Airport",
+    "city": "Santa Barbara",
+    "country": "United States"
+  },
+  {
+    "iataCode": "SBP",
+    "icaoCode": "KSBP",
+    "airportName": "San Luis Obispo County Regional Airport",
+    "city": "San Luis Obispo",
+    "country": "United States"
+  },
+  {
+    "iataCode": "SEA",
+    "icaoCode": "KSEA",
+    "airportName": "Seattle-Tacoma International Airport",
+    "city": "Seattle",
+    "country": "United States"
+  },
+  {
+    "iataCode": "SFB",
+    "icaoCode": "KSFB",
+    "airportName": "Orlando Sanford International Airport",
+    "city": "Sanford",
     "country": "United States"
   },
   {
@@ -266,6 +917,76 @@
     "country": "Singapore"
   },
   {
+    "iataCode": "SJC",
+    "icaoCode": "KSJC",
+    "airportName": "San Jose International Airport",
+    "city": "San Jose",
+    "country": "United States"
+  },
+  {
+    "iataCode": "SJT",
+    "icaoCode": "KSJT",
+    "airportName": "San Angelo Regional Airport",
+    "city": "San Angelo",
+    "country": "United States"
+  },
+  {
+    "iataCode": "SMF",
+    "icaoCode": "KSMF",
+    "airportName": "Sacramento International Airport",
+    "city": "Sacramento",
+    "country": "United States"
+  },
+  {
+    "iataCode": "SNA",
+    "icaoCode": "KSNA",
+    "airportName": "John Wayne Airport",
+    "city": "Orange County",
+    "country": "United States"
+  },
+  {
+    "iataCode": "SPI",
+    "icaoCode": "KSPI",
+    "airportName": "Abraham Lincoln Capital Airport",
+    "city": "Springfield",
+    "country": "United States"
+  },
+  {
+    "iataCode": "SPS",
+    "icaoCode": "KSPS",
+    "airportName": "Wichita Falls Regional Airport",
+    "city": "Wichita Falls",
+    "country": "United States"
+  },
+  {
+    "iataCode": "SRQ",
+    "icaoCode": "KSRQ",
+    "airportName": "Sarasota Bradenton International Airport",
+    "city": "Sarasota",
+    "country": "United States"
+  },
+  {
+    "iataCode": "STN",
+    "icaoCode": "EGSS",
+    "airportName": "London Stansted Airport",
+    "city": "London",
+    "country": "United Kingdom"
+  },
+  {
+    "iataCode": "STS",
+    "icaoCode": "KSTS",
+    "airportName": "Charles M. Schulz Sonoma County Airport",
+    "city": "Santa Rosa",
+    "country": "United States"
+  },
+  {
+    "iataCode": "SWF",
+    "icaoCode": "KSWF",
+    "airportName": "New York Stewart International Airport",
+    "city": "Newburgh",
+    "country": "United States"
+  },
+  {
     "iataCode": "SYD",
     "icaoCode": "YSSY",
     "airportName": "Sydney Kingsford Smith Airport",
@@ -273,66 +994,66 @@
     "country": "Australia"
   },
   {
+    "iataCode": "SYR",
+    "icaoCode": "KSYR",
+    "airportName": "Syracuse Hancock International Airport",
+    "city": "Syracuse",
+    "country": "United States"
+  },
+  {
+    "iataCode": "TLH",
+    "icaoCode": "KTLH",
+    "airportName": "Tallahassee International Airport",
+    "city": "Tallahassee",
+    "country": "United States"
+  },
+  {
+    "iataCode": "TPA",
+    "icaoCode": "KTPA",
+    "airportName": "Tampa International Airport",
+    "city": "Tampa",
+    "country": "United States"
+  },
+  {
+    "iataCode": "TXK",
+    "icaoCode": "KTXK",
+    "airportName": "Texarkana Regional Airport",
+    "city": "Texarkana",
+    "country": "United States"
+  },
+  {
+    "iataCode": "TYR",
+    "icaoCode": "KTYR",
+    "airportName": "Tyler Pounds Regional Airport",
+    "city": "Tyler",
+    "country": "United States"
+  },
+  {
+    "iataCode": "UIN",
+    "icaoCode": "KUIN",
+    "airportName": "Quincy Regional Airport",
+    "city": "Quincy",
+    "country": "United States"
+  },
+  {
+    "iataCode": "VLD",
+    "icaoCode": "KVLD",
+    "airportName": "Valdosta Regional Airport",
+    "city": "Valdosta",
+    "country": "United States"
+  },
+  {
+    "iataCode": "YKM",
+    "icaoCode": "KYKM",
+    "airportName": "Yakima Air Terminal",
+    "city": "Yakima",
+    "country": "United States"
+  },
+  {
     "iataCode": "YYZ",
     "icaoCode": "CYYZ",
     "airportName": "Toronto Pearson International Airport",
     "city": "Toronto",
     "country": "Canada"
-  },
-  {
-    "iataCode": "BLR",
-    "icaoCode": "VOBL",
-    "airportName": "Kempegowda International Airport",
-    "city": "Bangalore",
-    "country": "India"
-  },
-  {
-    "iataCode": "MAA",
-    "icaoCode": "VOMM",
-    "airportName": "Chennai International Airport",
-    "city": "Chennai",
-    "country": "India"
-  },
-  {
-    "iataCode": "CCU",
-    "icaoCode": "VECC",
-    "airportName": "Netaji Subhas Chandra Bose International Airport",
-    "city": "Kolkata",
-    "country": "India"
-  },
-  {
-    "iataCode": "HYD",
-    "icaoCode": "VOHS",
-    "airportName": "Rajiv Gandhi International Airport",
-    "city": "Hyderabad",
-    "country": "India"
-  },
-  {
-    "iataCode": "GOI",
-    "icaoCode": "VOGO",
-    "airportName": "Goa International Airport",
-    "city": "Goa",
-    "country": "India"
-  },
-  {
-    "iataCode": "COK",
-    "icaoCode": "VOCI",
-    "airportName": "Cochin International Airport",
-    "city": "Kochi",
-    "country": "India"
-  },
-  {
-    "iataCode": "AMD",
-    "icaoCode": "VAAH",
-    "airportName": "Sardar Vallabhbhai Patel International Airport",
-    "city": "Ahmedabad",
-    "country": "India"
-  },
-  {
-    "iataCode": "PNQ",
-    "icaoCode": "VAPO",
-    "airportName": "Pune Airport",
-    "city": "Pune",
-    "country": "India"
   }
 ]
