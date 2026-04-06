@@ -503,7 +503,7 @@ Choose the card that matches your travel patterns and start earning your way to 
     `,
     featuredImage: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=500&fit=crop",
     author: {
-      name: "Sarah Mitchell",
+      name: "Tristan David",
       avatar: "/avatars/1.png",
       bio: "Travel editor with 10+ years of experience finding the best flight deals.",
     },
