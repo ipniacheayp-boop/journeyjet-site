@@ -63,7 +63,14 @@ const AirportDropdown = React.memo(({ value, onChange, placeholder, className }:
 
         return nameMatch || cityMatch || iataMatch || countryMatch;
       })
-      .slice(0, 10);
+      .sort((a, b) => {
+        // Prioritize exact IATA matches, then city starts-with, then alphabetical
+        const aIata = a.iataCode.toLowerCase() === searchTerm ? -2 : 0;
+        const bIata = b.iataCode.toLowerCase() === searchTerm ? -2 : 0;
+        const aCity = a.city.toLowerCase().startsWith(searchTerm) ? -1 : 0;
+        const bCity = b.city.toLowerCase().startsWith(searchTerm) ? -1 : 0;
+        return (aIata + aCity) - (bIata + bCity) || a.city.localeCompare(b.city);
+      });
   }, [debouncedValue, airports]);
 
   // Handle input change
