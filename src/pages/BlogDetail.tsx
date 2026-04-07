@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Helmet } from "react-helmet";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Calendar, Clock, User, Share2 } from "lucide-react";
 import Header from "@/components/Header";
