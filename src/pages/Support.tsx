@@ -150,12 +150,43 @@ const Support = () => {
   return (
     <div className="min-h-screen flex flex-col font-poppins bg-background text-foreground transition-colors duration-300">
       <Helmet>
-        <title>Customer Support | CheapFlights - 24/7 Travel Assistance</title>
+        <title>Customer Support | Tripile.com - 24/7 Travel Assistance</title>
         <meta
           name="description"
-          content="Get 24/7 customer support for your travel bookings. Contact CheapFlights for help with flights, hotels, car rentals, refunds, and more."
+          content="Get 24/7 customer support for your travel bookings. Contact Tripile.com for help with flights, hotels, car rentals, refunds, cancellations, and more."
         />
-        <link rel="canonical" href="https://cheapflights.com/support" />
+        <meta name="keywords" content="Tripile support, travel help, flight booking support, 24/7 travel assistance, refund help, booking cancellation" />
+        <link rel="canonical" href="https://tripile.com/support" />
+        <meta property="og:title" content="Customer Support | Tripile.com - 24/7 Travel Assistance" />
+        <meta property="og:description" content="Get 24/7 customer support for your travel bookings with Tripile.com." />
+        <meta property="og:url" content="https://tripile.com/support" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ContactPage",
+            "name": "Tripile Customer Support",
+            "url": "https://tripile.com/support",
+            "description": "24/7 customer support for travel bookings, refunds, cancellations, and more.",
+            "mainEntity": {
+              "@type": "Organization",
+              "name": "Tripile.com",
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "+1-800-963-4330",
+                "contactType": "customer service",
+                "areaServed": "US",
+                "availableLanguage": ["English", "Spanish"]
+              }
+            },
+            "breadcrumb": {
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tripile.com/" },
+                { "@type": "ListItem", "position": 2, "name": "Support", "item": "https://tripile.com/support" }
+              ]
+            }
+          })}
+        </script>
       </Helmet>
       <Header />
 
