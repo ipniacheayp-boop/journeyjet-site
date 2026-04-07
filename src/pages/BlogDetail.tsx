@@ -135,6 +135,45 @@ const BlogDetail = () => {
         canonicalUrl={`https://tripile.com/blog/${post.slug}`}
         ogType="article"
       />
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": post.title,
+            "description": post.excerpt,
+            "image": post.featuredImage,
+            "datePublished": post.publishedAt,
+            "dateModified": post.publishedAt,
+            "author": {
+              "@type": "Person",
+              "name": post.author.name,
+              "description": post.author.bio
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "Tripile.com",
+              "url": "https://tripile.com",
+              "logo": { "@type": "ImageObject", "url": "https://tripile.com/favicon-tripile.png" }
+            },
+            "mainEntityOfPage": {
+              "@type": "WebPage",
+              "@id": `https://tripile.com/blog/${post.slug}`
+            }
+          })}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tripile.com/" },
+              { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://tripile.com/blog" },
+              { "@type": "ListItem", "position": 3, "name": post.title, "item": `https://tripile.com/blog/${post.slug}` }
+            ]
+          })}
+        </script>
+      </Helmet>
 
       <Header />
 

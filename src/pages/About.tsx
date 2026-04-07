@@ -8,21 +8,50 @@ const About = () => {
   return (
     <div className="min-h-screen flex flex-col font-poppins bg-background text-foreground transition-colors duration-300">
       <Helmet>
-        <title>About CheapFlights | Your Trusted US Travel Booking Partner</title>
+        <title>About Tripile | Trusted US Travel Booking Platform</title>
         <meta
           name="description"
-          content="Learn about CheapFlights - America's trusted travel booking platform. We help millions of travelers find the best deals on flights, hotels, and car rentals across the USA."
+          content="Learn about Tripile.com — America's trusted travel booking platform. We help millions of travelers find the best deals on flights, hotels, and car rentals across the USA."
         />
         <meta
           name="keywords"
-          content="about CheapFlights, US travel company, travel booking platform, flight deals company, trusted travel partner"
+          content="about Tripile, US travel company, travel booking platform, flight deals company, trusted travel partner, Tripile.com"
         />
-        <link rel="canonical" href="https://cheapflights.com/about" />
-        <meta property="og:title" content="About CheapFlights | Your Trusted US Travel Booking Partner" />
-        <meta
-          property="og:description"
-          content="Learn about CheapFlights - America's trusted travel booking platform."
-        />
+        <link rel="canonical" href="https://tripile.com/about" />
+        <meta property="og:title" content="About Tripile | Trusted US Travel Booking Platform" />
+        <meta property="og:description" content="Learn about Tripile.com — America's trusted travel booking platform helping millions find the best deals on flights, hotels, and car rentals." />
+        <meta property="og:url" content="https://tripile.com/about" />
+        <meta property="og:type" content="website" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "AboutPage",
+            "name": "About Tripile",
+            "url": "https://tripile.com/about",
+            "description": "Learn about Tripile.com — America's trusted travel booking platform.",
+            "mainEntity": {
+              "@type": "Organization",
+              "name": "Tripile.com",
+              "url": "https://tripile.com",
+              "foundingDate": "2023",
+              "description": "Tripile.com helps travelers find the best flight deals, hotel discounts, and car rentals across the USA.",
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "+1-800-963-4330",
+                "contactType": "customer service",
+                "areaServed": "US",
+                "availableLanguage": ["English", "Spanish"]
+              }
+            },
+            "breadcrumb": {
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tripile.com/" },
+                { "@type": "ListItem", "position": 2, "name": "About", "item": "https://tripile.com/about" }
+              ]
+            }
+          })}
+        </script>
       </Helmet>
 
       <Header />
