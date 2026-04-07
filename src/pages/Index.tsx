@@ -26,7 +26,7 @@ import dealBusiness from "@/assets/deal-business.jpg";
 import dealStudents from "@/assets/deal-students.jpg";
 import dealAirlines from "@/assets/deal-airlines.jpg";
 import rewardsIllustration from "@/assets/rewards-illustration.png";
-import rewardsIllustration2 from "@/assets/reward.png";
+import rewardsIllustration2 from "@/assets/reward.webp";
 import {
   ArrowRight,
   Check,
