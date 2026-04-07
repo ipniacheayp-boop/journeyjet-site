@@ -50,6 +50,7 @@ import FlightRoutePage from "./pages/seo/FlightRoutePage";
 import HotelCityPage from "./pages/seo/HotelCityPage";
 import CarRentalCityPage from "./pages/seo/CarRentalCityPage";
 import AirportLandingPage from "./pages/seo/AirportLandingPage";
+import CityFlightPage from "./pages/seo/CityFlightPage";
 import WebCheckIn from "./pages/WebCheckIn";
 import FlightStatus from "./pages/FlightStatus";
 import FlightsToDestination from "./pages/FlightsToDestination";
@@ -132,8 +133,8 @@ const App = () => (
                 <Route path="/flight-status" element={<FlightStatus />} />
                 <Route path="/flight-tracker" element={<FlightTracker />} />
                 <Route path="/flights-to/:slug" element={<FlightsToDestination />} />
+                <Route path="/flights/:from-to-:to" element={<CityFlightPage />} />
                 <Route path="/airlines/:slug" element={<AirlinePage />} />
-                <Route path="*" element={<NotFound />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <FlybotWrapper />
