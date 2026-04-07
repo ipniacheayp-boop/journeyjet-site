@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Helmet } from "react-helmet";
 import { Search } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -33,10 +34,29 @@ const Blog = () => {
     <>
       <SEOHead
         title="Travel Blog | Tripile.com - Tips, Guides & Inspiration"
-        description="Explore our travel blog for expert tips, destination guides, flight deals, and travel inspiration. Plan your next adventure with insider knowledge."
-        keywords="travel blog, travel tips, destination guides, flight deals, travel inspiration, budget travel"
+        description="Explore our travel blog for expert tips, destination guides, flight deals, and travel inspiration. Plan your next adventure with insider knowledge from Tripile.com."
+        keywords="travel blog, travel tips, destination guides, flight deals, travel inspiration, budget travel, Tripile blog"
         canonicalUrl="https://tripile.com/blog"
       />
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            "name": "Tripile Travel Blog",
+            "description": "Expert travel tips, destination guides, and flight deal insights from Tripile.com.",
+            "url": "https://tripile.com/blog",
+            "publisher": { "@type": "Organization", "name": "Tripile.com", "url": "https://tripile.com" },
+            "breadcrumb": {
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tripile.com/" },
+                { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://tripile.com/blog" }
+              ]
+            }
+          })}
+        </script>
+      </Helmet>
 
       <Header />
 

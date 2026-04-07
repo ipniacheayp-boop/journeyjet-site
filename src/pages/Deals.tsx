@@ -339,18 +339,36 @@ const Deals = () => {
         <title>Exclusive Flight Deals & Travel Offers | Tripile.com USA</title>
         <meta
           name="description"
-          content="Discover exclusive flight deals and travel offers across the USA. Save up to 50% on roundtrip flights with Tripile.com's best price guarantee."
+          content="Discover exclusive flight deals and travel offers across the USA. Save up to 50% on roundtrip flights with Tripile.com's best price guarantee. Compare fares from 500+ airlines."
         />
         <meta
           name="keywords"
-          content="flight deals USA, cheap airline tickets, travel offers, discounted flights, last minute deals, best flight prices"
+          content="flight deals USA, cheap airline tickets, travel offers, discounted flights, last minute deals, best flight prices, Tripile deals"
         />
         <meta property="og:title" content="Exclusive Flight Deals & Travel Offers | Tripile.com" />
         <meta
           property="og:description"
           content="Discover exclusive travel deals on flights across the USA. Save up to 50% on roundtrip flights."
         />
+        <meta property="og:url" content="https://tripile.com/deals" />
+        <meta property="og:type" content="website" />
         <link rel="canonical" href="https://tripile.com/deals" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            "name": "Exclusive Flight Deals & Travel Offers",
+            "description": "Discover exclusive flight deals across the USA. Save up to 50% on roundtrip flights.",
+            "url": "https://tripile.com/deals",
+            "breadcrumb": {
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tripile.com/" },
+                { "@type": "ListItem", "position": 2, "name": "Deals", "item": "https://tripile.com/deals" }
+              ]
+            }
+          })}
+        </script>
       </Helmet>
 
       {/* Animated Background Shapes */}
