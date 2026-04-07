@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 import { useFlightSearch } from "@/hooks/useFlightSearch";
 import { useHotelSearch } from "@/hooks/useHotelSearch";
 import { useCarSearch } from "@/hooks/useCarSearch";
@@ -14,6 +15,7 @@ import HotelResultCard from "@/components/HotelResultCard";
 import CarResultCard from "@/components/CarResultCard";
 import { FlightTimeFilter, getTimeSlot, type TimeSlot } from "@/components/flights/FlightTimeFilter";
 import { toast } from "sonner";
+import { Shield } from "lucide-react";
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
