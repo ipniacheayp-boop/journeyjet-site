@@ -46,6 +46,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
   const [flightOriginCode, setFlightOriginCode] = useState("");
   const [flightDestination, setFlightDestination] = useState("");
   const [flightDestinationCode, setFlightDestinationCode] = useState("");
+  const today = new Date().toISOString().split("T")[0];
   const [departDate, setDepartDate] = useState("");
   const [returnDate, setReturnDate] = useState("");
   const [passengers, setPassengers] = useState("1");
@@ -79,6 +80,8 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
     if (!flightOrigin.trim()) newErrors.origin = "Origin is required";
     if (!flightDestination.trim()) newErrors.destination = "Destination is required";
     if (!departDate) newErrors.departDate = "Departure date is required";
+    // Prevent past dates
+    if (departDate && departDate < today) newErrors.departDate = "Departure date cannot be in the past";
     if (tripType === "round-trip" && !returnDate) newErrors.returnDate = "Return date is required";
     if (tripType === "round-trip" && departDate && returnDate && new Date(returnDate) < new Date(departDate)) {
       newErrors.returnDate = "Return date must be after departure date";
@@ -113,6 +116,17 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
 
   const handleFlightSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    // Auto-set departure date to today if empty (prevents "required" error from confusing users)
+    if (!departDate) {
+      const autoDate = today;
+      setDepartDate(autoDate);
+      // Re-validate with auto-set date
+      if (!flightOrigin.trim() || !flightDestination.trim()) {
+        validateFlightForm();
+        toast.error("Please fix the errors in the form");
+        return;
+      }
+    }
     if (validateFlightForm()) {
       toast.success("Searching for flights...");
       const origin = (flightOriginCode || flightOrigin).trim().toUpperCase();
