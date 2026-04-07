@@ -2,7 +2,7 @@ import React from "react";
 import { Helmet } from "react-helmet";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Globe2, Heart, Award, ShieldCheck, PlaneTakeoff } from "lucide-react";
+import { Globe2, Heart, Award, ShieldCheck, PlaneTakeoff, Users, Clock, Star } from "lucide-react";
 
 const About = () => {
   return (
@@ -166,6 +166,31 @@ const About = () => {
               <p className="text-muted-foreground font-medium">
                 Unbeatable prices. If you find a better price elsewhere, we'll strive to beat it.
               </p>
+            </div>
+          </div>
+
+          {/* Trust & Credentials Section (E-E-A-T) */}
+          <div className="mb-24">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground tracking-tight text-center mb-4">
+              Why Travelers <span className="text-blue-500">Trust</span> Tripile
+            </h2>
+            <p className="text-center text-muted-foreground max-w-2xl mx-auto mb-10">
+              Backed by real expertise, real partners, and millions of successful bookings.
+            </p>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                { icon: Users, value: "2M+", label: "Travelers Served", desc: "Trusted by millions across the USA since 2023" },
+                { icon: Star, value: "4.5★", label: "Average Rating", desc: "Based on verified customer reviews" },
+                { icon: Clock, value: "24/7", label: "Expert Support", desc: "Real travel specialists, always available" },
+                { icon: ShieldCheck, value: "500+", label: "Airline Partners", desc: "Licensed and verified carrier partnerships" },
+              ].map(({ icon: Icon, value, label, desc }) => (
+                <div key={label} className="bg-card/60 border border-border rounded-2xl p-6 text-center">
+                  <Icon className="w-8 h-8 text-primary mx-auto mb-3" />
+                  <p className="text-2xl font-extrabold text-foreground">{value}</p>
+                  <p className="text-sm font-semibold text-foreground mt-1">{label}</p>
+                  <p className="text-xs text-muted-foreground mt-2">{desc}</p>
+                </div>
+              ))}
             </div>
           </div>
 
