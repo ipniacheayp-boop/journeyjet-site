@@ -127,8 +127,12 @@ const AirportDropdown = React.memo(({ value, onChange, placeholder, className }:
         break;
       case "Enter":
         e.preventDefault();
+        e.stopPropagation();
         if (highlightedIndex >= 0 && highlightedIndex < filteredAirports.length) {
           handleSelect(filteredAirports[highlightedIndex]);
+        } else if (filteredAirports.length > 0) {
+          // Auto-select first result when Enter is pressed without highlighting
+          handleSelect(filteredAirports[0]);
         }
         break;
       case "Escape":

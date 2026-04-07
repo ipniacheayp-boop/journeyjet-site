@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 import { useFlightSearch } from "@/hooks/useFlightSearch";
 import { useHotelSearch } from "@/hooks/useHotelSearch";
 import { useCarSearch } from "@/hooks/useCarSearch";
@@ -14,6 +15,7 @@ import HotelResultCard from "@/components/HotelResultCard";
 import CarResultCard from "@/components/CarResultCard";
 import { FlightTimeFilter, getTimeSlot, type TimeSlot } from "@/components/flights/FlightTimeFilter";
 import { toast } from "sonner";
+import { Shield } from "lucide-react";
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
@@ -175,7 +177,13 @@ const SearchResults = () => {
       <main className="flex-1 pt-24 pb-16 bg-background">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="mb-8">
-            <h1 className="font-display text-4xl font-bold mb-2 capitalize text-foreground">{type} Search Results</h1>
+            <div className="flex flex-wrap items-center gap-3 mb-2">
+              <h1 className="font-display text-4xl font-bold capitalize text-foreground">{type} Search Results</h1>
+              <Badge variant="outline" className="flex items-center gap-1.5 border-emerald-500/40 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 text-xs font-semibold px-3 py-1">
+                <Shield className="w-3.5 h-3.5" />
+                Price Match Guarantee
+              </Badge>
+            </div>
             <p className="text-muted-foreground">
               {loading ? "Finding the best available price for you..." : 
                 type === "flights" && timeFilter !== "all" 
