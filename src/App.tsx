@@ -57,6 +57,8 @@ import FlightsToDestination from "./pages/FlightsToDestination";
 import AirlinePage from "./pages/AirlinePage";
 import TravelChecklists from "@/pages/TravelChecklists";
 import FlightTracker from "@/pages/FlightTracker";
+import RefundPolicy from "@/pages/RefundPolicy";
+import PriceMatch from "@/pages/PriceMatch";
 
 const FlybotWrapper = () => {
   const location = useLocation();
@@ -132,6 +134,8 @@ const App = () => (
                 <Route path="/webcheck-in" element={<WebCheckIn />} />
                 <Route path="/flight-status" element={<FlightStatus />} />
                 <Route path="/flight-tracker" element={<FlightTracker />} />
+                <Route path="/refund-policy" element={<RefundPolicy />} />
+                <Route path="/price-match" element={<PriceMatch />} />
                 <Route path="/flights-to/:slug" element={<FlightsToDestination />} />
                 <Route path="/flights/:from-to-:to" element={<CityFlightPage />} />
                 <Route path="/airlines/:slug" element={<AirlinePage />} />
