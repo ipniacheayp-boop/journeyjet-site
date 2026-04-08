@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Helmet } from "react-helmet";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -6,6 +6,13 @@ import Footer from "@/components/Footer";
 const RefundPolicy = () => {
   const bannerImage =
     "https://d33v4339jhl8k0.cloudfront.net/docs/assets/592831430428634b4a337895/images/64d7cc3417822902c5ab960a/file-nwzcXbpfVh.png";
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
@@ -32,16 +39,13 @@ const RefundPolicy = () => {
           }}
         >
           <div className="container mx-auto px-4 py-12 md:py-16 text-center">
-            <h1
-              id="refund-policy-title"
-              className="text-3xl md:text-6xl font-bold tracking-tight"
-            >
+            <h1 id="refund-policy-title" className="text-3xl md:text-6xl font-bold tracking-tight">
               Refund &amp; Cancellation Policy
             </h1>
 
             <p className="mt-4 text-base md:text-lg text-white/90 max-w-3xl mx-auto leading-relaxed">
-              We understand travel plans can change. Please review our refund
-              and cancellation terms below before making a reservation.
+              We understand travel plans can change. Please review our refund and cancellation terms below before making
+              a reservation.
             </p>
           </div>
         </section>
@@ -52,79 +56,59 @@ const RefundPolicy = () => {
             <div className="space-y-10">
               {/* 24 Hour Rule */}
               <article className="space-y-3">
-                <h2 className="text-xl md:text-2xl font-bold">
-                  24-Hour Risk-Free Cancellation
-                </h2>
+                <h2 className="text-xl md:text-2xl font-bold">24-Hour Risk-Free Cancellation</h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  If your flight is booked at least <strong>7 days</strong>{" "}
-                  before departure and canceled within{" "}
-                  <strong>24 hours</strong> of booking, you may be eligible for a
-                  full refund to your original form of payment, subject to
-                  airline policy and U.S. Department of Transportation
-                  regulations.
+                  If your flight is booked at least <strong>7 days</strong> before departure and canceled within{" "}
+                  <strong>24 hours</strong> of booking, you may be eligible for a full refund to your original form of
+                  payment, subject to airline policy and U.S. Department of Transportation regulations.
                 </p>
               </article>
 
               {/* Airline Rules */}
               <article className="space-y-4">
-                <h2 className="text-xl md:text-2xl font-bold">
-                  Airline Ticket Refunds
-                </h2>
+                <h2 className="text-xl md:text-2xl font-bold">Airline Ticket Refunds</h2>
 
                 <p className="text-muted-foreground leading-relaxed">
-                  Tripile acts as an independent travel agency. All tickets are
-                  subject to the fare rules of the respective airline. Refund
-                  eligibility depends on ticket type, cancellation timing, and
-                  airline approval.
+                  Tripile acts as an independent travel agency. All tickets are subject to the fare rules of the
+                  respective airline. Refund eligibility depends on ticket type, cancellation timing, and airline
+                  approval.
                 </p>
 
                 <ul className="list-disc pl-6 space-y-2 text-muted-foreground leading-relaxed">
                   <li>
-                    <strong>Non-refundable</strong> tickets may qualify for
-                    airline credit minus applicable fees.
+                    <strong>Non-refundable</strong> tickets may qualify for airline credit minus applicable fees.
                   </li>
                   <li>
-                    <strong>Refundable</strong> tickets may be eligible for a
-                    full or partial refund.
+                    <strong>Refundable</strong> tickets may be eligible for a full or partial refund.
                   </li>
                   <li>
-                    Airline schedule changes or cancellations may qualify for a
-                    refund (subject to airline rules).
+                    Airline schedule changes or cancellations may qualify for a refund (subject to airline rules).
                   </li>
                 </ul>
               </article>
 
               {/* Schedule Changes */}
               <article className="space-y-3">
-                <h2 className="text-xl md:text-2xl font-bold">
-                  Airline Schedule Changes &amp; Cancellations
-                </h2>
+                <h2 className="text-xl md:text-2xl font-bold">Airline Schedule Changes &amp; Cancellations</h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  You may be eligible for a refund if your flight is canceled or
-                  significantly delayed (<strong>3+ hours</strong> domestic /{" "}
-                  <strong>6+ hours</strong> international). Refund approval is
+                  You may be eligible for a refund if your flight is canceled or significantly delayed (
+                  <strong>3+ hours</strong> domestic / <strong>6+ hours</strong> international). Refund approval is
                   subject to airline policies.
                 </p>
               </article>
 
               {/* Service Fees */}
               <article className="space-y-3">
-                <h2 className="text-xl md:text-2xl font-bold">
-                  Tripile Service Fees
-                </h2>
+                <h2 className="text-xl md:text-2xl font-bold">Tripile Service Fees</h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  Service fees may apply for voluntary cancellations, booking
-                  modifications, and refund processing. Service fees are{" "}
-                  <strong>non-refundable</strong> once services have been
-                  rendered.
+                  Service fees may apply for voluntary cancellations, booking modifications, and refund processing.
+                  Service fees are <strong>non-refundable</strong> once services have been rendered.
                 </p>
               </article>
 
               {/* Processing Timeline */}
               <article className="space-y-4">
-                <h2 className="text-xl md:text-2xl font-bold">
-                  Refund Processing Timeline
-                </h2>
+                <h2 className="text-xl md:text-2xl font-bold">Refund Processing Timeline</h2>
 
                 <div className="grid gap-3 md:grid-cols-3">
                   <div className="rounded-xl border border-border p-4">
@@ -144,35 +128,27 @@ const RefundPolicy = () => {
                 </div>
 
                 <p className="text-muted-foreground leading-relaxed">
-                  Processing times depend on airline approval and your financial
-                  institution.
+                  Processing times depend on airline approval and your financial institution.
                 </p>
               </article>
 
               {/* How to Request */}
               <article className="space-y-3">
-                <h2 className="text-xl md:text-2xl font-bold">
-                  How to Request a Refund
-                </h2>
+                <h2 className="text-xl md:text-2xl font-bold">How to Request a Refund</h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  To request a refund, please provide your{" "}
-                  <strong>booking reference number</strong>,{" "}
-                  <strong>passenger name</strong>, and{" "}
-                  <strong>ticket number</strong>. Contact our support team for
+                  To request a refund, please provide your <strong>booking reference number</strong>,{" "}
+                  <strong>passenger name</strong>, and <strong>ticket number</strong>. Contact our support team for
                   assistance.
                 </p>
               </article>
 
               {/* Disclaimer */}
               <article className="space-y-3">
-                <h2 className="text-xl md:text-2xl font-bold">
-                  Important Notice
-                </h2>
+                <h2 className="text-xl md:text-2xl font-bold">Important Notice</h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  Tripile is an independent online travel agency and is not
-                  affiliated with any airline. All refunds are subject to
-                  airline fare rules and approval. Tripile is not responsible
-                  for airline-imposed penalties or delays in refund processing.
+                  Tripile is an independent online travel agency and is not affiliated with any airline. All refunds are
+                  subject to airline fare rules and approval. Tripile is not responsible for airline-imposed penalties
+                  or delays in refund processing.
                 </p>
               </article>
             </div>
