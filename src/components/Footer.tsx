@@ -58,6 +58,8 @@ const Footer = () => {
       links: [
         { label: "Privacy Policy", href: "/privacy" },
         { label: "Terms & Conditions", href: "/terms" },
+        { label: "Refund & Cancellation Policy", href: "/refund-policy" },
+        { label: "Price Match Guarantee", href: "/price-match" },
         { label: "Taxes & Fees", href: "/terms#taxes" },
         { label: "Post-Ticketing Fees", href: "/terms#post-ticketing" },
         { label: "Affiliate Program", href: "/about#affiliates" },
