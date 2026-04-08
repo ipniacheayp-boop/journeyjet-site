@@ -36,7 +36,7 @@ const Footer = () => {
       links: [
         { label: "Customer Support", href: "/support" },
         { label: "Flight Status", href: "/flight-status" },
-        { label: "Online Check-in", href: "/support?topic=checkin" },
+        { label: "Online Check-in", href: "/webcheck-in" },
         { label: "Travel Checklists", href: "/destinations-checklist" },
         { label: "Airline Baggage Fees", href: "/taxes-fees" },
         { label: "Travel Blog", href: "/blog" },
