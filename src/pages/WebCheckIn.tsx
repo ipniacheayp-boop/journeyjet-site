@@ -49,7 +49,7 @@ const WebCheckIn = () => {
     {
       name: "Alaska Airlines",
       code: "AS",
-      logo: "https://toppng.com/uploads/preview/vector-royalty-free-download-airlines-logo-png-transparent-alaska-air-logo-115636320212walq1avlu.png",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Alaska_Airlines_logo_with_tagline.svg/1280px-Alaska_Airlines_logo_with_tagline.svg.png",
       statusUrl: "https://www.alaskaair.com/flightstatus?INT=sitemap-prodID:FlightStatus",
       checkinUrl: "https://reservations.alaskaair.com/checkin/",
       contactUrl: "https://www.alaskaair.com/content/about-us/help-contact",
@@ -122,12 +122,10 @@ const WebCheckIn = () => {
           }}
         >
           <div className="container mx-auto px-4 py-12 md:py-16 text-center">
-            <h1 className="text-3xl md:text-6xl font-bold">
-              Airlines Web Check-In
-            </h1>
+            <h1 className="text-3xl md:text-6xl font-bold">Airlines Web Check-In</h1>
             <p className="mt-2 text-white/90 max-w-3xl text-xl mx-auto">
-              Use the official airline links below to check flight status,
-              complete web check-in, or update contact details.
+              Use the official airline links below to check flight status, complete web check-in, or update contact
+              details.
             </p>
           </div>
         </section>
@@ -136,32 +134,16 @@ const WebCheckIn = () => {
         <section className="container mx-auto px-4 mt-10 hidden md:block">
           <div className="overflow-hidden rounded-xl border border-border bg-background shadow-sm">
             <div className="grid grid-cols-12 bg-muted/30 border-b border-border">
-              <div className="col-span-3 p-4 font-semibold text-foreground">
-                Airline
-              </div>
-              <div className="col-span-3 p-4 font-semibold text-foreground">
-                Check Flight Status
-              </div>
-              <div className="col-span-3 p-4 font-semibold text-foreground">
-                Web Check-In
-              </div>
-              <div className="col-span-3 p-4 font-semibold text-foreground">
-                Update Contact Details
-              </div>
+              <div className="col-span-3 p-4 font-semibold text-foreground">Airline</div>
+              <div className="col-span-3 p-4 font-semibold text-foreground">Check Flight Status</div>
+              <div className="col-span-3 p-4 font-semibold text-foreground">Web Check-In</div>
+              <div className="col-span-3 p-4 font-semibold text-foreground">Update Contact Details</div>
             </div>
 
             {airlines.map((a) => (
-              <div
-                key={a.code}
-                className="grid grid-cols-12 border-b border-border last:border-b-0"
-              >
+              <div key={a.code} className="grid grid-cols-12 border-b border-border last:border-b-0">
                 <div className="col-span-3 p-4 flex items-center gap-3">
-                  <img
-                    src={a.logo}
-                    alt={`${a.name} logo`}
-                    className="h-10 w-10 object-contain"
-                    loading="lazy"
-                  />
+                  <img src={a.logo} alt={`${a.name} logo`} className="h-10 w-10 object-contain" loading="lazy" />
                   <div className="font-semibold text-foreground">{a.name}</div>
                 </div>
 
@@ -201,34 +183,22 @@ const WebCheckIn = () => {
             ))}
           </div>
 
-          <p className="text-sm text-muted-foreground mt-4">
-            Links open on official airline websites.
-          </p>
+          <p className="text-sm text-muted-foreground mt-4">Links open on official airline websites.</p>
         </section>
 
         {/* Mobile stacked cards */}
         <section className="container mx-auto px-4 mt-10 md:hidden">
           <div className="space-y-4">
             {airlines.map((a) => (
-              <div
-                key={a.code}
-                className="rounded-xl border border-border bg-background p-5 shadow-sm"
-              >
+              <div key={a.code} className="rounded-xl border border-border bg-background p-5 shadow-sm">
                 <div className="flex items-center gap-3">
-                  <img
-                    src={a.logo}
-                    alt={`${a.name} logo`}
-                    className="h-10 w-10 object-contain"
-                    loading="lazy"
-                  />
+                  <img src={a.logo} alt={`${a.name} logo`} className="h-10 w-10 object-contain" loading="lazy" />
                   <div className="font-semibold text-foreground">{a.name}</div>
                 </div>
 
                 <div className="mt-4 space-y-3">
                   <div>
-                    <div className="text-sm font-semibold text-foreground">
-                      Check Flight Status
-                    </div>
+                    <div className="text-sm font-semibold text-foreground">Check Flight Status</div>
                     <a
                       href={a.statusUrl}
                       target="_blank"
@@ -240,9 +210,7 @@ const WebCheckIn = () => {
                   </div>
 
                   <div>
-                    <div className="text-sm font-semibold text-foreground">
-                      Web Check-In
-                    </div>
+                    <div className="text-sm font-semibold text-foreground">Web Check-In</div>
                     <a
                       href={a.checkinUrl}
                       target="_blank"
@@ -254,9 +222,7 @@ const WebCheckIn = () => {
                   </div>
 
                   <div>
-                    <div className="text-sm font-semibold text-foreground">
-                      Update Contact Details
-                    </div>
+                    <div className="text-sm font-semibold text-foreground">Update Contact Details</div>
                     <a
                       href={a.contactUrl}
                       target="_blank"
