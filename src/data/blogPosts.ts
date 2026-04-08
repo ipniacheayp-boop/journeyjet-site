@@ -1618,7 +1618,7 @@ This is booking a flight with a layover in your actual destination and getting o
 If you book a "Flexible" or "Standard" fare, many airlines (like Southwest or Alaska) allow you to "re-fare" your ticket and receive the difference in travel credit. Monitor your flight on Google Flights even after you buy it.
     `,
     featuredImage:
-      "https://media.istockphoto.com/id/1638299318/photo/back-view-of-a-woman-walking-towards-the-plane-ready-to-board-and-begin-her-vacation.webp?a=1&b=1&s=612x612&w=0&k=20&c=pW7cPyKicatD2d3GvV7oOCfbj0ZLJEYDUrx9FUorHuQ=",
+      "https://media.istockphoto.com/id/1006541818/photo/cheap-flights-button-on-computer-keyboard.webp?a=1&b=1&s=612x612&w=0&k=20&c=ux7feNN6fuetoITH5-vsqnP7nFduFosdv2SFWbvGNRQ=",
     author: {
       name: "Tripile Expert",
       avatar: "/avatars/tripile-logo.png",
