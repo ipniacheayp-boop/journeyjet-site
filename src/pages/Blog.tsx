@@ -88,15 +88,15 @@ const Blog = () => {
                   <Sparkles className="h-3.5 w-3.5" />
                   Fresh travel reads
                 </div>
-                <h1 className="max-w-2xl text-4xl font-bold tracking-tight text-foreground md:text-6xl">
-                  Blog stories designed to be read fast and shared easily.
+                <h1 className="max-w-2xl text-4xl font-bold tracking-tight text-foreground md:text-5xl">
+                  <span className="text-primary">Blog</span> stories designed to be read fast and shared easily.
                 </h1>
                 <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
                   Clear hooks, practical tips, visual summaries, and smart travel takeaways all in one place.
                 </p>
 
                 <div className="relative mt-8 max-w-xl">
-                  <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+                  <Search className="absolute left-4 top-1/2 h-5 w-5 z-10 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     type="text"
                     placeholder="Search guides, destinations, or travel topics"
