@@ -1504,7 +1504,8 @@ Rarely. While last-minute drops happen to fill unsold seats, prices usually spik
 ### Is it cheaper to book flights and hotels together?
 Yes, bundling typically reduces overall costs because travel platforms pass on negotiated bulk rates to you[cite: 181].
     `,
-    featuredImage: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop",
+    featuredImage:
+      "https://media.istockphoto.com/id/1638299318/photo/back-view-of-a-woman-walking-towards-the-plane-ready-to-board-and-begin-her-vacation.webp?a=1&b=1&s=612x612&w=0&k=20&c=pW7cPyKicatD2d3GvV7oOCfbj0ZLJEYDUrx9FUorHuQ=",
     author: {
       name: "Tripile Expert",
       avatar: "/avatars/tripile-logo.png",
