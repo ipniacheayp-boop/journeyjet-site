@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { ArrowRight, BookOpen, Search, Sparkles } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
@@ -12,8 +12,9 @@ import { Button } from "@/components/ui/button";
 import { blogPosts, getCategories } from "@/data/blogPosts";
 
 const Blog = () => {
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>((location.state as any)?.category || null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -79,56 +80,89 @@ const Blog = () => {
       <Header />
 
       <main className="min-h-screen bg-[linear-gradient(180deg,hsl(var(--background))_0%,hsl(var(--muted)/0.4)_22%,hsl(var(--background))_100%)]">
-        <section className="relative overflow-hidden border-b border-border/60">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.16),transparent_34%),radial-gradient(circle_at_top_right,hsl(var(--gold)/0.12),transparent_28%),linear-gradient(180deg,hsl(var(--background)/0.94),hsl(var(--muted)/0.5))]" />
-          <div className="container relative mx-auto px-4 py-16 md:py-24">
-            <div className="grid items-center gap-10 lg:grid-cols-[1.15fr_0.85fr]">
+        <section className="relative overflow-hidden border-b border-border/40 mt-16 pb-10">
+          {/* Subtle Dynamic Background Gradients */}
+          <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.12),transparent_50%),radial-gradient(circle_at_bottom_right,hsl(var(--gold)/0.08),transparent_40%),linear-gradient(180deg,hsl(var(--background)/1)_0%,transparent_100%)]" />
+
+          <div className="container relative mx-auto px-4 py-20 md:py-28">
+            <div className="grid items-center gap-12 lg:grid-cols-[1.2fr_0.8fr]">
+              {/* Left Content */}
               <div className="max-w-3xl">
-                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-card/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-primary shadow-sm backdrop-blur">
-                  <Sparkles className="h-3.5 w-3.5" />
-                  Fresh travel reads
+                <div className="mb-6 inline-flex items-center gap-2.5 rounded-full border border-primary/20 bg-primary/5 px-4 py-2 text-[11px] font-semibold uppercase tracking-widest text-primary shadow-sm backdrop-blur-md">
+                  <Sparkles className="h-4 w-4" />
+                  The Tripile Editorial
                 </div>
-                <h1 className="max-w-2xl text-4xl font-bold tracking-tight text-foreground md:text-5xl">
-                  <span className="text-primary">Blog</span> stories designed to be read fast and shared easily.
+
+                <h1 className="max-w-2xl text-4xl font-extrabold tracking-tight text-foreground md:text-5xl lg:text-6xl leading-[1.1]">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/70">
+                    Stories to fuel
+                  </span>{" "}
+                  <br className="hidden md:block" />
+                  <span className="opacity-90">your next adventure.</span>
                 </h1>
-                <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
-                  Clear hooks, practical tips, visual summaries, and smart travel takeaways all in one place.
+
+                <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
+                  Dive into our collection of expert destination guides, flight dropping hacks, and curated itineraries
+                  built for travelers who refuse to settle for ordinary.
                 </p>
 
-                <div className="relative mt-8 max-w-xl">
-                  <Search className="absolute left-4 top-1/2 h-5 w-5 z-10 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    type="text"
-                    placeholder="Search guides, destinations, or travel topics"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="h-14 rounded-full border-border/70 bg-card/85 pl-12 pr-4 text-base shadow-sm backdrop-blur"
-                  />
+                {/* Search Bar Refinement */}
+                <div className="relative mt-10 max-w-xl group ">
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/30 to-primary/10 rounded-[32px] blur opacity-40 group-hover:opacity-70 transition duration-500" />
+                  <div className="relative flex items-center bg-card/60 backdrop-blur-xl border border-border/80 hover:border-primary/50 transition-colors rounded-[32px] shadow-sm h-16">
+                    <Search className="absolute left-6 text-muted-foreground w-5 h-5 transition-colors group-hover:text-primary" />
+                    <Input
+                      type="text"
+                      placeholder="Search for guides, destinations, or topics..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full h-full bg-transparent border-none outline-none ring-0 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:outline-none focus-visible:ring-offset-0 pl-16 pr-6 text-[15px] shadow-none placeholder:text-muted-foreground/70"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
-                <div className="rounded-[28px] border border-border/60 bg-card/80 p-6 shadow-[0_25px_70px_-40px_hsl(var(--foreground)/0.34)] backdrop-blur">
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">Library</p>
-                  <p className="mt-3 text-3xl font-bold text-foreground">{blogPosts.length}</p>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                    Editorial blog cards refreshed with hooks, highlights, and visual summaries.
+              {/* Right Content Bento Box */}
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-2">
+                {/* Library Card */}
+                <div className="group relative rounded-[32px] border border-border/50 bg-gradient-to-br from-card/80 to-card/20 p-7 shadow-sm backdrop-blur-md transition-all hover:border-border hover:shadow-md">
+                  <div className="absolute top-4 right-4 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                    <BookOpen className="w-4 h-4 text-primary" />
+                  </div>
+                  <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-4">
+                    Library
+                  </p>
+                  <p className="text-4xl font-bold text-foreground tracking-tight">{blogPosts.length}</p>
+                  <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground/90">
+                    Curated editorial articles spanning across global destinations.
                   </p>
                 </div>
-                <div className="rounded-[28px] border border-primary/20 bg-primary/90 p-6 text-primary-foreground shadow-[0_25px_70px_-40px_hsl(var(--primary)/0.55)]">
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary-foreground/80">Topics</p>
-                  <p className="mt-3 text-3xl font-bold">{categories.length}</p>
-                  <p className="mt-2 text-sm leading-6 text-primary-foreground/85">
-                    Browse travel tips, destinations, and trend-focused stories without the clutter.
+
+                {/* Topics Card */}
+                <div className="group relative rounded-[32px] border border-primary/20 bg-gradient-to-br from-primary/10 to-primary/5 p-7 shadow-sm backdrop-blur-md transition-all hover:border-primary/30 hover:shadow-md">
+                  <div className="absolute top-4 right-4 w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                    <Search className="w-4 h-4 text-primary" />
+                  </div>
+                  <p className="text-[11px] font-semibold uppercase tracking-widest text-primary/80 mb-4">Topics</p>
+                  <p className="text-4xl font-bold text-foreground tracking-tight">{categories.length}</p>
+                  <p className="mt-2 text-[13px] leading-relaxed text-foreground/70">
+                    Discover targeted travel tips and trend-focused stories.
                   </p>
                 </div>
-                <div className="rounded-[28px] border border-gold/25 bg-gold/10 p-6 shadow-[0_25px_70px_-40px_hsl(var(--gold)/0.3)]">
-                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-gold">Content Flow</p>
 
-                  <p className="mt-3 text-lg font-semibold text-foreground">Hook → Value → Proof → CTA</p>
-
-                  <p className="mt-2 text-sm leading-6 text-slate-600">
-                    A structured flow that captures attention, delivers value, builds trust, and drives action.
+                {/* Content Flow Card (Spans two columns) */}
+                <div className="sm:col-span-2 group relative overflow-hidden rounded-[32px] border border-gold/30 bg-gradient-to-br from-gold/10 to-transparent p-7 shadow-sm backdrop-blur-md transition-all hover:border-gold/40">
+                  <div className="absolute right-0 top-0 w-64 h-64 bg-gold/5 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2" />
+                  <p className="text-[11px] font-semibold uppercase tracking-widest text-gold mb-3">Content Engine</p>
+                  <div className="flex items-center gap-2 text-foreground font-semibold text-[15px] sm:text-[17px]">
+                    Hook <ArrowRight className="w-4 h-4 text-muted-foreground" />
+                    Value <ArrowRight className="w-4 h-4 text-muted-foreground" />
+                    Proof <ArrowRight className="w-4 h-4 text-muted-foreground" />
+                    Action
+                  </div>
+                  <p className="mt-3 text-[13px] leading-relaxed text-muted-foreground max-w-sm">
+                    Our structured flow captures attention, delivers immense value reliably, builds unshakeable trust,
+                    and drives action.
                   </p>
                 </div>
               </div>
