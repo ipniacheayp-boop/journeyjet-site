@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { blogPosts, getCategories } from "@/data/blogPosts";
+import { getCategoryBadgeColor, cn } from "@/lib/utils";
 
 const Blog = () => {
   const location = useLocation();
@@ -22,16 +23,18 @@ const Blog = () => {
 
   const categories = getCategories();
 
-  const filteredPosts = blogPosts.filter((post) => {
-    const matchesSearch =
-      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredPosts = blogPosts
+    .filter((post) => {
+      const matchesSearch =
+        post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()));
 
-    const matchesCategory = selectedCategory ? post.category === selectedCategory : true;
+      const matchesCategory = selectedCategory ? post.category === selectedCategory : true;
 
-    return matchesSearch && matchesCategory;
-  });
+      return matchesSearch && matchesCategory;
+    })
+    .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
 
   const [featuredPost, ...gridPosts] = filteredPosts;
 
@@ -218,7 +221,12 @@ const Blog = () => {
 
                       <div className="flex flex-col justify-center p-6 md:p-10">
                         <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                          <span className="inline-flex items-center gap-2 rounded-full bg-muted px-3 py-1 text-foreground">
+                          <span
+                            className={cn(
+                              "inline-flex items-center gap-2 rounded-full border px-3 py-1 font-semibold text-xs",
+                              getCategoryBadgeColor(featuredPost.category),
+                            )}
+                          >
                             <BookOpen className="h-4 w-4" />
                             {featuredPost.category}
                           </span>
