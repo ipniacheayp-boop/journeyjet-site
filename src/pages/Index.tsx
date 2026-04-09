@@ -5,6 +5,13 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SearchWidget from "@/components/SearchWidget";
 import DealCard from "@/components/DealCard";
+import FAQSchema from "@/components/seo/FAQSchema";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 // Lazy load below-the-fold components for better TTI
 const DealModal = lazy(() => import("@/components/DealModal"));
@@ -869,10 +876,37 @@ const Index = () => {
         </div>
       </section>
 
-      {/* App Download Section */}
-      <Suspense fallback={<div className="py-20" />}>
-        <AppDownload />
-      </Suspense>
+      {/* Homepage FAQ Section */}
+      <FAQSchema faqs={[
+        { question: "How do I find the cheapest flights on Tripile.com?", answer: "Use our search tool to compare fares across 500+ airlines. Be flexible with dates, book midweek, and set price alerts for the best deals." },
+        { question: "Does Tripile.com charge any hidden fees?", answer: "No. The price shown includes all taxes and fees. We offer complete transparency with zero hidden charges." },
+        { question: "What is the Price Match Guarantee?", answer: "If you find a cheaper fare within 24 hours of booking, we'll match the price and give you an extra 10% off. That's our promise." },
+        { question: "Can I cancel or change my booking?", answer: "Most bookings offer free cancellation within 24 hours. Changes depend on your fare type. Our 24/7 support team can assist with modifications." },
+        { question: "How does Tripile.com compare to other travel sites?", answer: "Tripile.com searches 500+ airlines simultaneously, offers a Price Match Guarantee, transparent pricing, and 24/7 expert support — trusted by 2M+ travelers." },
+      ]} />
+      <section className="py-16 bg-muted/30">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <h2 className="font-display text-2xl md:text-3xl font-bold text-center mb-8">Frequently Asked Questions</h2>
+          <Accordion type="single" collapsible>
+            {[
+              { q: "How do I find the cheapest flights on Tripile.com?", a: "Use our search tool to compare fares across 500+ airlines. Be flexible with dates, book midweek, and set price alerts for the best deals." },
+              { q: "Does Tripile.com charge any hidden fees?", a: "No. The price shown includes all taxes and fees. We offer complete transparency with zero hidden charges." },
+              { q: "What is the Price Match Guarantee?", a: "If you find a cheaper fare within 24 hours of booking, we'll match the price and give you an extra 10% off. That's our promise." },
+              { q: "Can I cancel or change my booking?", a: "Most bookings offer free cancellation within 24 hours. Changes depend on your fare type. Our 24/7 support team can assist with modifications." },
+              { q: "How does Tripile.com compare to other travel sites?", a: "Tripile.com searches 500+ airlines simultaneously, offers a Price Match Guarantee, transparent pricing, and 24/7 expert support — trusted by 2M+ travelers." },
+            ].map((faq, i) => (
+              <AccordionItem key={i} value={`home-faq-${i}`} className="border-border">
+                <AccordionTrigger className="text-sm text-left hover:text-primary transition-colors">
+                  {faq.q}
+                </AccordionTrigger>
+                <AccordionContent className="text-sm text-muted-foreground">
+                  {faq.a}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+      </section>
 
       <Footer />
       <Suspense fallback={null}>
