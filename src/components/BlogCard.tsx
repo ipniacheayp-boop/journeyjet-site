@@ -3,6 +3,7 @@ import { ArrowRight, Calendar, Clock, User } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { getCategoryBadgeColor, cn } from "@/lib/utils";
 import type { BlogPost } from "@/data/blogPosts";
 
 interface BlogCardProps {
@@ -29,7 +30,12 @@ const BlogCard = ({ post }: BlogCardProps) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 transition-opacity duration-300 group-hover:opacity-90" />
         <div className="absolute inset-x-0 bottom-0 p-5 flex flex-col gap-3">
           <div className="flex items-center justify-between gap-3">
-            <Badge className="border-none bg-primary/90 hover:bg-primary text-primary-foreground font-semibold uppercase tracking-wider text-[10px] px-3 py-1.5 backdrop-blur-sm shadow-sm transition-colors">
+            <Badge
+              className={cn(
+                "border font-semibold uppercase tracking-wider text-[10px] px-3 py-1.5 backdrop-blur-sm shadow-sm transition-colors",
+                getCategoryBadgeColor(post.category),
+              )}
+            >
               {post.category}
             </Badge>
             <div className="flex items-center gap-1.5 rounded-full bg-black/40 px-3 py-1 text-xs font-medium text-white backdrop-blur-md border border-white/10">
