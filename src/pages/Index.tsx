@@ -192,16 +192,20 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>Tripile.com – Book Cheap Flights, Hotels & Car Rentals in the USA</title>
+        <title>Tripile.com – Buy Cheap Flights, Hotels & Car Rentals | Best US Travel Deals</title>
         <meta
           name="description"
-          content="Tripile.com helps you find the best flight deals, hotel discounts, and car rentals across the USA. Compare thousands of fares instantly and save big on your next trip."
+          content="Buy cheap flights, hotels & car rentals across the USA on Tripile.com. Compare 500+ airlines, get Price Match Guarantee, and save up to 46%. Trusted by 2M+ travelers."
         />
         <meta
           name="keywords"
-          content="cheap flights USA, flight deals, book flights online, US travel deals, last-minute flights, discounted airline tickets, cheap hotels, car rentals USA"
+          content="buy cheap flights USA, best flight deals, cheap flights near me, flight reviews, cheap hotels USA, car rentals USA, last-minute flights, travel booking, airline tickets"
         />
         <link rel="canonical" href="https://tripile.com/" />
+        <meta property="og:title" content="Tripile.com – Buy Cheap Flights, Hotels & Car Rentals" />
+        <meta property="og:description" content="Compare 500+ airlines and save up to 46% on US flights. Price Match Guarantee." />
+        <meta property="og:url" content="https://tripile.com/" />
+        <meta property="og:type" content="website" />
       </Helmet>
       <Header />
 
