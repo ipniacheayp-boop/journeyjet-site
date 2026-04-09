@@ -203,23 +203,23 @@ const Blog = () => {
             {filteredPosts.length > 0 ? (
               <div className="space-y-12">
                 {featuredPost && (
-                  <div className="overflow-hidden rounded-[32px] border border-border/60 bg-card/85 shadow-[0_30px_90px_-50px_hsl(var(--foreground)/0.34)] backdrop-blur">
-                    <div className="grid lg:grid-cols-[1.05fr_0.95fr]">
-                      <div className="relative min-h-[320px] overflow-hidden">
+                  <div className="overflow-hidden rounded-[24px] border border-border/60 bg-card/85 shadow-md backdrop-blur">
+                    <div className="grid lg:grid-cols-[0.8fr_1.2fr]">
+                      <div className="relative min-h-[240px] lg:min-h-full overflow-hidden">
                         <img
                           src={featuredPost.featuredImage}
                           alt={featuredPost.title}
-                          className="h-full w-full object-cover"
+                          className="absolute inset-0 h-full w-full object-cover object-center"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/20 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent lg:bg-gradient-to-r lg:from-black/80 lg:via-black/20 lg:to-transparent" />
                         <div className="absolute left-6 top-6">
-                          <Badge className="border-none bg-background/90 text-foreground hover:bg-background">
+                          <Badge className="border-none bg-background/90 text-foreground hover:bg-background shadow-sm">
                             Editor's pick
                           </Badge>
                         </div>
                       </div>
 
-                      <div className="flex flex-col justify-center p-6 md:p-10">
+                      <div className="flex flex-col justify-center p-6 md:p-8">
                         <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                           <span
                             className={cn(
@@ -227,40 +227,44 @@ const Blog = () => {
                               getCategoryBadgeColor(featuredPost.category),
                             )}
                           >
-                            <BookOpen className="h-4 w-4" />
+                            <BookOpen className="h-3.5 w-3.5" />
                             {featuredPost.category}
                           </span>
-                          <span>{featuredPost.readTime} min read</span>
+                          <span className="text-xs font-medium">{featuredPost.readTime} min read</span>
                         </div>
 
-                        <h2 className="mt-5 text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+                        <h2 className="mt-4 text-2xl font-bold tracking-tight text-foreground md:text-3xl">
                           {featuredPost.title}
                         </h2>
-                        <p className="mt-4 text-base leading-7 text-muted-foreground">{featuredPost.summary.hook}</p>
+                        <p className="mt-3 text-sm leading-relaxed text-muted-foreground line-clamp-2">
+                          {featuredPost.summary.hook}
+                        </p>
 
-                        <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                        <div className="mt-5 grid gap-3 sm:grid-cols-3">
                           {featuredPost.summary.visualStats.map((stat) => (
-                            <div key={stat.label} className="rounded-2xl border border-border/60 bg-muted/55 px-4 py-4">
-                              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                            <div key={stat.label} className="rounded-xl border border-border/60 bg-muted/40 px-3 py-3">
+                              <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
                                 {stat.label}
                               </p>
-                              <p className="mt-2 text-sm font-semibold text-foreground">{stat.value}</p>
+                              <p className="mt-1.5 text-sm font-semibold text-foreground">{stat.value}</p>
                             </div>
                           ))}
                         </div>
 
-                        <div className="mt-6 rounded-2xl border border-primary/20 bg-primary/8 p-4">
-                          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary">
+                        <div className="mt-5 rounded-xl border border-primary/20 bg-primary/5 p-4">
+                          <p className="text-[10px] font-semibold uppercase tracking-widest text-primary">
                             Quick takeaway
                           </p>
-                          <p className="mt-2 text-sm leading-6 text-foreground/85">{featuredPost.summary.takeaway}</p>
+                          <p className="mt-1.5 text-sm leading-relaxed text-foreground/85 line-clamp-2">
+                            {featuredPost.summary.takeaway}
+                          </p>
                         </div>
 
-                        <div className="mt-7">
-                          <Button asChild className="rounded-full px-6">
+                        <div className="mt-6">
+                          <Button asChild size="sm" className="rounded-full px-5 h-10">
                             <Link to={`/blog/${featuredPost.slug}`} className="inline-flex items-center gap-2">
                               Read featured story
-                              <ArrowRight className="h-4 w-4" />
+                              <ArrowRight className="h-3.5 w-3.5" />
                             </Link>
                           </Button>
                         </div>
