@@ -23,9 +23,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { getBlogBySlug, getRelatedPosts, getCategories } from "@/data/blogPosts";
 import { toast } from "sonner";
+import { getCategoryBadgeColor, cn } from "@/lib/utils";
+import { Textarea } from "@/components/ui/textarea";
 
 interface Comment {
   id: string;
@@ -502,7 +503,7 @@ const BlogDetail = () => {
 
               {/* Blog Post Hero Section */}
               <div className="mb-8">
-                <Badge className="mb-4 bg-primary/10 text-primary hover:bg-primary/20 border-none font-semibold px-3 py-1">
+                <Badge className={cn("mb-4 border font-semibold px-3 py-1", getCategoryBadgeColor(post.category))}>
                   {post.category}
                 </Badge>
 
