@@ -39,7 +39,7 @@ const renderStars = (rating: number) =>
   Array.from({ length: 5 }, (_, i) => (
     <Star
       key={i}
-      className={`w-3.5 h-3.5 ${i < rating ? "text-amber-400 fill-amber-400" : "text-white/20 fill-transparent"}`}
+      className={`w-4 h-4 ${i < rating ? "text-amber-400 fill-amber-400 drop-shadow-[0_0_4px_rgba(251,191,36,0.4)]" : "text-white/20 fill-transparent"}`}
     />
   ));
 
@@ -70,9 +70,9 @@ const CustomerReviewsDark = () => {
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/site-reviews-get?filter=highest&limit=20`,
         {
           headers: {
-            'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
           },
-        }
+        },
       );
       const data = await response.json();
       if (data.data) {
@@ -81,7 +81,7 @@ const CustomerReviewsDark = () => {
         setAverageRating(data.averageRating || 4.5);
       }
     } catch (error) {
-      console.error('Error fetching reviews:', error);
+      console.error("Error fetching reviews:", error);
     } finally {
       setLoading(false);
     }
@@ -135,51 +135,57 @@ const CustomerReviewsDark = () => {
         </motion.div>
 
         {/* Write a Review Button */}
-        <div className="text-center mt-6">
+        <div className="text-center mt-8">
           <Button
             onClick={() => setShowReviewModal(true)}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6 gap-2"
+            className="bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 hover:border-primary/50 transition-all rounded-full px-6 py-4 h-auto text-base gap-2 shadow-[0_0_15px_rgba(var(--primary),0.2)]"
           >
-            <PenLine className="w-4 h-4" />
+            <PenLine className="w-5 h-5" />
             Write a Review
           </Button>
         </div>
       </div>
 
       {/* ── Mobile: Swipeable Carousel ── */}
-      <div className="flex w-full overflow-x-auto snap-x snap-mandatory px-4 pb-6 gap-4 md:hidden scrollbar-hide">
+      <div className="flex w-full overflow-x-auto snap-x snap-mandatory px-4 pb-8 pt-4 gap-4 md:hidden scrollbar-hide">
         {allReviews.map((review, index) => (
           <div
             key={`${review.id}-${index}`}
-            className="w-[280px] sm:w-[320px] snap-center flex-shrink-0 bg-white/5 backdrop-blur-sm rounded-2xl p-5 border border-white/8 transition-all flex flex-col gap-3"
+            className="w-[300px] snap-center flex-shrink-0 bg-slate-900/40 backdrop-blur-xl rounded-3xl p-6 border border-white/5 transition-all flex flex-col gap-4 shadow-2xl relative overflow-hidden"
           >
+            {/* Background Glow */}
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+
             {/* Stars + platform */}
-            <div className="flex items-center justify-between">
-              <div className="flex gap-0.5">{renderStars(review.rating)}</div>
+            <div className="flex items-center justify-between relative z-10">
+              <div className="flex gap-1">{renderStars(review.rating)}</div>
               <span
-                className={`text-[10px] font-semibold uppercase tracking-wide ${platformColor[review.platform] ?? "text-white/40"}`}
+                className={`text-[11px] font-bold uppercase tracking-wider ${platformColor[review.platform] ?? "text-white/40"}`}
               >
                 {review.platform}
               </span>
             </div>
 
             {/* Quote icon + text */}
-            <div className="relative">
-              <Quote className="absolute -top-1 -left-1 w-5 h-5 text-white/15" aria-hidden="true" />
-              <p className="text-white/80 text-sm leading-relaxed pl-4">{review.text}</p>
+            <div className="relative mt-2 z-10">
+              <Quote className="absolute -top-2 -left-2 w-6 h-6 text-white/10" aria-hidden="true" />
+              <p className="text-white/90 text-sm leading-relaxed pl-6 italic font-medium">{review.text}</p>
             </div>
 
             {/* Reviewer */}
-            <div className="flex items-center gap-3 pt-1 mt-auto border-t border-white/8">
-              <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-sm shrink-0 border border-white/15">
+            <div className="flex items-center gap-4 pt-4 mt-auto border-t border-white/10 relative z-10">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/40 to-primary/10 flex items-center justify-center text-white font-bold text-sm shrink-0 border border-primary/20 shadow-inner">
                 {review.name[0]?.toUpperCase() || "?"}
               </div>
               <div className="min-w-0">
-                <div className="flex items-center gap-1">
-                  <span className="text-white text-xs font-semibold truncate">{review.name}</span>
-                  <BadgeCheck className="w-3.5 h-3.5 text-teal-400 shrink-0" aria-label="Verified" />
+                <div className="flex items-center gap-1.5">
+                  <span className="text-white text-sm font-bold truncate">{review.name}</span>
+                  <BadgeCheck
+                    className="w-4 h-4 text-primary shrink-0 drop-shadow-[0_0_2px_rgba(var(--primary),0.5)]"
+                    aria-label="Verified"
+                  />
                 </div>
-                <span className="text-white/45 text-[10px]">
+                <span className="text-white/50 text-[11px] font-medium tracking-wide">
                   {review.location} · {review.timeAgo}
                 </span>
               </div>
@@ -190,45 +196,56 @@ const CustomerReviewsDark = () => {
 
       {/* ── Desktop: Continuous Marquee ── */}
       <div
-        className="relative overflow-x-hidden hidden md:block group"
+        className="relative overflow-x-hidden hidden md:block group py-8"
         style={{
-          maskImage: "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
-          WebkitMaskImage: "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
+          maskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
+          WebkitMaskImage: "linear-gradient(to right, transparent, black 10%, black 90%, transparent)",
         }}
       >
-        <div className="flex w-max gap-4 px-4 animate-marquee group-hover:[animation-play-state:paused]">
+        <div className="flex w-max gap-6 px-4 animate-marquee group-hover:[animation-play-state:paused]">
           {duplicatedReviews.map((review, index) => (
             <div
               key={`${review.id}-${index}`}
-              className="w-[330px] flex-shrink-0 bg-white/5 hover:bg-white/8 backdrop-blur-sm rounded-2xl p-5 border border-white/8 hover:border-white/16 transition-all duration-300 flex flex-col gap-3"
+              className="w-[360px] h-[320px] flex-shrink-0 bg-slate-900/40 hover:bg-slate-900/70 backdrop-blur-xl rounded-3xl p-7 border border-white/5 hover:border-primary/30 transition-all duration-500 flex flex-col gap-4 shadow-xl hover:shadow-[0_0_30px_rgba(var(--primary),0.15)] hover:-translate-y-2 relative overflow-hidden group/card cursor-pointer"
             >
+              {/* Background Glow on hover */}
+              <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-primary/20 rounded-full blur-3xl pointer-events-none opacity-0 group-hover/card:opacity-100 transition-opacity duration-500"></div>
+
               {/* Stars + platform */}
-              <div className="flex items-center justify-between">
-                <div className="flex gap-0.5">{renderStars(review.rating)}</div>
+              <div className="flex items-center justify-between relative z-10">
+                <div className="flex gap-1">{renderStars(review.rating)}</div>
                 <span
-                  className={`text-[10px] font-semibold uppercase tracking-wide ${platformColor[review.platform] ?? "text-white/40"}`}
+                  className={`text-[11px] font-bold uppercase tracking-wider ${platformColor[review.platform] ?? "text-white/40"}`}
                 >
                   {review.platform}
                 </span>
               </div>
 
               {/* Quote icon + text */}
-              <div className="relative">
-                <Quote className="absolute -top-1 -left-1 w-5 h-5 text-white/15" aria-hidden="true" />
-                <p className="text-white/80 text-sm leading-relaxed pl-4">{review.text}</p>
+              <div className="relative mt-2 z-10">
+                <Quote
+                  className="absolute -top-2 -left-2 w-7 h-7 text-white/5 group-hover/card:text-primary/20 transition-colors duration-500"
+                  aria-hidden="true"
+                />
+                <p className="text-white/90 text-[15px] leading-relaxed pl-6 italic font-medium">{review.text}</p>
               </div>
 
               {/* Reviewer */}
-              <div className="flex items-center gap-3 pt-1 mt-auto border-t border-white/8">
-              <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-sm shrink-0 border border-white/15">
-                {review.name[0]?.toUpperCase() || "?"}
-              </div>
+              <div className="flex items-center gap-4 pt-5 mt-auto border-t border-white/10 group-hover/card:border-white/20 transition-colors duration-500 relative z-10">
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center text-white font-bold text-base shrink-0 border border-primary/20 shadow-inner group-hover/card:border-primary/50 transition-colors duration-500">
+                  {review.name[0]?.toUpperCase() || "?"}
+                </div>
                 <div className="min-w-0">
-                  <div className="flex items-center gap-1">
-                    <span className="text-white text-xs font-semibold truncate">{review.name}</span>
-                    <BadgeCheck className="w-3.5 h-3.5 text-teal-400 shrink-0" aria-label="Verified" />
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-white text-[15px] font-bold truncate group-hover/card:text-primary-100 transition-colors duration-300">
+                      {review.name}
+                    </span>
+                    <BadgeCheck
+                      className="w-4 h-4 text-primary shrink-0 drop-shadow-[0_0_2px_rgba(var(--primary),0.5)]"
+                      aria-label="Verified"
+                    />
                   </div>
-                  <span className="text-white/45 text-[10px]">
+                  <span className="text-white/50 text-xs font-medium tracking-wide">
                     {review.location} · {review.timeAgo}
                   </span>
                 </div>
@@ -249,11 +266,7 @@ const CustomerReviewsDark = () => {
         </Link>
       </div>
 
-      <WriteReviewModal
-        open={showReviewModal}
-        onOpenChange={setShowReviewModal}
-        onReviewAdded={handleReviewAdded}
-      />
+      <WriteReviewModal open={showReviewModal} onOpenChange={setShowReviewModal} onReviewAdded={handleReviewAdded} />
     </section>
   );
 };
