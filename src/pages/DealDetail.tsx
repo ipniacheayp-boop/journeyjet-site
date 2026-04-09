@@ -105,6 +105,15 @@ const DealDetail = () => {
       
       <main className="flex-1 pt-24 pb-16">
         <div className="container mx-auto px-4">
+          {/* Visual Breadcrumb */}
+          <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
+            <Link to="/" className="hover:text-foreground">Home</Link>
+            <ChevronRight className="w-3.5 h-3.5" />
+            <Link to="/deals" className="hover:text-foreground">Deals</Link>
+            <ChevronRight className="w-3.5 h-3.5" />
+            <span className="text-foreground font-medium">{deal.origin} → {deal.destination}</span>
+          </nav>
+
           {/* Hero Image */}
           <div className="relative h-96 rounded-2xl overflow-hidden mb-8">
             <img
