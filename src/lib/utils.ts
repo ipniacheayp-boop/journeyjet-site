@@ -45,6 +45,10 @@ export function getCategoryBadgeColor(category: string): string {
       return "bg-coral/10 text-coral hover:bg-coral/20 shadow-coral/10 border-coral/20";
     case "guides":
       return "bg-cyan-500/10 text-cyan-500 hover:bg-cyan-500/20 shadow-cyan-500/10 border-cyan-500/20";
+    case "digital nomad":
+      return "bg-cyan-500/10 text-cyan-500 hover:bg-cyan-500/20 shadow-cyan-500/10 border-cyan-500/20";
+    case "budget travel":
+      return "bg-red-500/10 text-red-500 hover:bg-red-500/20 shadow-red-500/10 border-red-500/20";
     default:
       return "bg-primary/10 text-primary hover:bg-primary/20 shadow-primary/10 border-primary/20";
   }
