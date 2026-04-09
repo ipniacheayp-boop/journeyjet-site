@@ -163,15 +163,23 @@ const SearchResults = () => {
     window.location.href = `/booking/${type}`;
   };
 
+  const origin = searchParams.get("originLocationCode") || "";
+  const destination = searchParams.get("destinationLocationCode") || "";
+  const canonicalBase = "https://tripile.com/search-results";
+  const dynamicTitle = type === "flights" && origin && destination
+    ? `${origin} to ${destination} Flight Results | Tripile.com`
+    : `${type.charAt(0).toUpperCase() + type.slice(1)} Search Results | Tripile.com`;
+  const dynamicDesc = type === "flights" && origin && destination
+    ? `Compare cheap flights from ${origin} to ${destination}. Find the best deals across 500+ airlines on Tripile.com.`
+    : `Compare and book the best ${type} deals on Tripile.com. Find cheap ${type} across the USA.`;
+
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>Search Results | Tripile.com - Find the Best Deals</title>
-        <meta
-          name="description"
-          content="Compare and book the best travel deals on Tripile.com. Find cheap flights, hotels, and car rentals across the USA."
-        />
+        <title>{dynamicTitle}</title>
+        <meta name="description" content={dynamicDesc} />
         <meta name="robots" content="noindex, follow" />
+        <link rel="canonical" href={canonicalBase} />
       </Helmet>
       <Header />
       <main className="flex-1 pt-24 pb-16 bg-background">

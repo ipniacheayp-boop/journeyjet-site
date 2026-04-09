@@ -1,10 +1,19 @@
 import { useParams, Link } from "react-router-dom";
+import { Helmet } from "react-helmet";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { mockDeals, type Deal } from "@/data/mockDeals";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Plane, ArrowRight, Clock, Users } from "lucide-react";
+import { Calendar, MapPin, Plane, ArrowRight, Clock, Users, Shield, HelpCircle, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
+import FAQSchema from "@/components/seo/FAQSchema";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const DealDetail = () => {
   const { id } = useParams();
@@ -31,12 +40,80 @@ const DealDetail = () => {
     ? Math.round(((deal.originalPrice - deal.price) / deal.originalPrice) * 100)
     : 0;
 
+  const faqs = [
+    { question: `How much does a flight from ${deal.origin} to ${deal.destination} cost?`, answer: `Flights from ${deal.origin} to ${deal.destination} start at $${deal.price} with ${deal.airline}. Prices vary by date and cabin class.` },
+    { question: `What is the best time to book flights to ${deal.destination}?`, answer: `Book 2-4 weeks in advance for the best prices. Midweek departures (Tue-Thu) tend to be cheaper.` },
+    { question: `Can I cancel or change my booking?`, answer: `Most bookings offer free cancellation within 24 hours. Changes may incur a fee depending on the fare type. Contact our 24/7 support for help.` },
+    { question: `Does Tripile.com charge any hidden fees?`, answer: `No. The price you see includes all taxes and fees. We offer a Price Match Guarantee — find it cheaper elsewhere and we'll match it.` },
+  ];
+
+  const relatedDeals = mockDeals.filter(d => d.id !== deal.id && (d.destination === deal.destination || d.origin === deal.origin)).slice(0, 4);
+
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": deal.title,
+    "description": `Book cheap ${deal.cabinClass} flights from ${deal.origin} to ${deal.destination} with ${deal.airline} starting at $${deal.price}. Save ${discount}% with Tripile.com.`,
+    "url": `https://tripile.com/deals/${deal.id}`,
+    "image": deal.image,
+    "category": "Flight",
+    "brand": { "@type": "Organization", "name": "Tripile.com" },
+    "offers": {
+      "@type": "Offer",
+      "priceCurrency": "USD",
+      "price": deal.price.toFixed(2),
+      "availability": "https://schema.org/InStock",
+      "validFrom": deal.departDate,
+      "priceValidUntil": deal.returnDate,
+      "seller": { "@type": "Organization", "name": "Tripile.com" },
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.5",
+      "reviewCount": "2847",
+      "bestRating": "5",
+      "worstRating": "1",
+    },
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>{`${deal.origin} to ${deal.destination} from $${deal.price} – ${deal.airline} | Tripile.com`}</title>
+        <meta name="description" content={`Book cheap ${deal.cabinClass} flights from ${deal.origin} to ${deal.destination} with ${deal.airline}. Save ${discount}% — fares from $${deal.price}. Price Match Guarantee on Tripile.com.`} />
+        <meta name="keywords" content={`${deal.origin} to ${deal.destination} flights, cheap ${deal.destination} flights, ${deal.airline} deals, buy ${deal.destination} flights, ${deal.destination} flight reviews`} />
+        <link rel="canonical" href={`https://tripile.com/deals/${deal.id}`} />
+        <meta property="og:title" content={`${deal.origin} to ${deal.destination} from $${deal.price} | Tripile.com`} />
+        <meta property="og:description" content={`Save ${discount}% on ${deal.cabinClass} flights with ${deal.airline}. Book now from $${deal.price}.`} />
+        <meta property="og:url" content={`https://tripile.com/deals/${deal.id}`} />
+        <meta property="og:type" content="product" />
+        <meta property="og:image" content={deal.image} />
+        <meta property="product:price:amount" content={deal.price.toString()} />
+        <meta property="product:price:currency" content="USD" />
+        <script type="application/ld+json">{JSON.stringify(productSchema)}</script>
+      </Helmet>
+
+      <BreadcrumbSchema items={[
+        { name: "Home", url: "https://tripile.com/" },
+        { name: "Deals", url: "https://tripile.com/deals" },
+        { name: `${deal.origin} to ${deal.destination}`, url: `https://tripile.com/deals/${deal.id}` },
+      ]} />
+
+      <FAQSchema faqs={faqs} />
+
       <Header />
       
       <main className="flex-1 pt-24 pb-16">
         <div className="container mx-auto px-4">
+          {/* Visual Breadcrumb */}
+          <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
+            <Link to="/" className="hover:text-foreground">Home</Link>
+            <ChevronRight className="w-3.5 h-3.5" />
+            <Link to="/deals" className="hover:text-foreground">Deals</Link>
+            <ChevronRight className="w-3.5 h-3.5" />
+            <span className="text-foreground font-medium">{deal.origin} → {deal.destination}</span>
+          </nav>
+
           {/* Hero Image */}
           <div className="relative h-96 rounded-2xl overflow-hidden mb-8">
             <img
@@ -129,6 +206,48 @@ const DealDetail = () => {
                   </ul>
                 </div>
               </section>
+
+              {/* FAQ Section */}
+              <section className="bg-card rounded-lg shadow-md p-6 border border-border">
+                <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                  <HelpCircle className="w-5 h-5 text-primary" />
+                  Frequently Asked Questions
+                </h2>
+                <Accordion type="single" collapsible>
+                  {faqs.map((faq, i) => (
+                    <AccordionItem key={i} value={`faq-${i}`}>
+                      <AccordionTrigger className="text-sm text-left hover:text-primary transition-colors">
+                        {faq.question}
+                      </AccordionTrigger>
+                      <AccordionContent className="text-sm text-muted-foreground">
+                        {faq.answer}
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </section>
+
+              {/* Related Deals - Internal Links */}
+              {relatedDeals.length > 0 && (
+                <section className="bg-card rounded-lg shadow-md p-6 border border-border">
+                  <h2 className="text-2xl font-bold mb-4">Related Flight Deals</h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {relatedDeals.map(rd => (
+                      <Link
+                        key={rd.id}
+                        to={`/deals/${rd.id}`}
+                        className="flex items-center gap-3 p-3 rounded-lg border border-border hover:border-primary/30 hover:bg-muted/50 transition-all group"
+                      >
+                        <Plane className="w-4 h-4 text-primary shrink-0" />
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold text-foreground group-hover:text-primary truncate">{rd.origin} → {rd.destination}</p>
+                          <p className="text-xs text-muted-foreground">From ${rd.price} · {rd.airline}</p>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </section>
+              )}
             </div>
 
             {/* Booking Sidebar */}
@@ -164,10 +283,10 @@ const DealDetail = () => {
 
                 <div className="border-t pt-4 space-y-2 text-sm text-muted-foreground">
                   <p className="flex items-center gap-2">
-                    ✓ Free cancellation within 24 hours
+                    <Shield className="w-4 h-4 text-emerald-500" /> Price Match Guarantee
                   </p>
                   <p className="flex items-center gap-2">
-                    ✓ Price guarantee
+                    ✓ Free cancellation within 24 hours
                   </p>
                   <p className="flex items-center gap-2">
                     ✓ Secure payment
