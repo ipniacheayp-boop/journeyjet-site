@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Calendar, Clock, Sparkles, User } from "lucide-react";
+import { ArrowRight, Calendar, Clock, User } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,97 +12,71 @@ interface BlogCardProps {
 const BlogCard = ({ post }: BlogCardProps) => {
   const formattedDate = new Date(post.publishedAt).toLocaleDateString("en-US", {
     year: "numeric",
-    month: "long",
+    month: "short",
     day: "numeric",
   });
 
   return (
-    <Card className="group flex h-[950px] w-full flex-col overflow-hidden border-border/60 bg-card/85 shadow-[0_20px_60px_-30px_hsl(var(--foreground)/0.28)] backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_30px_80px_-35px_hsl(var(--foreground)/0.36)]">
-      {/* Image Section - Fixed Aspect Ratio */}
-      <div className="relative shrink-0 overflow-hidden aspect-[16/10]">
+    <Card className="group flex flex-col h-full overflow-hidden border-border/40 bg-card/60 shadow-sm backdrop-blur-md transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-primary/5 rounded-[32px]">
+      {/* Image Section */}
+      <div className="relative shrink-0 overflow-hidden aspect-[16/10] sm:aspect-[4/3] lg:aspect-[16/10]">
         <img
           src={post.featuredImage}
           alt={post.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           loading="lazy"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 p-4">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 transition-opacity duration-300 group-hover:opacity-90" />
+        <div className="absolute inset-x-0 bottom-0 p-5 flex flex-col gap-3">
           <div className="flex items-center justify-between gap-3">
-            <Badge className="border-none bg-background/90 text-foreground hover:bg-background">{post.category}</Badge>
-            <div className="rounded-full bg-background/15 px-3 py-1 text-xs font-medium text-primary-foreground backdrop-blur">
-              {post.readTime} min read
+            <Badge className="border-none bg-primary/90 hover:bg-primary text-primary-foreground font-semibold uppercase tracking-wider text-[10px] px-3 py-1.5 backdrop-blur-sm shadow-sm transition-colors">
+              {post.category}
+            </Badge>
+            <div className="flex items-center gap-1.5 rounded-full bg-black/40 px-3 py-1 text-xs font-medium text-white backdrop-blur-md border border-white/10">
+              <Clock className="w-3.5 h-3.5" />
+              {post.readTime} min
             </div>
           </div>
         </div>
       </div>
 
-      <CardContent className="flex flex-1 flex-col p-5 md:p-6 overflow-hidden">
-        {/* Title - Fixed height for 2 lines */}
-        <Link to={`/blog/${post.slug}`}>
-          <h3 className="mb-3 text-xl font-semibold leading-tight text-foreground transition-colors group-hover:text-primary line-clamp-2 h-14">
+      <CardContent className="flex flex-1 flex-col p-6 lg:p-7">
+        {/* Title */}
+        <Link to={`/blog/${post.slug}`} className="group-hover:text-primary transition-colors">
+          <h3 className="mb-4 text-[19px] sm:text-xl font-bold leading-snug text-foreground line-clamp-2">
             {post.title}
           </h3>
         </Link>
 
-        {/* Hook - Fixed height for 3 lines */}
-        <p className="mb-4 text-sm leading-6 text-muted-foreground line-clamp-3 h-[72px]">{post.summary.hook}</p>
+        {/* Hook / Excerpt */}
+        <p className="mb-6 text-[15px] leading-relaxed text-muted-foreground line-clamp-3">
+          {post.summary.hook || post.excerpt}
+        </p>
 
-        {/* Metadata */}
-        <div className="mb-4 flex flex-wrap items-center gap-4 text-xs text-muted-foreground shrink-0">
-          <div className="flex items-center gap-1.5">
-            <User className="w-3.5 h-3.5" />
-            <span className="truncate max-w-[80px]">{post.author.name}</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5" />
-            <span>{formattedDate}</span>
-          </div>
-        </div>
-
-        {/* Main Content Highlights - Fixed height with hidden overflow */}
-        <div className="mb-5 h-[160px] rounded-2xl border border-border/70 bg-muted/55 p-4 overflow-y-scroll [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <div className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-            <Sparkles className="h-3.5 w-3.5 text-primary" />
-            Main Content
-          </div>
-          <ul className="space-y-2 text-sm text-foreground/85">
-            {post.summary.highlights.slice(0, 3).map((item) => (
-              <li key={item} className="flex gap-2 leading-5">
-                <span className="mt-2 h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
-                <span className="line-clamp-2">{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Visual Stats - Fixed height for the grid */}
-        <div className="mb-5 grid grid-cols-3 gap-2 h-24">
-          {post.summary.visualStats.map((stat) => (
-            <div
-              key={stat.label}
-              className="flex flex-col justify-center rounded-2xl border border-border/60 bg-[linear-gradient(180deg,hsl(var(--primary)/0.16),hsl(var(--card)/0.96))] px-2 py-3 text-center"
-            >
-              <div className="text-[10px] font-medium uppercase tracking-[0.15em] text-muted-foreground truncate">
-                {stat.label}
+        {/* Metadata Footer */}
+        <div className="mt-auto pt-5 border-t border-border/50">
+          <div className="mb-5 flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center shrink-0 border border-border/50">
+                <User className="w-3 h-3 text-foreground/50" />
               </div>
-              <div className="mt-1 text-xs font-semibold text-foreground line-clamp-2">{stat.value}</div>
+              <span className="truncate max-w-[100px] text-foreground/70">{post.author.name}</span>
             </div>
-          ))}
-        </div>
+            <div className="flex items-center gap-1.5 text-foreground/60">
+              <Calendar className="w-3.5 h-3.5" />
+              <span>{formattedDate}</span>
+            </div>
+          </div>
 
-        {/* Takeaway - Fixed height */}
-        <div className="mb-6 rounded-2xl border border-primary/20 bg-primary/8 p-4 h-28">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-primary">Takeaway</p>
-          <p className="mt-2 text-sm leading-5 text-foreground/85 line-clamp-3">{post.summary.takeaway}</p>
-        </div>
-
-        {/* CTA Button - Pushed to bottom */}
-        <div className="mt-auto">
-          <Link to={`/blog/${post.slug}`}>
-            <Button size="sm" className="w-full justify-between rounded-full px-5">
-              <span>{post.summary.ctaLabel}</span>
-              <ArrowRight className="h-4 w-4" />
+          <Link to={`/blog/${post.slug}`} className="block">
+            <Button
+              variant="outline"
+              className="w-full justify-between rounded-full px-5 border-border/60 hover:border-primary/50 hover:bg-primary/5 group/btn transition-all h-12"
+            >
+              <span className="font-semibold text-[13px] tracking-wide text-foreground">Read Article</span>
+              <div className="w-7 h-7 rounded-full bg-background flex items-center justify-center shadow-sm group-hover/btn:bg-primary group-hover/btn:text-primary-foreground transition-colors">
+                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-0.5" />
+              </div>
             </Button>
           </Link>
         </div>
