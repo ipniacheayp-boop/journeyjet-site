@@ -1,10 +1,19 @@
 import { useParams, Link } from "react-router-dom";
+import { Helmet } from "react-helmet";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { mockDeals, type Deal } from "@/data/mockDeals";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Plane, ArrowRight, Clock, Users } from "lucide-react";
+import { Calendar, MapPin, Plane, ArrowRight, Clock, Users, Shield, HelpCircle, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
+import FAQSchema from "@/components/seo/FAQSchema";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const DealDetail = () => {
   const { id } = useParams();
