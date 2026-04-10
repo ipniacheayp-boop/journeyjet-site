@@ -7,6 +7,8 @@ interface Airport {
   airportName: string;
   city: string;
   country: string;
+  aliases?: string[];
+  searchTerms?: string[];
 }
 
 interface AirportDropdownProps {
