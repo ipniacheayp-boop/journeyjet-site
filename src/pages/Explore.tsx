@@ -364,7 +364,7 @@ export default function Explore() {
                       Best Value Getaways
                     </h2>
                   </div>
-                  <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-8 -mx-4 px-4 no-scrollbar">
+                  <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-8 -mx-4 px-4 no-scrollbar [scrollbar-width:none]">
                     {filteredData
                       .filter((d) => d.category.includes("cheap"))
                       .slice(0, 8)
@@ -389,7 +389,7 @@ export default function Explore() {
                       <h2 className="text-3xl font-bold flex items-center gap-2 text-white">Ultimate Luxury</h2>
                     </div>
                   </div>
-                  <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-4 no-scrollbar relative z-10 w-[calc(100%+32px)] -ml-4 md:w-auto md:ml-0 md:px-0 px-4">
+                  <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-4 no-scrollbar relative z-10 w-[calc(100%+32px)] [scrollbar-width:none] -ml-4 md:w-auto md:ml-0 md:px-0 px-4">
                     {filteredData
                       .filter((d) => d.category.includes("luxury"))
                       .slice(0, 8)
@@ -410,7 +410,7 @@ export default function Explore() {
                       Hidden Gems
                     </h2>
                   </div>
-                  <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-4 no-scrollbar relative z-10 w-[calc(100%+32px)] -ml-4 md:w-auto md:ml-0 md:px-0 px-4">
+                  <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-4 no-scrollbar [scrollbar-width:none] relative z-10 w-[calc(100%+32px)] -ml-4 md:w-auto md:ml-0 md:px-0 px-4">
                     {filteredData
                       .filter((d) => d.category.includes("hidden_gem"))
                       .slice(0, 8)
