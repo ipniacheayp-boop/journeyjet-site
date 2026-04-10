@@ -39,7 +39,7 @@ export default function Explore() {
   };
 
   const removeRecentSearch = (term: string) => {
-    const updated = recentSearches.filter(t => t !== term);
+    const updated = recentSearches.filter((t) => t !== term);
     setRecentSearches(updated);
     localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(updated));
   };
@@ -51,25 +51,21 @@ export default function Explore() {
     // Text search
     if (searchTerm) {
       const lower = searchTerm.toLowerCase();
-      raw = raw.filter(d =>
-        d.name.toLowerCase().includes(lower) ||
-        d.country.toLowerCase().includes(lower)
-      );
+      raw = raw.filter((d) => d.name.toLowerCase().includes(lower) || d.country.toLowerCase().includes(lower));
     }
 
     // Buttons Category filter
     if (activeFilter !== "all") {
-      raw = raw.filter(d => d.category.includes(activeFilter));
+      raw = raw.filter((d) => d.category.includes(activeFilter));
     }
 
     // Season Toggle
     if (seasonToggle !== "all") {
-      raw = raw.filter(d => d.category.includes(seasonToggle));
+      raw = raw.filter((d) => d.category.includes(seasonToggle));
     }
 
     return raw;
   }, [searchTerm, activeFilter, seasonToggle]);
-
 
   return (
     <div className="min-h-screen bg-background">
@@ -94,7 +90,8 @@ export default function Explore() {
             transition={{ duration: 0.7 }}
             className="text-5xl md:text-7xl font-black mb-6 tracking-tight text-white drop-shadow-2xl"
           >
-            Find your next <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-400">adventure.</span>
+            Find your next{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-400">adventure.</span>
           </motion.h1>
 
           <motion.p
@@ -141,7 +138,7 @@ export default function Explore() {
             <span className="text-sm font-bold text-white/80 mr-2 flex items-center drop-shadow-md">
               <Flame className="w-4 h-4 mr-1 text-orange-400" /> Trending:
             </span>
-            {["Bali", "Japan", "Italy", "Maldives", "Switzerland"].map(tag => (
+            {["Bali", "Japan", "Italy", "Maldives", "Switzerland"].map((tag) => (
               <Badge
                 key={tag}
                 className="cursor-pointer bg-white/15 hover:bg-primary text-white border border-white/20 backdrop-blur-md transition-all py-1.5 px-4 text-sm rounded-full shadow-sm"
@@ -162,10 +159,21 @@ export default function Explore() {
                 className="mt-6 flex flex-wrap justify-center gap-2 max-w-3xl mx-auto overflow-hidden"
               >
                 <span className="text-sm font-semibold text-white/70 mr-2 flex items-center">Recent:</span>
-                {recentSearches.map(term => (
-                  <div key={term} className="flex items-center bg-black/40 backdrop-blur-md border border-white/10 rounded-full pl-4 pr-1.5 py-1.5 text-sm shadow-sm text-white">
-                    <span className="cursor-pointer font-medium mr-2 hover:text-primary transition-colors" onClick={() => handleSearch(term)}>{term}</span>
-                    <button onClick={() => removeRecentSearch(term)} className="hover:bg-white/20 p-1 rounded-full text-white/60 hover:text-white transition-colors">
+                {recentSearches.map((term) => (
+                  <div
+                    key={term}
+                    className="flex items-center bg-black/40 backdrop-blur-md border border-white/10 rounded-full pl-4 pr-1.5 py-1.5 text-sm shadow-sm text-white"
+                  >
+                    <span
+                      className="cursor-pointer font-medium mr-2 hover:text-primary transition-colors"
+                      onClick={() => handleSearch(term)}
+                    >
+                      {term}
+                    </span>
+                    <button
+                      onClick={() => removeRecentSearch(term)}
+                      className="hover:bg-white/20 p-1 rounded-full text-white/60 hover:text-white transition-colors"
+                    >
                       <X className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -183,10 +191,11 @@ export default function Explore() {
             <Button
               size="sm"
               className={`rounded-full shadow-sm transition-all border 
-  ${activeFilter === "all"
-                  ? "bg-primary text-white shadow-primary/25 border-primary"
-                  : "bg-primary/10 text-primary hover:bg-primary/20 border-primary/20"
-                }`}
+  ${
+    activeFilter === "all"
+      ? "bg-primary text-white shadow-primary/25 border-primary"
+      : "bg-primary/10 text-primary hover:bg-primary/20 border-primary/20"
+  }`}
               onClick={() => setActiveFilter("all")}
             >
               All Destinations
@@ -195,10 +204,11 @@ export default function Explore() {
             <Button
               size="sm"
               className={`rounded-full gap-1.5 shadow-sm transition-all border
-  ${activeFilter === "romantic"
-                  ? "bg-rose-500 text-white shadow-rose-500/25 border-rose-500"
-                  : "bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 border-rose-500/20"
-                }`}
+  ${
+    activeFilter === "romantic"
+      ? "bg-rose-500 text-white shadow-rose-500/25 border-rose-500"
+      : "bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 border-rose-500/20"
+  }`}
               onClick={() => setActiveFilter("romantic")}
             >
               <Heart className="w-4 h-4" /> Romantic
@@ -207,10 +217,11 @@ export default function Explore() {
             <Button
               size="sm"
               className={`rounded-full gap-1.5 shadow-sm transition-all border
-  ${activeFilter === "luxury"
-                  ? "bg-amber-500 text-white shadow-amber-500/25 border-amber-500"
-                  : "bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 border-amber-500/20"
-                }`}
+  ${
+    activeFilter === "luxury"
+      ? "bg-amber-500 text-white shadow-amber-500/25 border-amber-500"
+      : "bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 border-amber-500/20"
+  }`}
               onClick={() => setActiveFilter("luxury")}
             >
               <Gem className="w-4 h-4" /> Luxury
@@ -219,10 +230,11 @@ export default function Explore() {
             <Button
               size="sm"
               className={`rounded-full gap-1.5 shadow-sm transition-all border
-  ${activeFilter === "cheap"
-                  ? "bg-emerald-500 text-white shadow-emerald-500/25 border-emerald-500"
-                  : "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 border-emerald-500/20"
-                }`}
+  ${
+    activeFilter === "cheap"
+      ? "bg-emerald-500 text-white shadow-emerald-500/25 border-emerald-500"
+      : "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 border-emerald-500/20"
+  }`}
               onClick={() => setActiveFilter("cheap")}
             >
               <DollarSign className="w-4 h-4" /> Budget
@@ -231,10 +243,11 @@ export default function Explore() {
             <Button
               size="sm"
               className={`rounded-full gap-1.5 shadow-sm transition-all border
-  ${activeFilter === "adventure"
-                  ? "bg-indigo-500 text-white shadow-indigo-500/25 border-indigo-500"
-                  : "bg-indigo-500/10 text-indigo-500 hover:bg-indigo-500/20 border-indigo-500/20"
-                }`}
+  ${
+    activeFilter === "adventure"
+      ? "bg-indigo-500 text-white shadow-indigo-500/25 border-indigo-500"
+      : "bg-indigo-500/10 text-indigo-500 hover:bg-indigo-500/20 border-indigo-500/20"
+  }`}
               onClick={() => setActiveFilter("adventure")}
             >
               <Compass className="w-4 h-4" /> Adventure
@@ -245,10 +258,11 @@ export default function Explore() {
             <Button
               size="sm"
               className={`rounded-full h-8 px-4 text-xs font-semibold transition-all border
-  ${seasonToggle === "summer"
-                  ? "bg-orange-500 text-white shadow-orange-500/25 border-orange-500"
-                  : "bg-orange-500/10 text-orange-500 hover:bg-orange-500/20 border-orange-500/20"
-                }`}
+  ${
+    seasonToggle === "summer"
+      ? "bg-orange-500 text-white shadow-orange-500/25 border-orange-500"
+      : "bg-orange-500/10 text-orange-500 hover:bg-orange-500/20 border-orange-500/20"
+  }`}
               onClick={() => setSeasonToggle(seasonToggle === "summer" ? "all" : "summer")}
             >
               <Sun className="w-4 h-4 mr-1.5" /> Summer
@@ -257,10 +271,11 @@ export default function Explore() {
             <Button
               size="sm"
               className={`rounded-full h-8 px-4 text-xs font-semibold transition-all border
-  ${seasonToggle === "winter"
-                  ? "bg-blue-500 text-white shadow-blue-500/25 border-blue-500"
-                  : "bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 border-blue-500/20"
-                }`}
+  ${
+    seasonToggle === "winter"
+      ? "bg-blue-500 text-white shadow-blue-500/25 border-blue-500"
+      : "bg-blue-500/10 text-blue-500 hover:bg-blue-500/20 border-blue-500/20"
+  }`}
               onClick={() => setSeasonToggle(seasonToggle === "winter" ? "all" : "winter")}
             >
               <Snowflake className="w-4 h-4 mr-1.5" /> Winter
@@ -270,7 +285,6 @@ export default function Explore() {
       </div>
 
       <main className="max-w-7xl mx-auto px-4 py-12 min-h-[50vh]">
-
         {filteredData.length === 0 ? (
           <div className="text-center py-32 flex flex-col items-center">
             <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mb-6">
@@ -278,14 +292,20 @@ export default function Explore() {
             </div>
             <h3 className="text-2xl font-bold mb-2">No destinations found</h3>
             <p className="text-muted-foreground mb-8">We couldn't find anything matching your filters or search.</p>
-            <Button onClick={() => { setSearchTerm(""); setActiveFilter("all"); setSeasonToggle("all"); }}>
+            <Button
+              onClick={() => {
+                setSearchTerm("");
+                setActiveFilter("all");
+                setSeasonToggle("all");
+              }}
+            >
               Clear All Filters
             </Button>
           </div>
         ) : (
           <>
             {/* SEARCH RESULTS VIEW (Grid Mode) */}
-            {(searchTerm || activeFilter !== "all" || seasonToggle !== "all") ? (
+            {searchTerm || activeFilter !== "all" || seasonToggle !== "all" ? (
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -316,7 +336,6 @@ export default function Explore() {
             ) : (
               /* EXPLORE MODE (Carousel rows) */
               <div className="space-y-16 animate-in fade-in duration-700">
-
                 {/* Section: Trending Now */}
                 <section>
                   <div className="flex items-center justify-between mb-6">
@@ -325,12 +344,15 @@ export default function Explore() {
                       Trending Worldwide
                     </h2>
                   </div>
-                  <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-8 -mx-4 px-4 no-scrollbar ">
-                    {filteredData.filter(d => d.category.includes("trending")).slice(0, 8).map(dest => (
-                      <div className="snap-center shrink-0" key={dest.id}>
-                        <DestinationCard destination={dest} />
-                      </div>
-                    ))}
+                  <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-8 -mx-4 px-4 no-scrollbar [scrollbar-width:none]">
+                    {filteredData
+                      .filter((d) => d.category.includes("trending"))
+                      .slice(0, 8)
+                      .map((dest) => (
+                        <div className="snap-center shrink-0" key={dest.id}>
+                          <DestinationCard destination={dest} />
+                        </div>
+                      ))}
                   </div>
                 </section>
 
@@ -343,11 +365,14 @@ export default function Explore() {
                     </h2>
                   </div>
                   <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-8 -mx-4 px-4 no-scrollbar">
-                    {filteredData.filter(d => d.category.includes("cheap")).slice(0, 8).map(dest => (
-                      <div className="snap-center shrink-0" key={dest.id}>
-                        <DestinationCard destination={dest} />
-                      </div>
-                    ))}
+                    {filteredData
+                      .filter((d) => d.category.includes("cheap"))
+                      .slice(0, 8)
+                      .map((dest) => (
+                        <div className="snap-center shrink-0" key={dest.id}>
+                          <DestinationCard destination={dest} />
+                        </div>
+                      ))}
                   </div>
                 </section>
 
@@ -358,19 +383,22 @@ export default function Explore() {
                   </div>
                   <div className="flex items-center justify-between mb-8 relative z-10">
                     <div>
-                      <Badge className="bg-amber-500 hover:bg-amber-600 text-white border-none mb-3">Premium Collection</Badge>
-                      <h2 className="text-3xl font-bold flex items-center gap-2 text-white">
-                        Ultimate Luxury
-                      </h2>
+                      <Badge className="bg-amber-500 hover:bg-amber-600 text-white border-none mb-3">
+                        Premium Collection
+                      </Badge>
+                      <h2 className="text-3xl font-bold flex items-center gap-2 text-white">Ultimate Luxury</h2>
                     </div>
                   </div>
                   <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-4 no-scrollbar relative z-10 w-[calc(100%+32px)] -ml-4 md:w-auto md:ml-0 md:px-0 px-4">
-                    {filteredData.filter(d => d.category.includes("luxury")).slice(0, 8).map(dest => (
-                      <div className="snap-center shrink-0" key={dest.id}>
-                        {/* Card forced to dark mode compatibility slightly differently if needed, but DestinationCard is bg-card */}
-                        <DestinationCard destination={dest} />
-                      </div>
-                    ))}
+                    {filteredData
+                      .filter((d) => d.category.includes("luxury"))
+                      .slice(0, 8)
+                      .map((dest) => (
+                        <div className="snap-center shrink-0" key={dest.id}>
+                          {/* Card forced to dark mode compatibility slightly differently if needed, but DestinationCard is bg-card */}
+                          <DestinationCard destination={dest} />
+                        </div>
+                      ))}
                   </div>
                 </section>
 
@@ -383,14 +411,16 @@ export default function Explore() {
                     </h2>
                   </div>
                   <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-4 no-scrollbar relative z-10 w-[calc(100%+32px)] -ml-4 md:w-auto md:ml-0 md:px-0 px-4">
-                    {filteredData.filter(d => d.category.includes("hidden_gem")).slice(0, 8).map(dest => (
-                      <div className="snap-center shrink-0" key={dest.id}>
-                        <DestinationCard destination={dest} />
-                      </div>
-                    ))}
+                    {filteredData
+                      .filter((d) => d.category.includes("hidden_gem"))
+                      .slice(0, 8)
+                      .map((dest) => (
+                        <div className="snap-center shrink-0" key={dest.id}>
+                          <DestinationCard destination={dest} />
+                        </div>
+                      ))}
                   </div>
                 </section>
-
               </div>
             )}
           </>
