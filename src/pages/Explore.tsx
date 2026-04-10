@@ -410,12 +410,13 @@ export default function Explore() {
                       Hidden Gems
                     </h2>
                   </div>
-                  <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-4 no-scrollbar [scrollbar-width:none] relative z-10 w-[calc(100%+32px)] -ml-4 md:w-auto md:ml-0 md:px-0 px-4">
+
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-5">
                     {filteredData
                       .filter((d) => d.category.includes("hidden_gem"))
-                      .slice(0, 8)
+                      .slice(0, 12)
                       .map((dest) => (
-                        <div className="snap-center shrink-0" key={dest.id}>
+                        <div key={dest.id} className="w-full">
                           <DestinationCard destination={dest} />
                         </div>
                       ))}
