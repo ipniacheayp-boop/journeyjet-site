@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Globe, Bell, Plane, ArrowRight, Briefcase, Shield, Zap, Map } from "lucide-react";
+import { Globe, Sparkles, Bell, Plane, ArrowRight, Briefcase, Shield, Zap, Map } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
@@ -15,11 +15,11 @@ const tools = [
     badge: "Popular",
   },
   {
-    icon: Bell,
-    title: "Price Drop Alerts",
-    subtitle: "Set alerts and get notified instantly when fares drop on your favorite routes.",
-    link: "/account",
-    linkText: "Set an alert",
+    icon: Sparkles,
+    title: "AI Trip Planner",
+    subtitle: "Design a personalized, day-by-day itinerary instantly using advanced AI.",
+    link: "/trip-planner",
+    linkText: "Plan a trip",
     gradient: "from-violet-600 to-purple-700",
     highlight: "#7c3aed",
     badge: "New",
