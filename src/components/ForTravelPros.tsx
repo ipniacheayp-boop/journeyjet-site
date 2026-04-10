@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 const tools = [
   {
     icon: Globe,
-    title: "Explore Destinations",
+    title: "Explore",
     subtitle: "Browse hundreds of US routes with real-time pricing filtered to your budget.",
     link: "/explore",
     linkText: "Explore deals",
