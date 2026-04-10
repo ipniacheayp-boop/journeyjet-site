@@ -62,8 +62,10 @@ const AirportDropdown = React.memo(({ value, onChange, placeholder, className }:
         const cityMatch = airport.city.toLowerCase().includes(searchTerm);
         const iataMatch = airport.iataCode.toLowerCase().includes(searchTerm);
         const countryMatch = airport.country.toLowerCase().includes(searchTerm);
+        const aliasMatch = airport.aliases?.some(a => a.toLowerCase().includes(searchTerm)) ?? false;
+        const searchTermMatch = airport.searchTerms?.some(t => t.includes(searchTerm)) ?? false;
 
-        return nameMatch || cityMatch || iataMatch || countryMatch;
+        return nameMatch || cityMatch || iataMatch || countryMatch || aliasMatch || searchTermMatch;
       })
       .sort((a, b) => {
         // Prioritize exact IATA matches, then city starts-with, then alphabetical
