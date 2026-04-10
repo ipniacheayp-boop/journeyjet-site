@@ -59,6 +59,7 @@ import TravelChecklists from "@/pages/TravelChecklists";
 import FlightTracker from "@/pages/FlightTracker";
 import RefundPolicy from "@/pages/RefundPolicy";
 import PriceMatch from "@/pages/PriceMatch";
+import TripPlanner from "@/pages/TripPlanner";
 
 const FlybotWrapper = () => {
   const location = useLocation();
@@ -136,6 +137,7 @@ const App = () => (
                 <Route path="/flight-tracker" element={<FlightTracker />} />
                 <Route path="/refund-policy" element={<RefundPolicy />} />
                 <Route path="/price-match" element={<PriceMatch />} />
+                <Route path="/trip-planner" element={<TripPlanner />} />
                 <Route path="/flights-to/:slug" element={<FlightsToDestination />} />
                 <Route path="/flights/:from-to-:to" element={<CityFlightPage />} />
                 <Route path="/airlines/:slug" element={<AirlinePage />} />
