@@ -21,10 +21,11 @@ interface SEOHeadProps {
 }
 
 const SEOHead = ({
-  title = "Tripile.com – Buy Cheap Flights, Hotels & Car Rentals in the USA",
-  description = "Tripile.com helps you find the best flight deals, hotel discounts, and car rentals across the USA. Compare thousands of fares instantly and save big on your next trip.",
+  title = "Tripile.com – Buy Cheap Flights, Hotels & Car Rentals | Best US Travel Deals",
+  description =
+    "Buy cheap flights, hotels & car rentals across the USA on Tripile.com. Compare 500+ airlines, get Price Match Guarantee, and save up to 46%. Trusted by 2M+ travelers.",
   keywords = "cheap flights USA, flight deals, book flights online, US travel deals, last-minute flights, discounted airline tickets, cheap hotels, car rentals USA, travel booking, airfare deals",
-  canonicalUrl = "https://tripile.com",
+  canonicalUrl = "https://tripile.com/",
   ogImage = DEFAULT_OG_IMAGE,
   ogType = "website",
   noIndex = false
@@ -80,7 +81,6 @@ const SEOHead = ({
     <Helmet>
       {/* Primary Meta Tags */}
       <title>{title}</title>
-      <meta name="title" content={title} />
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords} />
       <meta name="author" content="Tripile.com" />
@@ -97,9 +97,8 @@ const SEOHead = ({
       <meta property="og:site_name" content="Tripile.com" />
       <meta property="og:locale" content="en_US" />
 
-      {/* Twitter */}
+      {/* Twitter / X */}
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:url" content={canonicalUrl} />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={absoluteOgImage} />
