@@ -145,6 +145,7 @@ const PopularFlights = () => {
           </div>
           <Link
             to="/deals"
+            title="View all travel deals on Tripile — flights, hotels & more"
             className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-primary/80 transition-colors shrink-0"
           >
             View all deals <ArrowRight className="w-4 h-4" />
@@ -167,6 +168,7 @@ const PopularFlights = () => {
             >
               <Link
                 to={`/?type=flights&originLocationCode=${route.fromCode}&destinationLocationCode=${route.toCode}#search-widget`}
+                title={`Search cheap flights ${route.from} (${route.fromCode}) to ${route.to} (${route.toCode}) on Tripile`}
                 className="group block bg-card rounded-2xl border border-border hover:border-primary/30 hover:shadow-md transition-all duration-200 p-5 h-full"
               >
                 {/* Tag */}

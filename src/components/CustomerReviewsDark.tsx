@@ -259,6 +259,7 @@ const CustomerReviewsDark = () => {
       <div className="text-center mt-8">
         <Link
           to="/reviews"
+          title="Read all Tripile customer reviews"
           className="inline-flex items-center gap-2 text-sm font-semibold text-white/60 hover:text-white transition-colors"
         >
           Read all reviews on Trustpilot

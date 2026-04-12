@@ -14,6 +14,7 @@ const FeatureHighlights = () => {
       subtitle: "Split your trip cost into predictable monthly payments. No interest, no surprises.",
       link: "/support?topic=flexpay",
       linkText: "Learn about FlexPay",
+      linkTitle: "Tripile FlexPay — buy now pay later for travel",
       iconBg: "bg-indigo-600",
       accent: "border-indigo-500/20 hover:border-indigo-500/40",
       badge: "FlexPay",
@@ -25,6 +26,7 @@ const FeatureHighlights = () => {
       subtitle: "Real travel specialists available around the clock — by phone, chat, or email.",
       link: "/support",
       linkText: "Contact Support",
+      linkTitle: "Contact Tripile customer support 24/7",
       iconBg: "bg-sky-600",
       accent: "border-sky-500/20 hover:border-sky-500/40",
       badge: "Always On",
@@ -36,6 +38,7 @@ const FeatureHighlights = () => {
       subtitle: "Millions of satisfied travelers rely on Tripile for smooth, reliable bookings every day.",
       link: "/reviews",
       linkText: "Read Reviews",
+      linkTitle: "Read Tripile traveler reviews",
       iconBg: "bg-emerald-600",
       accent: "border-emerald-500/20 hover:border-emerald-500/40",
       badge: "Top Rated",
@@ -94,6 +97,7 @@ const FeatureHighlights = () => {
               {/* CTA */}
               <Link
                 to={feature.link}
+                title={feature.linkTitle}
                 className="inline-flex items-center gap-1.5 mt-5 text-sm font-semibold text-primary hover:text-primary/80 transition-colors group"
               >
                 {feature.linkText}
@@ -107,6 +111,7 @@ const FeatureHighlights = () => {
         <div className="mt-10 text-center">
           <a
             href="tel:+18009634330"
+            title="Call a Tripile travel advisor — 1-800-963-4330"
             className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
           >
             <Headphones className="w-4 h-4" />

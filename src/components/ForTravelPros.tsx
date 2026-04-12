@@ -149,7 +149,7 @@ const ForTravelPros = () => {
             ))}
           </div>
           <Button asChild size="sm" className="shrink-0 rounded-xl bg-primary hover:bg-primary/90 font-semibold gap-2">
-            <Link to="/account">
+            <Link to="/account" title="Create your free Tripile account — member deals & alerts">
               Get Started Free <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>

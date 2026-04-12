@@ -161,6 +161,7 @@ const Index = () => {
       color: "text-blue-500",
       iconBg: "bg-blue-600",
       link: "/deals",
+      linkTitle: "Tripile best price guarantee — compare travel deals",
     },
     {
       icon: Clock,
@@ -171,6 +172,7 @@ const Index = () => {
       color: "text-emerald-500",
       iconBg: "bg-emerald-600",
       link: "/support",
+      linkTitle: "Contact Tripile support — 24/7 travel help",
     },
     {
       icon: Headphones,
@@ -182,6 +184,7 @@ const Index = () => {
       color: "text-indigo-500",
       iconBg: "bg-indigo-600",
       link: "/support",
+      linkTitle: "Tripile travel experts — personalized flight search",
     },
     {
       icon: CreditCard,
@@ -193,6 +196,7 @@ const Index = () => {
       color: "text-amber-500",
       iconBg: "bg-amber-500",
       link: "/support?topic=flexpay",
+      linkTitle: "Tripile FlexPay — flexible payment options for travel",
     },
   ];
 
@@ -279,6 +283,7 @@ const Index = () => {
           >
             <a
               href="#search-widget"
+              title="Jump to Tripile search — compare flights, hotels & car rentals"
               onClick={(e) => {
                 e.preventDefault();
                 document.getElementById("search-widget")?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -292,6 +297,7 @@ const Index = () => {
 
             <Link
               to="/deals"
+              title="See today’s best travel deals on Tripile"
               className="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm font-medium px-5 py-4 rounded-2xl border border-white/20 hover:border-white/40 bg-white/5 hover:bg-white/10 backdrop-blur-sm transition-all duration-200"
             >
               <TrendingDown className="w-4 h-4 text-green-400" />
@@ -429,6 +435,7 @@ const Index = () => {
                   </div>
                   <Link
                     to="/deals"
+                    title="View flight deals on Tripile"
                     className="shrink-0 mt-1 inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-600/20 border border-blue-500/30 text-blue-400 hover:bg-blue-600 hover:text-white transition-all duration-200"
                   >
                     <ArrowRight className="w-4 h-4" />
@@ -481,6 +488,7 @@ const Index = () => {
                   </div>
                   <Link
                     to="/deals"
+                    title="View senior & special fare deals on Tripile"
                     className="shrink-0 mt-1 inline-flex items-center justify-center w-8 h-8 rounded-full bg-rose-600/20 border border-rose-500/30 text-rose-400 hover:bg-rose-600 hover:text-white transition-all duration-200"
                   >
                     <ArrowRight className="w-4 h-4" />
@@ -505,6 +513,7 @@ const Index = () => {
               </div>
               <Link
                 to="/deals"
+                title="See all Tripile travel deals"
                 className="inline-flex items-center gap-1.5 text-[11px] font-bold text-sky-400 hover:text-sky-300 transition-colors duration-150"
               >
                 See all deals <ChevronRight className="w-3.5 h-3.5" />
@@ -605,6 +614,7 @@ const Index = () => {
                   <p className="text-xs text-muted-foreground leading-relaxed">{item.description}</p>
                   <Link
                     to={item.link}
+                    title={item.linkTitle}
                     className={`inline-flex items-center gap-1 mt-3 text-xs font-semibold ${item.color} hover:opacity-80 transition-opacity`}
                   >
                     Learn more <ArrowRight className="w-3 h-3" />
@@ -634,7 +644,11 @@ const Index = () => {
               Based on <strong className="text-foreground">56,000+</strong> verified reviews
             </span>
             <span className="hidden sm:block w-px h-4 bg-border" />
-            <Link to="/reviews" className="text-primary font-semibold hover:underline flex items-center gap-1">
+            <Link
+              to="/reviews"
+              title="Read verified Tripile customer reviews"
+              className="text-primary font-semibold hover:underline flex items-center gap-1"
+            >
               Read reviews <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </motion.div>
@@ -659,7 +673,7 @@ const Index = () => {
                 <RefreshCw className="w-4 h-4" />
                 Refresh
               </Button>
-              <Link to="/deals">
+              <Link to="/deals" title="View all featured travel deals on Tripile">
                 <Button className="gap-2 rounded-xl btn-premium">
                   View All <ArrowRight className="w-4 h-4" />
                 </Button>
@@ -792,7 +806,7 @@ const Index = () => {
                   ))}
                 </div>
 
-                <Link to="/account" className="block">
+                <Link to="/account" title="Join Tripile free — member deals & travel perks" className="block">
                   <Button size="lg" className="w-full font-bold rounded-xl btn-premium gap-2">
                     Join Free — No Credit Card <ArrowRight className="w-4 h-4" />
                   </Button>
@@ -836,7 +850,7 @@ const Index = () => {
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Link to="/account">
+              <Link to="/account" title="Sign up free on Tripile — compare fares & unlock member deals">
                 <Button
                   size="lg"
                   className="gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl shadow-[0_4px_32px_rgba(59,130,246,0.45)] hover:shadow-[0_6px_40px_rgba(59,130,246,0.6)] transition-all duration-200 hover:-translate-y-0.5 px-8"
@@ -844,7 +858,7 @@ const Index = () => {
                   Sign Up Free <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>
-              <Link to="/deals">
+              <Link to="/deals" title="Browse all Tripile flight & travel deals">
                 <Button
                   size="lg"
                   variant="outline"
@@ -899,32 +913,56 @@ const Index = () => {
               </h3>
               <p>
                 Tripile.com is built for travelers who want{" "}
-                <Link to="/deals" className="text-primary font-medium underline-offset-2 hover:underline">
+                <Link
+                  to="/deals"
+                  title="Find cheap flights on Tripile — compare airlines"
+                  className="text-primary font-medium underline-offset-2 hover:underline"
+                >
                   cheap flights
                 </Link>
                 , trusted hotel rates, and flexible{" "}
-                <Link to="/explore" className="text-primary font-medium underline-offset-2 hover:underline">
+                <Link
+                  to="/explore"
+                  title="Explore travel destinations on Tripile"
+                  className="text-primary font-medium underline-offset-2 hover:underline"
+                >
                   destination ideas
                 </Link>{" "}
                 without jumping between dozens of tabs. Our search experience is designed around real US routes and
                 popular international gateways, so you can move from inspiration to a shortlist in minutes—not hours.
                 We focus on clarity: taxes and carrier rules are surfaced early, and our{" "}
-                <Link to="/support" className="text-primary font-medium underline-offset-2 hover:underline">
+                <Link
+                  to="/support"
+                  title="Tripile customer support — contact us 24/7"
+                  className="text-primary font-medium underline-offset-2 hover:underline"
+                >
                   customer support team
                 </Link>{" "}
                 is available around the clock if your plans change.
               </p>
               <p className="mt-4">
                 From{" "}
-                <Link to="/flight-status" className="text-primary font-medium underline-offset-2 hover:underline">
+                <Link
+                  to="/flight-status"
+                  title="Check live flight status on Tripile"
+                  className="text-primary font-medium underline-offset-2 hover:underline"
+                >
                   flight status
                 </Link>{" "}
                 and{" "}
-                <Link to="/flight-tracker" className="text-primary font-medium underline-offset-2 hover:underline">
+                <Link
+                  to="/flight-tracker"
+                  title="Track flights live on Tripile"
+                  className="text-primary font-medium underline-offset-2 hover:underline"
+                >
                   live flight tracking
                 </Link>{" "}
                 to{" "}
-                <Link to="/trip-planner" className="text-primary font-medium underline-offset-2 hover:underline">
+                <Link
+                  to="/trip-planner"
+                  title="Tripile trip planner — build your itinerary"
+                  className="text-primary font-medium underline-offset-2 hover:underline"
+                >
                   itinerary planning
                 </Link>
                 , Tripile combines booking tools with practical resources—so you spend less time managing logistics
@@ -951,18 +989,30 @@ const Index = () => {
                 </li>
                 <li>
                   <strong className="text-foreground">Deals hub:</strong> Browse curated{" "}
-                  <Link to="/cruise-deals" className="text-primary font-medium underline-offset-2 hover:underline">
+                  <Link
+                    to="/cruise-deals"
+                    title="Browse cruise deals on Tripile"
+                    className="text-primary font-medium underline-offset-2 hover:underline"
+                  >
                     cruise deals
                   </Link>{" "}
                   and seasonal offers in one dashboard.
                 </li>
                 <li>
                   <strong className="text-foreground">Travel utilities:</strong> Use{" "}
-                  <Link to="/webcheck-in" className="text-primary font-medium underline-offset-2 hover:underline">
+                  <Link
+                    to="/webcheck-in"
+                    title="Airline web check-in guide — Tripile"
+                    className="text-primary font-medium underline-offset-2 hover:underline"
+                  >
                     airline web check-in
                   </Link>
                   ,{" "}
-                  <Link to="/destinations-checklist" className="text-primary font-medium underline-offset-2 hover:underline">
+                  <Link
+                    to="/destinations-checklist"
+                    title="Travel packing checklists by destination — Tripile"
+                    className="text-primary font-medium underline-offset-2 hover:underline"
+                  >
                     packing checklists
                   </Link>
                   , and policy pages so you know what to expect before you fly.
@@ -977,26 +1027,46 @@ const Index = () => {
               <p>
                 Tripile emphasizes transparent pricing, flexible payment options where available, and proactive help if
                 a schedule shifts. Our{" "}
-                <Link to="/price-match" className="text-primary font-medium underline-offset-2 hover:underline">
+                <Link
+                  to="/price-match"
+                  title="Tripile Price Match Guarantee — how it works"
+                  className="text-primary font-medium underline-offset-2 hover:underline"
+                >
                   Price Match Guarantee
                 </Link>{" "}
                 is structured to reward smart shoppers, while our{" "}
-                <Link to="/refund-policy" className="text-primary font-medium underline-offset-2 hover:underline">
+                <Link
+                  to="/refund-policy"
+                  title="Tripile refund and cancellation policy"
+                  className="text-primary font-medium underline-offset-2 hover:underline"
+                >
                   refund and cancellation policy
                 </Link>{" "}
                 pages explain common scenarios in plain language. Travelers also rely on verified{" "}
-                <Link to="/reviews" className="text-primary font-medium underline-offset-2 hover:underline">
+                <Link
+                  to="/reviews"
+                  title="Verified Tripile customer reviews"
+                  className="text-primary font-medium underline-offset-2 hover:underline"
+                >
                   Tripile reviews
                 </Link>{" "}
                 and the{" "}
-                <Link to="/blog" className="text-primary font-medium underline-offset-2 hover:underline">
+                <Link
+                  to="/blog"
+                  title="Tripile travel blog — tips & guides"
+                  className="text-primary font-medium underline-offset-2 hover:underline"
+                >
                   Tripile travel blog
                 </Link>{" "}
                 for timely tips— from baggage rules to destination guides.
               </p>
               <p className="mt-4">
                 If you are comparing carriers, start with our{" "}
-                <Link to="/sitemap" className="text-primary font-medium underline-offset-2 hover:underline">
+                <Link
+                  to="/sitemap"
+                  title="Tripile HTML site map — all travel pages"
+                  className="text-primary font-medium underline-offset-2 hover:underline"
+                >
                   site map
                 </Link>{" "}
                 to discover popular routes, airports, and city pages designed for SEO-friendly discovery—then jump back
@@ -1018,7 +1088,11 @@ const Index = () => {
               <p>
                 For quick answers on fees, changes, and how Tripile compares to other travel sites, scroll to the
                 Frequently Asked Questions on this page—or contact{" "}
-                <Link to="/support" className="text-primary font-medium underline-offset-2 hover:underline">
+                <Link
+                  to="/support"
+                  title="Get help from Tripile support"
+                  className="text-primary font-medium underline-offset-2 hover:underline"
+                >
                   Tripile support
                 </Link>{" "}
                 for one-to-one help. We are here 24/7.

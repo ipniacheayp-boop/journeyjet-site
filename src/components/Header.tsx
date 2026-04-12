@@ -18,7 +18,6 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import newLogo from "@/assets/new_logo.png";
 import tripileLogo from "@/assets/tripile-logo.svg";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -33,19 +32,29 @@ import {
 
 // Primary service links — these are the core user journeys
 const serviceLinks = [
-  { label: "Flights", href: "/?type=flights#search-widget", icon: Plane },
-  { label: "Hotels", href: "/?type=hotels#search-widget", icon: Hotel },
-  { label: "Deals", href: "/deals", icon: Tag },
-  { label: "Flight Status", href: "/flight-status", icon: PlaneTakeoff },
-  { label: "Flight Tracker", href: "/flight-tracker", icon: Globe },
+  {
+    label: "Flights",
+    href: "/?type=flights#search-widget",
+    icon: Plane,
+    linkTitle: "Search cheap flights — open Tripile flight booking",
+  },
+  {
+    label: "Hotels",
+    href: "/?type=hotels#search-widget",
+    icon: Hotel,
+    linkTitle: "Find hotel deals — Tripile hotel search",
+  },
+  { label: "Deals", href: "/deals", icon: Tag, linkTitle: "Today’s travel deals on Tripile" },
+  { label: "Flight Status", href: "/flight-status", icon: PlaneTakeoff, linkTitle: "Check flight status — Tripile" },
+  { label: "Flight Tracker", href: "/flight-tracker", icon: Globe, linkTitle: "Live flight tracker — Tripile" },
   // { label: "Cruise", href: "/?type=cruise#search-widget", icon: Ship },
 ];
 
 // Secondary utility links — lower priority, go in right area
 const utilityLinks = [
-  { label: "Reviews", href: "/reviews" },
-  { label: "Support", href: "/support" },
-  { label: "About", href: "/about" },
+  { label: "Reviews", href: "/reviews", linkTitle: "Tripile customer reviews" },
+  { label: "Support", href: "/support", linkTitle: "Tripile customer support — 24/7 help" },
+  { label: "About", href: "/about", linkTitle: "About Tripile — US flights, hotels & car rentals" },
 ];
 
 const Header = () => {
@@ -99,7 +108,11 @@ const Header = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-[68px] gap-4">
             {/* ── Logo ── */}
-            <Link to="/" className="flex items-center shrink-0 ml-2 lg:ml-6">
+            <Link
+              to="/"
+              className="flex items-center shrink-0 ml-2 lg:ml-6"
+              title="Tripile — home | cheap flights, hotels & car rentals in the USA"
+            >
               <div className="h-9 md:h-11 w-auto flex items-center transition-opacity hover:opacity-80">
                 <img src={tripileLogo} alt="Tripile Logo" className="h-full w-auto object-contain" />
               </div>
@@ -114,6 +127,7 @@ const Header = () => {
                   <Link
                     key={link.href}
                     to={link.href}
+                    title={link.linkTitle}
                     className={`group flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-semibold transition-all duration-150 ${
                       active
                         ? "text-primary bg-primary/8"
@@ -137,6 +151,7 @@ const Header = () => {
                   <Link
                     key={link.href}
                     to={link.href}
+                    title={link.linkTitle}
                     className="px-3 py-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors rounded-md hover:bg-slate-100 dark:hover:bg-slate-800"
                   >
                     {link.label}
@@ -188,6 +203,7 @@ const Header = () => {
               {/* Call CTA — Desktop */}
               <a
                 href="tel:+18009634330"
+                title="Call Tripile 24/7 customer support — 1-800-963-4330"
                 className="hidden md:flex items-center gap-1.5 px-4 py-2 rounded-full bg-primary text-primary-foreground font-semibold text-xs hover:bg-primary/90 transition-colors shadow-sm"
               >
                 <Phone className="w-3.5 h-3.5" />
@@ -220,7 +236,11 @@ const Header = () => {
                     {userRole === "admin" && (
                       <>
                         <DropdownMenuItem asChild>
-                          <Link to="/admin" className="flex items-center gap-2 w-full cursor-pointer">
+                          <Link
+                            to="/admin"
+                            title="Tripile admin dashboard"
+                            className="flex items-center gap-2 w-full cursor-pointer"
+                          >
                             <BookOpen className="w-4 h-4" />
                             {t("navigation.admin")}
                           </Link>
@@ -231,7 +251,11 @@ const Header = () => {
                     {userRole === "agent" && (
                       <>
                         <DropdownMenuItem asChild>
-                          <Link to="/agent/dashboard" className="flex items-center gap-2 w-full cursor-pointer">
+                          <Link
+                            to="/agent/dashboard"
+                            title="Tripile travel agent dashboard"
+                            className="flex items-center gap-2 w-full cursor-pointer"
+                          >
                             <BookOpen className="w-4 h-4" />
                             {t("navigation.agent")}
                           </Link>
@@ -240,13 +264,21 @@ const Header = () => {
                       </>
                     )}
                     <DropdownMenuItem asChild>
-                      <Link to="/account" className="flex items-center gap-2 w-full cursor-pointer">
+                      <Link
+                        to="/account"
+                        title="Your Tripile account"
+                        className="flex items-center gap-2 w-full cursor-pointer"
+                      >
                         <User className="w-4 h-4" />
                         {t("navigation.account")}
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link to="/my-bookings" className="flex items-center gap-2 w-full cursor-pointer">
+                      <Link
+                        to="/my-bookings"
+                        title="View my Tripile bookings"
+                        className="flex items-center gap-2 w-full cursor-pointer"
+                      >
                         <BookOpen className="w-4 h-4" />
                         {t("navigation.myBookings")}
                       </Link>
@@ -267,7 +299,9 @@ const Header = () => {
                   asChild
                   className="rounded-full bg-slate-900 text-white hover:bg-slate-700 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 font-semibold h-8 px-4 text-xs shadow-none"
                 >
-                  <Link to="/login">{t("navigation.signIn")}</Link>
+                  <Link to="/login" title="Sign in to Tripile">
+                    {t("navigation.signIn")}
+                  </Link>
                 </Button>
               )}
 
@@ -299,6 +333,7 @@ const Header = () => {
                       <Link
                         key={link.href}
                         to={link.href}
+                        title={link.linkTitle}
                         onClick={() => setIsMobileMenuOpen(false)}
                         className="flex items-center gap-2.5 px-3 py-3 text-sm font-semibold text-slate-800 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-900 rounded-xl transition-colors"
                       >
@@ -322,6 +357,7 @@ const Header = () => {
                     <Link
                       key={link.href}
                       to={link.href}
+                      title={link.linkTitle}
                       onClick={() => setIsMobileMenuOpen(false)}
                       className="px-3 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900 rounded-lg transition-colors"
                     >
@@ -369,6 +405,7 @@ const Header = () => {
       {/* Floating Mobile Call Button */}
       <a
         href="tel:+18009634330"
+        title="Call Tripile now — 1-800-963-4330"
         className="fixed md:hidden bottom-4 left-4 right-4 z-[90] flex items-center justify-between px-5 py-4 rounded-2xl bg-primary text-primary-foreground shadow-xl hover:bg-primary/90 transition-colors"
       >
         <div className="flex flex-col">

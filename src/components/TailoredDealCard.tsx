@@ -74,7 +74,7 @@ const TailoredDealCard = ({ deal }: TailoredDealCardProps) => {
           asChild
           className={`w-full rounded-xl font-semibold gap-2 ${cfg.bg} hover:opacity-90 text-white border-0`}
         >
-          <Link to="/deals">
+          <Link to="/deals" title="Browse tailored travel deals on Tripile">
             {cfg.cta}
             <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
           </Link>
