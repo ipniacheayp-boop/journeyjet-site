@@ -115,9 +115,9 @@ const CruiseDeals = () => {
     {
       title: "Book",
       links: [
-        { text: "Flights", href: "/search-results" },
-        { text: "Hotels", href: "/search-results?type=hotels" },
-        { text: "Cars", href: "/search-results?type=cars" },
+        { text: "Flights", href: "/flights" },
+        { text: "Hotels", href: "/hotels" },
+        { text: "Cars", href: "/car-rentals" },
         { text: "Cruises", href: "/cruise-deals" },
       ],
     },
@@ -125,9 +125,9 @@ const CruiseDeals = () => {
       title: "Traveler Tools",
       links: [
         { text: "My Bookings", href: "/my-bookings" },
-        { text: "Flight Status", href: "#" },
-        { text: "Check-In", href: "#" },
-        { text: "Travel Alerts", href: "#" },
+        { text: "Flight Status", href: "/flight-status" },
+        { text: "Check-In", href: "/webcheck-in" },
+        { text: "Deals", href: "/deals" },
       ],
     },
     {

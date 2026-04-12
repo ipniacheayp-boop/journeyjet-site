@@ -167,7 +167,7 @@ const PopularFlights = () => {
               whileHover={{ y: -3, transition: { duration: 0.2 } }}
             >
               <Link
-                to={`/?type=flights&originLocationCode=${route.fromCode}&destinationLocationCode=${route.toCode}#search-widget`}
+                to={`/flights?originLocationCode=${route.fromCode}&destinationLocationCode=${route.toCode}`}
                 title={`Search cheap flights ${route.from} (${route.fromCode}) to ${route.to} (${route.toCode}) on Tripile`}
                 className="group block bg-card rounded-2xl border border-border hover:border-primary/30 hover:shadow-md transition-all duration-200 p-5 h-full"
               >

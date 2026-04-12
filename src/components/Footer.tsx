@@ -25,9 +25,11 @@ const Footer = () => {
     {
       title: "Book",
       links: [
-        { label: "Cheap Flights", href: "/deals" },
-        { label: "Cheap Hotels", href: "/search?type=hotels" },
-        { label: "Car Rentals", href: "/search?type=cars" },
+        { label: "Search Flights", href: "/flights" },
+        { label: "Search Hotels", href: "/hotels" },
+        { label: "Car Rentals", href: "/car-rentals" },
+        { label: "Featured Deals", href: "/deals" },
+        { label: "Flight Status", href: "/flight-status" },
         { label: "Group Travel", href: "/support?topic=group" },
       ],
     },

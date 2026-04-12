@@ -278,19 +278,15 @@ const Index = () => {
             transition={{ delay: 0.5, duration: 0.5 }}
             className="flex flex-col sm:flex-row items-center gap-4 mb-12"
           >
-            <a
-              href="#search-widget"
-              title="Jump to Tripile search — compare flights, hotels & car rentals"
-              onClick={(e) => {
-                e.preventDefault();
-                document.getElementById("search-widget")?.scrollIntoView({ behavior: "smooth", block: "center" });
-              }}
+            <Link
+              to="/flights"
+              title="Search cheap flights on Tripile — dedicated flight search"
               className="group inline-flex items-center gap-3 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white text-base font-bold px-8 py-4 rounded-2xl shadow-[0_4px_32px_rgba(59,130,246,0.55)] hover:shadow-[0_6px_40px_rgba(59,130,246,0.7)] transition-all duration-200 hover:-translate-y-0.5"
             >
               <Plane className="w-5 h-5 transition-all duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:transition-all group-hover:duration-500 " />
               Find Your Next Flight
               <ChevronRight className="w-4 h-4 opacity-70 group-hover:translate-x-1 group-hover:transition-all group-hover:duration-500 transition-all duration-500" />
-            </a>
+            </Link>
 
             <Link
               to="/deals"
@@ -911,13 +907,21 @@ const Index = () => {
               <p>
                 Tripile.com is built for travelers who want{" "}
                 <Link
-                  to="/deals"
-                  title="Find cheap flights on Tripile — compare airlines"
+                  to="/flights"
+                  title="Search cheap flights on Tripile — compare airlines"
                   className="text-primary font-medium underline-offset-2 hover:underline"
                 >
                   cheap flights
                 </Link>
-                , trusted hotel rates, and flexible{" "}
+                ,{" "}
+                <Link
+                  to="/hotels"
+                  title="Find hotel deals on Tripile — compare rates"
+                  className="text-primary font-medium underline-offset-2 hover:underline"
+                >
+                  trusted hotel rates
+                </Link>
+                , and flexible{" "}
                 <Link
                   to="/explore"
                   title="Explore travel destinations on Tripile"
@@ -981,8 +985,17 @@ const Index = () => {
                   time—ideal for conferences, holidays, and multi-city routes.
                 </li>
                 <li>
-                  <strong className="text-foreground">Car rentals:</strong> Add ground transportation so your airport
-                  arrival and road-trip segments stay coordinated.
+                  <strong className="text-foreground">
+                    <Link
+                      to="/car-rentals"
+                      title="Compare car rentals on Tripile"
+                      className="text-foreground underline-offset-2 hover:underline"
+                    >
+                      Car rentals
+                    </Link>
+                    :
+                  </strong>{" "}
+                  Add ground transportation so your airport arrival and road-trip segments stay coordinated.
                 </li>
                 <li>
                   <strong className="text-foreground">Deals hub:</strong> Browse curated{" "}
@@ -1092,7 +1105,15 @@ const Index = () => {
                 >
                   Tripile support
                 </Link>{" "}
-                for one-to-one help. We are here 24/7.
+                for one-to-one help. We are here 24/7. Read our{" "}
+                <Link
+                  to="/privacy"
+                  title="Tripile privacy policy"
+                  className="text-primary font-medium underline-offset-2 hover:underline"
+                >
+                  privacy policy
+                </Link>{" "}
+                for how we handle your data.
               </p>
             </section>
           </div>

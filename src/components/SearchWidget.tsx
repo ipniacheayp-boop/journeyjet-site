@@ -197,14 +197,16 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
     // Switch tab
     if (type === "hotels") setSearchType("hotels");
     if (type === "flights") setSearchType("flights");
+    if (type === "cars") setSearchType("cars");
 
-    // Hotels → autofill city only
+    // Hotels → autofill city only (clean URLs: /hotels?cityCode=… without ?type=)
     const city = searchParams.get("city") || searchParams.get("cityCode");
     if (city) {
       setCityCode(city);
       setCityCodeIATA(city);
       setCheckInDate("");
       setCheckOutDate("");
+      if (!type && defaultTab === "hotels") setSearchType("hotels");
     }
 
     // Flights → autofill from & to only
@@ -222,13 +224,13 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
       setFlightDestination(airportMap[destination] || destination);
       setFlightDestinationCode(destination);
     }
-    // Auto scroll to widget
-    if (type === "hotels" || type === "flights") {
+    // Auto scroll to widget (homepage / legacy query URLs)
+    if (type === "hotels" || type === "flights" || type === "cars") {
       setTimeout(() => {
         document.getElementById("search-widget")?.scrollIntoView({ behavior: "smooth", block: "center" });
       }, 100);
     }
-  }, [searchParams]);
+  }, [searchParams, defaultTab]);
 
   return (
     <div className="w-full">

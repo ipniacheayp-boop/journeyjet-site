@@ -61,6 +61,7 @@ import RefundPolicy from "@/pages/RefundPolicy";
 import PriceMatch from "@/pages/PriceMatch";
 import TripPlanner from "@/pages/TripPlanner";
 import Explore from "@/pages/Explore";
+import SearchHubPage from "@/pages/SearchHubPage";
 
 const FlybotWrapper = () => {
   const location = useLocation();
@@ -87,6 +88,9 @@ const App = () => (
               <CookieConsentBanner />
               <Routes>
                 <Route path="/" element={<Index />} />
+                <Route path="/flights" element={<SearchHubPage />} />
+                <Route path="/hotels" element={<SearchHubPage />} />
+                <Route path="/car-rentals" element={<SearchHubPage />} />
                 <Route path="/deals" element={<Deals />} />
                 <Route path="/deals/:id" element={<DealDetail />} />
                 <Route path="/search-results" element={<SearchResults />} />

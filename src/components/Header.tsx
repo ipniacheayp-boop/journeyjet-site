@@ -12,8 +12,8 @@ import {
   Sun,
   Plane,
   Hotel,
+  Car,
   PlaneTakeoff,
-  Ship,
   Tag,
   ChevronDown,
 } from "lucide-react";
@@ -34,20 +34,25 @@ import {
 const serviceLinks = [
   {
     label: "Flights",
-    href: "/?type=flights#search-widget",
+    href: "/flights",
     icon: Plane,
-    linkTitle: "Search cheap flights — open Tripile flight booking",
+    linkTitle: "Search cheap flights — Tripile flight booking",
   },
   {
     label: "Hotels",
-    href: "/?type=hotels#search-widget",
+    href: "/hotels",
     icon: Hotel,
     linkTitle: "Find hotel deals — Tripile hotel search",
+  },
+  {
+    label: "Car Rentals",
+    href: "/car-rentals",
+    icon: Car,
+    linkTitle: "Compare car rentals — Tripile",
   },
   { label: "Deals", href: "/deals", icon: Tag, linkTitle: "Today’s travel deals on Tripile" },
   { label: "Flight Status", href: "/flight-status", icon: PlaneTakeoff, linkTitle: "Check flight status — Tripile" },
   { label: "Flight Tracker", href: "/flight-tracker", icon: Globe, linkTitle: "Live flight tracker — Tripile" },
-  // { label: "Cruise", href: "/?type=cruise#search-widget", icon: Ship },
 ];
 
 // Secondary utility links — lower priority, go in right area
@@ -83,18 +88,17 @@ const Header = () => {
   };
 
   const isActive = (href: string) => {
+    const pathOnly = href.split("?")[0].split("#")[0];
+    if (pathOnly === "/flights") return location.pathname === "/flights";
+    if (pathOnly === "/hotels") return location.pathname === "/hotels";
+    if (pathOnly === "/car-rentals") return location.pathname === "/car-rentals";
+    if (pathOnly === "/deals") return location.pathname === "/deals" || location.pathname.startsWith("/deals/");
+    if (pathOnly === "/flight-status") return location.pathname === "/flight-status";
+    if (pathOnly === "/flight-tracker") return location.pathname === "/flight-tracker";
+    if (pathOnly === "/") return location.pathname === "/";
+
     const url = new URL(href, window.location.origin);
-    const currentParams = new URLSearchParams(location.search);
-    const targetParams = new URLSearchParams(url.search);
-
-    // match pathname
-    if (location.pathname !== url.pathname) return false;
-
-    // match "type" param specifically
-    const targetType = targetParams.get("type");
-    if (!targetType) return true;
-
-    return currentParams.get("type") === targetType;
+    return location.pathname === url.pathname;
   };
   return (
     <>
