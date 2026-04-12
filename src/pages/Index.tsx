@@ -298,6 +298,52 @@ const Index = () => {
             </Link>
           </motion.div>
 
+          <motion.nav
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.55, duration: 0.45 }}
+            aria-label="Popular Tripile booking pages"
+            className="flex flex-wrap justify-center items-center gap-x-4 gap-y-2 mb-10 text-xs sm:text-sm"
+          >
+            <Link
+              to="/hotels"
+              title="Search hotels on Tripile"
+              className="text-white/80 hover:text-white underline-offset-4 hover:underline font-medium"
+            >
+              Hotels
+            </Link>
+            <span className="text-white/30" aria-hidden>
+              |
+            </span>
+            <Link
+              to="/car-rentals"
+              title="Compare car rentals on Tripile"
+              className="text-white/80 hover:text-white underline-offset-4 hover:underline font-medium"
+            >
+              Car rentals
+            </Link>
+            <span className="text-white/30" aria-hidden>
+              |
+            </span>
+            <Link
+              to="/flight-status"
+              title="Check flight status on Tripile"
+              className="text-white/80 hover:text-white underline-offset-4 hover:underline font-medium"
+            >
+              Flight status
+            </Link>
+            <span className="text-white/30 hidden sm:inline" aria-hidden>
+              |
+            </span>
+            <Link
+              to="/flights"
+              title="Dedicated flight search on Tripile"
+              className="text-white/80 hover:text-white underline-offset-4 hover:underline font-medium hidden sm:inline"
+            >
+              Flight search
+            </Link>
+          </motion.nav>
+
           {/* Popular destination tags */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}

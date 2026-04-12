@@ -6,6 +6,26 @@
 
   "routes": [
     {
+      "route": "/user/login",
+      "redirect": "/login",
+      "statusCode": 301
+    },
+    {
+      "route": "/reviews/site",
+      "redirect": "/reviews",
+      "statusCode": 301
+    },
+    {
+      "route": "/payment",
+      "redirect": "/payment-options",
+      "statusCode": 301
+    },
+    {
+      "route": "/payment/success",
+      "redirect": "/payment-success",
+      "statusCode": 301
+    },
+    {
       "route": "/api/*",
       "allowedRoles": ["anonymous"]
     },

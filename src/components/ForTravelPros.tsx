@@ -10,6 +10,7 @@ const tools = [
     subtitle: "Discover top destinations worldwide with curated experiences, pricing insights, and travel inspiration.",
     link: "/explore",
     linkText: "Explore destinations",
+    linkTitle: "Explore travel destinations on Tripile — inspiration and deals",
     gradient: "from-blue-600 to-indigo-700",
     highlight: "#0b69ff",
     badge: "Popular",
@@ -20,6 +21,7 @@ const tools = [
     subtitle: "Design a personalized, day-by-day itinerary instantly using advanced AI.",
     link: "/trip-planner",
     linkText: "Plan a trip",
+    linkTitle: "Tripile AI trip planner — build a personalized itinerary",
     gradient: "from-violet-600 to-purple-700",
     highlight: "#7c3aed",
     badge: "New",
@@ -30,6 +32,7 @@ const tools = [
     subtitle: "Track any US flight in real time — delays, gate changes, and arrivals.",
     link: "/flight-status",
     linkText: "Track a flight",
+    linkTitle: "Check live flight status on Tripile — delays and gates",
     gradient: "from-sky-500 to-blue-700",
     highlight: "#0ea5e9",
     badge: "Live",
@@ -40,6 +43,7 @@ const tools = [
     subtitle: "Track your global adventures and save your bucket list destinations.",
     link: "/destinations-checklist",
     linkText: "View checklists",
+    linkTitle: "Tripile travel checklists — destinations and packing",
     gradient: "from-emerald-500 to-teal-700",
     highlight: "#10b981",
     badge: "Free",
@@ -122,6 +126,7 @@ const ForTravelPros = () => {
 
                 <Link
                   to={tool.link}
+                  title={tool.linkTitle}
                   className="inline-flex items-center gap-1.5 mt-5 text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
                 >
                   {tool.linkText}

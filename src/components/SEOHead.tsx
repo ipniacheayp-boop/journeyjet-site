@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet';
+import { useLocation } from 'react-router-dom';
 
 const SITE_ORIGIN = "https://tripile.com";
 const DEFAULT_OG_IMAGE = `${SITE_ORIGIN}/og-image.png`;
@@ -14,6 +15,7 @@ interface SEOHeadProps {
   title?: string;
   description?: string;
   keywords?: string;
+  /** Absolute HTTPS URL; if omitted, derived from the current path (avoids homepage canonical on inner pages). */
   canonicalUrl?: string;
   ogImage?: string;
   ogType?: string;
@@ -25,11 +27,16 @@ const SEOHead = ({
   description =
     "Buy cheap flights, hotels & car rentals across the USA on Tripile.com. Compare 500+ airlines, get Price Match Guarantee, and save up to 46%. Trusted by 2M+ travelers.",
   keywords = "cheap flights USA, flight deals, book flights online, US travel deals, last-minute flights, discounted airline tickets, cheap hotels, car rentals USA, travel booking, airfare deals",
-  canonicalUrl = "https://tripile.com/",
+  canonicalUrl,
   ogImage = DEFAULT_OG_IMAGE,
   ogType = "website",
   noIndex = false
 }: SEOHeadProps) => {
+  const location = useLocation();
+  const pathOnly = location.pathname.replace(/\/$/, "") || "/";
+  const pathCanonical = pathOnly === "/" ? `${SITE_ORIGIN}/` : `${SITE_ORIGIN}${pathOnly}`;
+  const resolvedCanonical = canonicalUrl ?? pathCanonical;
+
   const absoluteOgImage = resolveAbsoluteImageUrl(ogImage);
   const structuredData = {
     "@context": "https://schema.org",
@@ -85,11 +92,11 @@ const SEOHead = ({
       <meta name="keywords" content={keywords} />
       <meta name="author" content="Tripile.com" />
       <meta name="robots" content={noIndex ? "noindex, nofollow" : "index, follow"} />
-      <link rel="canonical" href={canonicalUrl} />
+      <link rel="canonical" href={resolvedCanonical} />
 
       {/* Open Graph / Facebook */}
       <meta property="og:type" content={ogType} />
-      <meta property="og:url" content={canonicalUrl} />
+      <meta property="og:url" content={resolvedCanonical} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={absoluteOgImage} />

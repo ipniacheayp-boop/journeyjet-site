@@ -653,7 +653,11 @@ const FlightTracker = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEOHead title="Aviation Dashboard | Tripile" description="Complete aviation intelligence — track flights, schedules, routes & more." />
+      <SEOHead
+        title="Live Flight Tracker & Aviation Dashboard | Tripile.com"
+        description="Track flights, schedules, routes, and aviation insights on Tripile.com. Use alongside flight status search, deals, and booking tools for US and international travel."
+        canonicalUrl="https://tripile.com/flight-tracker"
+      />
       <Header />
       <main className="container mx-auto px-4 py-8 mt-16">
         <div className="mb-6">

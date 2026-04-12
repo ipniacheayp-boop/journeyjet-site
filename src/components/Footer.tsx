@@ -147,13 +147,21 @@ const Footer = () => {
               <span>5900 Balcones Drive STE 100, Austin, TX 78731 USA</span>
             </div>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-3 text-xs text-white/50">
-              <a href="tel:+18009634330" className="hover:text-white transition-colors">
+              <a
+                href="tel:+18009634330"
+                title="Call Tripile customer support — 1-800-963-4330"
+                className="hover:text-white transition-colors"
+              >
                 📞 1-800-963-4330
               </a>
               <span className="hidden sm:inline" aria-hidden="true">
                 |
               </span>
-              <a href="mailto:Support@Tripile.com" className="hover:text-white transition-colors">
+              <a
+                href="mailto:Support@Tripile.com"
+                title="Email Tripile support at Support@Tripile.com"
+                className="hover:text-white transition-colors"
+              >
                 ✉️ Support@Tripile.com
               </a>
             </div>

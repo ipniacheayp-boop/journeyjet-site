@@ -92,7 +92,11 @@ export default function CookieConsentBanner() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 py-3.5">
           <p className="text-xs sm:text-sm leading-relaxed text-center sm:text-left">
             {text}
-            <a href="/privacy" className="underline underline-offset-4 hover:opacity-90">
+            <a
+              href="/privacy"
+              title="Tripile privacy policy — how we use cookies and your data"
+              className="underline underline-offset-4 hover:opacity-90"
+            >
               {learnMore}
             </a>
           </p>

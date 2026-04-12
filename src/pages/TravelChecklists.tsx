@@ -183,6 +183,7 @@ const TravelChecklists = () => {
       <SEOHead
         title="Top Travel Destinations Checklist | Tripile.com"
         description="Track your adventures with our ultimate travel checklists. Top 100 places in the world, USA highlights, and bucket-list trips."
+        canonicalUrl="https://tripile.com/destinations-checklist"
       />
       <Header />
 

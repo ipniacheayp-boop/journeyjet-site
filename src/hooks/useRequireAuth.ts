@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
-export const useRequireAuth = (redirectPath: string = '/user/login') => {
+export const useRequireAuth = (redirectPath: string = '/login') => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 

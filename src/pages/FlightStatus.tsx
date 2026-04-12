@@ -15,6 +15,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import AirportDropdown from "@/components/AirportDropdown";
 
@@ -398,7 +399,9 @@ const FlightStatus = () => {
     <>
       <SEOHead
         title="Flight Status – Real-Time Tracking | Tripile.com"
-        description="Check real-time flight status by flight number or route. Track departures, arrivals, delays, and cancellations."
+        description="Check real-time flight status by flight number or route on Tripile.com. See departures, arrivals, delays, gate updates, and cancellations—then book flights, hotels, and cars in one place."
+        keywords="flight status, flight tracker, airline delays, airport departures, Tripile flight status"
+        canonicalUrl="https://tripile.com/flight-status"
       />
       <Header />
       <main className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background pt-24 pb-16">
@@ -576,6 +579,55 @@ const FlightStatus = () => {
               </motion.div>
             )}
           </AnimatePresence>
+
+          <article
+            className="mt-16 max-w-3xl mx-auto prose prose-sm md:prose-base dark:prose-invert text-muted-foreground"
+            aria-labelledby="flight-status-guide-heading"
+          >
+            <h2 id="flight-status-guide-heading" className="text-foreground font-display text-xl md:text-2xl font-bold">
+              How to use Tripile flight status before you travel
+            </h2>
+            <p>
+              Flight schedules are dynamic: weather, air traffic, crew timing, and gate changes can all shift what looked
+              like a simple itinerary. Checking status early—and again closer to departure—helps you make better decisions
+              about when to leave for the airport, whether to rebook, and how tight your connections really are. Tripile
+              provides this flight status tool as a companion to booking: use it to validate the operational reality behind
+              your reservation, not just the ideal timetable printed on your confirmation.
+            </p>
+            <p>
+              Searching by flight number is best when you already know the carrier code and numeric flight identifier
+              (for example, a typical airline code plus digits). If you are monitoring a route instead—especially when
+              multiple carriers operate between the same city pair—searching by origin and destination can surface
+              relevant departures for your selected date. Keep in mind that status displays are only as accurate as the
+              latest data available from airline systems; when in doubt, confirm at the airport or with your carrier.
+            </p>
+            <p>
+              Status checks pair naturally with the rest of your trip. After you confirm timing, you can plan ground
+              transportation and lodging with fewer surprises. Start a new search from Tripile’s dedicated hubs: book{" "}
+              <Link to="/flights" className="text-primary font-medium hover:underline">
+                flights
+              </Link>
+              , compare{" "}
+              <Link to="/hotels" className="text-primary font-medium hover:underline">
+                hotels
+              </Link>
+              , and reserve{" "}
+              <Link to="/car-rentals" className="text-primary font-medium hover:underline">
+                car rentals
+              </Link>{" "}
+              using clean URLs that are easy for travelers—and search engines—to understand. If you are hunting for
+              seasonal discounts, browse{" "}
+              <Link to="/deals" className="text-primary font-medium hover:underline">
+                featured deals
+              </Link>{" "}
+              for timely offers that may match your dates.
+            </p>
+            <p>
+              Finally, if your status results show a delay or cancellation, prioritize safety and buffer time over
+              optimistic connections. Tripile support can help you interpret options when disruptions occur, so you can
+              focus on getting to your destination with less stress—even when the schedule refuses to cooperate.
+            </p>
+          </article>
         </div>
       </main>
       <Footer />

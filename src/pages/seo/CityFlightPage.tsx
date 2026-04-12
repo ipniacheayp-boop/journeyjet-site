@@ -36,7 +36,7 @@ const CityFlightPage = () => {
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: "https://tripile.com/" },
-      { "@type": "ListItem", position: 2, name: "Flights", item: "https://tripile.com/deals" },
+      { "@type": "ListItem", position: 2, name: "Flights", item: "https://tripile.com/flights" },
       { "@type": "ListItem", position: 3, name: `${fromCity} to ${toCity}` },
     ],
   };
@@ -82,7 +82,7 @@ const CityFlightPage = () => {
           <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
             <Link to="/" className="hover:text-foreground">Home</Link>
             <span>/</span>
-            <Link to="/deals" className="hover:text-foreground">Flights</Link>
+            <Link to="/flights" className="hover:text-foreground">Flights</Link>
             <span>/</span>
             <span className="text-foreground font-medium">{fromCity} to {toCity}</span>
           </nav>
