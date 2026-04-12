@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
@@ -119,7 +119,9 @@ const Account = () => {
                   </AvatarFallback>
                 </Avatar>
               </div>
-              <CardTitle className="text-2xl">{profile.name || "Welcome!"}</CardTitle>
+              <h1 className="text-2xl font-semibold tracking-tight">
+                {profile.name ? `${profile.name} — Tripile account` : "Your Tripile account"}
+              </h1>
               <CardDescription>{profile.email}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">

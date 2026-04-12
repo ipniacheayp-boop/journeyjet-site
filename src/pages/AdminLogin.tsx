@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
 import { Shield, Loader2 } from "lucide-react";
 
@@ -66,7 +66,7 @@ const AdminLogin = () => {
           <div className="mx-auto w-12 h-12 bg-primary rounded-full flex items-center justify-center mb-2">
             <Shield className="w-6 h-6 text-primary-foreground" />
           </div>
-          <CardTitle className="text-2xl">Admin Login</CardTitle>
+          <h1 className="text-2xl font-semibold tracking-tight">Admin Login</h1>
           <CardDescription>
             Enter your admin credentials
           </CardDescription>

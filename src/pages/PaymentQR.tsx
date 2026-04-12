@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, CreditCard } from "lucide-react";
 
@@ -24,7 +24,7 @@ const PaymentQR = () => {
             <div className="mx-auto w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4">
               <AlertCircle className="h-8 w-8 text-amber-600" />
             </div>
-            <CardTitle className="text-xl">QR Payment Not Available</CardTitle>
+            <h1 className="text-xl font-semibold tracking-tight">QR Payment Not Available</h1>
           </CardHeader>
           <CardContent className="text-center space-y-4">
             <p className="text-muted-foreground">

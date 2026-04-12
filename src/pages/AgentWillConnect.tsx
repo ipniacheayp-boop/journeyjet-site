@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Phone, Mail, Home, BookOpen, Clock, User } from "lucide-react";
 
@@ -64,6 +64,7 @@ const AgentWillConnect = () => {
         <main className="flex-1 pt-24 pb-16 flex items-center justify-center">
           <Card className="max-w-md w-full mx-4">
             <CardContent className="py-12 text-center">
+              <h1 className="text-2xl font-semibold text-foreground mb-3">Booking status unavailable</h1>
               <p className="text-muted-foreground mb-4">No booking details found.</p>
               <Button onClick={() => navigate('/')}>
                 <Home className="mr-2 h-4 w-4" />
@@ -88,9 +89,9 @@ const AgentWillConnect = () => {
               <div className="mx-auto w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4">
                 <CheckCircle2 className="w-12 h-12 text-green-600 dark:text-green-400" />
               </div>
-              <CardTitle className="text-3xl text-green-700 dark:text-green-400">
+              <h1 className="text-3xl font-semibold text-green-700 dark:text-green-400 tracking-tight">
                 Booking Confirmed
-              </CardTitle>
+              </h1>
               <p className="text-lg text-amber-600 dark:text-amber-400 font-medium mt-2">
                 Payment Pending
               </p>

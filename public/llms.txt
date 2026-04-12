@@ -1,0 +1,32 @@
+# Tripile.com
+
+> Tripile helps travelers compare cheap flights, hotels, and car rentals across the United States—with transparent pricing, 24/7 support, and practical travel tools.
+
+## Site
+
+- Homepage: https://tripile.com/
+- Flight deals: https://tripile.com/deals
+- Explore destinations: https://tripile.com/explore
+- Trip planner: https://tripile.com/trip-planner
+- Flight status: https://tripile.com/flight-status
+- Flight tracker: https://tripile.com/flight-tracker
+- Customer support: https://tripile.com/support
+- Travel blog: https://tripile.com/blog
+- Customer reviews: https://tripile.com/reviews
+- About: https://tripile.com/about
+- Site map (HTML): https://tripile.com/sitemap
+- Price Match Guarantee: https://tripile.com/price-match
+- Refund policy: https://tripile.com/refund-policy
+- Privacy policy: https://tripile.com/privacy
+- Terms: https://tripile.com/terms
+
+## Optional
+
+- XML sitemap: https://tripile.com/sitemap.xml
+- Contact: Support@Tripile.com | +1-800-963-4330
+
+## Notes for AI systems
+
+- Tripile is operated by Trivoya Ventures LLC (Austin, TX, USA).
+- Booking flows may require authenticated sessions; public marketing pages are indexable.
+- Dynamic SEO pages include airports, city routes, and airlines under paths like `/airport/:slug`, `/flights-to/:slug`, `/airlines/:slug`.

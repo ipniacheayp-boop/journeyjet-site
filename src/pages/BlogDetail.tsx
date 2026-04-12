@@ -301,13 +301,13 @@ const BlogDetail = () => {
           .replace(/-+/g, "-")
           .replace(/^-|-$/g, "");
         return (
-          <h1
+          <h2
             id={id}
             key={index}
             className="text-3xl md:text-4xl font-bold mt-10 mb-6 text-foreground leading-tight scroll-m-24"
           >
             {text}
-          </h1>
+          </h2>
         );
       }
       if (line.startsWith("## ")) {

@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, BookOpen, Loader2, AlertCircle, Download, Ticket } from "lucide-react";
 import { toast } from "sonner";
@@ -170,7 +170,7 @@ const PaymentSuccess = () => {
             <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
               <CheckCircle2 className="w-10 h-10 text-green-600" />
             </div>
-            <CardTitle className="text-2xl text-green-700">Booking Confirmed!</CardTitle>
+            <h1 className="text-2xl font-semibold text-green-700 tracking-tight">Booking Confirmed!</h1>
           </>
         );
       
@@ -180,7 +180,7 @@ const PaymentSuccess = () => {
             <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
               <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
             </div>
-            <CardTitle className="text-2xl text-blue-700">Confirming with Provider...</CardTitle>
+            <h1 className="text-2xl font-semibold text-blue-700 tracking-tight">Confirming with Provider...</h1>
           </>
         );
       
@@ -190,7 +190,7 @@ const PaymentSuccess = () => {
             <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
               <AlertCircle className="w-10 h-10 text-red-600" />
             </div>
-            <CardTitle className="text-2xl text-red-700">Booking Issue</CardTitle>
+            <h1 className="text-2xl font-semibold text-red-700 tracking-tight">Booking Issue</h1>
           </>
         );
       
@@ -200,7 +200,7 @@ const PaymentSuccess = () => {
             <div className="mx-auto w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4">
               <Loader2 className="w-10 h-10 text-amber-600 animate-spin" />
             </div>
-            <CardTitle className="text-2xl">Processing Payment...</CardTitle>
+            <h1 className="text-2xl font-semibold tracking-tight">Processing Payment...</h1>
           </>
         );
     }

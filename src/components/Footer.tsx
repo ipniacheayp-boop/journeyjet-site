@@ -34,8 +34,10 @@ const Footer = () => {
     {
       title: "Traveler Tools",
       links: [
+        { label: "Explore Destinations", href: "/explore" },
         { label: "Customer Support", href: "/support" },
         { label: "Flight Status", href: "/flight-status" },
+        { label: "Flight Tracker", href: "/flight-tracker" },
         { label: "Online Check-in", href: "/webcheck-in" },
         { label: "Trip Planner", href: "/trip-planner" },
         { label: "Travel Checklists", href: "/destinations-checklist" },

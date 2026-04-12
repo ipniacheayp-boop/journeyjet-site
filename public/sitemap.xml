@@ -16,6 +16,11 @@
   <url><loc>https://tripile.com/webcheck-in</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://tripile.com/flight-status</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
   <url><loc>https://tripile.com/destinations-checklist</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/explore</loc><changefreq>weekly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://tripile.com/trip-planner</loc><changefreq>weekly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://tripile.com/flight-tracker</loc><changefreq>daily</changefreq><priority>0.75</priority></url>
+  <url><loc>https://tripile.com/refund-policy</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://tripile.com/price-match</loc><changefreq>monthly</changefreq><priority>0.55</priority></url>
 
   <!-- Blog -->
   <url><loc>https://tripile.com/blog</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>

@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Plane, Loader2 } from 'lucide-react';
@@ -143,7 +143,7 @@ const AgentLogin = () => {
           <div className="flex justify-center mb-4">
             <Plane className="h-12 w-12 text-primary" />
           </div>
-          <CardTitle className="text-2xl">Agent Portal</CardTitle>
+          <h1 className="text-2xl font-semibold tracking-tight">Agent Portal</h1>
           <CardDescription>B2B Travel Partner Login</CardDescription>
         </CardHeader>
         <CardContent>

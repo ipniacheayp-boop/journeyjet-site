@@ -16,6 +16,9 @@ User-agent: *
 Allow: /
 Crawl-delay: 2
 
+# LLM / AI site context (optional)
+# llms.txt: https://tripile.com/llms.txt
+
 # Sitemap
 Sitemap: https://tripile.com/sitemap.xml
 

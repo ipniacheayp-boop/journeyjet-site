@@ -99,7 +99,7 @@ const PaymentProcessing = () => {
               <>
                 <Loader2 className="w-16 h-16 mx-auto text-primary animate-spin" />
                 <div className="space-y-2">
-                  <h2 className="text-xl font-semibold">Redirecting to Secure Payment</h2>
+                  <h1 className="text-xl font-semibold tracking-tight">Redirecting to Secure Payment</h1>
                   <p className="text-muted-foreground text-sm">
                     Please wait while we connect you to our secure payment provider...
                   </p>
@@ -113,7 +113,7 @@ const PaymentProcessing = () => {
                   <AlertCircle className="w-10 h-10 text-amber-600" />
                 </div>
                 <div className="space-y-2">
-                  <h2 className="text-xl font-semibold">Fare Has Changed</h2>
+                  <h1 className="text-xl font-semibold tracking-tight">Fare Has Changed</h1>
                   <p className="text-muted-foreground">
                     {errorMessage}
                   </p>
@@ -140,7 +140,7 @@ const PaymentProcessing = () => {
                   <AlertCircle className="w-10 h-10 text-destructive" />
                 </div>
                 <div className="space-y-2">
-                  <h2 className="text-xl font-semibold">Payment Initiation Failed</h2>
+                  <h1 className="text-xl font-semibold tracking-tight">Payment Initiation Failed</h1>
                   <p className="text-muted-foreground">
                     {errorMessage}
                   </p>

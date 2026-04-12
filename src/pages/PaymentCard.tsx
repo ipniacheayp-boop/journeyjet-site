@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, CreditCard, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
@@ -51,8 +51,9 @@ const PaymentCard = () => {
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-1 pt-24 pb-16 flex items-center justify-center">
-          <div className="text-center">
-            <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
+          <div className="text-center max-w-md px-4">
+            <h1 className="text-xl font-semibold text-foreground mb-3 tracking-tight">Secure card payment | Tripile</h1>
+            <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" aria-hidden />
             <p className="text-lg text-muted-foreground">Redirecting to secure payment...</p>
           </div>
         </main>
@@ -71,7 +72,7 @@ const PaymentCard = () => {
               <div className="mx-auto w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mb-4">
                 <AlertCircle className="h-8 w-8 text-destructive" />
               </div>
-              <CardTitle className="text-xl">Payment Session Error</CardTitle>
+              <h1 className="text-xl font-semibold tracking-tight">Payment Session Error</h1>
             </CardHeader>
             <CardContent className="text-center space-y-4">
               <p className="text-muted-foreground">{error}</p>

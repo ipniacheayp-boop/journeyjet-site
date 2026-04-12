@@ -1,7 +1,7 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { XCircle, RefreshCw, Home, Search } from "lucide-react";
 
@@ -28,7 +28,7 @@ const PaymentCancel = () => {
             <div className="mx-auto w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mb-4">
               <XCircle className="w-10 h-10 text-destructive" />
             </div>
-            <CardTitle className="text-2xl">Payment Cancelled</CardTitle>
+            <h1 className="text-2xl font-semibold tracking-tight">Payment Cancelled</h1>
           </CardHeader>
           <CardContent className="text-center space-y-4">
             <p className="text-muted-foreground">

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Phone, Home, Headset } from "lucide-react";
 
@@ -19,9 +19,9 @@ const AgentConnect = () => {
               <div className="mx-auto w-24 h-24 bg-gradient-to-br from-primary to-primary/60 rounded-full flex items-center justify-center mb-6 shadow-lg animate-pulse">
                 <Headset className="w-14 h-14 text-primary-foreground" />
               </div>
-              <CardTitle className="text-4xl mb-3 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              <h1 className="text-4xl mb-3 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent font-semibold tracking-tight">
                 Our Travel Agent Will Contact You Shortly
-              </CardTitle>
+              </h1>
               <p className="text-muted-foreground text-lg max-w-md mx-auto">
                 Thank you for choosing our services! One of our expert travel agents will reach out to you within the next few minutes.
               </p>
