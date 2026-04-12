@@ -160,6 +160,17 @@ const Support = () => {
         <meta property="og:title" content="Customer Support | Tripile.com - 24/7 Travel Assistance" />
         <meta property="og:description" content="Get 24/7 customer support for your travel bookings with Tripile.com." />
         <meta property="og:url" content="https://tripile.com/support" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://tripile.com/og-image.png" />
+        <meta property="og:image:secure_url" content="https://tripile.com/og-image.png" />
+        <meta property="og:site_name" content="Tripile.com" />
+        <meta property="og:locale" content="en_US" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@tripile" />
+        <meta name="twitter:creator" content="@tripile" />
+        <meta name="twitter:title" content="Customer Support | Tripile.com - 24/7 Travel Assistance" />
+        <meta name="twitter:description" content="Get 24/7 customer support for your travel bookings with Tripile.com." />
+        <meta name="twitter:image" content="https://tripile.com/og-image.png" />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",

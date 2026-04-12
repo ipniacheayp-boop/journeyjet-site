@@ -213,10 +213,7 @@ const Index = () => {
           content="buy cheap flights USA, best flight deals, cheap flights near me, flight reviews, cheap hotels USA, car rentals USA, last-minute flights, travel booking, airline tickets"
         />
         <link rel="canonical" href="https://tripile.com/" />
-        <meta property="og:title" content="Tripile.com – Buy Cheap Flights, Hotels & Car Rentals" />
-        <meta property="og:description" content="Compare 500+ airlines and save up to 46% on US flights. Price Match Guarantee." />
-        <meta property="og:url" content="https://tripile.com/" />
-        <meta property="og:type" content="website" />
+        {/* Open Graph & Twitter: defined once in index.html to avoid duplicate meta tags */}
       </Helmet>
       <Header />
 

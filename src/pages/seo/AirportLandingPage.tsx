@@ -84,9 +84,15 @@ const AirportLandingPage = () => {
         <meta property="og:url" content={canonicalUrl} />
         <meta property="og:type" content="website" />
         <meta property="og:image" content={airport.destinationImage} />
+        <meta property="og:image:secure_url" content={airport.destinationImage} />
+        <meta property="og:site_name" content="Tripile.com" />
+        <meta property="og:locale" content="en_US" />
         <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@tripile" />
+        <meta name="twitter:creator" content="@tripile" />
         <meta name="twitter:title" content={pageTitle} />
         <meta name="twitter:description" content={pageDescription} />
+        <meta name="twitter:image" content={airport.destinationImage} />
       </Helmet>
 
       {/* Structured Data */}

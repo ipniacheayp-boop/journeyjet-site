@@ -40,6 +40,11 @@ const DealDetail = () => {
     ? Math.round(((deal.originalPrice - deal.price) / deal.originalPrice) * 100)
     : 0;
 
+  const shareImageUrl =
+    deal.image.startsWith("http://") || deal.image.startsWith("https://")
+      ? deal.image
+      : `https://tripile.com${deal.image.startsWith("/") ? "" : "/"}${deal.image}`;
+
   const faqs = [
     { question: `How much does a flight from ${deal.origin} to ${deal.destination} cost?`, answer: `Flights from ${deal.origin} to ${deal.destination} start at $${deal.price} with ${deal.airline}. Prices vary by date and cabin class.` },
     { question: `What is the best time to book flights to ${deal.destination}?`, answer: `Book 2-4 weeks in advance for the best prices. Midweek departures (Tue-Thu) tend to be cheaper.` },
@@ -55,7 +60,7 @@ const DealDetail = () => {
     "name": deal.title,
     "description": `Book cheap ${deal.cabinClass} flights from ${deal.origin} to ${deal.destination} with ${deal.airline} starting at $${deal.price}. Save ${discount}% with Tripile.com.`,
     "url": `https://tripile.com/deals/${deal.id}`,
-    "image": deal.image,
+    "image": shareImageUrl,
     "category": "Flight",
     "brand": { "@type": "Organization", "name": "Tripile.com" },
     "offers": {
@@ -87,7 +92,22 @@ const DealDetail = () => {
         <meta property="og:description" content={`Save ${discount}% on ${deal.cabinClass} flights with ${deal.airline}. Book now from $${deal.price}.`} />
         <meta property="og:url" content={`https://tripile.com/deals/${deal.id}`} />
         <meta property="og:type" content="product" />
-        <meta property="og:image" content={deal.image} />
+        <meta property="og:image" content={shareImageUrl} />
+        <meta property="og:image:secure_url" content={shareImageUrl} />
+        <meta property="og:site_name" content="Tripile.com" />
+        <meta property="og:locale" content="en_US" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@tripile" />
+        <meta name="twitter:creator" content="@tripile" />
+        <meta
+          name="twitter:title"
+          content={`${deal.origin} to ${deal.destination} from $${deal.price} | Tripile.com`}
+        />
+        <meta
+          name="twitter:description"
+          content={`Save ${discount}% on ${deal.cabinClass} flights with ${deal.airline}. Book now from $${deal.price}.`}
+        />
+        <meta name="twitter:image" content={shareImageUrl} />
         <meta property="product:price:amount" content={deal.price.toString()} />
         <meta property="product:price:currency" content="USD" />
         <script type="application/ld+json">{JSON.stringify(productSchema)}</script>

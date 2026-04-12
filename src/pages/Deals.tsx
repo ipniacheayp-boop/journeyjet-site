@@ -352,6 +352,19 @@ const Deals = () => {
         />
         <meta property="og:url" content="https://tripile.com/deals" />
         <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://tripile.com/og-image.png" />
+        <meta property="og:image:secure_url" content="https://tripile.com/og-image.png" />
+        <meta property="og:site_name" content="Tripile.com" />
+        <meta property="og:locale" content="en_US" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@tripile" />
+        <meta name="twitter:creator" content="@tripile" />
+        <meta name="twitter:title" content="Exclusive Flight Deals &amp; Travel Offers | Tripile.com" />
+        <meta
+          name="twitter:description"
+          content="Discover exclusive travel deals on flights across the USA. Save up to 50% on roundtrip flights."
+        />
+        <meta name="twitter:image" content="https://tripile.com/og-image.png" />
         <link rel="canonical" href="https://tripile.com/deals" />
         <script type="application/ld+json">
           {JSON.stringify({

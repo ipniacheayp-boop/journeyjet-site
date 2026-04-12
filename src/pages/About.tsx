@@ -22,6 +22,19 @@ const About = () => {
         <meta property="og:description" content="Learn about Tripile.com — America's trusted travel booking platform helping millions find the best deals on flights, hotels, and car rentals." />
         <meta property="og:url" content="https://tripile.com/about" />
         <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://tripile.com/og-image.png" />
+        <meta property="og:image:secure_url" content="https://tripile.com/og-image.png" />
+        <meta property="og:site_name" content="Tripile.com" />
+        <meta property="og:locale" content="en_US" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@tripile" />
+        <meta name="twitter:creator" content="@tripile" />
+        <meta name="twitter:title" content="About Tripile | Trusted US Travel Booking Platform" />
+        <meta
+          name="twitter:description"
+          content="Learn about Tripile.com — America's trusted travel booking platform helping millions find the best deals on flights, hotels, and car rentals."
+        />
+        <meta name="twitter:image" content="https://tripile.com/og-image.png" />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
