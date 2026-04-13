@@ -252,14 +252,14 @@ const Index = () => {
             #1 Rated US Flight Comparison
           </motion.div>
 
-          {/* Primary page title — one H1 per page, keyword-optimized for search */}
+          {/* Single H1 per page — matches visible hero copy for crawlers */}
           <motion.h1
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25, duration: 0.7, ease: "easeOut" }}
-            className="font-display text-balance text-center text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.12] mb-6 max-w-4xl mx-auto px-2"
+            className="font-display text-balance text-center text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.12] mb-6 max-w-5xl mx-auto px-2"
           >
-            <span className="text-white drop-shadow-lg">Cheap Flights, Hotels &amp; Car Rentals</span>
+            <span className="text-white drop-shadow-lg">Cheap Flights, Hotels &amp; Car Rentals USA</span>
             <span className="block mt-3 text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-300 via-sky-300 to-blue-200 bg-clip-text text-transparent">
               | Tripile
             </span>
@@ -960,10 +960,73 @@ const Index = () => {
           </header>
 
           <div className="space-y-8 text-sm md:text-base text-muted-foreground leading-relaxed">
+            <section aria-labelledby="why-choose-tripile-seo">
+              <h2 id="why-choose-tripile-seo" className="font-display font-semibold text-foreground text-xl md:text-2xl mb-3">
+                Why Choose Tripile
+              </h2>
+              <p>
+                Tripile is built for travelers who want transparent{" "}
+                <strong className="font-medium text-foreground">cheap flights USA</strong> options without switching
+                between dozens of browser tabs. We aggregate{" "}
+                <strong className="font-medium text-foreground">flight deals</strong> from hundreds of carriers so you
+                can compare schedules, baggage rules, and total price—including taxes and fees—before you commit. When
+                your itinerary needs a place to stay, Tripile also helps you evaluate{" "}
+                <strong className="font-medium text-foreground">cheap hotels USA</strong> rates alongside your airfare,
+                so you can align check-in dates, airports, and ground transportation in one workflow. For road trips,
+                airport pickups, or one-way drives, adding{" "}
+                <strong className="font-medium text-foreground">car rentals USA</strong> keeps every leg of your trip
+                coordinated. Our Price Match Guarantee, 24/7 support, and traveler-first policies are designed to reduce
+                surprises at checkout and after you book.
+              </p>
+            </section>
+
+            <section aria-labelledby="travel-deals-seo">
+              <h2 id="travel-deals-seo" className="font-display font-semibold text-foreground text-xl md:text-2xl mb-3">
+                Travel Deals
+              </h2>
+              <p>
+                Start with{" "}
+                <Link
+                  to="/flights"
+                  title="Search cheap flights USA on Tripile"
+                  className="text-primary font-medium underline-offset-2 hover:underline"
+                >
+                  cheap flights
+                </Link>{" "}
+                to lock dates and carriers, then layer on{" "}
+                <Link
+                  to="/hotels"
+                  title="Find cheap hotels USA on Tripile"
+                  className="text-primary font-medium underline-offset-2 hover:underline"
+                >
+                  hotel deals
+                </Link>{" "}
+                when a package saves time. Need a vehicle? Compare{" "}
+                <Link
+                  to="/car-rentals"
+                  title="Compare car rentals USA on Tripile"
+                  className="text-primary font-medium underline-offset-2 hover:underline"
+                >
+                  car rentals USA
+                </Link>{" "}
+                by pickup location, vehicle type, and cancellation rules. For curated promotions and seasonal offers,
+                browse our{" "}
+                <Link
+                  to="/deals"
+                  title="View travel deals on Tripile"
+                  className="text-primary font-medium underline-offset-2 hover:underline"
+                >
+                  travel deals hub
+                </Link>
+                —it highlights limited-time fares and bundles so you do not miss a flash sale. Together, these tools
+                help you move from research to a booked itinerary with fewer tabs and clearer totals.
+              </p>
+            </section>
+
             <section aria-labelledby="intro-tripile">
-              <h3 id="intro-tripile" className="font-semibold text-foreground text-lg mb-2">
-                Introduction: Why travelers start on Tripile.com
-              </h3>
+              <h2 id="intro-tripile" className="font-display font-semibold text-foreground text-xl md:text-2xl mb-3">
+                Compare Travel in One Place
+              </h2>
               <p>
                 Tripile.com is built for travelers who want{" "}
                 <Link
@@ -1032,9 +1095,9 @@ const Index = () => {
             </section>
 
             <section aria-labelledby="features-tripile">
-              <h3 id="features-tripile" className="font-semibold text-foreground text-lg mb-2">
-                Features that simplify every step
-              </h3>
+              <h2 id="features-tripile" className="font-display font-semibold text-foreground text-xl md:text-2xl mb-3">
+                Key Features
+              </h2>
               <ul className="list-disc pl-5 space-y-2">
                 <li>
                   <strong className="text-foreground">Broad airline comparison:</strong> Search across hundreds of
@@ -1058,15 +1121,23 @@ const Index = () => {
                   Add ground transportation so your airport arrival and road-trip segments stay coordinated.
                 </li>
                 <li>
-                  <strong className="text-foreground">Deals hub:</strong> Browse curated{" "}
+                  <strong className="text-foreground">Deals hub:</strong> Browse{" "}
+                  <Link
+                    to="/deals"
+                    title="Tripile travel deals — flights, hotels and more"
+                    className="text-primary font-medium underline-offset-2 hover:underline"
+                  >
+                    travel deals
+                  </Link>
+                  , curated{" "}
                   <Link
                     to="/cruise-deals"
                     title="Browse cruise deals on Tripile"
                     className="text-primary font-medium underline-offset-2 hover:underline"
                   >
-                    cruise deals
-                  </Link>{" "}
-                  and seasonal offers in one dashboard.
+                    cruise offers
+                  </Link>
+                  , and seasonal promotions in one dashboard.
                 </li>
                 <li>
                   <strong className="text-foreground">Travel utilities:</strong> Use{" "}
@@ -1091,9 +1162,9 @@ const Index = () => {
             </section>
 
             <section aria-labelledby="benefits-tripile">
-              <h3 id="benefits-tripile" className="font-semibold text-foreground text-lg mb-2">
-                Benefits: save money and reduce surprises
-              </h3>
+              <h2 id="benefits-tripile" className="font-display font-semibold text-foreground text-xl md:text-2xl mb-3">
+                Benefits
+              </h2>
               <p>
                 Tripile emphasizes transparent pricing, flexible payment options where available, and proactive help if
                 a schedule shifts. Our{" "}
@@ -1153,7 +1224,7 @@ const Index = () => {
 
             <section aria-labelledby="faq-pointer">
               <h3 id="faq-pointer" className="font-semibold text-foreground text-lg mb-2">
-                Questions? See our FAQ below
+                More answers in the FAQ below
               </h3>
               <p>
                 For quick answers on fees, changes, and how Tripile compares to other travel sites, scroll to the

@@ -67,30 +67,16 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-tripile.png?v=4" />
     <link rel="manifest" href="/site.webmanifest" />
 
-    <!-- Structured Data: TravelAgency (homepage — Google Rich Results / Facebook) -->
+    <!-- Structured Data: TravelAgency (single entity — required: @context, @type, name, url, description) -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "TravelAgency",
         "name": "Tripile",
-        "url": "https://tripile.com",
-        "logo": "https://tripile.com/og-image.png",
+        "url": "https://tripile.com/",
         "description": "Compare cheap flights, hotels \u0026 car rentals across the USA. Price Match Guarantee. Trusted by 2M+ travelers.",
-        "sameAs": [
-          "https://twitter.com/tripile"
-        ]
-      }
-    </script>
-
-    <!-- Structured Data: Organization -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "Tripile.com",
-        "url": "https://tripile.com",
         "logo": "https://tripile.com/favicon-tripile.png",
-        "description": "Compare cheap flights, flight deals, hotels, and car rentals across the USA with Tripile.",
+        "image": "https://tripile.com/og-image.png",
         "sameAs": [
           "https://facebook.com/tripile",
           "https://twitter.com/tripile",
@@ -106,55 +92,18 @@
       }
     </script>
 
-    <!-- Structured Data: WebSite with SearchAction -->
+    <!-- Structured Data: WebSite + SearchAction (Google sitelinks search box) -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "WebSite",
-        "name": "Tripile.com",
-        "url": "https://tripile.com",
+        "name": "Tripile",
+        "url": "https://tripile.com/",
         "potentialAction": {
           "@type": "SearchAction",
-          "target": {
-            "@type": "EntryPoint",
-            "urlTemplate": "https://tripile.com/search-results?q={search_term_string}"
-          },
+          "target": "https://tripile.com/search-results?q={search_term_string}",
           "query-input": "required name=search_term_string"
         }
-      }
-    </script>
-
-    <!-- Structured Data: BreadcrumbList -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          {
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Home",
-            "item": "https://tripile.com"
-          },
-          {
-            "@type": "ListItem",
-            "position": 2,
-            "name": "Flight Deals",
-            "item": "https://tripile.com/deals"
-          },
-          {
-            "@type": "ListItem",
-            "position": 3,
-            "name": "Reviews",
-            "item": "https://tripile.com/reviews"
-          },
-          {
-            "@type": "ListItem",
-            "position": 4,
-            "name": "Blog",
-            "item": "https://tripile.com/blog"
-          }
-        ]
       }
     </script>
   </head>
