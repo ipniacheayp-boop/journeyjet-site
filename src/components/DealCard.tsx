@@ -78,7 +78,9 @@ const DealCard = ({ deal, onClick }: DealCardProps) => {
         <img
           src={getImageSrc()}
           alt={`${deal.title} - Flight deal from ${deal.origin} to ${deal.destination}`}
+          title={`${deal.title} — cheap flights ${originCity} to ${destCity} on Tripile`}
           loading="lazy"
+          decoding="async"
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           onError={(e) => {
             (e.target as HTMLImageElement).src = "/deal-beach.jpg";

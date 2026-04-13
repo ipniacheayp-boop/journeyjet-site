@@ -157,8 +157,10 @@ const TrustBadges = () => {
                   <img
                     src={item.logo}
                     alt={`${item.name} logo`}
+                    title={`${item.name} traveler reviews — Tripile trust ratings USA`}
                     className="h-5 w-auto object-contain transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
+                    decoding="async"
                   />
                 </div>
 

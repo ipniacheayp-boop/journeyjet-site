@@ -118,7 +118,12 @@ const Header = () => {
               title="Tripile — home | cheap flights, hotels & car rentals in the USA"
             >
               <div className="h-9 md:h-11 w-auto flex items-center transition-opacity hover:opacity-80">
-                <img src={tripileLogo} alt="Tripile Logo" className="h-full w-auto object-contain" />
+                <img
+                  src={tripileLogo}
+                  alt="Tripile Logo"
+                  title="Tripile — cheap flights, hotels and car rentals USA"
+                  className="h-full w-auto object-contain"
+                />
               </div>
             </Link>
 

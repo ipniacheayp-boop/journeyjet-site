@@ -66,12 +66,14 @@ const PartnerLogos = () => {
           </p>
           <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-4 md:gap-x-10 opacity-80">
             {comparisonPartners.map((partner) => (
-              <div key={partner.name} className="flex items-center justify-center" title={partner.name}>
+              <div key={partner.name} className="flex items-center justify-center">
                 <img
                   src={partner.logo}
                   alt={partner.name}
+                  title={`${partner.name} — travel price comparison partners on Tripile`}
                   className="h-4 md:h-5 w-auto object-contain max-w-[90px] md:max-w-[110px]"
                   loading="lazy"
+                  decoding="async"
                   onError={(e) => {
                     const t = e.target as HTMLImageElement;
                     t.style.display = "none";

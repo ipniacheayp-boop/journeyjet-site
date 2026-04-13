@@ -113,7 +113,14 @@ const CustomerReviewsDark = () => {
 
           {/* Trustpilot + Slider row */}
           <div className="flex flex-col sm:flex-row justify-center items-center gap-6 mb-4">
-            <img src={trustPilotImage} alt="Trustpilot rating" className="h-24 md:h-28 object-contain" />
+            <img
+              src={trustPilotImage}
+              alt="Trustpilot rating"
+              title="Tripile Trustpilot ratings — verified USA traveler reviews"
+              loading="lazy"
+              decoding="async"
+              className="h-24 md:h-28 object-contain"
+            />
             <TrustpilotSlider />
           </div>
 

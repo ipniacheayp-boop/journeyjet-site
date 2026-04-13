@@ -124,12 +124,14 @@ const PopularFlights = () => {
             </p>
             <div className="group flex flex-wrap justify-center items-center gap-x-10 gap-y-8 md:gap-x-14 opacity-80 ">
               {airlines.map((airline) => (
-                <div key={airline.name} className="flex items-center justify-center" title={airline.name}>
+                <div key={airline.name} className="flex items-center justify-center">
                   <img
                     src={airline.logo}
                     alt={airline.name}
+                    title={`${airline.name} — book cheap USA flights on Tripile`}
                     className="h-7 md:h-9 w-auto object-contain max-w-[110px] md:max-w-[130px]"
                     loading="lazy"
+                    decoding="async"
                   />
                 </div>
               ))}

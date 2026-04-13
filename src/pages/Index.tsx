@@ -32,7 +32,6 @@ import dealSeniors from "@/assets/deal-seniors.jpg";
 import dealBusiness from "@/assets/deal-business.jpg";
 import dealStudents from "@/assets/deal-students.jpg";
 import dealAirlines from "@/assets/deal-airlines.jpg";
-import rewardsIllustration from "@/assets/rewards-illustration.png";
 import rewardsIllustration2 from "@/assets/reward.webp";
 import {
   ArrowRight,
@@ -203,14 +202,14 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>Tripile.com – Buy Cheap Flights, Hotels & Car Rentals | Best US Travel Deals</title>
+        <title>Tripile – Cheap Flights, Hotels & Car Rentals USA</title>
         <meta
           name="description"
-          content="Buy cheap flights, hotels & car rentals across the USA on Tripile.com. Compare 500+ airlines, get Price Match Guarantee, and save up to 46%. Trusted by 2M+ travelers."
+          content="Compare cheap flights, hotels & car rentals across the USA. Price Match Guarantee. Trusted by 2M+ travelers. Search Tripile—compare fares, hotels & cars today."
         />
         <meta
           name="keywords"
-          content="buy cheap flights USA, best flight deals, cheap flights near me, flight reviews, cheap hotels USA, car rentals USA, last-minute flights, travel booking, airline tickets"
+          content="cheap flights USA, flight deals, cheap hotels USA, car rentals USA, travel booking USA"
         />
         <link rel="canonical" href="https://tripile.com/" />
         {/* Open Graph & Twitter: defined once in index.html to avoid duplicate meta tags */}
@@ -220,11 +219,17 @@ const Index = () => {
       <main id="main-content">
       {/* Professional Hero Section */}
       <section className="relative min-h-[680px] md:min-h-[780px] w-full overflow-hidden z-10" aria-label="Hero">
-        {/* Background Image */}
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-[1.04] transition-transform duration-[8000ms] ease-out"
-          style={{ backgroundImage: `url(${heroBlackFriday})` }}
-        />
+        {/* LCP hero image — real img for fetch priority + SEO title */}
+        <div className="absolute inset-0 overflow-hidden">
+          <img
+            src={heroBlackFriday}
+            alt="Cheap flights, hotels and car rentals across the USA — compare travel deals on Tripile"
+            title="Cheap flights USA — Tripile flight, hotel and car rental comparison"
+            fetchPriority="high"
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover object-center scale-[1.04] transition-transform duration-[8000ms] ease-out"
+          />
+        </div>
 
         {/* Multi-layer overlay: dark base + directional gradient for text contrast */}
         <div className="absolute inset-0 bg-slate-950/55" />
@@ -439,6 +444,9 @@ const Index = () => {
                   <img
                     src={dealLastMinute}
                     alt="Last Minute Flights Deal"
+                    title="Last minute cheap flight deals USA — Tripile"
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover object-[center_70%] group-hover:scale-105 transition-all duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
@@ -494,6 +502,9 @@ const Index = () => {
                   <img
                     src={dealSeniors}
                     alt="Senior Citizens Travel Deal"
+                    title="Senior traveler flight deals USA — Tripile"
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover object-[center_14%] group-hover:scale-105 transition-all duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
@@ -806,6 +817,9 @@ const Index = () => {
                 <img
                   src={rewardsIllustration2}
                   alt="Rewards and benefits illustration"
+                  title="Tripile member rewards — exclusive USA travel perks"
+                  loading="lazy"
+                  decoding="async"
                   className="w-full max-w-lg relative z-10 drop-shadow-xl rounded-lg"
                 />
               </motion.div>

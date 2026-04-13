@@ -40,6 +40,9 @@ const TailoredDealCard = ({ deal }: TailoredDealCardProps) => {
         <img
           src={deal.image}
           alt={deal.title}
+          title={`${deal.title} — USA flight and travel deals on Tripile`}
+          loading="lazy"
+          decoding="async"
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
         />
         {/* gradient */}
