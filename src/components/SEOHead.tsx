@@ -38,51 +38,6 @@ const SEOHead = ({
   const resolvedCanonical = canonicalUrl ?? pathCanonical;
 
   const absoluteOgImage = resolveAbsoluteImageUrl(ogImage);
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Organization",
-        "@id": "https://tripile.com/#organization",
-        "name": "Tripile.com",
-        "url": "https://tripile.com",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://tripile.com/og-image.png"
-        },
-        "sameAs": [
-          "https://facebook.com/tripile",
-          "https://twitter.com/tripile",
-          "https://instagram.com/tripile"
-        ],
-        "contactPoint": {
-          "@type": "ContactPoint",
-          "telephone": "+1-800-963-4330",
-          "contactType": "customer service",
-          "areaServed": "US",
-          "availableLanguage": ["English", "Spanish"]
-        }
-      },
-      {
-        "@type": "WebSite",
-        "@id": "https://tripile.com/#website",
-        "url": "https://tripile.com",
-        "name": "Tripile.com",
-        "description": description,
-        "publisher": {
-          "@id": "https://tripile.com/#organization"
-        },
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": {
-            "@type": "EntryPoint",
-            "urlTemplate": "https://tripile.com/search-results?q={search_term_string}"
-          },
-          "query-input": "required name=search_term_string"
-        }
-      }
-    ]
-  };
 
   return (
     <Helmet>
@@ -118,11 +73,6 @@ const SEOHead = ({
       <meta name="language" content="English" />
       <meta name="revisit-after" content="1 days" />
       <meta name="rating" content="general" />
-
-      {/* Structured Data */}
-      <script type="application/ld+json">
-        {JSON.stringify(structuredData)}
-      </script>
     </Helmet>
   );
 };

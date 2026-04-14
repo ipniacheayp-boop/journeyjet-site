@@ -1,10 +1,8 @@
 User-agent: Googlebot
 Allow: /
-Crawl-delay: 1
 
 User-agent: Bingbot
 Allow: /
-Crawl-delay: 1
 
 User-agent: Twitterbot
 Allow: /
@@ -14,7 +12,6 @@ Allow: /
 
 User-agent: *
 Allow: /
-Crawl-delay: 2
 
 # LLM / AI site context (optional)
 # llms.txt: https://tripile.com/llms.txt

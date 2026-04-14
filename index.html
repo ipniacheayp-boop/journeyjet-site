@@ -43,8 +43,69 @@
     <!-- Legacy link preview hint (some crawlers) -->
     <link rel="image_src" href="https://tripile.com/og-image.png" />
 
-    <!-- Canonical -->
+    <!-- Canonical (SPA: updated per path by inline script below) -->
     <link rel="canonical" href="https://tripile.com/" />
+
+    <!-- Route-aware title / canonical / OG for crawlers that execute early inline JS (SPA shares one index.html) -->
+    <script>
+      (function () {
+        var path = location.pathname.replace(/\/$/, "") || "/";
+        var map = {
+          "/": {
+            title: "Tripile – Cheap Flights, Hotels & Car Rentals USA",
+            canonical: "https://tripile.com/",
+            ogTitle: "Tripile – Cheap Flights, Hotels & Car Rentals USA",
+            desc:
+              "Compare cheap flights, hotels & car rentals across the USA. Price Match Guarantee. Trusted by 2M+ travelers. Search Tripile—compare fares, hotels & cars today.",
+          },
+          "/flights": {
+            title: "Search Cheap Flights | Tripile.com — Compare 500+ Airlines",
+            canonical: "https://tripile.com/flights",
+            ogTitle: "Search Cheap Flights | Tripile.com — Compare 500+ Airlines",
+            desc:
+              "Search and compare cheap flights across the USA on Tripile.com. Compare 500+ airlines, flexible dates, transparent fares, and 24/7 support when plans change.",
+          },
+          "/hotels": {
+            title: "Find Cheap Hotels | Tripile.com — US & International Stays",
+            canonical: "https://tripile.com/hotels",
+            ogTitle: "Find Cheap Hotels | Tripile.com — US & International Stays",
+            desc:
+              "Find hotel deals and compare nightly rates for US cities and international destinations. Filter by neighborhood, star rating, and amenities on Tripile.com.",
+          },
+          "/car-rentals": {
+            title: "Cheap Car Rentals | Tripile.com — Compare Rates",
+            canonical: "https://tripile.com/car-rentals",
+            ogTitle: "Cheap Car Rentals | Tripile.com — Compare Rates",
+            desc:
+              "Compare car rental rates from major brands. Choose pick-up and drop-off locations, dates, and vehicle class—built for US road trips and airport pickups on Tripile.com.",
+          },
+          "/deals": {
+            title: "Exclusive Flight Deals & Travel Offers | Tripile.com USA",
+            canonical: "https://tripile.com/deals",
+            ogTitle: "Exclusive Flight Deals & Travel Offers | Tripile.com",
+            desc:
+              "Discover exclusive flight deals and travel offers across the USA. Save up to 50% on roundtrip flights with Tripile.com's best price guarantee. Compare fares from 500+ airlines.",
+          },
+        };
+        var m = map[path];
+        if (!m) return;
+        document.title = m.title;
+        var link = document.querySelector('link[rel="canonical"]');
+        if (link) link.setAttribute("href", m.canonical);
+        function setMeta(sel, attr, val) {
+          var el = document.querySelector(sel);
+          if (el) el.setAttribute(attr, val);
+        }
+        setMeta('meta[property="og:url"]', "content", m.canonical);
+        setMeta('meta[property="og:title"]', "content", m.ogTitle);
+        setMeta('meta[name="twitter:title"]', "content", m.ogTitle);
+        if (m.desc) {
+          setMeta('meta[name="description"]', "content", m.desc);
+          setMeta('meta[property="og:description"]', "content", m.desc);
+          setMeta('meta[name="twitter:description"]', "content", m.desc);
+        }
+      })();
+    </script>
 
     <!-- Machine-readable site summary for AI assistants (llms.txt) -->
     <link rel="alternate" type="text/plain" title="Tripile for AI systems" href="/llms.txt" />
@@ -67,7 +128,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-tripile.png?v=4" />
     <link rel="manifest" href="/site.webmanifest" />
 
-    <!-- Structured Data: TravelAgency (single entity — required: @context, @type, name, url, description) -->
+    <!-- Structured Data: TravelAgency (LocalBusiness subtype — include address + logo object for validator tools) -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -75,8 +136,21 @@
         "name": "Tripile",
         "url": "https://tripile.com/",
         "description": "Compare cheap flights, hotels \u0026 car rentals across the USA. Price Match Guarantee. Trusted by 2M+ travelers.",
-        "logo": "https://tripile.com/favicon-tripile.png",
-        "image": "https://tripile.com/og-image.png",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://tripile.com/favicon-tripile.png"
+        },
+        "image": ["https://tripile.com/og-image.png"],
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Online travel booking — service nationwide",
+          "addressLocality": "United States",
+          "addressCountry": "US"
+        },
+        "areaServed": {
+          "@type": "Country",
+          "name": "United States"
+        },
         "sameAs": [
           "https://facebook.com/tripile",
           "https://twitter.com/tripile",
@@ -86,7 +160,10 @@
           "@type": "ContactPoint",
           "telephone": "+1-800-963-4330",
           "contactType": "customer service",
-          "areaServed": "US",
+          "areaServed": {
+            "@type": "Country",
+            "name": "United States"
+          },
           "availableLanguage": ["English", "Spanish"]
         }
       }

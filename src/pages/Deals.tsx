@@ -369,17 +369,18 @@ const Deals = () => {
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "CollectionPage",
-            "name": "Exclusive Flight Deals & Travel Offers",
-            "description": "Discover exclusive flight deals across the USA. Save up to 50% on roundtrip flights.",
+            "@type": "WebPage",
+            "name": "Exclusive Flight Deals & Travel Offers | Tripile.com USA",
+            "description":
+              "Discover exclusive flight deals and travel offers across the USA. Compare fares from 500+ airlines with Tripile.com.",
             "url": "https://tripile.com/deals",
             "breadcrumb": {
               "@type": "BreadcrumbList",
               "itemListElement": [
                 { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tripile.com/" },
-                { "@type": "ListItem", "position": 2, "name": "Deals", "item": "https://tripile.com/deals" }
-              ]
-            }
+                { "@type": "ListItem", "position": 2, "name": "Deals", "item": "https://tripile.com/deals" },
+              ],
+            },
           })}
         </script>
       </Helmet>
