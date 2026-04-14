@@ -2052,6 +2052,8 @@ A few practical things that matter here:
 
 When you are ready to search and compare, search available flights on **Tripile** to compare prices across major carriers in one place and find the best fares for your specific dates and cities.
 
+![](https://res.cloudinary.com/diiegizut/image/upload/v1776193936/fifa_z0hgqj.png)
+
 ## Hotels: The Part Most People Underestimate
 Here is the honest truth about World Cup hotel availability: in host cities with major group stage matches and knockout round games, the good options at reasonable prices are disappearing now.
 
