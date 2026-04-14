@@ -4,5 +4,6 @@ import "./index.css";
 import { initGoogleAnalytics } from "./lib/initGoogleAnalytics";
 
 initGoogleAnalytics();
+document.getElementById("seo-static-content")?.remove();
 
 createRoot(document.getElementById("root")!).render(<App />);
