@@ -354,6 +354,27 @@ const BlogDetail = () => {
         return <br key={index} className="hidden" />;
       }
 
+            // Inline image: ![alt](url)
+      const imgMatch = line.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+      if (imgMatch) {
+        const [, alt, src] = imgMatch;
+        return (
+          <figure key={index} className="my-8 w-[400px] rounded-2xl  overflow-hidden border border-border/50 shadow-md">
+            <img
+              src={src}
+              alt={alt}
+              className="w-[400px] h-auto object-cover"
+              loading="lazy"
+            />
+            {alt && (
+              <figcaption className="text-center text-sm text-muted-foreground py-3 px-4 bg-muted/30">
+                {alt}
+              </figcaption>
+            )}
+          </figure>
+        );
+      }
+
       const boldRegex = /\*\*(.*?)\*\*/g;
       const parts = line.split(boldRegex);
       return (
