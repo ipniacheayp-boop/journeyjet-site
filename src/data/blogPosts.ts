@@ -2098,7 +2098,7 @@ The 2026 World Cup is a once-in-a-generation event. Sort your flights and accomm
       bio: "Football and travel enthusiast",
     },
     publishedAt: "2026-04-14",
-    category: "Travel Guides",
+    category: "Travel Tips",
     tags: ["FIFA World Cup", "2026", "travel planning", "booking guide"],
     readTime: 12,
   },
