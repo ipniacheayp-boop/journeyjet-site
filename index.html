@@ -43,12 +43,10 @@
     <!-- Legacy link preview hint (some crawlers) -->
     <link rel="image_src" href="https://tripile.com/og-image.png" />
 
-    <!--
-      No static rel=canonical in this file: one index.html serves every route. A single homepage canonical caused
-      SEMrush (JS off) to flag sitemap URLs /flights, /hotels, etc. as "non-canonical". Canonical comes from each
-      route’s React Helmet. Crawlers without JS see no conflicting canonical vs. sitemap <loc> URLs.
-    -->
-    <!-- Route-aware title + OG only (canonical is set by react-helmet per route to avoid duplicates) -->
+    <!-- Canonical (SPA: updated per path by inline script below) -->
+    <link rel="canonical" href="https://tripile.com/" />
+
+    <!-- Route-aware title / canonical / OG for crawlers that execute early inline JS (SPA shares one index.html) -->
     <script>
       (function () {
         var path = location.pathname.replace(/\/$/, "") || "/";
@@ -92,6 +90,8 @@
         var m = map[path];
         if (!m) return;
         document.title = m.title;
+        var link = document.querySelector('link[rel="canonical"]');
+        if (link) link.setAttribute("href", m.canonical);
         function setMeta(sel, attr, val) {
           var el = document.querySelector(sel);
           if (el) el.setAttribute(attr, val);
