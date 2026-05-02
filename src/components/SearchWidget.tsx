@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { Calendar, MapPin, Users, ChevronDown, Search, Plane, Hotel, Car, Ship } from "lucide-react";
+import { Calendar, MapPin, Users, Search, Plane, Hotel, Car, Ship } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useNavigate } from "react-router-dom";
 import AirportDropdown from "@/components/AirportDropdown";
+import PlacesLocationInput from "@/components/PlacesLocationInput";
 import { useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 
@@ -54,7 +55,6 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
 
   // Hotel state
   const [cityCode, setCityCode] = useState("");
-  const [cityCodeIATA, setCityCodeIATA] = useState("");
   const [checkInDate, setCheckInDate] = useState("");
   const [checkOutDate, setCheckOutDate] = useState("");
   const [hotelGuests, setHotelGuests] = useState("2");
@@ -95,6 +95,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
     if (!cityCode.trim()) newErrors.cityCode = "City is required";
     if (!checkInDate) newErrors.checkInDate = "Check-in date is required";
     if (!checkOutDate) newErrors.checkOutDate = "Check-out date is required";
+    if (checkInDate && checkInDate < today) newErrors.checkInDate = "Check-in date cannot be in the past";
     if (checkInDate && checkOutDate && new Date(checkOutDate) <= new Date(checkInDate)) {
       newErrors.checkOutDate = "Check-out must be after check-in";
     }
@@ -153,7 +154,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
       toast.success("Searching for hotels...");
       const params = new URLSearchParams({
         type: "hotels",
-        cityCode: cityCodeIATA || cityCode,
+        cityCode: cityCode,
         checkInDate,
         checkOutDate,
         adults: hotelGuests,
@@ -203,7 +204,6 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
     const city = searchParams.get("city") || searchParams.get("cityCode");
     if (city) {
       setCityCode(city);
-      setCityCodeIATA(city);
       setCheckInDate("");
       setCheckOutDate("");
       if (!type && defaultTab === "hotels") setSearchType("hotels");
@@ -444,14 +444,13 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                 >
                   City
                 </Label>
-                <AirportDropdown
+                <PlacesLocationInput
+                  id="city-code"
                   value={cityCode}
-                  onChange={(value, iataCode) => {
-                    setCityCode(value);
-                    setCityCodeIATA(iataCode);
-                  }}
-                  placeholder="City or Airport"
-                  className={`pl-10 bg-background text-foreground px-2 py-1 rounded-lg border border-input h-11 ${errors.cityCode ? "border-destructive" : ""}`}
+                  onChange={setCityCode}
+                  placeholder="City, region, or country"
+                  className={`w-full pl-10 pr-3 bg-background text-foreground rounded-lg border border-input h-11 text-sm ${errors.cityCode ? "border-destructive" : ""}`}
+                  aria-invalid={!!errors.cityCode}
                 />
                 {errors.cityCode && <p className="text-xs text-destructive">{errors.cityCode}</p>}
               </div>

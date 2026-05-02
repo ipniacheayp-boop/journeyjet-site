@@ -264,7 +264,13 @@ const SearchResults = () => {
                   {type === "flights" &&
                     filteredResults.map((flight, i) => <FlightResultCard key={i} flight={flight} onBook={handleBook} />)}
                   {type === "hotels" &&
-                    filteredResults.map((hotel, i) => <HotelResultCard key={i} hotel={hotel} onBook={handleBook} />)}
+                    filteredResults.map((hotel, i) => (
+                      <HotelResultCard
+                        key={hotel.placeId || hotel.hotel?.hotelId || String(i)}
+                        hotel={hotel}
+                        onBook={handleBook}
+                      />
+                    ))}
                   {type === "cars" && filteredResults.map((car, i) => <CarResultCard key={i} car={car} onBook={handleBook} />)}
                 </div>
               )}

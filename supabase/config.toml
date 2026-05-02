@@ -82,7 +82,11 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.hotels-search]
-verify_jwt = true
+verify_jwt = false
+
+# Public read-only: city/country suggestions for hotel search (uses server Places API key).
+[functions.places-autocomplete]
+verify_jwt = false
 
 [functions.stripe-webhook]
 verify_jwt = false

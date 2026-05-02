@@ -10,7 +10,8 @@ import {
   X, Search, Loader2, Check, ArrowRight,
 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { supabase } from "@/integrations/supabase/client";
+import { invokeSupabaseFunction } from "@/lib/invokeSupabaseFunction";
+import { extractHotelSearchRows } from "@/lib/extractHotelSearchRows";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/utils";
 
@@ -71,17 +72,15 @@ const HotelUpsellStep = ({ destinationCode, arrivalDate, departureDate, onComple
     setSearching(true);
     setPhase("results");
     try {
-      const { data, error } = await supabase.functions.invoke("hotels-search", {
-        body: {
-          cityCode: destinationCode,
-          checkInDate,
-          checkOutDate,
-          adults,
-          roomQuantity: rooms,
-        },
+      const { data, error } = await invokeSupabaseFunction<{ data?: unknown[] }>("hotels-search", {
+        cityCode: destinationCode,
+        checkInDate,
+        checkOutDate,
+        adults,
+        roomQuantity: rooms,
       });
-      if (error) throw error;
-      const results = data?.data || [];
+      if (error) throw new Error(error);
+      const results = extractHotelSearchRows(data);
       setHotels(results);
       if (results.length === 0) {
         toast.info("No hotels found for these dates. Try different dates.");

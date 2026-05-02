@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
+import { invokeSupabaseFunction } from '@/lib/invokeSupabaseFunction';
+import { extractHotelSearchRows } from '@/lib/extractHotelSearchRows';
 
 export interface HotelSearchParams {
   cityCode: string;
@@ -11,8 +11,13 @@ export interface HotelSearchParams {
   currency?: string;
 }
 
+type HotelsSearchResponse = {
+  data?: unknown[];
+  error?: string;
+  details?: string;
+};
+
 export const useHotelSearch = () => {
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,29 +28,30 @@ export const useHotelSearch = () => {
     console.log('🏨 Frontend: Searching hotels with params:', params);
 
     try {
-      const { data, error: functionError } = await supabase.functions.invoke('hotels-search', {
-        body: params,
-      });
+      const { data, error: invokeErr } = await invokeSupabaseFunction<HotelsSearchResponse>(
+        'hotels-search',
+        params as unknown as Record<string, unknown>,
+      );
 
-      console.log('📡 Backend response:', { data, error: functionError });
-
-      if (functionError) {
-        console.error('❌ Function error:', functionError);
-        throw functionError;
+      if (invokeErr) {
+        console.error('❌ invoke hotels-search:', invokeErr);
+        throw new Error(invokeErr);
       }
 
-      if (data?.error) {
-        console.error('❌ API error:', data.error, data.details);
-        throw new Error(data.error + (data.details ? ': ' + data.details : ''));
+      const payload = data;
+      const p = payload as { error?: string; details?: string; data?: unknown } | null;
+      if (p && typeof p.error === 'string' && !Array.isArray(p.data)) {
+        console.error('❌ API error:', p.error, p.details);
+        throw new Error(p.error + (p.details ? ': ' + p.details : ''));
       }
-      
-      console.log('✅ Hotel search successful:', data.data?.length || 0, 'results');
-      return data;
-    } catch (err: any) {
-      const errorMessage = err.message || 'Failed to search hotels';
+
+      const rows = extractHotelSearchRows(payload);
+      console.log('✅ Hotel search successful:', rows.length, 'results');
+      return { data: rows };
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to search hotels';
       console.error('❌ Search error:', errorMessage);
       setError(errorMessage);
-      navigate('/error');
       throw err;
     } finally {
       setLoading(false);

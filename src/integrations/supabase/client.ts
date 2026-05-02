@@ -2,13 +2,36 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
+
+/**
+ * Supabase client keys:
+ * - Edge Functions + PostgREST expect `Authorization: Bearer <JWT>`.
+ * - New **publishable** keys (`sb_publishable_…`) are NOT JWTs → gateway returns `401 Invalid JWT`
+ *   and the browser may show "Failed to send a request to the Edge Function".
+ * - Use the **anon public** JWT (`eyJ…`) from Dashboard → Settings → API as `VITE_SUPABASE_ANON_KEY`.
+ */
+const ANON_JWT = (import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined)?.trim();
+const PUBLISHABLE = (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined)?.trim();
+
+const SUPABASE_KEY =
+  ANON_JWT && ANON_JWT.startsWith('eyJ')
+    ? ANON_JWT
+    : PUBLISHABLE && PUBLISHABLE.startsWith('eyJ')
+      ? PUBLISHABLE
+      : ANON_JWT || PUBLISHABLE || '';
+
+if (import.meta.env.DEV && SUPABASE_KEY.startsWith('sb_publishable_')) {
+  // eslint-disable-next-line no-console
+  console.error(
+    '[Supabase] Publishable key alone breaks Edge Functions. Set VITE_SUPABASE_ANON_KEY to the JWT anon key (Dashboard → Settings → API → anon public, starts with eyJ).',
+  );
+}
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_KEY, {
   auth: {
     storage: localStorage,
     persistSession: true,
