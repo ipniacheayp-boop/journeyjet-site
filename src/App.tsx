@@ -135,7 +135,7 @@ const App = () => (
                 {/* SEO Route Pages */}
                 <Route path="/airport/:slug" element={<AirportLandingPage />} />
                 <Route path="/cheap-flights-from-:slug" element={<FlightRoutePage />} />
-                <Route path="/cheap-hotels-in-:slug" element={<HotelCityPage />} />
+                <Route path="/cheap-hotels-in/:slug" element={<HotelCityPage />} />
                 <Route path="/cheap-car-rentals-in-:slug" element={<CarRentalCityPage />} />
                 <Route path="/webcheck-in" element={<WebCheckIn />} />
                 <Route path="/flight-status" element={<FlightStatus />} />

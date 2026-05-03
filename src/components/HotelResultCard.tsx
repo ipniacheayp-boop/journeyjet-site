@@ -2,7 +2,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useFxSmartSave } from "@/hooks/useFxSmartSave";
 import FxSmartSaveBadge from "@/components/FxSmartSaveBadge";
 import {
@@ -13,15 +12,12 @@ import {
   Phone,
   Globe,
   Clock,
-  ChevronDown,
   CalendarRange,
   Users,
   BedDouble,
   ExternalLink,
 } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
-import { useState } from "react";
-
 interface HotelResultCardProps {
   hotel: any;
   onBook: (hotel: any) => void;
@@ -54,7 +50,6 @@ function formatBusinessStatus(s?: string): string {
 }
 
 export function HotelResultCard({ hotel, onBook }: HotelResultCardProps) {
-  const [detailsOpen, setDetailsOpen] = useState(false);
   const offer = hotel.offers?.[0] || hotel;
   const price = parseFloat(offer.price?.total || "0");
   const currency = offer.price?.currency || "USD";
@@ -397,20 +392,6 @@ export function HotelResultCard({ hotel, onBook }: HotelResultCardProps) {
                 breakdown={fxData.breakdown}
               />
             </TooltipProvider>
-          )}
-
-          {googlePlace && (
-            <Collapsible open={detailsOpen} onOpenChange={setDetailsOpen}>
-              <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg border border-border px-3 py-2 text-sm font-medium hover:bg-muted/50">
-                <span>Full Google Places response</span>
-                <ChevronDown className={`w-4 h-4 transition-transform ${detailsOpen ? "rotate-180" : ""}`} />
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <pre className="mt-2 max-h-72 overflow-auto rounded-md bg-muted/50 p-3 text-[10px] leading-relaxed whitespace-pre-wrap break-words">
-                  {JSON.stringify(googlePlace, null, 2)}
-                </pre>
-              </CollapsibleContent>
-            </Collapsible>
           )}
 
           <div className="grid grid-cols-1 gap-2 pt-1">

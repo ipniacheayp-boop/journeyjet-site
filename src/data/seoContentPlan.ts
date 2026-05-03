@@ -238,7 +238,7 @@ export const seoContentPlan: ContentArticle[] = [
     difficulty: "medium",
     category: "commercial",
     outline: ["Off-peak beach destinations", "National park alternatives", "City deals", "Budget breakdown"],
-    internalLinks: ["/deals", "/cheap-hotels-in-orlando"]
+    internalLinks: ["/deals", "/cheap-hotels-in/orlando"]
   },
   {
     week: 11, month: 3,
@@ -249,7 +249,7 @@ export const seoContentPlan: ContentArticle[] = [
     difficulty: "high",
     category: "commercial",
     outline: ["Best connecting routes", "Seasonal pricing", "Beach vs downtown stays", "Fort Lauderdale alternative"],
-    internalLinks: ["/cheap-flights-from-chicago-to-miami", "/cheap-flights-from-new-york-to-miami", "/cheap-hotels-in-miami"]
+    internalLinks: ["/cheap-flights-from-chicago-to-miami", "/cheap-flights-from-new-york-to-miami", "/cheap-hotels-in/miami"]
   },
   {
     week: 11, month: 3,
@@ -282,7 +282,7 @@ export const seoContentPlan: ContentArticle[] = [
     difficulty: "high",
     category: "commercial",
     outline: ["JFK vs Newark vs LaGuardia", "Best connecting hubs", "Seasonal pricing", "Midweek savings"],
-    internalLinks: ["/cheap-flights-from-los-angeles-to-new-york", "/cheap-hotels-in-new-york"]
+    internalLinks: ["/cheap-flights-from-los-angeles-to-new-york", "/cheap-hotels-in/new-york"]
   },
 
   // MONTH 4 - Commercial Content Continued
@@ -317,7 +317,7 @@ export const seoContentPlan: ContentArticle[] = [
     difficulty: "high",
     category: "commercial",
     outline: ["Best times to visit", "Package deals", "Airport options", "Off-site savings"],
-    internalLinks: ["/cheap-flights-from-boston-to-orlando", "/cheap-hotels-in-orlando"]
+    internalLinks: ["/cheap-flights-from-boston-to-orlando", "/cheap-hotels-in/orlando"]
   },
   {
     week: 14, month: 4,
@@ -350,7 +350,7 @@ export const seoContentPlan: ContentArticle[] = [
     difficulty: "high",
     category: "commercial",
     outline: ["LAX alternatives", "Best connecting routes", "Seasonal pricing", "Hollywood trip planning"],
-    internalLinks: ["/cheap-flights-from-new-york-to-los-angeles", "/cheap-hotels-in-los-angeles"]
+    internalLinks: ["/cheap-flights-from-new-york-to-los-angeles", "/cheap-hotels-in/los-angeles"]
   },
   {
     week: 16, month: 4,
@@ -372,7 +372,7 @@ export const seoContentPlan: ContentArticle[] = [
     difficulty: "medium",
     category: "commercial",
     outline: ["O'Hare vs Midway", "Best connecting routes", "Winter vs summer pricing", "Lake Michigan experiences"],
-    internalLinks: ["/cheap-flights-from-new-york-to-chicago", "/cheap-hotels-in-chicago"]
+    internalLinks: ["/cheap-flights-from-new-york-to-chicago", "/cheap-hotels-in/chicago"]
   },
 
   // MONTH 5 - Authority Content

@@ -92,6 +92,58 @@
   <url><loc>https://tripile.com/flights-to/athens</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://tripile.com/flights-to/lisbon</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
 
+  <!-- Hotels by city -->
+  <url><loc>https://tripile.com/cheap-hotels-in/new-york</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/los-angeles</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/chicago</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/miami</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/san-francisco</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/las-vegas</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/orlando</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/atlanta</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/dallas</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/denver</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/seattle</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/boston</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/houston</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/phoenix</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/nashville</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/san-diego</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/tampa</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/portland</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/minneapolis</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/detroit</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/philadelphia</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/charlotte</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/salt-lake-city</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/honolulu</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/fort-lauderdale</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/washington-dc</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/baltimore</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/austin</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/raleigh</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/new-orleans</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/london</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/paris</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/tokyo</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/dubai</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/cancun</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/barcelona</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/rome</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/amsterdam</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/bangkok</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/toronto</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/sydney</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/frankfurt</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/singapore</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/istanbul</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/seoul</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/mumbai</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/delhi</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/cape-town</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/athens</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://tripile.com/cheap-hotels-in/lisbon</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+
   <!-- Airlines -->
   <url><loc>https://tripile.com/airlines/air-canada</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://tripile.com/airlines/air-france</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>

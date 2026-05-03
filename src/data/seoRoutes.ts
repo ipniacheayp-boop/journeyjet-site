@@ -130,15 +130,77 @@ export interface SEOHotelCity {
 export const seoHotelCities: SEOHotelCity[] = [
   { slug: "cheap-hotels-in-new-york", city: "New York", state: "NY", avgPrice: 189, topAreas: ["Times Square", "Midtown", "Downtown Manhattan", "Brooklyn"] },
   { slug: "cheap-hotels-in-los-angeles", city: "Los Angeles", state: "CA", avgPrice: 149, topAreas: ["Hollywood", "Santa Monica", "Downtown LA", "Beverly Hills"] },
-  { slug: "cheap-hotels-in-las-vegas", city: "Las Vegas", state: "NV", avgPrice: 79, topAreas: ["The Strip", "Downtown", "Fremont Street", "Henderson"] },
-  { slug: "cheap-hotels-in-miami", city: "Miami", state: "FL", avgPrice: 139, topAreas: ["South Beach", "Downtown", "Brickell", "Coral Gables"] },
-  { slug: "cheap-hotels-in-orlando", city: "Orlando", state: "FL", avgPrice: 99, topAreas: ["International Drive", "Disney Area", "Universal Area", "Downtown"] },
   { slug: "cheap-hotels-in-chicago", city: "Chicago", state: "IL", avgPrice: 129, topAreas: ["Magnificent Mile", "Downtown", "River North", "Wicker Park"] },
+  { slug: "cheap-hotels-in-miami", city: "Miami", state: "FL", avgPrice: 139, topAreas: ["South Beach", "Downtown", "Brickell", "Coral Gables"] },
   { slug: "cheap-hotels-in-san-francisco", city: "San Francisco", state: "CA", avgPrice: 169, topAreas: ["Union Square", "Fisherman's Wharf", "SOMA", "Financial District"] },
-  { slug: "cheap-hotels-in-seattle", city: "Seattle", state: "WA", avgPrice: 139, topAreas: ["Downtown", "Capitol Hill", "Pike Place", "South Lake Union"] },
+  { slug: "cheap-hotels-in-las-vegas", city: "Las Vegas", state: "NV", avgPrice: 79, topAreas: ["The Strip", "Downtown", "Fremont Street", "Henderson"] },
+  { slug: "cheap-hotels-in-orlando", city: "Orlando", state: "FL", avgPrice: 99, topAreas: ["International Drive", "Disney Area", "Universal Area", "Downtown"] },
+  { slug: "cheap-hotels-in-atlanta", city: "Atlanta", state: "GA", avgPrice: 119, topAreas: ["Downtown", "Buckhead", "Midtown", "Airport"] },
   { slug: "cheap-hotels-in-dallas", city: "Dallas", state: "TX", avgPrice: 109, topAreas: ["Downtown", "Uptown", "Deep Ellum", "Design District"] },
+  { slug: "cheap-hotels-in-denver", city: "Denver", state: "CO", avgPrice: 129, topAreas: ["LoDo", "RiNo", "Cherry Creek", "Downtown"] },
+  { slug: "cheap-hotels-in-seattle", city: "Seattle", state: "WA", avgPrice: 139, topAreas: ["Downtown", "Capitol Hill", "Pike Place", "South Lake Union"] },
+  { slug: "cheap-hotels-in-boston", city: "Boston", state: "MA", avgPrice: 179, topAreas: ["Back Bay", "Downtown", "Cambridge", "Seaport"] },
   { slug: "cheap-hotels-in-houston", city: "Houston", state: "TX", avgPrice: 99, topAreas: ["Downtown", "Galleria", "Medical Center", "Montrose"] },
+  { slug: "cheap-hotels-in-phoenix", city: "Phoenix", state: "AZ", avgPrice: 109, topAreas: ["Downtown", "Scottsdale", "Tempe", "Airport"] },
+  { slug: "cheap-hotels-in-nashville", city: "Nashville", state: "TN", avgPrice: 139, topAreas: ["Broadway", "The Gulch", "Downtown", "Music Row"] },
+  { slug: "cheap-hotels-in-san-diego", city: "San Diego", state: "CA", avgPrice: 149, topAreas: ["Gaslamp", "La Jolla", "Downtown", "Coronado"] },
+  { slug: "cheap-hotels-in-tampa", city: "Tampa", state: "FL", avgPrice: 119, topAreas: ["Downtown", "Ybor City", "Westshore", "Airport"] },
+  { slug: "cheap-hotels-in-portland", city: "Portland", state: "OR", avgPrice: 129, topAreas: ["Pearl District", "Downtown", "Nob Hill", "Airport"] },
+  { slug: "cheap-hotels-in-minneapolis", city: "Minneapolis", state: "MN", avgPrice: 119, topAreas: ["Downtown", "Uptown", "Northeast", "Airport"] },
+  { slug: "cheap-hotels-in-detroit", city: "Detroit", state: "MI", avgPrice: 109, topAreas: ["Downtown", "Midtown", "Corktown", "Airport"] },
+  { slug: "cheap-hotels-in-philadelphia", city: "Philadelphia", state: "PA", avgPrice: 139, topAreas: ["Center City", "Old City", "University City", "Airport"] },
+  { slug: "cheap-hotels-in-charlotte", city: "Charlotte", state: "NC", avgPrice: 119, topAreas: ["Uptown", "South End", "Airport", "NoDa"] },
+  { slug: "cheap-hotels-in-salt-lake-city", city: "Salt Lake City", state: "UT", avgPrice: 109, topAreas: ["Downtown", "Sugar House", "Airport", "Sandy"] },
+  { slug: "cheap-hotels-in-honolulu", city: "Honolulu", state: "HI", avgPrice: 189, topAreas: ["Waikiki", "Downtown", "Ala Moana", "Airport"] },
+  { slug: "cheap-hotels-in-fort-lauderdale", city: "Fort Lauderdale", state: "FL", avgPrice: 129, topAreas: ["Beach", "Las Olas", "Downtown", "Airport"] },
+  { slug: "cheap-hotels-in-washington-dc", city: "Washington DC", state: "DC", avgPrice: 169, topAreas: ["Downtown", "Georgetown", "Capitol Hill", "Dupont"] },
+  { slug: "cheap-hotels-in-baltimore", city: "Baltimore", state: "MD", avgPrice: 119, topAreas: ["Inner Harbor", "Fells Point", "Downtown", "Airport"] },
+  { slug: "cheap-hotels-in-austin", city: "Austin", state: "TX", avgPrice: 149, topAreas: ["Downtown", "South Congress", "East Austin", "Domain"] },
+  { slug: "cheap-hotels-in-raleigh", city: "Raleigh", state: "NC", avgPrice: 109, topAreas: ["Downtown", "North Hills", "Cary", "Airport"] },
+  { slug: "cheap-hotels-in-new-orleans", city: "New Orleans", state: "LA", avgPrice: 139, topAreas: ["French Quarter", "Garden District", "Warehouse District", "Downtown"] },
+  { slug: "cheap-hotels-in-london", city: "London", state: "UK", avgPrice: 159, topAreas: ["Westminster", "Covent Garden", "Shoreditch", "Heathrow"] },
+  { slug: "cheap-hotels-in-paris", city: "Paris", state: "France", avgPrice: 149, topAreas: ["Le Marais", "Saint-Germain", "Montmartre", "La Défense"] },
+  { slug: "cheap-hotels-in-tokyo", city: "Tokyo", state: "Japan", avgPrice: 119, topAreas: ["Shinjuku", "Shibuya", "Ginza", "Asakusa"] },
+  { slug: "cheap-hotels-in-dubai", city: "Dubai", state: "UAE", avgPrice: 129, topAreas: ["Downtown", "Marina", "JBR", "Deira"] },
+  { slug: "cheap-hotels-in-cancun", city: "Cancun", state: "Mexico", avgPrice: 99, topAreas: ["Hotel Zone", "Downtown", "Isla Mujeres ferry", "Airport"] },
+  { slug: "cheap-hotels-in-barcelona", city: "Barcelona", state: "Spain", avgPrice: 119, topAreas: ["Gothic Quarter", "Eixample", "Gràcia", "Beachfront"] },
+  { slug: "cheap-hotels-in-rome", city: "Rome", state: "Italy", avgPrice: 129, topAreas: ["Historic Center", "Trastevere", "Vatican area", "Termini"] },
+  { slug: "cheap-hotels-in-amsterdam", city: "Amsterdam", state: "Netherlands", avgPrice: 139, topAreas: ["Centrum", "Jordaan", "De Pijp", "Museum Quarter"] },
+  { slug: "cheap-hotels-in-bangkok", city: "Bangkok", state: "Thailand", avgPrice: 59, topAreas: ["Sukhumvit", "Silom", "Old Town", "Riverside"] },
+  { slug: "cheap-hotels-in-toronto", city: "Toronto", state: "Canada", avgPrice: 129, topAreas: ["Downtown", "Yorkville", "Distillery", "Airport"] },
+  { slug: "cheap-hotels-in-sydney", city: "Sydney", state: "Australia", avgPrice: 149, topAreas: ["CBD", "Darling Harbour", "Bondi", "Airport"] },
+  { slug: "cheap-hotels-in-frankfurt", city: "Frankfurt", state: "Germany", avgPrice: 119, topAreas: ["Innenstadt", "Sachsenhausen", "Airport", "Westend"] },
+  { slug: "cheap-hotels-in-singapore", city: "Singapore", state: "Singapore", avgPrice: 139, topAreas: ["Marina Bay", "Orchard", "Chinatown", "Sentosa"] },
+  { slug: "cheap-hotels-in-istanbul", city: "Istanbul", state: "Turkey", avgPrice: 89, topAreas: ["Sultanahmet", "Beyoğlu", "Kadıköy", "Airport"] },
+  { slug: "cheap-hotels-in-seoul", city: "Seoul", state: "South Korea", avgPrice: 99, topAreas: ["Gangnam", "Myeongdong", "Hongdae", "Itaewon"] },
+  { slug: "cheap-hotels-in-mumbai", city: "Mumbai", state: "India", avgPrice: 79, topAreas: ["Colaba", "Bandra", "Andheri", "Airport"] },
+  { slug: "cheap-hotels-in-delhi", city: "Delhi", state: "India", avgPrice: 69, topAreas: ["Connaught Place", "Karol Bagh", "Aerocity", "Old Delhi"] },
+  { slug: "cheap-hotels-in-cape-town", city: "Cape Town", state: "South Africa", avgPrice: 89, topAreas: ["V&A Waterfront", "City Bowl", "Camps Bay", "Airport"] },
+  { slug: "cheap-hotels-in-athens", city: "Athens", state: "Greece", avgPrice: 99, topAreas: ["Plaka", "Syntagma", "Kolonaki", "Airport"] },
+  { slug: "cheap-hotels-in-lisbon", city: "Lisbon", state: "Portugal", avgPrice: 109, topAreas: ["Baixa", "Alfama", "Belém", "Chiado"] },
 ];
+
+const STORED_HOTEL_SLUG_PREFIX = "cheap-hotels-in-";
+
+/** Match `/cheap-hotels-in/:slug` (e.g. `new-york`) to stored SEO slugs (`cheap-hotels-in-new-york`). */
+export function findHotelCityByRouteParam(routeSlug: string | undefined): SEOHotelCity | undefined {
+  if (!routeSlug) return undefined;
+  return seoHotelCities.find(
+    (c) => c.slug === routeSlug || c.slug === `${STORED_HOTEL_SLUG_PREFIX}${routeSlug}`
+  );
+}
+
+/** Client path for stored slug — React Router needs `/cheap-hotels-in/:city`, not one hyphenated segment. */
+export function hotelListingPath(storedSlug: string): string {
+  const segment = storedSlug.startsWith(STORED_HOTEL_SLUG_PREFIX)
+    ? storedSlug.slice(STORED_HOTEL_SLUG_PREFIX.length)
+    : storedSlug;
+  return `/cheap-hotels-in/${segment}`;
+}
+
+export function hotelListingCanonicalUrl(storedSlug: string): string {
+  return `https://tripile.com${hotelListingPath(storedSlug)}`;
+}
 
 // Car rental cities
 export interface SEOCarCity {
@@ -161,7 +223,7 @@ export const seoCarCities: SEOCarCity[] = [
 export const getAllSEORouteSlugs = (): string[] => {
   return [
     ...seoFlightRoutes.map(r => `/${r.slug}`),
-    ...seoHotelCities.map(r => `/${r.slug}`),
+    ...seoHotelCities.map((r) => hotelListingPath(r.slug)),
     ...seoCarCities.map(r => `/${r.slug}`),
   ];
 };

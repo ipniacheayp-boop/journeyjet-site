@@ -8,12 +8,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import BreadcrumbSchema from '@/components/seo/BreadcrumbSchema';
 import FAQSchema from '@/components/seo/FAQSchema';
 import ReviewSchema from '@/components/seo/ReviewSchema';
-import { seoHotelCities } from '@/data/seoRoutes';
+import { findHotelCityByRouteParam, hotelListingCanonicalUrl } from '@/data/seoRoutes';
 
 const HotelCityPage = () => {
   const { slug } = useParams<{ slug: string }>();
   
-  const city = seoHotelCities.find(c => c.slug === slug);
+  const city = findHotelCityByRouteParam(slug);
   
   if (!city) {
     return (
@@ -30,7 +30,7 @@ const HotelCityPage = () => {
 
   const pageTitle = `Cheap Hotels in ${city.city} | Best Deals & Discounts – Tripile.com`;
   const pageDescription = `Book cheap hotels in ${city.city}, ${city.state} with exclusive discounts. Compare prices, ratings, and amenities. Hotels starting at $${city.avgPrice}/night.`;
-  const canonicalUrl = `https://tripile.com/${city.slug}`;
+  const canonicalUrl = hotelListingCanonicalUrl(city.slug);
 
   const faqs = [
     {

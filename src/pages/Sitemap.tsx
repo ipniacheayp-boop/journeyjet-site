@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import SitemapSection from "@/components/sitemap/SitemapSection";
 import AirlineList from "@/components/sitemap/AirlineList";
 import DestinationGrid from "@/components/sitemap/DestinationGrid";
+import HotelDestinationGrid from "@/components/sitemap/HotelDestinationGrid";
 import { siteMapData } from "@/data/sitemapData";
 import { Helmet } from "react-helmet";
 import {
@@ -44,7 +45,7 @@ export default function Sitemap() {
         <title>Sitemap – Cheap Flights, Airlines & Destinations | Tripile.com</title>
         <meta
           name="description"
-          content="Browse our complete site map. Find cheap flights to 50+ destinations, compare 30+ airlines, and discover travel deals."
+          content="Browse our complete site map. Find cheap flights and hotels in 50+ destinations, compare 30+ airlines, and discover travel deals."
         />
       </Helmet>
 
@@ -66,6 +67,8 @@ export default function Sitemap() {
 
         {/* Unified Destinations */}
         <DestinationGrid />
+
+        <HotelDestinationGrid />
 
         {/* Legacy sitemap sections */}
         {otherSections.map((section) => {
