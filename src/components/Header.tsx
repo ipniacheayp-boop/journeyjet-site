@@ -303,15 +303,27 @@ const Header = () => {
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <Button
-                  size="sm"
-                  asChild
-                  className="rounded-full bg-slate-900 text-white hover:bg-slate-700 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 font-semibold h-8 px-4 text-xs shadow-none"
-                >
-                  <Link to="/login" title="Sign in to Tripile">
-                    {t("navigation.signIn")}
-                  </Link>
-                </Button>
+                <div className="hidden sm:flex items-center gap-2">
+                  <Button
+                    size="sm"
+                    asChild
+                    variant="outline"
+                    className="rounded-full border-slate-300 dark:border-slate-700 h-8 px-4 text-xs font-semibold"
+                  >
+                    <Link to="/signup" title="Create your Tripile account">
+                      Sign Up
+                    </Link>
+                  </Button>
+                  <Button
+                    size="sm"
+                    asChild
+                    className="rounded-full bg-slate-900 text-white hover:bg-slate-700 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 font-semibold h-8 px-4 text-xs shadow-none"
+                  >
+                    <Link to="/login" title="Sign in to Tripile">
+                      {t("navigation.signIn")}
+                    </Link>
+                  </Button>
+                </div>
               )}
 
               {/* Mobile Hamburger */}
@@ -406,6 +418,21 @@ const Header = () => {
                   </Button>
                 </div>
               </div>
+
+              {!user && (
+                <div className="pt-3 border-t border-slate-100 dark:border-slate-800 mt-2 grid grid-cols-2 gap-2 px-1">
+                  <Button asChild variant="outline" className="rounded-lg">
+                    <Link to="/signup" onClick={() => setIsMobileMenuOpen(false)}>
+                      Sign Up
+                    </Link>
+                  </Button>
+                  <Button asChild className="rounded-lg">
+                    <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                      {t("navigation.signIn")}
+                    </Link>
+                  </Button>
+                </div>
+              )}
             </div>
           )}
         </div>

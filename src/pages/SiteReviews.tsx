@@ -20,10 +20,14 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 
 export default function SiteReviews() {
   const { user } = useAuth();
-  const [filter, setFilter] = useState("recent");
+  const [searchParams] = useSearchParams();
+  const initialFilter = searchParams.get("filter");
+  const allowedFilters = new Set(["recent", "top", "highest", "lowest"]);
+  const [filter, setFilter] = useState(allowedFilters.has(initialFilter || "") ? (initialFilter as string) : "recent");
   const [page, setPage] = useState(1);
   const limit = 7;
   const [isDialogOpen, setIsDialogOpen] = useState(false);

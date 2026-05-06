@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,15 @@ const UserLogin = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [selectedRole, setSelectedRole] = useState<UserRole>("user");
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const shouldUseSignUp = location.pathname === "/signup" || location.search.includes("mode=signup");
+    setIsSignUp(shouldUseSignUp);
+    if (shouldUseSignUp) {
+      setSelectedRole("user");
+    }
+  }, [location.pathname, location.search]);
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -44,9 +53,9 @@ const UserLogin = () => {
 
     try {
       if (isSignUp) {
-        // Sign up flow (only for regular users)
+        // Sign up flow is always regular user mode.
         if (selectedRole !== "user") {
-          throw new Error("Please use the appropriate registration for Agents");
+          setSelectedRole("user");
         }
 
         const { error } = await supabase.auth.signUp({
@@ -61,9 +70,11 @@ const UserLogin = () => {
 
         toast({
           title: "Success!",
-          description: "Account created successfully. You can now sign in.",
+          description: "Account created successfully. Please sign in with your credentials.",
         });
         setIsSignUp(false);
+        setSelectedRole("user");
+        navigate("/login", { replace: true });
       } else {
         // Sign in flow
         const { data: authData, error } = await supabase.auth.signInWithPassword({
@@ -135,9 +146,16 @@ const UserLogin = () => {
         }
       }
     } catch (error: any) {
+      const message =
+        error?.message?.includes("Invalid login credentials")
+          ? "Invalid email or password. Please try again."
+          : error?.message?.includes("Email not confirmed")
+            ? "Please verify your email first, then sign in."
+            : error.message;
+
       toast({
         title: "Error",
-        description: error.message,
+        description: message,
         variant: "destructive",
       });
     } finally {
@@ -341,7 +359,13 @@ const UserLogin = () => {
           <div className="mt-4 text-center text-sm">
             <button
               type="button"
-              onClick={() => setIsSignUp(!isSignUp)}
+              onClick={() => {
+                const nextSignUpState = !isSignUp;
+                setIsSignUp(nextSignUpState);
+                if (nextSignUpState) {
+                  setSelectedRole("user");
+                }
+              }}
               className="text-primary hover:underline"
               disabled={loading}
             >

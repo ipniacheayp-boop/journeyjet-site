@@ -86,7 +86,7 @@ export default function TrustpilotSlider() {
   const [index, setIndex] = useState(0);
 
   return (
-    <div className="w-full max-w-[700px] h-[170px] md:h-[160px] flex items-center justify-between bg-white/5 border border-white/10 rounded-xl px-2 md:px-4">
+    <div className="w-full h-[170px] md:h-[160px] flex items-center justify-between bg-white/5 border border-white/10 rounded-xl px-2 md:px-4">
       {/* Left Arrow */}
       <button
         onClick={() => setIndex((i) => (i - 1 + reviews.length) % reviews.length)}
