@@ -36,5 +36,9 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_KEY, {
     storage: localStorage,
     persistSession: true,
     autoRefreshToken: true,
+    // Pick up `?code=…` (PKCE) and `#access_token=…` (implicit) automatically
+    // after Google / OAuth / magic link redirects.
+    detectSessionInUrl: true,
+    flowType: 'pkce',
   }
 });

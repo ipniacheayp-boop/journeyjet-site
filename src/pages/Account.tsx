@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -13,6 +14,23 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Loader2, LogOut, User, Mail, Calendar, Shield } from "lucide-react";
 
+const buildProfileFromUser = (currentUser: SupabaseUser) => ({
+  id: currentUser.id,
+  email: currentUser.email ?? null,
+  name:
+    (currentUser.user_metadata?.full_name as string | undefined) ||
+    (currentUser.user_metadata?.name as string | undefined) ||
+    currentUser.email?.split("@")[0] ||
+    null,
+  profile_image:
+    (currentUser.user_metadata?.avatar_url as string | undefined) ||
+    (currentUser.user_metadata?.picture as string | undefined) ||
+    null,
+  login_method: currentUser.app_metadata?.provider || "email",
+  created_at: currentUser.created_at || null,
+  last_login: new Date().toISOString(),
+});
+
 const Account = () => {
   const { user, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
@@ -24,39 +42,72 @@ const Account = () => {
     created_at: string | null;
     last_login: string | null;
   } | null>(null);
-  const [loadingProfile, setLoadingProfile] = useState(true);
   const [editingName, setEditingName] = useState(false);
   const [newName, setNewName] = useState("");
+  const [profileSyncFailed, setProfileSyncFailed] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
-      navigate("/login", { replace: true });
+      navigate("/auth/signin", { replace: true });
+      return;
     }
+    if (!user) return;
+
+    // Render the page immediately with session data.
+    const fallbackProfile = buildProfileFromUser(user);
+    setProfile(fallbackProfile);
+    setNewName(fallbackProfile.name || "");
+    setProfileSyncFailed(false);
+
+    let cancelled = false;
+    const TIMEOUT_MS = 6000;
+
+    const fetchProfile = async () => {
+      try {
+        const result = (await Promise.race([
+          supabase.from("profiles").select("*").eq("id", user.id).maybeSingle(),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("profile-fetch-timeout")), TIMEOUT_MS),
+          ),
+        ])) as { data: typeof profile; error: any };
+
+        if (cancelled) return;
+        if (result.error) throw result.error;
+        if (result.data) {
+          setProfile(result.data);
+          setNewName(result.data.name || "");
+          return;
+        }
+
+        const upsert = (await Promise.race([
+          supabase
+            .from("profiles")
+            .upsert(buildProfileFromUser(user), { onConflict: "id" })
+            .select("*")
+            .single(),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("profile-upsert-timeout")), TIMEOUT_MS),
+          ),
+        ])) as { data: typeof profile; error: any };
+
+        if (cancelled) return;
+        if (upsert.error) throw upsert.error;
+        if (upsert.data) {
+          setProfile(upsert.data);
+          setNewName(upsert.data.name || "");
+        }
+      } catch (error) {
+        if (cancelled) return;
+        console.warn("Profile sync failed, showing session data only.", error);
+        setProfileSyncFailed(true);
+      }
+    };
+
+    void fetchProfile();
+    return () => {
+      cancelled = true;
+    };
   }, [user, authLoading, navigate]);
-
-  useEffect(() => {
-    if (user) {
-      fetchProfile();
-    }
-  }, [user]);
-
-  const fetchProfile = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user!.id)
-        .single();
-
-      if (error) throw error;
-      setProfile(data);
-      setNewName(data.name || "");
-    } catch (error) {
-      console.error("Error fetching profile:", error);
-    } finally {
-      setLoadingProfile(false);
-    }
-  };
 
   const handleUpdateName = async () => {
     if (!newName.trim()) return;
@@ -71,7 +122,7 @@ const Account = () => {
       setEditingName(false);
       toast.success("Name updated successfully!");
     } catch (error: any) {
-      toast.error(error.message || "Failed to update name");
+      toast.error(error.message || "Failed to update name. Make sure the profiles table is set up.");
     }
   };
 
@@ -80,7 +131,7 @@ const Account = () => {
     toast.success("Signed out successfully");
   };
 
-  if (authLoading || loadingProfile) {
+  if (authLoading) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
@@ -125,6 +176,12 @@ const Account = () => {
               <CardDescription>{profile.email}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+              {profileSyncFailed && (
+                <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-200">
+                  We couldn't sync your saved profile yet, so we're showing details from your current session. Run the
+                  <code className="mx-1 rounded bg-amber-100 px-1 dark:bg-amber-900/40">profiles</code> table migration in Supabase to enable name editing and persistent profile data.
+                </div>
+              )}
               {/* Profile Details */}
               <div className="space-y-4">
                 <div className="flex items-center gap-3">

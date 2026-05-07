@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   Phone,
   User,
@@ -22,6 +22,7 @@ import tripileLogo from "@/assets/tripile-logo.svg";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useTheme } from "@/components/ThemeProvider";
+import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -64,7 +65,6 @@ const utilityLinks = [
 
 const Header = () => {
   const { user, signOut, isAdmin, userRole } = useAuth();
-  const navigate = useNavigate();
   const location = useLocation();
   const { t, language, toggleLanguage } = useLanguage();
   const { theme, setTheme } = useTheme();
@@ -84,7 +84,7 @@ const Header = () => {
 
   const handleSignOut = async () => {
     await signOut();
-    navigate("/");
+    toast.success("Signed out successfully");
   };
 
   const isActive = (href: string) => {
@@ -294,7 +294,10 @@ const Header = () => {
                     </DropdownMenuItem>
                     <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800" />
                     <DropdownMenuItem
-                      onClick={handleSignOut}
+                      onSelect={(event) => {
+                        event.preventDefault();
+                        void handleSignOut();
+                      }}
                       className="flex items-center gap-2 text-red-600 dark:text-red-400 cursor-pointer"
                     >
                       <LogOut className="w-4 h-4" />
@@ -310,7 +313,7 @@ const Header = () => {
                     variant="outline"
                     className="rounded-full border-slate-300 dark:border-slate-700 h-8 px-4 text-xs font-semibold"
                   >
-                    <Link to="/signup" title="Create your Tripile account">
+                    <Link to="/auth/signup" title="Create your Tripile account">
                       Sign Up
                     </Link>
                   </Button>
@@ -319,7 +322,7 @@ const Header = () => {
                     asChild
                     className="rounded-full bg-slate-900 text-white hover:bg-slate-700 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 font-semibold h-8 px-4 text-xs shadow-none"
                   >
-                    <Link to="/login" title="Sign in to Tripile">
+                    <Link to="/auth/signin" title="Sign in to Tripile">
                       {t("navigation.signIn")}
                     </Link>
                   </Button>
@@ -422,12 +425,12 @@ const Header = () => {
               {!user && (
                 <div className="pt-3 border-t border-slate-100 dark:border-slate-800 mt-2 grid grid-cols-2 gap-2 px-1">
                   <Button asChild variant="outline" className="rounded-lg">
-                    <Link to="/signup" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Link to="/auth/signup" onClick={() => setIsMobileMenuOpen(false)}>
                       Sign Up
                     </Link>
                   </Button>
                   <Button asChild className="rounded-lg">
-                    <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Link to="/auth/signin" onClick={() => setIsMobileMenuOpen(false)}>
                       {t("navigation.signIn")}
                     </Link>
                   </Button>

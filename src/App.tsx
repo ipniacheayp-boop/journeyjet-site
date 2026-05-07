@@ -3,12 +3,18 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import FlyBot from "@/components/FlyBot";
 import CookieConsentBanner from "@/components/CookieConsentBanner";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import SignIn from "./pages/auth/SignIn";
+import SignUp from "./pages/auth/SignUp";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
+import AuthCallback from "./pages/auth/AuthCallback";
 import Index from "./pages/Index";
 import Deals from "./pages/Deals";
 import DealDetail from "./pages/DealDetail";
@@ -95,12 +101,32 @@ const App = () => (
                 <Route path="/deals/:id" element={<DealDetail />} />
                 <Route path="/search-results" element={<SearchResults />} />
                 <Route path="/booking/:id" element={<Booking />} />
-                <Route path="/account" element={<Account />} />
-                <Route path="/my-bookings" element={<MyBookings />} />
+                <Route
+                  path="/account"
+                  element={
+                    <ProtectedRoute>
+                      <Account />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/my-bookings"
+                  element={
+                    <ProtectedRoute>
+                      <MyBookings />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route path="/support" element={<Support />} />
                 <Route path="/terms" element={<Terms />} />
-                <Route path="/login" element={<UserLogin />} />
-                <Route path="/signup" element={<UserLogin />} />
+                <Route path="/auth/signin" element={<SignIn />} />
+                <Route path="/auth/signup" element={<SignUp />} />
+                <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+                <Route path="/auth/reset-password" element={<ResetPassword />} />
+                <Route path="/auth/callback" element={<AuthCallback />} />
+                {/* Legacy redirects */}
+                <Route path="/login" element={<Navigate to="/auth/signin" replace />} />
+                <Route path="/signup" element={<Navigate to="/auth/signup" replace />} />
                 <Route path="/user/login" element={<UserLogin />} />
                 <Route path="/admin/login" element={<AdminLogin />} />
                 <Route path="/admin" element={<Admin />} />

@@ -46,7 +46,7 @@ const WriteReviewModal = ({ open, onOpenChange, onReviewAdded }: WriteReviewModa
     if (!user) {
       toast.error("Please sign in to write a review");
       onOpenChange(false);
-      navigate("/login");
+      navigate(`/auth/signin?next=${encodeURIComponent("/?writeReview=1")}`);
       return;
     }
 

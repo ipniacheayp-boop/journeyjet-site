@@ -30,79 +30,83 @@ const MyBookings = () => {
   const navigate = useNavigate();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
-      navigate('/admin/login');
+      navigate('/auth/signin', { replace: true });
       return;
     }
 
-    if (user) {
-      fetchBookings();
-      
-      // Set up real-time subscription
-      const channel = supabase
-        .channel('bookings-changes')
-        .on(
-          'postgres_changes',
-          {
-            event: 'INSERT',
-            schema: 'public',
-            table: 'bookings',
-            filter: `user_id=eq.${user.id}`
-          },
-          (payload) => {
-            console.log('New booking detected:', payload);
-            setBookings(prev => [payload.new as Booking, ...prev]);
-            toast({
-              title: "New Booking!",
-              description: "Your booking has been confirmed.",
-            });
-          }
-        )
-        .on(
-          'postgres_changes',
-          {
-            event: 'UPDATE',
-            schema: 'public',
-            table: 'bookings',
-            filter: `user_id=eq.${user.id}`
-          },
-          (payload) => {
-            console.log('Booking updated:', payload);
-            setBookings(prev => 
-              prev.map(b => b.id === payload.new.id ? payload.new as Booking : b)
-            );
-          }
-        )
-        .subscribe();
+    if (!user) return;
 
-      return () => {
-        supabase.removeChannel(channel);
-      };
-    }
+    void fetchBookings();
+
+    const channel = supabase
+      .channel('bookings-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'bookings',
+          filter: `user_id=eq.${user.id}`,
+        },
+        (payload) => {
+          setBookings((prev) => [payload.new as Booking, ...prev]);
+          toast({
+            title: 'New Booking!',
+            description: 'Your booking has been confirmed.',
+          });
+        },
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'bookings',
+          filter: `user_id=eq.${user.id}`,
+        },
+        (payload) => {
+          setBookings((prev) => prev.map((b) => (b.id === payload.new.id ? (payload.new as Booking) : b)));
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [user, authLoading, navigate]);
 
   const fetchBookings = async () => {
     if (!user) return;
-    
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from('bookings')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      setBookings(data || []);
+    setLoading(true);
+    setFetchError(null);
+    const TIMEOUT_MS = 6000;
+    try {
+      const result = (await Promise.race([
+        supabase
+          .from('bookings')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false }),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('bookings-fetch-timeout')), TIMEOUT_MS),
+        ),
+      ])) as { data: Booking[] | null; error: any };
+
+      if (result.error) throw result.error;
+      setBookings(result.data || []);
     } catch (error: any) {
-      console.error('Error fetching bookings:', error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch bookings",
-        variant: "destructive",
-      });
+      console.warn('Error fetching bookings:', error);
+      setBookings([]);
+      setFetchError(
+        error?.message === 'bookings-fetch-timeout'
+          ? 'We are having trouble reaching the bookings service. Please try again in a moment.'
+          : error?.message || 'Failed to fetch bookings',
+      );
     } finally {
       setLoading(false);
     }
@@ -212,7 +216,7 @@ const MyBookings = () => {
     return null;
   };
 
-  if (authLoading || loading) {
+  if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <RefreshCw className="animate-spin h-8 w-8" />
@@ -220,10 +224,14 @@ const MyBookings = () => {
     );
   }
 
+  if (!user) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      
+
       <main className="flex-1 pt-24 pb-16">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="mb-8 flex items-center justify-between">
@@ -231,13 +239,28 @@ const MyBookings = () => {
               <h1 className="text-4xl font-bold mb-2">My Bookings</h1>
               <p className="text-muted-foreground">View and manage your travel bookings</p>
             </div>
-            <Button onClick={fetchBookings} variant="outline">
-              <RefreshCw className="h-4 w-4 mr-2" />
+            <Button onClick={fetchBookings} variant="outline" disabled={loading}>
+              <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
               Refresh
             </Button>
           </div>
 
-          {bookings.length === 0 ? (
+          {fetchError && (
+            <Card className="mb-4 border-amber-300 bg-amber-50 dark:border-amber-900/50 dark:bg-amber-950/30">
+              <CardContent className="py-4 text-sm text-amber-900 dark:text-amber-200">
+                {fetchError}
+              </CardContent>
+            </Card>
+          )}
+
+          {loading ? (
+            <Card>
+              <CardContent className="py-16 text-center">
+                <RefreshCw className="animate-spin h-8 w-8 mx-auto text-muted-foreground" />
+                <p className="text-sm text-muted-foreground mt-3">Loading your bookings…</p>
+              </CardContent>
+            </Card>
+          ) : bookings.length === 0 ? (
             <Card>
               <CardContent className="py-16 text-center">
                 <p className="text-muted-foreground text-lg">No bookings yet</p>
