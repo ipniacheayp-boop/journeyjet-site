@@ -86,7 +86,6 @@ export function HotelResultCard({ hotel, onBook }: HotelResultCardProps) {
       }
     | undefined;
 
-  const isGooglePlaces = hotel.provider === "google-places" || !!googlePlace;
   const stayNights = nightsBetween(searchMeta?.checkInDate, searchMeta?.checkOutDate);
 
   const regularHours = googlePlace?.regularOpeningHours as { weekdayDescriptions?: string[] } | undefined;
@@ -111,9 +110,6 @@ export function HotelResultCard({ hotel, onBook }: HotelResultCardProps) {
     (googlePlace?.primaryTypeDisplayName as { text?: string } | undefined)?.text ||
     googlePlace?.primaryType ||
     "";
-
-  const coordLat = (googlePlace?.location as { latitude?: number } | undefined)?.latitude;
-  const coordLng = (googlePlace?.location as { longitude?: number } | undefined)?.longitude;
 
   return (
     <Card className="hover:shadow-lg transition-shadow animate-fade-in">
@@ -159,10 +155,6 @@ export function HotelResultCard({ hotel, onBook }: HotelResultCardProps) {
                 <div className="text-2xl font-bold text-primary">{formatCurrency(price, currency)}</div>
                 <p className="text-sm text-muted-foreground">{currency}</p>
               </>
-            ) : isGooglePlaces ? (
-              <Badge variant="secondary" className="text-xs">
-                Google Places
-              </Badge>
             ) : null}
           </div>
         </div>
@@ -325,23 +317,6 @@ export function HotelResultCard({ hotel, onBook }: HotelResultCardProps) {
               </ul>
             </div>
           )}
-
-          {(coordLat != null && coordLng != null) || googlePlace?.utcOffsetMinutes != null ? (
-            <div className="text-xs text-muted-foreground space-y-1">
-              {coordLat != null && coordLng != null && (
-                <p>
-                  <span className="font-medium text-foreground">Coordinates:</span> {coordLat.toFixed(6)},{" "}
-                  {coordLng.toFixed(6)}
-                </p>
-              )}
-              {googlePlace?.utcOffsetMinutes != null && (
-                <p>
-                  <span className="font-medium text-foreground">UTC offset:</span>{" "}
-                  {String(googlePlace.utcOffsetMinutes)} min
-                </p>
-              )}
-            </div>
-          ) : null}
 
           {(googlePlace?.accessibilityOptions ||
             googlePlace?.parkingOptions ||
