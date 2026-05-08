@@ -63,7 +63,11 @@ const ChatWindow = ({ onClose }: ChatWindowProps) => {
               <p className="text-xs opacity-90">Please log in to chat</p>
             </div>
           </div>
-          <button onClick={onClose} className="hover:bg-white/20 rounded-full p-2 transition-colors">
+          <button
+            onClick={onClose}
+            aria-label="Close live chat window"
+            className="hover:bg-white/20 rounded-full p-2 transition-colors"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -94,7 +98,11 @@ const ChatWindow = ({ onClose }: ChatWindowProps) => {
             </p>
           </div>
         </div>
-        <button onClick={handleClose} className="hover:bg-white/20 rounded-full p-2 transition-colors">
+        <button
+          onClick={handleClose}
+          aria-label="Close live chat window"
+          className="hover:bg-white/20 rounded-full p-2 transition-colors"
+        >
           <X className="w-5 h-5" />
         </button>
       </div>
@@ -164,6 +172,7 @@ const ChatWindow = ({ onClose }: ChatWindowProps) => {
             disabled={!conversation || isSending || !inputValue.trim()}
             className="bg-support-sky hover:bg-support-sky/90"
             size="icon"
+            aria-label="Send message"
           >
             <Send className="w-4 h-4" />
           </Button>

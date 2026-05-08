@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Helmet } from "react-helmet";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -16,6 +15,7 @@ import CarResultCard from "@/components/CarResultCard";
 import { FlightTimeFilter, getTimeSlot, type TimeSlot } from "@/components/flights/FlightTimeFilter";
 import { toast } from "sonner";
 import { Shield } from "lucide-react";
+import SEOHead from "@/components/SEOHead";
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
@@ -175,12 +175,7 @@ const SearchResults = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Helmet>
-        <title>{dynamicTitle}</title>
-        <meta name="description" content={dynamicDesc} />
-        <meta name="robots" content="noindex, follow" />
-        <link rel="canonical" href={canonicalBase} />
-      </Helmet>
+      <SEOHead title={dynamicTitle} description={dynamicDesc} canonicalUrl={canonicalBase} noIndex />
       <Header />
       <main className="flex-1 pt-24 pb-16 bg-background">
         <div className="container mx-auto px-4 max-w-7xl">

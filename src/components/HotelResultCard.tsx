@@ -300,24 +300,6 @@ export function HotelResultCard({ hotel, onBook }: HotelResultCardProps) {
             </div>
           )}
 
-          {googlePlace?.addressComponents && Array.isArray(googlePlace.addressComponents) && (
-            <div className="text-xs space-y-1">
-              <p className="font-medium text-sm text-foreground">Address details</p>
-              <ul className="text-muted-foreground space-y-0.5 max-h-24 overflow-y-auto">
-                {(googlePlace.addressComponents as { longText?: string; shortText?: string; types?: string[] }[]).map(
-                  (c, i) => (
-                    <li key={i}>
-                      {(c.longText || c.shortText) ?? "—"}
-                      {c.types?.length ? (
-                        <span className="text-muted-foreground/80"> ({c.types.join(", ")})</span>
-                      ) : null}
-                    </li>
-                  )
-                )}
-              </ul>
-            </div>
-          )}
-
           {(googlePlace?.accessibilityOptions ||
             googlePlace?.parkingOptions ||
             googlePlace?.paymentOptions ||

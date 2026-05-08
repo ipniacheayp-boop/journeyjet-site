@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Helmet } from "react-helmet";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import {
   Calendar,
@@ -427,8 +426,6 @@ const BlogDetail = () => {
         ogType="article"
       />
 
-      <Helmet>{/* Schema and Breadcrumbs JSON-LD omitted for brevity but should be kept in production */}</Helmet>
-
       <Header />
 
       <main className="min-h-screen bg-background pt-24 pb-20">
@@ -442,6 +439,7 @@ const BlogDetail = () => {
                   window.open(`https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`, "_blank");
                 }}
                 size="icon"
+                aria-label="Share this article on Facebook"
                 className="rounded-full w-10 h-10 bg-[#1877F2]/10 text-[#1877F2] border-[#1877F2]/20 hover:bg-[#1877F2] hover:text-white transition-all shadow-sm"
               >
                 <Facebook className="w-4 h-4" />
@@ -452,6 +450,7 @@ const BlogDetail = () => {
                 onClick={() => {
                   window.open(`https://wa.me/?text=${post.title}%20${window.location.href}`, "_blank");
                 }}
+                aria-label="Share this article on WhatsApp"
                 className="rounded-full w-10 h-10 text-green-500 border-green-500 hover:bg-green-500 hover:text-white transition-all shadow-sm"
               >
                 <FaWhatsapp size={20} />
@@ -465,6 +464,7 @@ const BlogDetail = () => {
                     "_blank",
                   );
                 }}
+                aria-label="Share this article on Pinterest"
                 className="rounded-full w-10 h-10 text-red-500 border-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm"
               >
                 <FaPinterestP size={18} />
@@ -479,6 +479,7 @@ const BlogDetail = () => {
                     "_blank",
                   );
                 }}
+                aria-label="Share this article on X"
                 className="rounded-full w-10 h-10 text-black border-black hover:bg-black hover:text-white transition-all shadow-sm dark:text-white dark:border-white dark:hover:bg-white dark:hover:text-black"
               >
                 <FaXTwitter size={18} />
@@ -492,6 +493,7 @@ const BlogDetail = () => {
                     "_blank",
                   );
                 }}
+                aria-label="Share this article on LinkedIn"
                 className="rounded-full w-10 h-10 bg-[#0A66C2]/10 text-[#0A66C2] border-[#0A66C2]/20 hover:bg-[#0A66C2] hover:text-white transition-all shadow-sm"
               >
                 <Linkedin className="w-4 h-4" />
@@ -502,6 +504,7 @@ const BlogDetail = () => {
                 size="icon"
                 className="rounded-full w-10 h-10 text-muted-foreground hover:bg-primary hover:text-primary-foreground border-border transition-all shadow-sm"
                 onClick={handleShare}
+                aria-label="Copy article link"
               >
                 <Link2 className="w-4 h-4" />
               </Button>
@@ -549,13 +552,20 @@ const BlogDetail = () => {
                   </div>
 
                   {/* Mobile Share Button */}
-                  <Button variant="ghost" size="sm" className="xl:hidden ml-auto gap-2" onClick={handleShare}>
+                  <Button variant="ghost" size="sm" className="xl:hidden ml-auto gap-2" onClick={handleShare} aria-label="Share this article">
                     <Share2 className="w-4 h-4" /> Share
                   </Button>
                 </div>
 
                 <div className="w-full aspect-[16/10] md:aspect-video rounded-3xl overflow-hidden shadow-lg border border-border/50 mb-10">
-                  <img src={post.featuredImage} alt={post.title} className="w-full h-full object-cover" />
+                  <img
+                    src={post.featuredImage}
+                    alt={post.title}
+                    className="w-full h-full object-cover"
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
+                  />
                 </div>
               </div>
 
@@ -708,6 +718,8 @@ const BlogDetail = () => {
                             src={rp.featuredImage}
                             alt={rp.title}
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            loading="lazy"
+                            decoding="async"
                           />
                         </div>
                         <div className="flex-1 min-w-0">

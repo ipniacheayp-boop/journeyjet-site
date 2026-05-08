@@ -118,6 +118,7 @@ const DealCardEnhanced = ({ deal, index = 0, onQuickView, onClick }: DealCardEnh
         onClick={handleClick}
         role="button"
         tabIndex={0}
+        aria-label={`Open deal ${deal.title}`}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
@@ -139,6 +140,7 @@ const DealCardEnhanced = ({ deal, index = 0, onQuickView, onClick }: DealCardEnh
             src={getImageSrc()}
             alt={`${deal.title} - Flight deal`}
             loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover"
             whileHover={{ scale: 1.1 }}
             transition={{ duration: 0.6 }}
@@ -234,6 +236,7 @@ const DealCardEnhanced = ({ deal, index = 0, onQuickView, onClick }: DealCardEnh
                   e.stopPropagation();
                   handleClick();
                 }}
+                aria-label={`View deal for ${deal.title}`}
               >
                 View Deal
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -247,6 +250,7 @@ const DealCardEnhanced = ({ deal, index = 0, onQuickView, onClick }: DealCardEnh
                     e.stopPropagation();
                     onQuickView();
                   }}
+                  aria-label={`Quick view for ${deal.title}`}
                 >
                   <Eye className="w-4 h-4" />
                 </Button>
