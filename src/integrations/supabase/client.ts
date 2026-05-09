@@ -2,7 +2,7 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
+const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.trim() ?? '';
 
 /** Matches default Supabase JS storage namespace (`sb-<project-ref>-auth-token`). */
 export function getSupabaseAuthStorageKeyPrefix(): string {
@@ -18,6 +18,63 @@ export function getPkceVerifierStorageKey(): string {
   return `${getSupabaseAuthStorageKeyPrefix()}-code-verifier`;
 }
 
+function supabaseUrlProjectRef(url: string): string | null {
+  try {
+    return new URL(url).hostname.split(".")[0] || null;
+  } catch {
+    return null;
+  }
+}
+
+/** Decode `ref` claim from Supabase anon JWT (matches project subdomain). */
+function jwtPayloadRef(token: string): string | null {
+  try {
+    const parts = token.split(".");
+    if (parts.length < 2 || !token.startsWith("eyJ")) return null;
+    let b64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    const pad = b64.length % 4;
+    if (pad) b64 += "=".repeat(4 - pad);
+    const payload = JSON.parse(atob(b64)) as { ref?: string };
+    return typeof payload.ref === "string" ? payload.ref : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Prefer the anon JWT whose `ref` matches `VITE_SUPABASE_URL`.
+ * A mismatched anon key (wrong project) causes "Invalid API key" on Auth and REST.
+ */
+function selectSupabasePublicKey(url: string, anon?: string, publishable?: string): string {
+  const candidates = [anon?.trim(), publishable?.trim()].filter(
+    (k): k is string => Boolean(k && k.length > 0),
+  );
+  if (candidates.length === 0) return "";
+
+  const hostRef = url ? supabaseUrlProjectRef(url) : null;
+
+  if (hostRef) {
+    for (const key of candidates) {
+      if (!key.startsWith("eyJ")) continue;
+      if (jwtPayloadRef(key) === hostRef) return key;
+    }
+    if (import.meta.env.DEV) {
+      // eslint-disable-next-line no-console
+      console.error(
+        "[Supabase] No JWT matches VITE_SUPABASE_URL host.",
+        "URL project:",
+        hostRef,
+        "anon/publishable JWT ref(s):",
+        candidates.filter((k) => k.startsWith("eyJ")).map(jwtPayloadRef),
+        "Set VITE_SUPABASE_ANON_KEY to the anon public key from the same project as VITE_SUPABASE_URL (Dashboard → Settings → API).",
+      );
+    }
+  }
+
+  const jwt = candidates.find((k) => k.startsWith("eyJ"));
+  return jwt ?? candidates[0];
+}
+
 /**
  * Supabase client keys:
  * - Edge Functions + PostgREST expect `Authorization: Bearer <JWT>`.
@@ -28,12 +85,7 @@ export function getPkceVerifierStorageKey(): string {
 const ANON_JWT = (import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined)?.trim();
 const PUBLISHABLE = (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined)?.trim();
 
-const SUPABASE_KEY =
-  ANON_JWT && ANON_JWT.startsWith('eyJ')
-    ? ANON_JWT
-    : PUBLISHABLE && PUBLISHABLE.startsWith('eyJ')
-      ? PUBLISHABLE
-      : ANON_JWT || PUBLISHABLE || '';
+const SUPABASE_KEY = selectSupabasePublicKey(SUPABASE_URL, ANON_JWT, PUBLISHABLE);
 
 if (import.meta.env.DEV && SUPABASE_KEY.startsWith('sb_publishable_')) {
   // eslint-disable-next-line no-console
