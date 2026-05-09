@@ -4,6 +4,20 @@ import type { Database } from './types';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
 
+/** Matches default Supabase JS storage namespace (`sb-<project-ref>-auth-token`). */
+export function getSupabaseAuthStorageKeyPrefix(): string {
+  try {
+    const ref = new URL(SUPABASE_URL).hostname.split(".")[0];
+    return `sb-${ref}-auth-token`;
+  } catch {
+    return "sb-local-auth-token";
+  }
+}
+
+export function getPkceVerifierStorageKey(): string {
+  return `${getSupabaseAuthStorageKeyPrefix()}-code-verifier`;
+}
+
 /**
  * Supabase client keys:
  * - Edge Functions + PostgREST expect `Authorization: Bearer <JWT>`.

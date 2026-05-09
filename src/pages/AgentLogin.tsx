@@ -93,7 +93,7 @@ const AgentLogin = () => {
         email: registerEmail,
         password: registerPassword,
         options: {
-          emailRedirectTo: `${window.location.origin}/agent/dashboard`,
+          emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent("/agent/dashboard")}`,
         },
       });
 

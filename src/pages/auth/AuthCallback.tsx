@@ -2,7 +2,62 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, getPkceVerifierStorageKey } from "@/integrations/supabase/client";
+
+/** Same merge rule as GoTrue `parseParametersFromURL`: query overrides hash. */
+function parseAuthParamsFromLocation(): Record<string, string> {
+  const result: Record<string, string> = {};
+  try {
+    const url = new URL(window.location.href);
+    if (url.hash.startsWith("#")) {
+      new URLSearchParams(url.hash.slice(1)).forEach((value, key) => {
+        result[key] = value;
+      });
+    }
+    url.searchParams.forEach((value, key) => {
+      result[key] = value;
+    });
+  } catch {
+    /* ignore */
+  }
+  return result;
+}
+
+function decodeOAuthParam(value: string): string {
+  try {
+    return decodeURIComponent(value.replace(/\+/g, " "));
+  } catch {
+    return value;
+  }
+}
+
+function friendlyAuthMessage(raw: string): string {
+  const lower = raw.toLowerCase();
+  if (
+    lower.includes("code verifier") ||
+    lower.includes("auth code") ||
+    lower.includes("implicit grant flow url") ||
+    lower.includes("pkce")
+  ) {
+    return "This confirmation link could not be completed. Try: request a new confirmation email from the sign-in page, open the link on the same browser you used to sign up, and ensure your published site uses the latest version of the app.";
+  }
+  return raw;
+}
+
+const EMAIL_OTP_TYPES = [
+  "signup",
+  "invite",
+  "magiclink",
+  "recovery",
+  "email_change",
+  "email",
+] as const;
+
+type EmailOtpType = (typeof EMAIL_OTP_TYPES)[number];
+
+function isEmailOtpType(t: string): t is EmailOtpType {
+  return (EMAIL_OTP_TYPES as readonly string[]).includes(t);
+}
 
 const AuthCallback = () => {
   const navigate = useNavigate();
@@ -11,7 +66,6 @@ const AuthCallback = () => {
 
   useEffect(() => {
     const next = searchParams.get("next") || "/account";
-    const oauthError = searchParams.get("error_description") || searchParams.get("error");
 
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
     let unsubscribe: (() => void) | undefined;
@@ -27,26 +81,56 @@ const AuthCallback = () => {
     };
 
     const finalize = async () => {
-      if (oauthError) {
-        setError(decodeURIComponent(oauthError));
+      const params = parseAuthParamsFromLocation();
+      const oauthErrorRaw =
+        params.error_description ||
+        params.error ||
+        searchParams.get("error_description") ||
+        searchParams.get("error");
+
+      if (oauthErrorRaw) {
+        setError(friendlyAuthMessage(decodeOAuthParam(oauthErrorRaw)));
         return;
       }
 
       try {
-        // Session-from-URL is handled once by the Supabase client on load (`detectSessionInUrl`).
-        // Do not call `exchangeCodeForSession` here: it expects the raw `code` string (not the full
-        // URL), must pair with the PKCE verifier from the same browser session, and duplicates the
-        // client's initializer — leading to "auth code and code verifier should be non-empty".
+        const { error: initError } = await supabase.auth.initialize();
 
-        const { data, error: sessionError } = await supabase.auth.getSession();
-        if (sessionError) throw sessionError;
-        if (data.session) {
-          finishWithSession(next);
+        const tryFinishIfSession = async (): Promise<boolean> => {
+          const { data, error: sessionError } = await supabase.auth.getSession();
+          if (sessionError) throw sessionError;
+          if (data.session) {
+            finishWithSession(next);
+            return true;
+          }
+          return false;
+        };
+
+        if (await tryFinishIfSession()) return;
+
+        const token_hash = params.token_hash;
+        const typeParam = params.type;
+        if (token_hash && typeParam && isEmailOtpType(typeParam)) {
+          const { error: otpError } = await supabase.auth.verifyOtp({
+            token_hash,
+            type: typeParam,
+          });
+          if (otpError) throw otpError;
+          if (await tryFinishIfSession()) return;
+        }
+
+        const code = params.code;
+        if (code && localStorage.getItem(getPkceVerifierStorageKey())) {
+          const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+          if (exchangeError) throw exchangeError;
+          if (await tryFinishIfSession()) return;
+        }
+
+        if (initError?.message) {
+          setError(friendlyAuthMessage(initError.message));
           return;
         }
 
-        // Otherwise, listen briefly for the session to appear (covers magic links
-        // and slow OAuth providers).
         const {
           data: { subscription },
         } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -58,12 +142,13 @@ const AuthCallback = () => {
           if (cancelled) return;
           unsubscribe?.();
           setError(
-            "We couldn't complete sign in. Make sure Google Sign-In is enabled in Supabase and that this URL is in the redirect allow-list, then try again.",
+            "We couldn't complete sign in. Add your site URL and `/auth/callback` under Supabase Authentication → URL Configuration, then try again or request a new confirmation email.",
           );
         }, 9000);
-      } catch (err: any) {
+      } catch (err: unknown) {
         if (cancelled) return;
-        setError(err?.message || "Authentication failed.");
+        const message = err instanceof Error ? err.message : "Authentication failed.";
+        setError(friendlyAuthMessage(message));
       }
     };
 
