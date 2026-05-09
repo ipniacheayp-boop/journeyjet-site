@@ -36,9 +36,10 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_KEY, {
     storage: localStorage,
     persistSession: true,
     autoRefreshToken: true,
-    // Pick up `?code=…` (PKCE) and `#access_token=…` (implicit) automatically
-    // after Google / OAuth / magic link redirects.
+    // Implicit flow: tokens arrive in the URL hash after redirects. Works when users open email
+    // confirmation links on a different device than signup (PKCE requires the same browser where
+    // sign-up ran). OAuth + magic links use the same detection path.
     detectSessionInUrl: true,
-    flowType: 'pkce',
+    flowType: 'implicit',
   }
 });

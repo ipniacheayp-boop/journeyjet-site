@@ -12,7 +12,6 @@ const AuthCallback = () => {
   useEffect(() => {
     const next = searchParams.get("next") || "/account";
     const oauthError = searchParams.get("error_description") || searchParams.get("error");
-    const code = searchParams.get("code");
 
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
     let unsubscribe: (() => void) | undefined;
@@ -34,16 +33,11 @@ const AuthCallback = () => {
       }
 
       try {
-        // 1. PKCE flow (Google OAuth uses this with flowType: 'pkce'):
-        //    Supabase appends ?code=... to our redirect URL. Exchange it for a session
-        //    explicitly so we don't depend on the auto-detection race.
-        if (code) {
-          const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(window.location.href);
-          if (exchangeError) throw exchangeError;
-        }
+        // Session-from-URL is handled once by the Supabase client on load (`detectSessionInUrl`).
+        // Do not call `exchangeCodeForSession` here: it expects the raw `code` string (not the full
+        // URL), must pair with the PKCE verifier from the same browser session, and duplicates the
+        // client's initializer — leading to "auth code and code verifier should be non-empty".
 
-        // 2. After exchanging (or if implicit flow already populated the session),
-        //    read the session.
         const { data, error: sessionError } = await supabase.auth.getSession();
         if (sessionError) throw sessionError;
         if (data.session) {
@@ -51,8 +45,8 @@ const AuthCallback = () => {
           return;
         }
 
-        // 3. Otherwise, listen briefly for the session to appear (covers magic links
-        //    and slow OAuth providers).
+        // Otherwise, listen briefly for the session to appear (covers magic links
+        // and slow OAuth providers).
         const {
           data: { subscription },
         } = supabase.auth.onAuthStateChange((_event, session) => {
