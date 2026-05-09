@@ -1,15 +1,15 @@
-import { supabase } from '@/integrations/supabase/client';
-import { getEdgeFunctionHeaders } from '@/lib/edgeFunctionHeaders';
+import { supabase } from "@/integrations/supabase/client";
+import { getEdgeFunctionHeaders } from "@/lib/edgeFunctionHeaders";
 
 /** Use Vite dev/proxy same-origin URL on localhost so Edge calls are not blocked by the browser. */
 function getEdgeFunctionRequestUrl(functionName: string): string {
-  const baseUrl = (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.replace(/\/$/, '');
+  const baseUrl = (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.replace(/\/$/, "");
   const remote = `${baseUrl}/functions/v1/${encodeURIComponent(functionName)}`;
 
-  if (typeof window === 'undefined') return remote;
+  if (typeof window === "undefined") return remote;
 
   const h = window.location.hostname;
-  if (h === 'localhost' || h === '127.0.0.1' || h === '::1') {
+  if (h === "localhost" || h === "127.0.0.1" || h === "::1") {
     return `${window.location.origin}/supabase-functions/${encodeURIComponent(functionName)}`;
   }
 
@@ -24,9 +24,7 @@ function normalizeInvokePayload<T>(
 
   if (invokeErr) {
     const serverMsg =
-      obj?.error != null
-        ? String(obj.error) + (obj.details ? `: ${obj.details}` : '')
-        : invokeErr.message;
+      obj?.error != null ? String(obj.error) + (obj.details ? `: ${obj.details}` : "") : invokeErr.message;
     return { data: null, error: serverMsg };
   }
 
@@ -46,17 +44,16 @@ export async function invokeSupabaseFunction<T = unknown>(
   functionName: string,
   body: Record<string, unknown>,
 ): Promise<{ data: T | null; error: string | null }> {
-  const baseUrl = (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.replace(/\/$/, '');
+  const baseUrl = (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.replace(/\/$/, "");
   const headers = getEdgeFunctionHeaders();
 
-  if (!baseUrl?.startsWith('http')) {
-    return { data: null, error: 'VITE_SUPABASE_URL is missing or invalid.' };
+  if (!baseUrl?.startsWith("http")) {
+    return { data: null, error: "VITE_SUPABASE_URL is missing or invalid." };
   }
   if (!headers.Authorization) {
     return {
       data: null,
-      error:
-        'Missing anon JWT: add VITE_SUPABASE_ANON_KEY (eyJ…) from Supabase → Settings → API.',
+      error: "Missing anon JWT: add VITE_SUPABASE_ANON_KEY (eyJ…) from Supabase → Settings → API.",
     };
   }
 
@@ -74,12 +71,16 @@ export async function invokeSupabaseFunction<T = unknown>(
     if (!res.ok) {
       const errObj = parsed as { error?: string; details?: string } | null;
       const msg = errObj?.error || `Request failed (${res.status})`;
-      const details = errObj?.details ? `: ${errObj.details}` : '';
+      const details = errObj?.details ? `: ${errObj.details}` : "";
       return { data: null, error: msg + details };
     }
 
-    const errObj = parsed as { error?: string; details?: string } | null;
-    if (errObj && typeof errObj.error === 'string' && errObj.data === undefined && !('data' in (errObj as object))) {
+    const errObj = parsed as {
+      error?: string;
+      details?: string;
+      data?: unknown;
+    } | null;
+    if (errObj && typeof errObj.error === "string" && errObj.data === undefined && !("data" in (errObj as object))) {
       return { data: null, error: errObj.details ? `${errObj.error}: ${errObj.details}` : errObj.error };
     }
 
@@ -90,22 +91,21 @@ export async function invokeSupabaseFunction<T = unknown>(
 
   try {
     const res = await fetch(url, {
-      method: 'POST',
-      mode: 'cors',
-      credentials: 'omit',
-      cache: 'no-store',
+      method: "POST",
+      mode: "cors",
+      credentials: "omit",
+      cache: "no-store",
       headers: {
         ...headers,
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
+        "Content-Type": "application/json",
+        Accept: "application/json",
       },
       body: JSON.stringify(body),
     });
     return await parseHttpResponse(res);
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
-    const isNetworkFailure =
-      /load failed|failed to fetch|networkerror|network request failed|aborted/i.test(msg);
+    const isNetworkFailure = /load failed|failed to fetch|networkerror|network request failed|aborted/i.test(msg);
 
     if (!isNetworkFailure) {
       return { data: null, error: msg };
@@ -123,9 +123,7 @@ export async function invokeSupabaseFunction<T = unknown>(
 
   if (result.error && usedFallback && import.meta.env.DEV) {
     // eslint-disable-next-line no-console
-    console.warn(
-      '[invokeSupabaseFunction] Direct fetch failed; used supabase.functions.invoke fallback.',
-    );
+    console.warn("[invokeSupabaseFunction] Direct fetch failed; used supabase.functions.invoke fallback.");
   }
 
   return result;
