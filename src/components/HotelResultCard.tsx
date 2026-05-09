@@ -62,13 +62,14 @@ export function HotelResultCard({ hotel, onBook }: HotelResultCardProps) {
     (googlePlace?.formattedAddress as string | undefined) ||
     (googlePlace?.shortFormattedAddress as string | undefined) ||
     (typeof googlePlace?.adrFormatAddress === "string"
-      ? googlePlace.adrFormatAddress.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim()
+      ? googlePlace.adrFormatAddress
+          .replace(/<[^>]+>/g, " ")
+          .replace(/\s+/g, " ")
+          .trim()
       : "");
 
   const displayHotelName =
-    hotel.hotel?.name?.trim() ||
-    (googlePlace?.displayName as { text?: string } | undefined)?.text?.trim() ||
-    "";
+    hotel.hotel?.name?.trim() || (googlePlace?.displayName as { text?: string } | undefined)?.text?.trim() || "";
 
   const locationLabel =
     hotel.hotel?.address?.trim() ||
@@ -108,8 +109,7 @@ export function HotelResultCard({ hotel, onBook }: HotelResultCardProps) {
   const displayTypes = (googlePlace?.types as string[] | undefined)?.filter(Boolean);
   const primaryTypeLabel =
     (googlePlace?.primaryTypeDisplayName as { text?: string } | undefined)?.text ||
-    googlePlace?.primaryType ||
-    "";
+    String(googlePlace?.primaryType || "");
 
   return (
     <Card className="hover:shadow-lg transition-shadow animate-fade-in">
@@ -138,9 +138,7 @@ export function HotelResultCard({ hotel, onBook }: HotelResultCardProps) {
               <CardTitle className="text-lg leading-snug">{displayHotelName || "Hotel"}</CardTitle>
               <p className="text-sm text-muted-foreground flex items-start gap-1 mt-1">
                 <MapPin className="w-3 h-3 shrink-0 mt-0.5" />
-                <span className="break-words">
-                  {gpFormatted || locationLabel}
-                </span>
+                <span className="break-words">{gpFormatted || locationLabel}</span>
               </p>
             </div>
           </div>
