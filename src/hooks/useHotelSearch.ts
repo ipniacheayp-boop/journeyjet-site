@@ -29,8 +29,8 @@ export const useHotelSearch = () => {
 
     try {
       const { data, error: invokeErr } = await invokeSupabaseFunction<HotelsSearchResponse>(
-        'hotels-search',
-        params as unknown as Record<string, unknown>,
+        "hotels-search",
+        params,
       );
 
       if (invokeErr) {

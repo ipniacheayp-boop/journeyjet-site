@@ -1,3 +1,6 @@
+/// <reference path="./deno-shim.d.ts" />
+// Deno resolves this URL at runtime; Node-based TS server can't resolve remote imports.
+// @ts-expect-error TS2307 — Supabase Edge Functions run on Deno, not Vite.
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 
 const corsHeaders = {

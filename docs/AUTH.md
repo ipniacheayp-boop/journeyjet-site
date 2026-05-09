@@ -74,9 +74,24 @@ supabase db push
    - **Site URL**: `https://your-app.com`
    - **Redirect URLs**: include `https://your-app.com/auth/callback` (and `http://localhost:8080/auth/callback` for dev)
 3. Authentication → Email templates: optional, but recommended for branded reset/confirmation emails.
-4. Google OAuth client (Cloud Console):
-   - Authorized redirect URI = `https://YOUR-PROJECT.supabase.co/auth/v1/callback`
-   - Add the client id/secret in Supabase → Providers → Google.
+4. Google OAuth client (**Google Cloud Console** → APIs & Services → Credentials → your **Web client**):
+   - **Authorized JavaScript origins**: `https://your-app.com`, `https://www.your-app.com` (if you use both), and `http://localhost:8080` for local dev (this repo’s Vite port).
+   - **Authorized redirect URIs**: you **must** include **exactly**  
+     `https://YOUR-PROJECT-REF.supabase.co/auth/v1/callback`  
+     where `YOUR-PROJECT-REF` is the subdomain of **Project URL** in Supabase → Settings → API (e.g. `qgmhqhejoilexhgwdujl`).  
+     Do **not** put `https://your-app.com/auth/callback` here—that belongs only in Supabase **Redirect URLs**, not in Google.
+   - Copy **Client ID** and **Client secret** into Supabase → Authentication → Providers → **Google** (same Web client as above).
+
+### Troubleshooting: Google `Error 400: redirect_uri_mismatch`
+
+Google shows this when the redirect URI sent during OAuth is not listed under **Authorized redirect URIs** for the OAuth client whose Client ID you pasted into Supabase.
+
+1. Confirm in Supabase → Settings → API that **Project URL** is `https://YOUR-PROJECT-REF.supabase.co`.
+2. In Google Cloud Console, open the **same** OAuth 2.0 Client ID configured in Supabase → Providers → Google.
+3. Under **Authorized redirect URIs**, add (no trailing slash):  
+   `https://YOUR-PROJECT-REF.supabase.co/auth/v1/callback`
+4. Save in Google, wait a minute, try **Sign in with Google** again.
+5. If you use `www` and bare domain for the site, add both origins under **Authorized JavaScript origins**; Supabase **Redirect URLs** should list both `https://your-app.com/auth/callback` and `https://www.your-app.com/auth/callback` if users can land on either.
 
 ## Auth context API
 

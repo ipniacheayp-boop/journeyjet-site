@@ -87,6 +87,11 @@ const PUBLISHABLE = (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | u
 
 const SUPABASE_KEY = selectSupabasePublicKey(SUPABASE_URL, ANON_JWT, PUBLISHABLE);
 
+/** Same JWT as `createClient` — use for Edge Function `Authorization` / `apikey` headers. */
+export function getResolvedSupabaseAnonKey(): string {
+  return SUPABASE_KEY;
+}
+
 if (import.meta.env.DEV && SUPABASE_KEY.startsWith('sb_publishable_')) {
   // eslint-disable-next-line no-console
   console.error(

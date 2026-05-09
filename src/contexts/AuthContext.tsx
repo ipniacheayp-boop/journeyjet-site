@@ -167,6 +167,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const signInWithGoogle = useCallback<AuthContextType["signInWithGoogle"]>(async (redirectTo) => {
+    // Google checks redirect_uri against Cloud Console. With Supabase, that URI is always
+    // https://<project-ref>.supabase.co/auth/v1/callback (set there + matching Web client in
+    // Supabase → Providers → Google). `redirectTo` below is only where users return after auth.
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {

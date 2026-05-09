@@ -1,6 +1,5 @@
 import { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
+import { invokeSupabaseFunction } from '@/lib/invokeSupabaseFunction';
 
 export interface FlightSearchParams {
   originLocationCode: string;
@@ -18,19 +17,33 @@ export interface RetryState {
   maxAttempts: number;
 }
 
+type FlightSearchApiPayload = {
+  data?: unknown[];
+  dictionaries?: unknown;
+  meta?: { provider?: string; environment?: string };
+  error?: string;
+  details?: string;
+  hint?: string;
+};
+
 const MAX_RETRIES = 3;
 const INITIAL_DELAY_MS = 1000;
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-const isRateLimitError = (data: any): boolean => {
-  return data?.details?.includes('429') || 
-         data?.details?.includes('Quota limit exceeded') ||
-         data?.error?.includes('rate limit');
+const isRateLimitError = (payload: unknown): boolean => {
+  const text =
+    typeof payload === "string"
+      ? payload
+      : JSON.stringify(payload ?? "");
+  return (
+    text.includes("429") ||
+    text.includes("Quota limit exceeded") ||
+    text.includes("rate limit")
+  );
 };
 
 export const useFlightSearch = () => {
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [retryState, setRetryState] = useState<RetryState>({
@@ -42,47 +55,72 @@ export const useFlightSearch = () => {
   const searchFlightsWithRetry = useCallback(async (
     params: FlightSearchParams,
     attempt: number = 0
-  ): Promise<any> => {
+  ): Promise<FlightSearchApiPayload & { isRateLimited?: boolean }> => {
     console.log(`🚀 Flight search attempt ${attempt + 1}/${MAX_RETRIES + 1}`, params);
 
-    const { data, error: functionError } = await supabase.functions.invoke('flights-search', {
-      body: params,
-    });
+    const { data, error: invokeErr } = await invokeSupabaseFunction<FlightSearchApiPayload>(
+      "flights-search",
+      params,
+    );
 
-    console.log('📡 Backend response:', { data, error: functionError });
+    console.log('📡 Backend response:', { data, error: invokeErr });
 
-    if (functionError) {
-      throw functionError;
+    if (invokeErr) {
+      if (attempt < MAX_RETRIES && isRateLimitError(invokeErr)) {
+        const delay = INITIAL_DELAY_MS * Math.pow(2, attempt);
+        console.log(`⏳ Rate limited. Retrying in ${delay}ms (attempt ${attempt + 1}/${MAX_RETRIES})`);
+
+        setRetryState({
+          isRetrying: true,
+          currentAttempt: attempt + 2,
+          maxAttempts: MAX_RETRIES + 1,
+        });
+
+        await sleep(delay);
+        return searchFlightsWithRetry(params, attempt + 1);
+      }
+
+      setRetryState({ isRetrying: false, currentAttempt: 0, maxAttempts: MAX_RETRIES + 1 });
+
+      if (isRateLimitError(invokeErr)) {
+        const rateLimitError =
+          'Flight search is temporarily unavailable due to high demand. Please try again in a few minutes.';
+        return { data: [], error: rateLimitError, isRateLimited: true };
+      }
+
+      throw new Error(invokeErr);
     }
 
-    // Check for rate limit error
     if (data?.error && isRateLimitError(data)) {
       if (attempt < MAX_RETRIES) {
         const delay = INITIAL_DELAY_MS * Math.pow(2, attempt);
         console.log(`⏳ Rate limited. Retrying in ${delay}ms (attempt ${attempt + 1}/${MAX_RETRIES})`);
-        
-        // Update retry state for UI
+
         setRetryState({
           isRetrying: true,
-          currentAttempt: attempt + 2, // Next attempt number (1-indexed)
+          currentAttempt: attempt + 2,
           maxAttempts: MAX_RETRIES + 1,
         });
-        
+
         await sleep(delay);
         return searchFlightsWithRetry(params, attempt + 1);
       }
-      
-      // All retries exhausted
+
       setRetryState({ isRetrying: false, currentAttempt: 0, maxAttempts: MAX_RETRIES + 1 });
-      const rateLimitError = 'Flight search is temporarily unavailable due to high demand. Please try again in a few minutes.';
+      const rateLimitError =
+        'Flight search is temporarily unavailable due to high demand. Please try again in a few minutes.';
       return { data: [], error: rateLimitError, isRateLimited: true };
     }
 
     if (data?.error) {
-      throw new Error(data.error + (data.details ? ': ' + data.details : '') + (data.hint ? ' - ' + data.hint : ''));
+      throw new Error(
+        data.error +
+          (data.details ? ': ' + data.details : '') +
+          (data.hint ? ' - ' + data.hint : ''),
+      );
     }
 
-    return data;
+    return data ?? {};
   }, []);
 
   const searchFlights = async (params: FlightSearchParams) => {
@@ -92,23 +130,23 @@ export const useFlightSearch = () => {
 
     try {
       const result = await searchFlightsWithRetry(params);
-      
+
       setRetryState({ isRetrying: false, currentAttempt: 0, maxAttempts: MAX_RETRIES + 1 });
-      
+
       if (result.isRateLimited) {
-        setError(result.error);
+        setError(result.error ?? null);
         return result;
       }
-      
-      console.log('✅ Flight search successful:', result.data?.length || 0, 'results');
+
+      const count = Array.isArray(result.data) ? result.data.length : 0;
+      console.log('✅ Flight search successful:', count, 'results');
       return result;
-    } catch (err: any) {
-      const errorMessage = err.message || 'Failed to search flights';
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to search flights';
       console.error('❌ Search error:', errorMessage);
       setError(errorMessage);
       setRetryState({ isRetrying: false, currentAttempt: 0, maxAttempts: MAX_RETRIES + 1 });
-      // Don't redirect to error page - let SearchResults handle the error display
-      throw err;
+      throw err instanceof Error ? err : new Error(errorMessage);
     } finally {
       setLoading(false);
     }
