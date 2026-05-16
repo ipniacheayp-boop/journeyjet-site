@@ -517,20 +517,26 @@ serve(async (req) => {
 
     // Process car rental results
     let carResults: any[] = [];
+    let carProviderError: string | null = null;
     if (carResponse.ok) {
       const carData = await carResponse.json();
       console.log('📦 Booking.com raw response:', JSON.stringify(carData).substring(0, 500));
+      if (carData?.status === false || carData?.message) {
+        carProviderError = String(carData?.message || 'Car rental provider returned an error');
+        console.warn('⚠️ Car rental provider error:', carProviderError);
+      }
       const rawResults = carData.data?.search_results
         || carData.data?.cars
         || carData.data
         || carData.search_results
         || carData.result
         || [];
-      const results = Array.isArray(rawResults) ? rawResults : [];
+      const results = carProviderError ? [] : (Array.isArray(rawResults) ? rawResults : []);
       console.log('✅ Found', results.length, 'car rental results');
       carResults = results.map((car: any, i: number) => transformCarResult(car, i, pickUpDate, dropOffDate));
     } else {
       const errBody = await carResponse.text();
+      carProviderError = `Car rental search failed (${carResponse.status})`;
       console.warn('⚠️ Car rental search failed:', carResponse.status, errBody.substring(0, 300));
     }
 
@@ -550,6 +556,16 @@ serve(async (req) => {
     carResults.sort((a: any, b: any) => a.pricing.grandTotal - b.pricing.grandTotal);
     const allResults = [...carResults, ...uberResults];
 
+    if (allResults.length === 0 && carProviderError) {
+      return new Response(
+        JSON.stringify({
+          error: 'Car search provider unavailable',
+          details: carProviderError,
+        }),
+        { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     return new Response(
       JSON.stringify({
         data: allResults,
@@ -557,6 +573,7 @@ serve(async (req) => {
           count: allResults.length,
           carRentals: carResults.length,
           rideEstimates: uberResults.length,
+          providerError: carProviderError,
           location: { iataCode: locationInput.toUpperCase(), name: location.name },
           environment: 'production',
           source: 'booking.com+uber',
