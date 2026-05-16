@@ -135,6 +135,7 @@ const CITY_COORDS: Record<string, { lat: number; lon: number; name: string }> = 
   'SJC': { lat: 37.3639, lon: -121.9289, name: 'San Jose' },
   'OAK': { lat: 37.7213, lon: -122.2208, name: 'Oakland' },
   'HNL': { lat: 21.3187, lon: -157.9225, name: 'Honolulu' },
+  'ACY': { lat: 39.4576, lon: -74.5772, name: 'Atlantic City' },
   // Asia / Oceania
   'PEK': { lat: 40.0801, lon: 116.5846, name: 'Beijing Capital' },
   'PKX': { lat: 39.5098, lon: 116.4106, name: 'Beijing Daxing' },
