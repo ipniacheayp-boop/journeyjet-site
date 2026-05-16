@@ -46,14 +46,14 @@ const serviceLinks = [
     linkTitle: "Find hotel deals — Tripile hotel search",
   },
   {
-    label: "Car Rentals",
+    label: "Cars",
     href: "/car-rentals",
     icon: Car,
     linkTitle: "Compare car rentals — Tripile",
   },
   { label: "Deals", href: "/deals", icon: Tag, linkTitle: "Today’s travel deals on Tripile" },
-  { label: "Flight Status", href: "/flight-status", icon: PlaneTakeoff, linkTitle: "Check flight status — Tripile" },
-  { label: "Flight Tracker", href: "/flight-tracker", icon: Globe, linkTitle: "Live flight tracker — Tripile" },
+  { label: "F.Status", href: "/flight-status", icon: PlaneTakeoff, linkTitle: "Check flight status — Tripile" },
+  { label: "F.Tracker", href: "/flight-tracker", icon: Globe, linkTitle: "Live flight tracker — Tripile" },
 ];
 
 // Secondary utility links — lower priority, go in right area
