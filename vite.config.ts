@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
 
   // Same-origin proxy so Edge Function calls from localhost avoid browser cross-origin blocks
   // ("Load failed" / "Failed to send a request to the Edge Function").
-  const supabaseFunctionsProxy = supabaseOrigin
+  const supabaseFunctionsProxy: Record<string, import("vite").ProxyOptions> = supabaseOrigin
     ? {
         "/supabase-functions": {
           target: supabaseOrigin,
