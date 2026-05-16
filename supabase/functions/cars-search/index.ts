@@ -500,8 +500,10 @@ serve(async (req) => {
       pick_up_longitude: location.lon.toString(),
       drop_off_latitude: dropOffCoords.lat.toString(),
       drop_off_longitude: dropOffCoords.lon.toString(),
-      pick_up_time: `${pickUpDate}T10:00:00`,
-      drop_off_time: `${dropOffDate}T10:00:00`,
+      pick_up_date: pickUpDate,
+      pick_up_time: '10:00',
+      drop_off_date: dropOffDate,
+      drop_off_time: '10:00',
       driver_age: (driverAge || 30).toString(),
       currency_code: 'USD',
     });
