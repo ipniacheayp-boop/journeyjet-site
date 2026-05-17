@@ -2,27 +2,30 @@
 
 > Tripile helps travelers compare cheap flights, hotels, and car rentals across the United States—with transparent pricing, 24/7 support, and practical travel tools.
 
-## Site
+## Pages
 
-- Homepage: https://tripile.com/
-- Flight deals: https://tripile.com/deals
-- Explore destinations: https://tripile.com/explore
-- Trip planner: https://tripile.com/trip-planner
-- Flight status: https://tripile.com/flight-status
-- Flight tracker: https://tripile.com/flight-tracker
-- Customer support: https://tripile.com/support
-- Travel blog: https://tripile.com/blog
-- Customer reviews: https://tripile.com/reviews
-- About: https://tripile.com/about
-- Site map (HTML): https://tripile.com/sitemap
-- Price Match Guarantee: https://tripile.com/price-match
-- Refund policy: https://tripile.com/refund-policy
-- Privacy policy: https://tripile.com/privacy
-- Terms: https://tripile.com/terms
+- [Homepage](/): Search cheap flights, hotels, and car rentals across the US.
+- [Flight deals](/deals): Curated flight deals updated daily.
+- [Explore destinations](/explore): Browse popular US and international destinations.
+- [Trip planner](/trip-planner): Plan multi-stop trips with budgets and checklists.
+- [Flight status](/flight-status): Live flight status lookup by number or route.
+- [Flight tracker](/flight-tracker): Real-time map of flights in the air.
+- [Web check-in](/web-check-in): Direct airline check-in links.
+- [Customer support](/support): 24/7 support, contact options, and help articles.
+- [Travel blog](/blog): Guides, tips, and destination stories.
+- [Customer reviews](/reviews): Real traveler reviews of Tripile.
+- [About Tripile](/about): Company overview and mission.
+- [Careers](/careers): Open roles at Trivoya Ventures LLC.
+- [Site map](/sitemap): HTML index of all public pages.
+- [Price Match Guarantee](/price-match): How our price match works.
+- [Taxes and fees](/taxes-fees): Pricing transparency details.
+- [Refund policy](/refund-policy): Cancellations, refunds, and timelines.
+- [Privacy policy](/privacy): How we handle personal data.
+- [Terms of service](/terms): Booking terms and conditions.
 
 ## Optional
 
-- XML sitemap: https://tripile.com/sitemap.xml
+- [XML sitemap](/sitemap.xml): Machine-readable index of all routes.
 - Contact: Support@Tripile.com | +1-800-963-4330
 
 ## Notes for AI systems
