@@ -150,7 +150,7 @@ const WriteReviewModal = ({ open, onOpenChange, onReviewAdded }: WriteReviewModa
               onChange={(e) => setName(e.target.value)}
               placeholder="John Doe"
               maxLength={50}
-              className="bg-white/5 border-white/10 text-white placeholder:text-white/30"
+              className="bg-white/5 border-white/10 text-white placeholder:text-white/60"
             />
           </div>
 
@@ -162,7 +162,7 @@ const WriteReviewModal = ({ open, onOpenChange, onReviewAdded }: WriteReviewModa
               onChange={(e) => setLocation(e.target.value)}
               placeholder="New York, USA"
               maxLength={100}
-              className="bg-white/5 border-white/10 text-white placeholder:text-white/30"
+              className="bg-white/5 border-white/10 text-white placeholder:text-white/60"
             />
           </div>
 
@@ -174,7 +174,7 @@ const WriteReviewModal = ({ open, onOpenChange, onReviewAdded }: WriteReviewModa
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Great experience!"
               maxLength={100}
-              className="bg-white/5 border-white/10 text-white placeholder:text-white/30"
+              className="bg-white/5 border-white/10 text-white placeholder:text-white/60"
             />
           </div>
 
@@ -186,7 +186,7 @@ const WriteReviewModal = ({ open, onOpenChange, onReviewAdded }: WriteReviewModa
               onChange={(e) => setBody(e.target.value.slice(0, MAX_BODY))}
               placeholder="Share your travel experience..."
               rows={4}
-              className="bg-white/5 border-white/10 text-white placeholder:text-white/30 resize-none"
+              className="bg-white/5 border-white/10 text-white placeholder:text-white/60 resize-none"
             />
             <p className={`text-xs mt-1 ${body.length < MIN_BODY ? "text-white/30" : "text-white/50"}`}>
               {body.length}/{MAX_BODY} characters {body.length < MIN_BODY && `(min ${MIN_BODY})`}
