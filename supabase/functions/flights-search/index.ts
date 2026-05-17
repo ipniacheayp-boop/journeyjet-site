@@ -123,15 +123,41 @@ function serpToOffer(
   };
 }
 
+// Metro/city codes → comma-separated airport lists (Google Flights accepts multi-airport queries)
+const METRO_TO_AIRPORTS: Record<string, string> = {
+  PAR: "CDG,ORY",
+  NYC: "JFK,LGA,EWR",
+  LON: "LHR,LGW,STN,LTN,LCY",
+  TYO: "HND,NRT",
+  WAS: "IAD,DCA,BWI",
+  CHI: "ORD,MDW",
+  MIL: "MXP,LIN,BGY",
+  ROM: "FCO,CIA",
+  STO: "ARN,BMA,NYO",
+  MOW: "SVO,DME,VKO",
+  SEL: "ICN,GMP",
+  BJS: "PEK,PKX",
+  SHA: "PVG,SHA",
+  OSA: "KIX,ITM",
+  BUE: "EZE,AEP",
+  SAO: "GRU,CGH,VCP",
+  RIO: "GIG,SDU",
+};
+
+function expandCode(code: string): string {
+  const up = String(code).toUpperCase();
+  return METRO_TO_AIRPORTS[up] || up;
+}
+
 async function searchSerpApi(params: any) {
   const SERPAPI_KEY = Deno.env.get("SERPAPI_KEY");
-  if (!SERPAPI_KEY) return { error: "SERPAPI_KEY missing" };
+  if (!SERPAPI_KEY) return { error: "SERPAPI_KEY missing" } as const;
 
   const sp = new URLSearchParams();
   sp.set("engine", "google_flights");
   sp.set("api_key", SERPAPI_KEY);
-  sp.set("departure_id", String(params.originLocationCode).toUpperCase());
-  sp.set("arrival_id", String(params.destinationLocationCode).toUpperCase());
+  sp.set("departure_id", expandCode(params.originLocationCode));
+  sp.set("arrival_id", expandCode(params.destinationLocationCode));
   sp.set("outbound_date", String(params.departureDate));
   if (params.returnDate) {
     sp.set("return_date", String(params.returnDate));
@@ -148,14 +174,21 @@ async function searchSerpApi(params: any) {
   }
   if (params.nonStop === true || params.nonStop === "true") sp.set("stops", "1");
 
-  console.log(`🔎 SerpAPI: ${params.originLocationCode}→${params.destinationLocationCode} ${params.departureDate}`);
+  console.log(`🔎 SerpAPI: ${sp.get("departure_id")}→${sp.get("arrival_id")} ${params.departureDate}`);
   const res = await fetch(`https://serpapi.com/search.json?${sp.toString()}`);
   if (!res.ok) {
     const txt = await res.text();
-    return { error: `SerpAPI failed (${res.status}): ${txt.slice(0, 300)}` };
+    return { error: `SerpAPI failed (${res.status}): ${txt.slice(0, 300)}` } as const;
   }
   const json = await res.json();
-  if (json.error) return { error: String(json.error) };
+  if (json.error) {
+    const msg = String(json.error);
+    const isEmpty = /hasn't returned any results|no results/i.test(msg);
+    if (isEmpty) {
+      return { data: [] as any[], dictionaries: { carriers: {} }, empty: true, message: msg } as const;
+    }
+    return { error: msg } as const;
+  }
 
   const best: SerpFlightOption[] = json.best_flights || [];
   const other: SerpFlightOption[] = json.other_flights || [];
@@ -170,7 +203,7 @@ async function searchSerpApi(params: any) {
   });
 
   console.log(`✅ SerpAPI returned ${offers.length} offers`);
-  return { data: offers, dictionaries: { carriers: allCarriers } };
+  return { data: offers, dictionaries: { carriers: allCarriers }, empty: offers.length === 0 } as const;
 }
 
 serve(async (req) => {
@@ -192,18 +225,32 @@ serve(async (req) => {
 
     if (!Deno.env.get("SERPAPI_KEY")) {
       return new Response(
-        JSON.stringify({ error: "Flight search not configured", code: "SERPAPI_MISSING" }),
-        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        JSON.stringify({ error: "Flight search not configured", code: "SERPAPI_MISSING", data: [] }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
 
-    const result = await searchSerpApi(body);
-    if ("error" in result) {
+    const result: any = await searchSerpApi(body);
+    if (result.error) {
+      console.error("⚠️ SerpAPI error:", result.error);
       return new Response(
-        JSON.stringify({ error: result.error, data: [] }),
-        { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        JSON.stringify({ error: result.error, data: [], dictionaries: { carriers: {} } }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
+
+    return new Response(
+      JSON.stringify({
+        data: result.data || [],
+        dictionaries: result.dictionaries || { carriers: {} },
+        meta: {
+          provider: "serpapi-google-flights",
+          count: (result.data || []).length,
+          ...(result.empty ? { empty: true, message: "No flights found for this route/date." } : {}),
+        },
+      }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
 
     return new Response(
       JSON.stringify({
