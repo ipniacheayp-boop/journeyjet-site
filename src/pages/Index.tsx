@@ -225,7 +225,10 @@ const Index = () => {
             src={heroBlackFriday}
             alt="Cheap flights, hotels and car rentals across the USA — compare travel deals on Tripile"
             title="Cheap flights USA — Tripile flight, hotel and car rental comparison"
+            width={1920}
+            height={1080}
             fetchPriority="high"
+            loading="eager"
             decoding="async"
             className="absolute inset-0 h-full w-full object-cover object-center scale-[1.04] transition-transform duration-[8000ms] ease-out"
           />
