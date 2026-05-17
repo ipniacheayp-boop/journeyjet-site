@@ -182,4 +182,55 @@
   <url><loc>https://tripile.com/airport/abilene-tx-abi</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://tripile.com/airport/albany-ny-alb</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://tripile.com/airport/albuquerque-nm-abq</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <!-- Deal Detail Pages -->
+  <url><loc>https://tripile.com/deals/mock-1</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-2</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-3</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-4</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-5</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-6</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-7</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-8</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-9</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-10</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-11</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-12</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-13</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-14</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-15</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-16</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-17</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-18</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-19</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-20</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-21</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-22</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-23</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-24</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-25</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-26</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-27</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-28</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-29</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-30</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-31</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-32</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-33</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-34</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-35</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-36</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-37</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-38</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-39</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-40</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-41</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-42</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-43</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-44</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-45</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-46</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-47</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-48</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-49</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://tripile.com/deals/mock-50</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
 </urlset>
