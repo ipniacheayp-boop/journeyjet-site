@@ -8,26 +8,12 @@ const corsHeaders = {
     "Authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const USE_PROD_APIS = Deno.env.get("USE_PROD_APIS") === "true";
-const AMADEUS_BASE_URL = USE_PROD_APIS
-  ? "https://api.amadeus.com"
-  : "https://test.api.amadeus.com";
-
-const ALLOWED_CABINS = new Set([
-  "ECONOMY",
-  "PREMIUM_ECONOMY",
-  "BUSINESS",
-  "FIRST",
-]);
-
 const CABIN_TO_SERPAPI: Record<string, number> = {
   ECONOMY: 1,
   PREMIUM_ECONOMY: 2,
   BUSINESS: 3,
   FIRST: 4,
 };
-
-// ---------------- SerpAPI (primary) ----------------
 
 interface SerpFlightSegment {
   departure_airport?: { id?: string; name?: string; time?: string };
@@ -59,12 +45,11 @@ function minutesToISODuration(mins?: number): string {
 }
 
 function toAmadeusTime(t?: string): string {
-  // SerpAPI returns "2024-12-25 18:30" — convert to "2024-12-25T18:30:00"
   if (!t) return "";
   return t.replace(" ", "T") + (t.length === 16 ? ":00" : "");
 }
 
-function serpToAmadeusOffer(
+function serpToOffer(
   opt: SerpFlightOption,
   index: number,
   adults: number,
@@ -103,16 +88,9 @@ function serpToAmadeusOffer(
       instantTicketingRequired: false,
       nonHomogeneous: false,
       oneWay: false,
-      lastTicketingDate: new Date(Date.now() + 86400000)
-        .toISOString()
-        .slice(0, 10),
+      lastTicketingDate: new Date(Date.now() + 86400000).toISOString().slice(0, 10),
       numberOfBookableSeats: 9,
-      itineraries: [
-        {
-          duration: minutesToISODuration(opt.total_duration),
-          segments,
-        },
-      ],
+      itineraries: [{ duration: minutesToISODuration(opt.total_duration), segments }],
       price: {
         currency,
         total: String(total),
@@ -120,10 +98,7 @@ function serpToAmadeusOffer(
         fees: [{ amount: "0.00", type: "SUPPLIER" }],
         grandTotal: String(total),
       },
-      pricingOptions: {
-        fareType: ["PUBLISHED"],
-        includedCheckedBagsOnly: false,
-      },
+      pricingOptions: { fareType: ["PUBLISHED"], includedCheckedBagsOnly: false },
       validatingAirlineCodes: Object.keys(carriers).slice(0, 1),
       travelerPricings: Array.from({ length: adults }, (_, i) => ({
         travelerId: String(i + 1),
@@ -148,17 +123,7 @@ function serpToAmadeusOffer(
   };
 }
 
-async function searchSerpApi(params: {
-  originLocationCode: string;
-  destinationLocationCode: string;
-  departureDate: string;
-  returnDate?: string;
-  adults: number;
-  travelClass?: string;
-  currencyCode?: string;
-  nonStop?: boolean | string;
-  max?: number;
-}): Promise<{ data: any[]; dictionaries: any } | { error: string; status?: number }> {
+async function searchSerpApi(params: any) {
   const SERPAPI_KEY = Deno.env.get("SERPAPI_KEY");
   if (!SERPAPI_KEY) return { error: "SERPAPI_KEY missing" };
 
@@ -170,9 +135,9 @@ async function searchSerpApi(params: {
   sp.set("outbound_date", String(params.departureDate));
   if (params.returnDate) {
     sp.set("return_date", String(params.returnDate));
-    sp.set("type", "1"); // round trip
+    sp.set("type", "1");
   } else {
-    sp.set("type", "2"); // one-way
+    sp.set("type", "2");
   }
   sp.set("adults", String(params.adults));
   sp.set("currency", String(params.currencyCode || "USD"));
@@ -181,24 +146,16 @@ async function searchSerpApi(params: {
   if (params.travelClass && CABIN_TO_SERPAPI[String(params.travelClass).toUpperCase()]) {
     sp.set("travel_class", String(CABIN_TO_SERPAPI[String(params.travelClass).toUpperCase()]));
   }
-  if (params.nonStop === true || params.nonStop === "true") {
-    sp.set("stops", "1");
-  }
+  if (params.nonStop === true || params.nonStop === "true") sp.set("stops", "1");
 
-  const url = `https://serpapi.com/search.json?${sp.toString()}`;
-  console.log(`🔎 SerpAPI Google Flights: ${params.originLocationCode}→${params.destinationLocationCode} ${params.departureDate}`);
-
-  const res = await fetch(url);
+  console.log(`🔎 SerpAPI: ${params.originLocationCode}→${params.destinationLocationCode} ${params.departureDate}`);
+  const res = await fetch(`https://serpapi.com/search.json?${sp.toString()}`);
   if (!res.ok) {
     const txt = await res.text();
-    console.error("❌ SerpAPI error:", res.status, txt.slice(0, 500));
-    return { error: `SerpAPI failed: ${txt.slice(0, 300)}`, status: res.status };
+    return { error: `SerpAPI failed (${res.status}): ${txt.slice(0, 300)}` };
   }
-
   const json = await res.json();
-  if (json.error) {
-    return { error: String(json.error) };
-  }
+  if (json.error) return { error: String(json.error) };
 
   const best: SerpFlightOption[] = json.best_flights || [];
   const other: SerpFlightOption[] = json.other_flights || [];
@@ -207,82 +164,14 @@ async function searchSerpApi(params: {
   const currency = params.currencyCode || "USD";
   const allCarriers: Record<string, string> = {};
   const offers = allOptions.map((opt, i) => {
-    const { offer, carriers } = serpToAmadeusOffer(opt, i, params.adults, currency);
+    const { offer, carriers } = serpToOffer(opt, i, params.adults, currency);
     Object.assign(allCarriers, carriers);
     return offer;
   });
 
-  console.log(`✅ SerpAPI returned ${offers.length} flight offers`);
-  return {
-    data: offers,
-    dictionaries: { carriers: allCarriers },
-  };
+  console.log(`✅ SerpAPI returned ${offers.length} offers`);
+  return { data: offers, dictionaries: { carriers: allCarriers } };
 }
-
-// ---------------- Amadeus (fallback) ----------------
-
-let cachedToken: { token: string; expiresAt: number } | null = null;
-function invalidateToken(): void {
-  cachedToken = null;
-}
-
-async function getAmadeusToken(forceRefresh = false): Promise<string> {
-  if (forceRefresh) invalidateToken();
-  if (cachedToken && cachedToken.expiresAt > Date.now()) return cachedToken.token;
-
-  const apiKey = Deno.env.get("AMADEUS_API_KEY");
-  const apiSecret = Deno.env.get("AMADEUS_API_SECRET");
-  if (!apiKey || !apiSecret) throw new Error("AMADEUS not configured");
-
-  const r = await fetch(`${AMADEUS_BASE_URL}/v1/security/oauth2/token`, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: `grant_type=client_credentials&client_id=${encodeURIComponent(apiKey)}&client_secret=${encodeURIComponent(apiSecret)}`,
-  });
-  if (!r.ok) {
-    invalidateToken();
-    throw new Error(`Amadeus auth failed (${r.status}): ${await r.text()}`);
-  }
-  const d = await r.json();
-  cachedToken = { token: d.access_token, expiresAt: Date.now() + 25 * 60 * 1000 };
-  return d.access_token;
-}
-
-async function searchAmadeus(body: any) {
-  const params = new URLSearchParams();
-  params.set("originLocationCode", String(body.originLocationCode).toUpperCase());
-  params.set("destinationLocationCode", String(body.destinationLocationCode).toUpperCase());
-  params.set("departureDate", String(body.departureDate));
-  if (body.returnDate) params.set("returnDate", String(body.returnDate));
-  params.set("adults", String(body.adults));
-  if (body.travelClass && ALLOWED_CABINS.has(String(body.travelClass).toUpperCase())) {
-    params.set("travelClass", String(body.travelClass).toUpperCase());
-  }
-  params.set("currencyCode", String(body.currencyCode || "USD"));
-  params.set("max", String(Math.min(Math.max(Number(body.max) || 50, 1), 250)));
-  if (body.nonStop === true || body.nonStop === "true") params.set("nonStop", "true");
-
-  let token = await getAmadeusToken();
-  const doFetch = (t: string) =>
-    fetch(`${AMADEUS_BASE_URL}/v2/shopping/flight-offers?${params.toString()}`, {
-      headers: { Authorization: `Bearer ${t}`, Accept: "application/json" },
-    });
-  let res = await doFetch(token);
-  if (res.status === 401) {
-    token = await getAmadeusToken(true);
-    res = await doFetch(token);
-  }
-  if (!res.ok) {
-    throw new Error(`Amadeus ${res.status}: ${(await res.text()).slice(0, 300)}`);
-  }
-  const json = await res.json();
-  return {
-    data: Array.isArray(json?.data) ? json.data : [],
-    dictionaries: json?.dictionaries || {},
-  };
-}
-
-// ---------------- Handler ----------------
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -301,38 +190,26 @@ serve(async (req) => {
       );
     }
 
-    // Primary: SerpAPI
-    const SERPAPI_KEY = Deno.env.get("SERPAPI_KEY");
-    if (SERPAPI_KEY) {
-      try {
-        const result = await searchSerpApi(body);
-        if (!("error" in result) && result.data.length > 0) {
-          return new Response(
-            JSON.stringify({
-              data: result.data,
-              dictionaries: result.dictionaries,
-              meta: { provider: "serpapi-google-flights", count: result.data.length },
-            }),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } },
-          );
-        }
-        console.warn("⚠️ SerpAPI returned no results or errored, falling back to Amadeus", "error" in result ? result.error : "");
-      } catch (e) {
-        console.error("⚠️ SerpAPI threw, falling back:", e);
-      }
+    if (!Deno.env.get("SERPAPI_KEY")) {
+      return new Response(
+        JSON.stringify({ error: "Flight search not configured", code: "SERPAPI_MISSING" }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
     }
 
-    // Fallback: Amadeus
-    const amadeus = await searchAmadeus(body);
+    const result = await searchSerpApi(body);
+    if ("error" in result) {
+      return new Response(
+        JSON.stringify({ error: result.error, data: [] }),
+        { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
     return new Response(
       JSON.stringify({
-        data: amadeus.data,
-        dictionaries: amadeus.dictionaries,
-        meta: {
-          provider: "amadeus",
-          environment: USE_PROD_APIS ? "amadeus-prod" : "amadeus-test",
-          count: amadeus.data.length,
-        },
+        data: result.data,
+        dictionaries: result.dictionaries,
+        meta: { provider: "serpapi-google-flights", count: result.data.length },
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
