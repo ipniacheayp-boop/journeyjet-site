@@ -132,7 +132,7 @@ const TrustBadges = () => {
                   </div>
 
                   {/* Label */}
-                  <div className="text-[11px] md:text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-[0.15em]">
+                  <div className="text-[11px] md:text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-[0.15em]">
                     {stat.label}
                   </div>
                 </div>

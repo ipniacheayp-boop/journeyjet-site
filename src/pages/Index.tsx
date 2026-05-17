@@ -552,7 +552,7 @@ const Index = () => {
 
             {/* ── Bottom trust strip ── */}
             <div className="mt-4 pt-4 border-t border-white/8 flex flex-wrap items-center justify-between gap-3">
-              <div className="flex flex-wrap items-center gap-4 text-[11px] text-white/40 font-medium">
+              <div className="flex flex-wrap items-center gap-4 text-[11px] text-white/80 font-medium">
                 {[
                   { icon: ShieldCheck, label: "Best Price Guarantee" },
                   { icon: Clock, label: "Limited Time Only" },
