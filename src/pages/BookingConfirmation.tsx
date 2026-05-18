@@ -42,6 +42,9 @@ const BookingConfirmation = () => {
           amount: parsed.amount,
           currency: parsed.currency || 'USD',
           travelerInfo: parsed.travelerInfo,
+          itinerary: parsed.itinerary,
+          passengers: parsed.passengers,
+          hotelUpsell: parsed.hotelUpsell,
         });
         // Clear session storage after confirmation
         sessionStorage.removeItem('pendingBooking');
