@@ -36,8 +36,10 @@ Disallow: /login
 Disallow: /user/login
 Disallow: /admin/login
 Disallow: /agent/login
+Disallow: /auth/
 Disallow: /account
 Disallow: /my-bookings
+Disallow: /search-results
 Disallow: /booking/
 Disallow: /booking-confirmation
 Disallow: /agent-connect
