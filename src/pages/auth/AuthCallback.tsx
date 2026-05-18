@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import SEOHead from "@/components/SEOHead";
 import { supabase, getPkceVerifierStorageKey } from "@/integrations/supabase/client";
 
 /** Same merge rule as GoTrue `parseParametersFromURL`: query overrides hash. */
@@ -162,25 +163,33 @@ const AuthCallback = () => {
   }, [navigate, searchParams]);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-background px-6 text-center text-sm text-muted-foreground">
-      {error ? (
-        <>
-          <p className="max-w-md text-destructive">{error}</p>
-          <button
-            type="button"
-            className="rounded-md border border-border px-4 py-2 text-sm font-medium hover:bg-muted"
-            onClick={() => navigate("/auth/signin", { replace: true })}
-          >
-            Back to sign in
-          </button>
-        </>
-      ) : (
-        <>
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
-          Finishing sign in...
-        </>
-      )}
-    </div>
+    <>
+      <SEOHead
+        title="Signing In | Tripile.com"
+        description="Completing your Tripile sign-in securely."
+        canonicalUrl="https://tripile.com/auth/callback"
+        noIndex
+      />
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-background px-6 text-center text-sm text-muted-foreground">
+        {error ? (
+          <>
+            <p className="max-w-md text-destructive">{error}</p>
+            <button
+              type="button"
+              className="rounded-md border border-border px-4 py-2 text-sm font-medium hover:bg-muted"
+              onClick={() => navigate("/auth/signin", { replace: true })}
+            >
+              Back to sign in
+            </button>
+          </>
+        ) : (
+          <>
+            <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            Finishing sign in...
+          </>
+        )}
+      </div>
+    </>
   );
 };
 
