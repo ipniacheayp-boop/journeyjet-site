@@ -100,11 +100,15 @@ const Booking = () => {
     return o.price?.currency || "USD";
   };
 
+  // API price (per person for flights; total for hotels/cars) — DO NOT add synthetic taxes,
+  // the API total already includes them. This keeps booking total === search result price.
   const price = validatedPrice || getPrice(offer);
   const currency = validatedCurrency || getCurrency(offer);
-  const taxes = price * 0.15;
-  const total = price + taxes;
-  const finalTotal = total * passengers.length - discount;
+  const apiBase = parseFloat(offer?.price?.base || "0");
+  const taxes = apiBase > 0 && apiBase < price ? price - apiBase : 0;
+  const basePerUnit = taxes > 0 ? apiBase : price;
+  const passengerMultiplier = bookingType === "flights" ? passengers.length : 1;
+  const finalTotal = price * passengerMultiplier - discount;
 
   const isProcessing = loading || validating;
 
