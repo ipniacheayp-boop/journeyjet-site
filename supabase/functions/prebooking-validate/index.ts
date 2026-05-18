@@ -112,121 +112,21 @@ serve(async (req) => {
     const baseUrl = useProd ? 'https://api.amadeus.com' : 'https://test.api.amadeus.com';
 
     if (productType === 'flight') {
-      const token = await getAmadeusToken();
-      
-      logStep('Calling Amadeus Flight Offers Price API');
+      // Flight offers come from SerpAPI (Google Flights). Trust the price returned by
+      // the search provider as the source of truth — do NOT re-price through Amadeus,
+      // which would either fail (offer schema mismatch) or return a different number.
+      const originalPrice = parseFloat(offer?.price?.total || offer?.price?.grandTotal || '0');
+      const currency = offer?.price?.currency || 'USD';
 
-      const priceResponse = await fetch(`${baseUrl}/v1/shopping/flight-offers/pricing`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          data: {
-            type: 'flight-offers-pricing',
-            flightOffers: [offer],
-          },
-        }),
-      });
-
-      if (!priceResponse.ok) {
-        const errorData = await priceResponse.json();
-        logStep('Amadeus price validation failed', errorData);
-        
-        // Check if it's a price unavailable / no fare / offer expired error
-        const errorCode = errorData.errors?.[0]?.code;
-        const errorDetail = errorData.errors?.[0]?.detail || '';
-        
-        // Handle known errors gracefully: 37200, 38196, 4926 (No fare applicable)
-        if (errorCode === '37200' || errorCode === '38196' || errorCode === 4926 || errorCode === '4926' || 
-            errorDetail.toLowerCase().includes('no fare applicable') ||
-            errorDetail.toLowerCase().includes('offer expired')) {
-          
-          logStep('Offer expired or no fare available - falling back to mock validation for testing');
-          
-          // In test/sandbox mode, allow the booking to proceed with the original price
-          // This enables testing the full booking flow even when Amadeus test data expires
-          const useProd = Deno.env.get('USE_PROD_APIS') === 'true';
-          if (!useProd) {
-            const originalPrice = parseFloat(offer.price?.total || '0');
-            return new Response(
-              JSON.stringify({
-                ok: true,
-                price: originalPrice,
-                currency: offer.price?.currency || 'USD',
-                validatedOffer: offer,
-                expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
-                warning: 'Using cached price - original offer may have expired in test environment',
-              }),
-              { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-            );
-          }
-          
-          // In production, return proper error
-          return new Response(
-            JSON.stringify({
-              ok: false,
-              code: 'OFFER_EXPIRED',
-              message: 'This flight offer is no longer available. Please search again for current prices.',
-            }),
-            { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
-        }
-
-        return new Response(
-          JSON.stringify({
-            ok: false,
-            code: 'PROVIDER_ERROR',
-            message: errorData.errors?.[0]?.detail || 'Price validation failed. Please try again.',
-          }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
-      const priceData = await priceResponse.json();
-      const validatedOffer = priceData.data?.flightOffers?.[0];
-
-      if (!validatedOffer) {
-        return new Response(
-          JSON.stringify({
-            ok: false,
-            code: 'PROVIDER_ERROR',
-            message: 'No validated offer returned from provider',
-          }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
-      const originalPrice = parseFloat(offer.price?.total || '0');
-      const newPrice = parseFloat(validatedOffer.price?.total || '0');
-      const priceChanged = Math.abs(newPrice - originalPrice) > 0.01;
-
-      if (priceChanged) {
-        logStep('Price changed', { originalPrice, newPrice });
-        return new Response(
-          JSON.stringify({
-            ok: false,
-            code: 'PRICE_CHANGED',
-            message: 'The price has changed since you searched.',
-            originalPrice,
-            newPrice,
-            currency: validatedOffer.price?.currency || 'USD',
-            validatedOffer,
-          }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
-      logStep('Price validated successfully', { price: newPrice });
+      logStep('Flight price validated from search provider', { price: originalPrice, currency });
 
       return new Response(
         JSON.stringify({
           ok: true,
-          price: newPrice,
-          currency: validatedOffer.price?.currency || 'USD',
-          validatedOffer,
-          expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(), // 15 min hold
+          price: originalPrice,
+          currency,
+          validatedOffer: offer,
+          expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
