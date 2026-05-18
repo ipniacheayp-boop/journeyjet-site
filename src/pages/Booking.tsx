@@ -100,15 +100,30 @@ const Booking = () => {
     return o.price?.currency || "USD";
   };
 
-  // API price (per person for flights; total for hotels/cars) — DO NOT add synthetic taxes,
-  // the API total already includes them. This keeps booking total === search result price.
+  // API price (per person for flights; total for hotels/cars). API total already includes taxes.
   const price = validatedPrice || getPrice(offer);
   const currency = validatedCurrency || getCurrency(offer);
-  const apiBase = parseFloat(offer?.price?.base || "0");
-  const taxes = apiBase > 0 && apiBase < price ? price - apiBase : 0;
-  const basePerUnit = taxes > 0 ? apiBase : price;
+  const apiBaseRaw =
+    bookingType === "hotels"
+      ? parseFloat(offer?.offers?.[0]?.price?.base || offer?.price?.base || "0")
+      : parseFloat(offer?.price?.base || "0");
+  const taxes = apiBaseRaw > 0 && apiBaseRaw < price ? price - apiBaseRaw : 0;
+  const basePerUnit = taxes > 0 ? apiBaseRaw : price;
   const passengerMultiplier = bookingType === "flights" ? passengers.length : 1;
-  const finalTotal = price * passengerMultiplier - discount;
+
+  // Hotel upsell (only valid when primary booking is a flight)
+  const hotelUpsellOffer = hotelUpsellData?.wantsHotel ? hotelUpsellData.selectedHotel : null;
+  const hotelUpsellPrice = hotelUpsellOffer
+    ? parseFloat(hotelUpsellOffer.offers?.[0]?.price?.total || "0")
+    : 0;
+  const hotelUpsellCurrency = hotelUpsellOffer?.offers?.[0]?.price?.currency || currency;
+
+  // Strict conditional totals
+  const flightSubtotal = bookingType === "flights" ? price * passengerMultiplier : 0;
+  const hotelSubtotal =
+    bookingType === "hotels" ? price : bookingType === "flights" ? hotelUpsellPrice : 0;
+  const carSubtotal = bookingType === "cars" ? price : 0;
+  const finalTotal = Math.max(0, flightSubtotal + hotelSubtotal + carSubtotal - discount);
 
   const isProcessing = loading || validating;
 
