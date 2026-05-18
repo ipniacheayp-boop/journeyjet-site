@@ -211,9 +211,18 @@ const Booking = () => {
     setValidatedPrice(validationResult.price || null);
     setValidatedCurrency(validationResult.currency || "USD");
 
+    // Charge the customer the FULL grand total (flight + hotel upsell - discount, etc.)
+    const validatedUnit = validationResult.price || getPrice(offer);
+    const computedGrandTotal = Math.max(
+      0,
+      (bookingType === "flights" ? validatedUnit * passengerMultiplier : validatedUnit) +
+        (bookingType === "flights" ? hotelUpsellPrice : 0) -
+        discount,
+    );
+
     await createBookingAndPay(
       validationResult.validatedOffer || offer,
-      validationResult.price || getPrice(offer),
+      computedGrandTotal,
       validationResult.currency || "USD",
       validationResult.expiresAt,
     );
