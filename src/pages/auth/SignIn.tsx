@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
+import SEOHead from "@/components/SEOHead";
 import AuthLayout from "@/components/auth/AuthLayout";
 import GoogleButton from "@/components/auth/GoogleButton";
 import { useAuth } from "@/contexts/AuthContext";
@@ -75,83 +76,91 @@ const SignIn = () => {
   };
 
   return (
-    <AuthLayout
-      title="Welcome back"
-      subtitle="Sign in to continue planning your next trip."
-      footer={
-        <>
-          Don&apos;t have an account?{" "}
-          <Link
-            to={`/auth/signup${next !== "/account" ? `?next=${encodeURIComponent(next)}` : ""}`}
-            className="font-semibold text-primary hover:underline"
-          >
-            Create account
-          </Link>
-        </>
-      }
-    >
-      <div className="space-y-5">
-        <GoogleButton onClick={handleGoogle} loading={googleLoading} disabled={submitting} />
+    <>
+      <SEOHead
+        title="Sign In | Tripile.com"
+        description="Sign in to your Tripile account to manage bookings and continue checkout."
+        canonicalUrl="https://tripile.com/auth/signin"
+        noIndex
+      />
+      <AuthLayout
+        title="Welcome back"
+        subtitle="Sign in to continue planning your next trip."
+        footer={
+          <>
+            Don&apos;t have an account?{" "}
+            <Link
+              to={`/auth/signup${next !== "/account" ? `?next=${encodeURIComponent(next)}` : ""}`}
+              className="font-semibold text-primary hover:underline"
+            >
+              Create account
+            </Link>
+          </>
+        }
+      >
+        <div className="space-y-5">
+          <GoogleButton onClick={handleGoogle} loading={googleLoading} disabled={submitting} />
 
-        <div className="relative">
-          <Separator />
-          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-2 text-xs uppercase tracking-widest text-slate-500 dark:bg-slate-900 dark:text-slate-400">
-            or
-          </span>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-          <div className="space-y-1.5">
-            <Label htmlFor="signin-email">Email</Label>
-            <Input
-              id="signin-email"
-              type="email"
-              autoComplete="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              disabled={submitting}
-              aria-invalid={!!errors.email}
-            />
-            {errors.email ? (
-              <p className="text-xs text-destructive">{errors.email}</p>
-            ) : null}
+          <div className="relative">
+            <Separator />
+            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-2 text-xs uppercase tracking-widest text-slate-500 dark:bg-slate-900 dark:text-slate-400">
+              or
+            </span>
           </div>
 
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="signin-password">Password</Label>
-              <Link to="/auth/forgot-password" className="text-xs font-medium text-primary hover:underline">
-                Forgot password?
-              </Link>
+          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+            <div className="space-y-1.5">
+              <Label htmlFor="signin-email">Email</Label>
+              <Input
+                id="signin-email"
+                type="email"
+                autoComplete="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                disabled={submitting}
+                aria-invalid={!!errors.email}
+              />
+              {errors.email ? (
+                <p className="text-xs text-destructive">{errors.email}</p>
+              ) : null}
             </div>
-            <Input
-              id="signin-password"
-              type="password"
-              autoComplete="current-password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              disabled={submitting}
-              aria-invalid={!!errors.password}
-            />
-            {errors.password ? (
-              <p className="text-xs text-destructive">{errors.password}</p>
-            ) : null}
-          </div>
 
-          <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-            <Checkbox checked={remember} onCheckedChange={(value) => setRemember(value === true)} />
-            Remember me on this device
-          </label>
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="signin-password">Password</Label>
+                <Link to="/auth/forgot-password" className="text-xs font-medium text-primary hover:underline">
+                  Forgot password?
+                </Link>
+              </div>
+              <Input
+                id="signin-password"
+                type="password"
+                autoComplete="current-password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                disabled={submitting}
+                aria-invalid={!!errors.password}
+              />
+              {errors.password ? (
+                <p className="text-xs text-destructive">{errors.password}</p>
+              ) : null}
+            </div>
 
-          <Button type="submit" className="w-full" disabled={submitting}>
-            {submitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-            Sign in
-          </Button>
-        </form>
-      </div>
-    </AuthLayout>
+            <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+              <Checkbox checked={remember} onCheckedChange={(value) => setRemember(value === true)} />
+              Remember me on this device
+            </label>
+
+            <Button type="submit" className="w-full" disabled={submitting}>
+              {submitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              Sign in
+            </Button>
+          </form>
+        </div>
+      </AuthLayout>
+    </>
   );
 };
 

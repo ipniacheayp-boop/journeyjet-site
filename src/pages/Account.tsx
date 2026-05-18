@@ -3,6 +3,7 @@ import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -156,6 +157,12 @@ const Account = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEOHead
+        title="Your Account | Tripile.com"
+        description="Manage your Tripile profile, login details, and booking settings."
+        canonicalUrl="https://tripile.com/account"
+        noIndex
+      />
       <Header />
 
       <main className="flex-1 pt-24 pb-16">

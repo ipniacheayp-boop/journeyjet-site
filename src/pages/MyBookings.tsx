@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import SEOHead from '@/components/SEOHead';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -230,6 +231,12 @@ const MyBookings = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEOHead
+        title="My Bookings | Tripile.com"
+        description="Review and manage your Tripile bookings."
+        canonicalUrl="https://tripile.com/my-bookings"
+        noIndex
+      />
       <Header />
 
       <main className="flex-1 pt-24 pb-16">

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import SEOHead from "@/components/SEOHead";
 import AuthLayout from "@/components/auth/AuthLayout";
 import GoogleButton from "@/components/auth/GoogleButton";
 import { useAuth } from "@/contexts/AuthContext";
@@ -88,125 +89,133 @@ const SignUp = () => {
   };
 
   return (
-    <AuthLayout
-      title="Create your account"
-      subtitle="Join Tripile to unlock member fares and personalized travel deals."
-      footer={
-        <>
-          Already have an account?{" "}
-          <Link
-            to={`/auth/signin${next !== "/account" ? `?next=${encodeURIComponent(next)}` : ""}`}
-            className="font-semibold text-primary hover:underline"
-          >
-            Sign in
-          </Link>
-        </>
-      }
-    >
-      <div className="space-y-5">
-        <GoogleButton onClick={handleGoogle} loading={googleLoading} disabled={submitting} label="Sign up with Google" />
+    <>
+      <SEOHead
+        title="Create Account | Tripile.com"
+        description="Create a Tripile account to manage bookings and unlock member fares."
+        canonicalUrl="https://tripile.com/auth/signup"
+        noIndex
+      />
+      <AuthLayout
+        title="Create your account"
+        subtitle="Join Tripile to unlock member fares and personalized travel deals."
+        footer={
+          <>
+            Already have an account?{" "}
+            <Link
+              to={`/auth/signin${next !== "/account" ? `?next=${encodeURIComponent(next)}` : ""}`}
+              className="font-semibold text-primary hover:underline"
+            >
+              Sign in
+            </Link>
+          </>
+        }
+      >
+        <div className="space-y-5">
+          <GoogleButton onClick={handleGoogle} loading={googleLoading} disabled={submitting} label="Sign up with Google" />
 
-        <div className="relative">
-          <Separator />
-          <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-2 text-xs uppercase tracking-widest text-slate-500 dark:bg-slate-900 dark:text-slate-400">
-            or sign up with email
-          </span>
+          <div className="relative">
+            <Separator />
+            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-2 text-xs uppercase tracking-widest text-slate-500 dark:bg-slate-900 dark:text-slate-400">
+              or sign up with email
+            </span>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+            <div className="space-y-1.5">
+              <Label htmlFor="signup-name">Full name</Label>
+              <Input
+                id="signup-name"
+                autoComplete="name"
+                placeholder="Jane Doe"
+                value={fullName}
+                onChange={(event) => setFullName(event.target.value)}
+                disabled={submitting}
+                aria-invalid={!!errors.fullName}
+              />
+              {errors.fullName ? (
+                <p className="text-xs text-destructive">{errors.fullName}</p>
+              ) : null}
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="signup-email">Email</Label>
+              <Input
+                id="signup-email"
+                type="email"
+                autoComplete="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                disabled={submitting}
+                aria-invalid={!!errors.email}
+              />
+              {errors.email ? (
+                <p className="text-xs text-destructive">{errors.email}</p>
+              ) : null}
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="signup-password">Password</Label>
+              <Input
+                id="signup-password"
+                type="password"
+                autoComplete="new-password"
+                placeholder="Create a strong password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                disabled={submitting}
+                aria-invalid={!!errors.password}
+              />
+              <ul className="mt-1 space-y-0.5 text-xs text-slate-500 dark:text-slate-400">
+                {passwordRules.map((rule) => {
+                  const passed = rule.test(password);
+                  return (
+                    <li
+                      key={rule.label}
+                      className={passed ? "text-emerald-600 dark:text-emerald-400" : undefined}
+                    >
+                      {passed ? "✓" : "•"} {rule.label}
+                    </li>
+                  );
+                })}
+              </ul>
+              {errors.password ? (
+                <p className="text-xs text-destructive">{errors.password}</p>
+              ) : null}
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="signup-confirm">Confirm password</Label>
+              <Input
+                id="signup-confirm"
+                type="password"
+                autoComplete="new-password"
+                placeholder="Re-enter your password"
+                value={confirmPassword}
+                onChange={(event) => setConfirmPassword(event.target.value)}
+                disabled={submitting}
+                aria-invalid={!!errors.confirmPassword}
+              />
+              {errors.confirmPassword ? (
+                <p className="text-xs text-destructive">{errors.confirmPassword}</p>
+              ) : null}
+            </div>
+
+            <Button type="submit" className="w-full" disabled={submitting}>
+              {submitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              Create account
+            </Button>
+
+            <p className="text-center text-xs text-slate-500 dark:text-slate-400">
+              By creating an account you agree to our {" "}
+              <Link to="/terms" className="underline hover:text-primary">Terms</Link> and {" "}
+              <Link to="/privacy" className="underline hover:text-primary">Privacy Policy</Link>.
+            </p>
+          </form>
         </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-          <div className="space-y-1.5">
-            <Label htmlFor="signup-name">Full name</Label>
-            <Input
-              id="signup-name"
-              autoComplete="name"
-              placeholder="Jane Doe"
-              value={fullName}
-              onChange={(event) => setFullName(event.target.value)}
-              disabled={submitting}
-              aria-invalid={!!errors.fullName}
-            />
-            {errors.fullName ? (
-              <p className="text-xs text-destructive">{errors.fullName}</p>
-            ) : null}
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="signup-email">Email</Label>
-            <Input
-              id="signup-email"
-              type="email"
-              autoComplete="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              disabled={submitting}
-              aria-invalid={!!errors.email}
-            />
-            {errors.email ? (
-              <p className="text-xs text-destructive">{errors.email}</p>
-            ) : null}
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="signup-password">Password</Label>
-            <Input
-              id="signup-password"
-              type="password"
-              autoComplete="new-password"
-              placeholder="Create a strong password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              disabled={submitting}
-              aria-invalid={!!errors.password}
-            />
-            <ul className="mt-1 space-y-0.5 text-xs text-slate-500 dark:text-slate-400">
-              {passwordRules.map((rule) => {
-                const passed = rule.test(password);
-                return (
-                  <li
-                    key={rule.label}
-                    className={passed ? "text-emerald-600 dark:text-emerald-400" : undefined}
-                  >
-                    {passed ? "✓" : "•"} {rule.label}
-                  </li>
-                );
-              })}
-            </ul>
-            {errors.password ? (
-              <p className="text-xs text-destructive">{errors.password}</p>
-            ) : null}
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="signup-confirm">Confirm password</Label>
-            <Input
-              id="signup-confirm"
-              type="password"
-              autoComplete="new-password"
-              placeholder="Re-enter your password"
-              value={confirmPassword}
-              onChange={(event) => setConfirmPassword(event.target.value)}
-              disabled={submitting}
-              aria-invalid={!!errors.confirmPassword}
-            />
-            {errors.confirmPassword ? (
-              <p className="text-xs text-destructive">{errors.confirmPassword}</p>
-            ) : null}
-          </div>
-
-          <Button type="submit" className="w-full" disabled={submitting}>
-            {submitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-            Create account
-          </Button>
-
-          <p className="text-center text-xs text-slate-500 dark:text-slate-400">
-            By creating an account you agree to our {" "}
-            <Link to="/terms" className="underline hover:text-primary">Terms</Link> and {" "}
-            <Link to="/privacy" className="underline hover:text-primary">Privacy Policy</Link>.
-          </p>
-        </form>
-      </div>
-    </AuthLayout>
+      </AuthLayout>
+    </>
   );
 };
 
