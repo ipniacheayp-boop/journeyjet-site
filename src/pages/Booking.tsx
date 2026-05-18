@@ -481,7 +481,7 @@ const Booking = () => {
               {currentStep === 3 && (
                 <>
                   <CouponSection
-                    totalPrice={price * passengerMultiplier}
+                    totalPrice={flightSubtotal + hotelSubtotal + carSubtotal}
                     appliedCoupon={appliedCoupon}
                     discount={discount}
                     onApplyCoupon={handleApplyCoupon}
