@@ -240,6 +240,42 @@ const Booking = () => {
       setBookingReference(data.bookingReference);
       setPaymentReady(true);
 
+      // Build a compact, type-aware itinerary summary for the confirmation page
+      const itinerarySummary: any = { bookingType };
+      if (bookingType === "flights") {
+        const out = offer?.itineraries?.[0]?.segments || [];
+        const ret = offer?.itineraries?.[1]?.segments || [];
+        itinerarySummary.flight = {
+          origin: out[0]?.departure?.iataCode,
+          destination: out[out.length - 1]?.arrival?.iataCode,
+          departAt: out[0]?.departure?.at,
+          arriveAt: out[out.length - 1]?.arrival?.at,
+          carrier: out[0]?.carrierCode,
+          flightNumber: out[0]?.number,
+          stops: Math.max(0, out.length - 1),
+          cabin: offer?.travelerPricings?.[0]?.fareDetailsBySegment?.[0]?.cabin || "ECONOMY",
+          returnDepartAt: ret[0]?.departure?.at,
+          returnArriveAt: ret[ret.length - 1]?.arrival?.at,
+        };
+      } else if (bookingType === "hotels") {
+        const o = offer?.offers?.[0] || offer;
+        itinerarySummary.hotel = {
+          name: offer?.hotel?.name || (offer?.googlePlace as any)?.displayName?.text,
+          address: offer?.hotel?.address || (offer?.googlePlace as any)?.formattedAddress,
+          checkIn: o?.checkInDate,
+          checkOut: o?.checkOutDate,
+          rating: offer?.rating,
+        };
+      } else if (bookingType === "cars") {
+        itinerarySummary.car = {
+          vehicle: offer?.vehicle?.description || offer?.vehicle?.category || offer?.title,
+          supplier: offer?.provider?.name || offer?.supplier?.name || offer?.vendor,
+          pickup: offer?.pickup?.location || offer?.pickUpLocation,
+          pickupAt: offer?.pickup?.dateTime || offer?.pickUpDate,
+          dropoffAt: offer?.dropoff?.dateTime || offer?.dropOffDate,
+        };
+      }
+
       sessionStorage.setItem("pendingBooking", JSON.stringify({
         bookingId: data.bookingId,
         amount: checkoutPrice.toFixed(2),
@@ -248,6 +284,13 @@ const Booking = () => {
         agentId,
         bookingReference: data.bookingReference,
         travelerInfo: { firstName: passengers[0].firstName, lastName: passengers[0].lastName, email: contact.email, phone: contact.phone },
+        itinerary: itinerarySummary,
+        passengers: passengers.length,
+        hotelUpsell: hotelUpsellData?.wantsHotel && hotelUpsellData.selectedHotel ? {
+          name: hotelUpsellData.selectedHotel.hotel?.name,
+          checkIn: hotelUpsellData.checkInDate,
+          checkOut: hotelUpsellData.checkOutDate,
+        } : null,
       }));
 
       toast.success("Booking created! Complete payment below.");
