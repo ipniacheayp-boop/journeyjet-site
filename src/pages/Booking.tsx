@@ -20,6 +20,8 @@ import CouponSection from "@/components/booking/CouponSection";
 import PriceSummaryCard from "@/components/booking/PriceSummaryCard";
 import HotelUpsellStep, { type HotelUpsellData } from "@/components/booking/HotelUpsellStep";
 import StripePaymentForm from "@/components/booking/StripePaymentForm";
+import HotelSummaryCard from "@/components/booking/HotelSummaryCard";
+import CarSummaryCard from "@/components/booking/CarSummaryCard";
 
 const STEPS = ["Flight", "Hotel", "Passengers", "Coupons", "Payment"];
 
@@ -98,11 +100,15 @@ const Booking = () => {
     return o.price?.currency || "USD";
   };
 
+  // API price (per person for flights; total for hotels/cars) — DO NOT add synthetic taxes,
+  // the API total already includes them. This keeps booking total === search result price.
   const price = validatedPrice || getPrice(offer);
   const currency = validatedCurrency || getCurrency(offer);
-  const taxes = price * 0.15;
-  const total = price + taxes;
-  const finalTotal = total * passengers.length - discount;
+  const apiBase = parseFloat(offer?.price?.base || "0");
+  const taxes = apiBase > 0 && apiBase < price ? price - apiBase : 0;
+  const basePerUnit = taxes > 0 ? apiBase : price;
+  const passengerMultiplier = bookingType === "flights" ? passengers.length : 1;
+  const finalTotal = price * passengerMultiplier - discount;
 
   const isProcessing = loading || validating;
 
@@ -234,6 +240,42 @@ const Booking = () => {
       setBookingReference(data.bookingReference);
       setPaymentReady(true);
 
+      // Build a compact, type-aware itinerary summary for the confirmation page
+      const itinerarySummary: any = { bookingType };
+      if (bookingType === "flights") {
+        const out = offer?.itineraries?.[0]?.segments || [];
+        const ret = offer?.itineraries?.[1]?.segments || [];
+        itinerarySummary.flight = {
+          origin: out[0]?.departure?.iataCode,
+          destination: out[out.length - 1]?.arrival?.iataCode,
+          departAt: out[0]?.departure?.at,
+          arriveAt: out[out.length - 1]?.arrival?.at,
+          carrier: out[0]?.carrierCode,
+          flightNumber: out[0]?.number,
+          stops: Math.max(0, out.length - 1),
+          cabin: offer?.travelerPricings?.[0]?.fareDetailsBySegment?.[0]?.cabin || "ECONOMY",
+          returnDepartAt: ret[0]?.departure?.at,
+          returnArriveAt: ret[ret.length - 1]?.arrival?.at,
+        };
+      } else if (bookingType === "hotels") {
+        const o = offer?.offers?.[0] || offer;
+        itinerarySummary.hotel = {
+          name: offer?.hotel?.name || (offer?.googlePlace as any)?.displayName?.text,
+          address: offer?.hotel?.address || (offer?.googlePlace as any)?.formattedAddress,
+          checkIn: o?.checkInDate,
+          checkOut: o?.checkOutDate,
+          rating: offer?.rating,
+        };
+      } else if (bookingType === "cars") {
+        itinerarySummary.car = {
+          vehicle: offer?.vehicle?.description || offer?.vehicle?.category || offer?.title,
+          supplier: offer?.provider?.name || offer?.supplier?.name || offer?.vendor,
+          pickup: offer?.pickup?.location || offer?.pickUpLocation,
+          pickupAt: offer?.pickup?.dateTime || offer?.pickUpDate,
+          dropoffAt: offer?.dropoff?.dateTime || offer?.dropOffDate,
+        };
+      }
+
       sessionStorage.setItem("pendingBooking", JSON.stringify({
         bookingId: data.bookingId,
         amount: checkoutPrice.toFixed(2),
@@ -242,6 +284,13 @@ const Booking = () => {
         agentId,
         bookingReference: data.bookingReference,
         travelerInfo: { firstName: passengers[0].firstName, lastName: passengers[0].lastName, email: contact.email, phone: contact.phone },
+        itinerary: itinerarySummary,
+        passengers: passengers.length,
+        hotelUpsell: hotelUpsellData?.wantsHotel && hotelUpsellData.selectedHotel ? {
+          name: hotelUpsellData.selectedHotel.hotel?.name,
+          checkIn: hotelUpsellData.checkInDate,
+          checkOut: hotelUpsellData.checkOutDate,
+        } : null,
       }));
 
       toast.success("Booking created! Complete payment below.");
@@ -340,7 +389,13 @@ const Booking = () => {
               {/* Step 0: Flight Summary */}
               {currentStep === 0 && (
                 <>
-                  <FlightSummaryCard offer={offer} />
+                  {bookingType === "hotels" ? (
+                    <HotelSummaryCard offer={offer} />
+                  ) : bookingType === "cars" ? (
+                    <CarSummaryCard offer={offer} />
+                  ) : (
+                    <FlightSummaryCard offer={offer} />
+                  )}
                   <div className="flex justify-end">
                     <Button onClick={goNext} size="lg" className="gap-2">
                       Continue <ArrowRight className="w-4 h-4" />
@@ -411,7 +466,7 @@ const Booking = () => {
               {currentStep === 3 && (
                 <>
                   <CouponSection
-                    totalPrice={total * passengers.length}
+                    totalPrice={price * passengerMultiplier}
                     appliedCoupon={appliedCoupon}
                     discount={discount}
                     onApplyCoupon={handleApplyCoupon}
@@ -470,13 +525,21 @@ const Booking = () => {
                       {/* Price breakdown */}
                       <div className="p-4 bg-muted/30 rounded-lg text-sm space-y-2">
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Flight ({passengers.length}x)</span>
-                          <span className="text-foreground">{formatCurrency(price * passengers.length, currency)}</span>
+                          <span className="text-muted-foreground">
+                            {bookingType === "flights" ? `Base Fare (${passengers.length}x)` : "Subtotal"}
+                          </span>
+                          <span className="text-foreground">
+                            {formatCurrency(basePerUnit * passengerMultiplier, currency)}
+                          </span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Taxes & Fees</span>
-                          <span className="text-foreground">{formatCurrency(taxes * passengers.length, currency)}</span>
-                        </div>
+                        {taxes > 0 && (
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Taxes & Fees</span>
+                            <span className="text-foreground">
+                              {formatCurrency(taxes * passengerMultiplier, currency)}
+                            </span>
+                          </div>
+                        )}
                         {discount > 0 && (
                           <div className="flex justify-between text-green-600">
                             <span>Discount ({appliedCoupon})</span>
@@ -558,11 +621,11 @@ const Booking = () => {
             {/* Sidebar - Price Summary */}
             <div className="lg:col-span-1">
               <PriceSummaryCard
-                basePrice={price}
+                basePrice={basePerUnit}
                 taxes={taxes}
                 discount={discount}
                 currency={currency}
-                passengerCount={passengers.length}
+                passengerCount={passengerMultiplier}
                 couponCode={appliedCoupon}
               />
             </div>

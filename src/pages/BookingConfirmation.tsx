@@ -17,6 +17,9 @@ interface ConfirmationDetails {
     lastName: string;
     email: string;
   };
+  itinerary?: any;
+  passengers?: number;
+  hotelUpsell?: { name?: string; checkIn?: string; checkOut?: string } | null;
 }
 
 const BookingConfirmation = () => {
@@ -39,6 +42,9 @@ const BookingConfirmation = () => {
           amount: parsed.amount,
           currency: parsed.currency || 'USD',
           travelerInfo: parsed.travelerInfo,
+          itinerary: parsed.itinerary,
+          passengers: parsed.passengers,
+          hotelUpsell: parsed.hotelUpsell,
         });
         // Clear session storage after confirmation
         sessionStorage.removeItem('pendingBooking');
@@ -125,13 +131,80 @@ const BookingConfirmation = () => {
                 </div>
               </div>
 
+              {/* Itinerary details */}
+              {confirmationDetails.itinerary?.flight && (() => {
+                const f = confirmationDetails.itinerary.flight;
+                const fmtDT = (d?: string) => d ? new Date(d).toLocaleString("en-US", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—";
+                return (
+                  <div className="border rounded-lg p-4 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <p className="font-semibold text-foreground">
+                        {f.origin} → {f.destination}
+                      </p>
+                      <span className="text-xs px-2 py-0.5 bg-muted rounded">{f.cabin}</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      {f.carrier} {f.flightNumber} • {f.stops === 0 ? "Non-stop" : `${f.stops} stop(s)`}
+                    </p>
+                    <p className="text-sm"><span className="text-muted-foreground">Departs:</span> {fmtDT(f.departAt)}</p>
+                    <p className="text-sm"><span className="text-muted-foreground">Arrives:</span> {fmtDT(f.arriveAt)}</p>
+                    {f.returnDepartAt && (
+                      <p className="text-sm pt-2 border-t"><span className="text-muted-foreground">Return:</span> {fmtDT(f.returnDepartAt)} → {fmtDT(f.returnArriveAt)}</p>
+                    )}
+                  </div>
+                );
+              })()}
+
+              {confirmationDetails.itinerary?.hotel && (() => {
+                const h = confirmationDetails.itinerary.hotel;
+                return (
+                  <div className="border rounded-lg p-4 space-y-1">
+                    <p className="font-semibold text-foreground">{h.name || "Hotel"}</p>
+                    {h.address && <p className="text-sm text-muted-foreground">{h.address}</p>}
+                    <p className="text-sm"><span className="text-muted-foreground">Check-in:</span> {h.checkIn}</p>
+                    <p className="text-sm"><span className="text-muted-foreground">Check-out:</span> {h.checkOut}</p>
+                  </div>
+                );
+              })()}
+
+              {confirmationDetails.itinerary?.car && (() => {
+                const c = confirmationDetails.itinerary.car;
+                const fmt = (d?: string) => d ? new Date(d).toLocaleString("en-US", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—";
+                return (
+                  <div className="border rounded-lg p-4 space-y-1">
+                    <p className="font-semibold text-foreground">{c.vehicle}</p>
+                    {c.supplier && <p className="text-sm text-muted-foreground">{c.supplier}</p>}
+                    {c.pickup && <p className="text-sm"><span className="text-muted-foreground">Pickup:</span> {c.pickup}</p>}
+                    <p className="text-sm"><span className="text-muted-foreground">From:</span> {fmt(c.pickupAt)}</p>
+                    <p className="text-sm"><span className="text-muted-foreground">To:</span> {fmt(c.dropoffAt)}</p>
+                  </div>
+                );
+              })()}
+
+              {confirmationDetails.hotelUpsell && (
+                <div className="border rounded-lg p-4 space-y-1 bg-muted/30">
+                  <p className="text-xs uppercase tracking-wide text-muted-foreground">Added hotel</p>
+                  <p className="font-semibold text-foreground">{confirmationDetails.hotelUpsell.name}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {confirmationDetails.hotelUpsell.checkIn} → {confirmationDetails.hotelUpsell.checkOut}
+                  </p>
+                </div>
+              )}
+
               {/* Booking Summary */}
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Booking Type</span>
                   <span className="font-medium capitalize">{confirmationDetails.bookingType}</span>
                 </div>
-                
+
+                {confirmationDetails.passengers && confirmationDetails.passengers > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Travelers</span>
+                    <span className="font-medium">{confirmationDetails.passengers}</span>
+                  </div>
+                )}
+
                 {parseFloat(confirmationDetails.amount) > 0 && (
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Total Paid</span>
@@ -140,16 +213,14 @@ const BookingConfirmation = () => {
                     </span>
                   </div>
                 )}
-                
+
                 {confirmationDetails.travelerInfo && (
-                  <>
-                    <div className="border-t pt-3 mt-3">
-                      <p className="text-sm font-medium mb-2">Traveler</p>
-                      <p className="text-sm text-muted-foreground">
-                        {confirmationDetails.travelerInfo.firstName} {confirmationDetails.travelerInfo.lastName}
-                      </p>
-                    </div>
-                  </>
+                  <div className="border-t pt-3 mt-3">
+                    <p className="text-sm font-medium mb-2">Lead Traveler</p>
+                    <p className="text-sm text-muted-foreground">
+                      {confirmationDetails.travelerInfo.firstName} {confirmationDetails.travelerInfo.lastName}
+                    </p>
+                  </div>
                 )}
               </div>
 
