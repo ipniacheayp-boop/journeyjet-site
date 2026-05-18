@@ -20,6 +20,8 @@ import CouponSection from "@/components/booking/CouponSection";
 import PriceSummaryCard from "@/components/booking/PriceSummaryCard";
 import HotelUpsellStep, { type HotelUpsellData } from "@/components/booking/HotelUpsellStep";
 import StripePaymentForm from "@/components/booking/StripePaymentForm";
+import HotelSummaryCard from "@/components/booking/HotelSummaryCard";
+import CarSummaryCard from "@/components/booking/CarSummaryCard";
 
 const STEPS = ["Flight", "Hotel", "Passengers", "Coupons", "Payment"];
 
