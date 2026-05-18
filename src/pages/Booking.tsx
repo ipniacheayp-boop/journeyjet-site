@@ -100,15 +100,30 @@ const Booking = () => {
     return o.price?.currency || "USD";
   };
 
-  // API price (per person for flights; total for hotels/cars) — DO NOT add synthetic taxes,
-  // the API total already includes them. This keeps booking total === search result price.
+  // API price (per person for flights; total for hotels/cars). API total already includes taxes.
   const price = validatedPrice || getPrice(offer);
   const currency = validatedCurrency || getCurrency(offer);
-  const apiBase = parseFloat(offer?.price?.base || "0");
-  const taxes = apiBase > 0 && apiBase < price ? price - apiBase : 0;
-  const basePerUnit = taxes > 0 ? apiBase : price;
+  const apiBaseRaw =
+    bookingType === "hotels"
+      ? parseFloat(offer?.offers?.[0]?.price?.base || offer?.price?.base || "0")
+      : parseFloat(offer?.price?.base || "0");
+  const taxes = apiBaseRaw > 0 && apiBaseRaw < price ? price - apiBaseRaw : 0;
+  const basePerUnit = taxes > 0 ? apiBaseRaw : price;
   const passengerMultiplier = bookingType === "flights" ? passengers.length : 1;
-  const finalTotal = price * passengerMultiplier - discount;
+
+  // Hotel upsell (only valid when primary booking is a flight)
+  const hotelUpsellOffer = hotelUpsellData?.wantsHotel ? hotelUpsellData.selectedHotel : null;
+  const hotelUpsellPrice = hotelUpsellOffer
+    ? parseFloat(hotelUpsellOffer.offers?.[0]?.price?.total || "0")
+    : 0;
+  const hotelUpsellCurrency = hotelUpsellOffer?.offers?.[0]?.price?.currency || currency;
+
+  // Strict conditional totals
+  const flightSubtotal = bookingType === "flights" ? price * passengerMultiplier : 0;
+  const hotelSubtotal =
+    bookingType === "hotels" ? price : bookingType === "flights" ? hotelUpsellPrice : 0;
+  const carSubtotal = bookingType === "cars" ? price : 0;
+  const finalTotal = Math.max(0, flightSubtotal + hotelSubtotal + carSubtotal - discount);
 
   const isProcessing = loading || validating;
 
@@ -196,9 +211,18 @@ const Booking = () => {
     setValidatedPrice(validationResult.price || null);
     setValidatedCurrency(validationResult.currency || "USD");
 
+    // Charge the customer the FULL grand total (flight + hotel upsell - discount, etc.)
+    const validatedUnit = validationResult.price || getPrice(offer);
+    const computedGrandTotal = Math.max(
+      0,
+      (bookingType === "flights" ? validatedUnit * passengerMultiplier : validatedUnit) +
+        (bookingType === "flights" ? hotelUpsellPrice : 0) -
+        discount,
+    );
+
     await createBookingAndPay(
       validationResult.validatedOffer || offer,
-      validationResult.price || getPrice(offer),
+      computedGrandTotal,
       validationResult.currency || "USD",
       validationResult.expiresAt,
     );
@@ -466,7 +490,7 @@ const Booking = () => {
               {currentStep === 3 && (
                 <>
                   <CouponSection
-                    totalPrice={price * passengerMultiplier}
+                    totalPrice={flightSubtotal + hotelSubtotal + carSubtotal}
                     appliedCoupon={appliedCoupon}
                     discount={discount}
                     onApplyCoupon={handleApplyCoupon}
@@ -492,49 +516,85 @@ const Booking = () => {
                     <CardContent className="p-6 space-y-4">
                       <h2 className="text-xl font-semibold text-foreground">Booking Summary</h2>
 
-                      {/* Flight summary */}
-                      <div className="p-4 bg-muted/30 rounded-lg text-sm space-y-1">
-                        <p className="font-medium text-foreground">
-                          ✈️ {offer.itineraries?.[0]?.segments?.[0]?.departure?.iataCode} →{" "}
-                          {offer.itineraries?.[0]?.segments?.slice(-1)[0]?.arrival?.iataCode}
-                        </p>
-                        <p className="text-muted-foreground">
-                          {passengers.length} Passenger{passengers.length > 1 ? "s" : ""} •{" "}
-                          {passengers[0].firstName} {passengers[0].lastName}
-                          {passengers.length > 1 && ` + ${passengers.length - 1} more`}
-                        </p>
-                        <p className="text-muted-foreground">{contact.email} • {contact.phone}</p>
-                      </div>
-
-                      {/* Hotel summary */}
-                      {hotelUpsellData?.wantsHotel && hotelUpsellData.selectedHotel && (
+                      {/* Flight summary — only for flight bookings */}
+                      {bookingType === "flights" && (
                         <div className="p-4 bg-muted/30 rounded-lg text-sm space-y-1">
                           <p className="font-medium text-foreground">
-                            🏨 {hotelUpsellData.selectedHotel.hotel?.name || "Hotel"} — {destinationCode}
+                            ✈️ {offer.itineraries?.[0]?.segments?.[0]?.departure?.iataCode} →{" "}
+                            {offer.itineraries?.[0]?.segments?.slice(-1)[0]?.arrival?.iataCode}
                           </p>
                           <p className="text-muted-foreground">
-                            {hotelUpsellData.checkInDate} → {hotelUpsellData.checkOutDate} • {hotelUpsellData.rooms} Room{hotelUpsellData.rooms > 1 ? "s" : ""} • {hotelUpsellData.adults} Adult{hotelUpsellData.adults > 1 ? "s" : ""}
-                            {hotelUpsellData.children > 0 && `, ${hotelUpsellData.children} Child${hotelUpsellData.children > 1 ? "ren" : ""}`}
+                            {passengers.length} Passenger{passengers.length > 1 ? "s" : ""} •{" "}
+                            {passengers[0].firstName} {passengers[0].lastName}
+                            {passengers.length > 1 && ` + ${passengers.length - 1} more`}
+                          </p>
+                          <p className="text-muted-foreground">{contact.email} • {contact.phone}</p>
+                        </div>
+                      )}
+
+                      {/* Hotel-only summary */}
+                      {bookingType === "hotels" && (
+                        <div className="p-4 bg-muted/30 rounded-lg text-sm space-y-1">
+                          <p className="font-medium text-foreground">
+                            🏨 {offer?.hotel?.name || (offer?.googlePlace as any)?.displayName?.text || "Hotel"}
+                          </p>
+                          <p className="text-muted-foreground">
+                            {offer?.offers?.[0]?.checkInDate} → {offer?.offers?.[0]?.checkOutDate}
+                          </p>
+                          <p className="text-muted-foreground">{contact.email} • {contact.phone}</p>
+                        </div>
+                      )}
+
+                      {/* Car-only summary */}
+                      {bookingType === "cars" && (
+                        <div className="p-4 bg-muted/30 rounded-lg text-sm space-y-1">
+                          <p className="font-medium text-foreground">
+                            🚗 {offer?.vehicle?.description || offer?.vehicle?.category || offer?.title || "Vehicle"}
+                          </p>
+                          <p className="text-muted-foreground">{contact.email} • {contact.phone}</p>
+                        </div>
+                      )}
+
+                      {/* Hotel upsell (flight + hotel package) */}
+                      {bookingType === "flights" && hotelUpsellOffer && (
+                        <div className="p-4 bg-muted/30 rounded-lg text-sm space-y-1">
+                          <p className="font-medium text-foreground">
+                            🏨 {hotelUpsellOffer.hotel?.name || "Hotel"} — {destinationCode}
+                          </p>
+                          <p className="text-muted-foreground">
+                            {hotelUpsellData?.checkInDate} → {hotelUpsellData?.checkOutDate} • {hotelUpsellData?.rooms} Room{(hotelUpsellData?.rooms || 1) > 1 ? "s" : ""}
                           </p>
                           <p className="font-medium text-primary">
-                            Hotel: {formatCurrency(parseFloat(hotelUpsellData.selectedHotel.offers?.[0]?.price?.total || "0"), hotelUpsellData.selectedHotel.offers?.[0]?.price?.currency || "USD")}
+                            Hotel: {formatCurrency(hotelUpsellPrice, hotelUpsellCurrency)}
                           </p>
                         </div>
                       )}
 
                       {/* Price breakdown */}
                       <div className="p-4 bg-muted/30 rounded-lg text-sm space-y-2">
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">
-                            {bookingType === "flights" ? `Base Fare (${passengers.length}x)` : "Subtotal"}
-                          </span>
-                          <span className="text-foreground">
-                            {formatCurrency(basePerUnit * passengerMultiplier, currency)}
-                          </span>
-                        </div>
-                        {taxes > 0 && (
+                        {flightSubtotal > 0 && (
                           <div className="flex justify-between">
-                            <span className="text-muted-foreground">Taxes & Fees</span>
+                            <span className="text-muted-foreground">
+                              Flight Subtotal {passengerMultiplier > 1 && `(${passengerMultiplier}x)`}
+                            </span>
+                            <span className="text-foreground">{formatCurrency(flightSubtotal, currency)}</span>
+                          </div>
+                        )}
+                        {hotelSubtotal > 0 && (
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Hotel Subtotal</span>
+                            <span className="text-foreground">{formatCurrency(hotelSubtotal, currency)}</span>
+                          </div>
+                        )}
+                        {carSubtotal > 0 && (
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Car Subtotal</span>
+                            <span className="text-foreground">{formatCurrency(carSubtotal, currency)}</span>
+                          </div>
+                        )}
+                        {bookingType === "flights" && taxes > 0 && (
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Taxes & Fees (included)</span>
                             <span className="text-foreground">
                               {formatCurrency(taxes * passengerMultiplier, currency)}
                             </span>
@@ -547,7 +607,7 @@ const Booking = () => {
                           </div>
                         )}
                         <div className="border-t border-border pt-2 flex justify-between font-bold text-base">
-                          <span className="text-foreground">Total</span>
+                          <span className="text-foreground">Grand Total</span>
                           <span className="text-primary">{formatCurrency(finalTotal, currency)}</span>
                         </div>
                       </div>
@@ -627,6 +687,10 @@ const Booking = () => {
                 currency={currency}
                 passengerCount={passengerMultiplier}
                 couponCode={appliedCoupon}
+                flightSubtotal={flightSubtotal}
+                hotelSubtotal={hotelSubtotal}
+                carSubtotal={carSubtotal}
+                bookingType={bookingType}
               />
             </div>
           </div>
