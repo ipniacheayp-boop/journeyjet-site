@@ -346,7 +346,13 @@ const Booking = () => {
               {/* Step 0: Flight Summary */}
               {currentStep === 0 && (
                 <>
-                  <FlightSummaryCard offer={offer} />
+                  {bookingType === "hotels" ? (
+                    <HotelSummaryCard offer={offer} />
+                  ) : bookingType === "cars" ? (
+                    <CarSummaryCard offer={offer} />
+                  ) : (
+                    <FlightSummaryCard offer={offer} />
+                  )}
                   <div className="flex justify-end">
                     <Button onClick={goNext} size="lg" className="gap-2">
                       Continue <ArrowRight className="w-4 h-4" />
