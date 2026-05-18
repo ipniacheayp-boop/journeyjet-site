@@ -678,6 +678,10 @@ const Booking = () => {
                 currency={currency}
                 passengerCount={passengerMultiplier}
                 couponCode={appliedCoupon}
+                flightSubtotal={flightSubtotal}
+                hotelSubtotal={hotelSubtotal}
+                carSubtotal={carSubtotal}
+                bookingType={bookingType}
               />
             </div>
           </div>
