@@ -17,6 +17,9 @@ interface ConfirmationDetails {
     lastName: string;
     email: string;
   };
+  itinerary?: any;
+  passengers?: number;
+  hotelUpsell?: { name?: string; checkIn?: string; checkOut?: string } | null;
 }
 
 const BookingConfirmation = () => {
