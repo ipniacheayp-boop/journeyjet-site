@@ -578,11 +578,11 @@ const Booking = () => {
             {/* Sidebar - Price Summary */}
             <div className="lg:col-span-1">
               <PriceSummaryCard
-                basePrice={price}
+                basePrice={basePerUnit}
                 taxes={taxes}
                 discount={discount}
                 currency={currency}
-                passengerCount={passengers.length}
+                passengerCount={passengerMultiplier}
                 couponCode={appliedCoupon}
               />
             </div>
