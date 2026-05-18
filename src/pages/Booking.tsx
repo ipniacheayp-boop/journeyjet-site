@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -307,6 +308,12 @@ const Booking = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEOHead
+        title="Secure Booking | Tripile.com"
+        description="Complete your Tripile booking securely."
+        canonicalUrl={`https://tripile.com/booking/${bookingType ?? "flight"}`}
+        noIndex
+      />
       <Header />
 
       {priceChangeData && (
