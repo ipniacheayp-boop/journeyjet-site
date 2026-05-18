@@ -334,7 +334,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                   Depart
                 </Label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                   <Input
                     id="depart-date"
                     type="date"
@@ -356,7 +356,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     Return
                   </Label>
                   <div className="relative">
-                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                     <Input
                       id="return-date"
                       type="date"
@@ -462,7 +462,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                   Check-in
                 </Label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                   <Input
                     id="check-in"
                     type="date"
@@ -482,7 +482,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                   Check-out
                 </Label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                   <Input
                     id="check-out"
                     type="date"
@@ -582,7 +582,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                   Pick-up Date
                 </Label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                   <Input
                     id="pickup-date"
                     type="date"
@@ -602,7 +602,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                   Drop-off Date
                 </Label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                   <Input
                     id="dropoff-date"
                     type="date"
@@ -691,7 +691,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                   Departure Date
                 </Label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                   <Input
                     id="cruise-date"
                     type="date"
