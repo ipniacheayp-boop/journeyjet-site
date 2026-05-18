@@ -482,13 +482,21 @@ const Booking = () => {
                       {/* Price breakdown */}
                       <div className="p-4 bg-muted/30 rounded-lg text-sm space-y-2">
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Flight ({passengers.length}x)</span>
-                          <span className="text-foreground">{formatCurrency(price * passengers.length, currency)}</span>
+                          <span className="text-muted-foreground">
+                            {bookingType === "flights" ? `Base Fare (${passengers.length}x)` : "Subtotal"}
+                          </span>
+                          <span className="text-foreground">
+                            {formatCurrency(basePerUnit * passengerMultiplier, currency)}
+                          </span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Taxes & Fees</span>
-                          <span className="text-foreground">{formatCurrency(taxes * passengers.length, currency)}</span>
-                        </div>
+                        {taxes > 0 && (
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Taxes & Fees</span>
+                            <span className="text-foreground">
+                              {formatCurrency(taxes * passengerMultiplier, currency)}
+                            </span>
+                          </div>
+                        )}
                         {discount > 0 && (
                           <div className="flex justify-between text-green-600">
                             <span>Discount ({appliedCoupon})</span>
