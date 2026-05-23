@@ -44,9 +44,9 @@ const Terms = () => {
                 transactions taking place on the website and are in compliance with the legal obligations.
               </p>
               <p className="text-base leading-7 text-foreground/90 mb-4">
-                These terms of use are entered into by and between you and Cheap Flights. The following terms and
+                These terms of use are entered into by and between you and Trivoya Ventures LLC. The following terms and
                 conditions, together with any documents they expressly incorporate by reference (collectively, these
-                "Terms of Use"), govern your access to and use of Cheap Flights along with the Company's mobile website
+                "Terms of Use"), govern your access to and use of Tripile.com along with the Company's mobile website
                 and mobile and tablet applications (the "App"), including any content, functionality and services
                 offered on or through{" "}
                 <a
@@ -583,7 +583,7 @@ const Terms = () => {
               <p className="text-base leading-7 text-foreground/90 mb-4">
                 You also authorize us to send you automated and/or prerecorded calls regarding our Services and your
                 service requests, along with calls from Travel Service Providers that can help you with your request to
-                any landline or mobile phone number you provided. You consent to Cheap Flights and the Travel Service
+                any landline or mobile phone number you provided. You consent to Trivoya Ventures LLC and the Travel Service
                 Provider's use of automated phone technology including auto-dialed and prerecorded messages to
                 communicate with you concerning your account or use of the Services, updates concerning new and existing
                 features on the Website, and communications concerning promotions run by us. If a contact number you
@@ -966,7 +966,7 @@ const Terms = () => {
               </p>
               <p className="text-base leading-7 text-foreground/90 mb-4">
                 Refunds, where applicable, will be processed within 7-14 business days to the original payment method
-                used for booking. Service fees charged by Cheap Flights may be non-refundable regardless of the
+                used for booking. Service fees charged by Trivoya Ventures LLC may be non-refundable regardless of the
                 booking's refund status.
               </p>
               <p className="text-base leading-7 text-foreground/90 mb-4">
@@ -996,7 +996,7 @@ const Terms = () => {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-foreground mb-4">Force Majeure</h2>
               <p className="text-base leading-7 text-foreground/90 mb-4">
-                Neither Cheap Flights nor our service providers shall be liable for any failure to perform our
+                Neither Trivoya Ventures LLC nor our service providers shall be liable for any failure to perform our
                 obligations where such failure results from any cause beyond our reasonable control, including but not
                 limited to: acts of God, natural disasters, war, terrorism, riots, civil unrest, government actions,
                 pandemic or epidemic, strikes, labor disputes, or failure of telecommunications or information services.
@@ -1025,7 +1025,7 @@ const Terms = () => {
               <h3 className="text-xl font-semibold text-foreground mb-3 mt-6">General Parking Terms</h3>
               <ul className="list-disc pl-6 space-y-2 text-base leading-7 text-foreground/90 mb-4">
                 <li>
-                  Cheap Flights acts only as an agent for third party parking facility operators (Car Park Operator).
+                  Trivoya Ventures LLC acts only as an agent for third party parking facility operators (Car Park Operator).
                 </li>
                 <li>Bookings must be made online at least 24 hours prior to arrival.</li>
                 <li>You must be in possession of the credit card with which you have made the booking reservation.</li>
@@ -1045,11 +1045,11 @@ const Terms = () => {
                   Please make sure you have the details about the arrival procedure as stated on your booking
                   confirmation. It is your responsibility to obtain this information before departing for the airport -
                   any missed bookings, flights or other problems arising from the customer's failure to obtain this
-                  information will not be entertained by Cheap Flights or the featured car park service provider.
+                  information will not be entertained by Trivoya Ventures LLC or the featured car park service provider.
                 </li>
                 <li>
                   You must check in at the car park check-in facility at the time stated on your booking receipt. Should
-                  the customer not arrive on or before the stated time then Cheap Flights and the featured car park
+                  the customer not arrive on or before the stated time then Trivoya Ventures LLC and the featured car park
                   service provider shall not be liable for any customers' failure to meet aircraft arrivals and
                   departures.
                 </li>
@@ -1064,7 +1064,7 @@ const Terms = () => {
                 <li>Full payment will be made to the featured car park service provider for completing the booking.</li>
                 <li>
                   Your credit card will be charged twice for booking. Once by the featured car park service provider and
-                  by Cheap Flights at the time of booking.
+                  by Trivoya Ventures LLC at the time of booking.
                 </li>
                 <li>
                   We reserve the right to change our tariffs at any time and to withdraw any special, introductory or
@@ -1080,7 +1080,7 @@ const Terms = () => {
 
               <h3 className="text-xl font-semibold text-foreground mb-3 mt-6">Parking Cancellation Policy</h3>
               <ul className="list-disc pl-6 space-y-2 text-base leading-7 text-foreground/90 mb-4">
-                <li>All cancellation must be made through Cheap Flights in order to be valid.</li>
+                <li>All cancellation must be made through Trivoya Ventures LLC in order to be valid.</li>
                 <li>
                   All bookings are subject to a non-refundable booking fee. The refund of booking amount, however,
                   differ from one service provider to other.
@@ -1095,9 +1095,9 @@ const Terms = () => {
                   amendment terms and conditions.
                 </li>
                 <li>
-                  The customer acknowledges that Cheap Flights may need to cancel parking services due to industrial
+                  The customer acknowledges that Trivoya Ventures LLC may need to cancel parking services due to industrial
                   action, no parking spaces available, technical problems or any event beyond the reasonable control of
-                  Cheap Flights. In no circumstances will the Cheap Flights be liable for any losses which a customer
+                  Trivoya Ventures LLC. In no circumstances will the Trivoya Ventures LLC be liable for any losses which a customer
                   may incur as a result of any such occurrence or event.
                 </li>
               </ul>
