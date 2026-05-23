@@ -41,7 +41,7 @@ const PrivacyPolicy = () => {
 
       <SectionHeading>INTRODUCTION</SectionHeading>
       <P>
-        Tripile.com, LLC ("Tripile.com", "Company," "Us" or "We") respects your privacy and is committed to protecting
+        Trivoya Ventures LLC ("Tripile.com", "Company," "Us" or "We") respects your privacy and is committed to protecting
         it through our compliance with this policy. This Privacy Notice and Policy (hereafter the "Policy") describes
         the types of information we may collect from you or that you may provide when you visit or use www.tripile.com
         and the Company's mobile website, its mobile and tablet applications (collectively herein the "App"), or use any
@@ -324,7 +324,7 @@ const PrivacyPolicy = () => {
         <Li>To our subsidiaries and affiliates;</Li>
         <Li>
           To contractors, service providers, and other third parties we use to support our business, including but not
-          limited to, Triplile.com Pvt. Ltd., but only to the extent such parties are necessary for the fulfillment of
+          limited to, Trivoya Ventures LLC, but only to the extent such parties are necessary for the fulfillment of
           your travel arrangements. Generally, it will be necessary for us to process personal data via a third party,
           including, but not limited to, airlines, hotel vendors, car rental companies, and entry visa or passport
           companies, in the course of completing your purchases of travel;
@@ -423,7 +423,7 @@ const PrivacyPolicy = () => {
         If you delete your User Contributions from the Website, copies of your User Contributions may remain viewable in
         cached and archived pages or might have been copied or stored by other Website users. Proper access and use of
         information provided on the Website, including User Contributions, is governed by our Terms and Conditions,
-        Triplie.com Terms and Conditions. Residents of certain states within the United States may have additional
+        Tripile.com Terms and Conditions. Residents of certain states within the United States may have additional
         personal information rights and choices. Please see the section on your specific state's privacy rights, if
         applicable.
       </P>
@@ -695,12 +695,12 @@ const PrivacyPolicy = () => {
         personal information. California Civil Code 1798.83 permits California residents who use our Website to request
         certain information regarding our disclosure of personal information to third parties for their direct marketing
         purposes. To make such a request, please send an email to Support@Tripile.com. To learn more about your Privacy
-        Rights, please visit our state specific notice at California Privacy Notice - Cheap Flights.
+        Rights, please visit our state specific notice at California Privacy Notice - Trivoya Ventures LLC.
       </P>
       <SubHeading>Nevada Residents; Nevada Privacy Rights Notice</SubHeading>
       <P>
         Nevada consumers have a right to opt out of the sale of certain personal information collected by website
-        operators under Nevada law (SB 220). In the preceding twelve (12) months, Cheap Flights has not sold your
+        operators under Nevada law (SB 220). In the preceding twelve (12) months, Trivoya Ventures LLC has not sold your
         personal information to third parties (as defined by Nevada law) and will not do so in the future without
         providing you with notice and an opportunity to opt out of such sale as required by law. If you have questions
         regarding these rights, please contact us at Support@Tripile.com
@@ -709,12 +709,12 @@ const PrivacyPolicy = () => {
       <P>
         Effective January 1, 2023, under Virginia's Consumer Data Protection Act ("CDPA"), Virginia residents have
         rights regarding the collection, use, and sharing of their personal data. In the preceding twelve (12) months,
-        Cheap Flights has not sold your personal data and will not do so in the future without providing you with notice
-        and an opportunity to opt out of such sale as required by law. Cheap Flights may engage in "targeted
+        Trivoya Ventures LLC has not sold your personal data and will not do so in the future without providing you with notice
+        and an opportunity to opt out of such sale as required by law. Trivoya Ventures LLC may engage in "targeted
         advertising" as that term is defined in the CDPA.
       </P>
       <P>
-        As of January 1, 2023, you have the right to opt out of targeted advertising. Cheap Flights collects various
+        As of January 1, 2023, you have the right to opt out of targeted advertising. Trivoya Ventures LLC collects various
         categories of personal information when you use the Website, the App, or our services which are described in the
         Section, "Information We Collect About You and How We Use It." The Section, "Disclosure of Your Information"
         describes the third parties with whom we may share personal information and under what circumstances certain
@@ -752,9 +752,9 @@ const PrivacyPolicy = () => {
         Effective July 1, 2023, Colorado residents will have certain rights around the collection, use, and sharing of
         their personal data under Colorado's Consumer Privacy Act ("CPA"). In the preceding twelve (12) months, Cheap
         Flights has not sold your personal data and will not do so in the future without providing you with notice and
-        an opportunity to opt out of such sale as required by law. Cheap Flights may engage in "targeted advertising" as
+        an opportunity to opt out of such sale as required by law. Trivoya Ventures LLC may engage in "targeted advertising" as
         that term is defined in the CPA and as of July 1, 2023 you will have the right to opt-out of targeted
-        advertising. Cheap Flights collects various categories of personal information when you use the Website, the
+        advertising. Trivoya Ventures LLC collects various categories of personal information when you use the Website, the
         App, and our services which are described in the Section, "Information We Collect About You and How We Use It."
         The Section, "Disclosure of Your Information" describes the third parties with whom we may share personal
         information and under what circumstances certain information may be shared.
