@@ -233,6 +233,10 @@ const About = () => {
                 Support@Tripile.com
               </a>
             </p>
+            <div className="relative z-10 pt-6 border-t border-border/50">
+              <p className="text-sm font-semibold text-foreground tracking-wide">Trivoya Ventures LLC</p>
+              <p className="text-xs text-muted-foreground mt-1">5900 Balcones Drive STE 100, Austin, TX 78731 USA</p>
+            </div>
           </div>
         </div>
       </main>
