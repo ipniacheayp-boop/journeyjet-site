@@ -47,7 +47,11 @@ const About = () => {
               "name": "Tripile.com",
               "url": "https://tripile.com",
               "foundingDate": "2023",
-              "description": "Tripile.com helps travelers find the best flight deals, hotel discounts, and car rentals across the USA.",
+            "description": "Tripile.com is a travel booking platform operated by Trivoya Ventures LLC, helping travelers find the best flight deals, hotel discounts, and car rentals across the USA.",
+              "parentOrganization": {
+                "@type": "Organization",
+                "name": "Trivoya Ventures LLC"
+              },
               "contactPoint": {
                 "@type": "ContactPoint",
                 "telephone": "+1-800-963-4330",
@@ -86,6 +90,9 @@ const About = () => {
           <p className="text-xl md:text-2xl font-light max-w-3xl mx-auto text-muted-foreground drop-shadow-sm leading-relaxed">
             We believe every journey can be life-changing — a chance to explore, unwind, and discover the beauty of the
             world.
+          </p>
+          <p className="mt-4 text-sm text-muted-foreground/80 font-medium tracking-wide uppercase">
+            A Trivoya Ventures LLC Company
           </p>
         </div>
       </div>
