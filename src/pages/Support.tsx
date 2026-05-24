@@ -181,6 +181,9 @@ const Support = () => {
             "mainEntity": {
               "@type": "Organization",
               "name": "Tripile.com",
+              "alternateName": "Trivoya Ventures LLC",
+              "description": "Tripile.com is a travel booking platform operated by Trivoya Ventures LLC, headquartered in Austin, TX.",
+              "url": "https://tripile.com",
               "contactPoint": {
                 "@type": "ContactPoint",
                 "telephone": "+1-800-963-4330",
@@ -377,7 +380,10 @@ const Support = () => {
                   <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[80px]" />
                   <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px]" />
 
-                  <h3 className="text-2xl font-bold mb-8 text-foreground relative z-10">Get In Touch</h3>
+                  <h3 className="text-2xl font-bold mb-2 text-foreground relative z-10">Get In Touch</h3>
+                  <p className="text-sm text-muted-foreground mb-8 relative z-10">
+                    Tripile.com — A Trivoya Ventures LLC Company
+                  </p>
 
                   <div className="space-y-8 relative z-10 text-left">
                     <div className="flex items-start gap-5">
