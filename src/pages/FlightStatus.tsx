@@ -303,16 +303,11 @@ const FlightStatus = () => {
 
         if (fnError) throw fnError;
 
-        if (data?.mock || !data?.data?.length) {
-          // Use mock fallback
-          const filtered = MOCK_RESULTS.filter((r) => r.flightNumber.toUpperCase().includes(flightInput.toUpperCase()));
-          setResults(filtered.length ? filtered : MOCK_RESULTS.slice(0, 1));
-        } else {
-          setResults(transformAmadeusData(data.data));
-        }
-      } catch {
-        // Fallback to mock
-        setResults(MOCK_RESULTS.slice(0, 1));
+        if (data?.error) setError(data.error);
+        setResults(Array.isArray(data?.data) ? data.data : []);
+      } catch (err: any) {
+        setError(err?.message || "Unable to fetch flight status right now. Please try again.");
+        setResults([]);
       } finally {
         setLoading(false);
       }
@@ -332,18 +327,17 @@ const FlightStatus = () => {
 
         if (fnError) throw fnError;
 
-        if (data?.mock || !data?.data?.length) {
-          setResults(MOCK_RESULTS);
-        } else {
-          setResults(transformRouteData(data.data));
-        }
-      } catch {
-        setResults(MOCK_RESULTS);
+        if (data?.error) setError(data.error);
+        setResults(Array.isArray(data?.data) ? data.data : []);
+      } catch (err: any) {
+        setError(err?.message || "Unable to fetch flight status right now. Please try again.");
+        setResults([]);
       } finally {
         setLoading(false);
       }
     }
   };
+
 
   const transformAmadeusData = (apiData: any[]): FlightResult[] => {
     return apiData.slice(0, 5).map((item: any) => {
