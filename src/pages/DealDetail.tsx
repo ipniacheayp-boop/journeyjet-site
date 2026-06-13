@@ -1,10 +1,12 @@
 import { useParams, Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { mockDeals, type Deal } from "@/data/mockDeals";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Plane, ArrowRight, Clock, Users, Shield, HelpCircle, ChevronRight } from "lucide-react";
+import { Calendar, MapPin, Plane, ArrowRight, Clock, Users, Shield, HelpCircle, ChevronRight, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import FAQSchema from "@/components/seo/FAQSchema";
@@ -15,11 +17,108 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
+// Pull the first usable image out of the DB `images` JSON column
+const firstImage = (images: unknown): string => {
+  try {
+    let arr: any = images;
+    if (typeof images === "string") {
+      const trimmed = images.trim();
+      arr = trimmed.startsWith("[") ? JSON.parse(trimmed) : trimmed;
+    }
+    if (Array.isArray(arr) && arr.length > 0) return String(arr[0]);
+    if (typeof arr === "string" && arr) return arr;
+  } catch {
+    /* ignore */
+  }
+  return "/deal-beach.jpg";
+};
+
+// Normalize a database deal row into the display Deal shape
+const normalizeDbDeal = (row: any): Deal => ({
+  id: row.slug || row.id,
+  title: row.title || `${row.origin_city} to ${row.dest_city}`,
+  image: firstImage(row.images),
+  origin: `${row.origin_city} (${row.origin_code})`,
+  destination: `${row.dest_city} (${row.dest_code})`,
+  airline: row.airline || "Multiple Airlines",
+  departDate: row.date_from,
+  returnDate: row.date_to,
+  price: Math.ceil(Number(row.price_usd) || 0),
+  originalPrice: Math.ceil(Number(row.original_price_usd) || Number(row.price_usd) * 1.3 || 0),
+  cabinClass: row.class || "Economy",
+});
+
 const DealDetail = () => {
   const { id } = useParams();
-  const deal = mockDeals.find(d => d.id === id);
+  const [deal, setDeal] = useState<Deal | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      setLoading(true);
+
+      // 1) Static/mock deals (e.g. mock-1) resolve instantly
+      const local = mockDeals.find((d) => d.id === id);
+      if (local) {
+        if (active) {
+          setDeal(local);
+          setLoading(false);
+        }
+        return;
+      }
+
+      // 2) Look up a published deal in the database by slug, then by id
+      try {
+        let { data } = await supabase
+          .from("deals")
+          .select("*")
+          .eq("slug", id)
+          .eq("published", true)
+          .maybeSingle();
+
+        if (!data) {
+          const byId = await supabase
+            .from("deals")
+            .select("*")
+            .eq("id", id)
+            .eq("published", true)
+            .maybeSingle();
+          data = byId.data;
+        }
+
+        if (active) {
+          setDeal(data ? normalizeDbDeal(data) : null);
+          setLoading(false);
+        }
+      } catch {
+        if (active) {
+          setDeal(null);
+          setLoading(false);
+        }
+      }
+    };
+
+    load();
+    return () => {
+      active = false;
+    };
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 pt-24 pb-16 flex items-center justify-center">
+          <Loader2 className="w-10 h-10 animate-spin text-primary" />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!deal) {
+
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
