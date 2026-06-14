@@ -6,6 +6,8 @@ import { resolve } from "path";
 import { popularDestinations, airlinesData } from "../src/data/destinationsData";
 import { seoFlightRoutes, seoHotelCities } from "../src/data/seoRoutes";
 import { airportLandingPages } from "../src/data/airportLandingData";
+import { blogPosts } from "../src/data/blogPosts";
+import { cruiseDestinations } from "../src/data/cruiseDestinations";
 
 const BASE_URL = "https://tripile.com";
 const today = new Date().toISOString().slice(0, 10);
@@ -47,21 +49,14 @@ const core: Entry[] = [
 ];
 entries.push(...core);
 
-// Blog posts (kept inline — content data is markdown-driven elsewhere)
-const blogSlugs = [
-  "smart-international-travel-cheap-international-flights",
-  "hidden-gems-europe-2024",
-  "travel-insurance-guide",
-  "packing-carry-on-only",
-  "best-travel-credit-cards-2024",
-  "solo-travel-safety-tips",
-  "how-to-find-cheap-flights-2026",
-  "spring-break-2026-cheapest-destinations",
-  "micro-cations-24-hour-travel-guide-2026",
-  "flight-canceled-refund-guide-usa-2026",
-];
-blogSlugs.forEach((slug) =>
-  entries.push({ path: `/blog/${slug}`, changefreq: "monthly", priority: "0.7" })
+// Blog posts (sourced dynamically from blog data so the sitemap stays in sync)
+blogPosts.forEach((post) =>
+  entries.push({ path: `/blog/${post.slug}`, changefreq: "monthly", priority: "0.7" })
+);
+
+// Cruise destination landing pages (CruiseDestinationPage — /cruises/:slug)
+cruiseDestinations.forEach((d) =>
+  entries.push({ path: `/cruises/${d.slug}`, changefreq: "weekly", priority: "0.8" })
 );
 
 // Flights to destination (FlightsToDestination — /flights-to/:slug)
