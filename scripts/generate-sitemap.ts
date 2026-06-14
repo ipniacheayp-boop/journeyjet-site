@@ -6,6 +6,8 @@ import { resolve } from "path";
 import { popularDestinations, airlinesData } from "../src/data/destinationsData";
 import { seoFlightRoutes, seoHotelCities } from "../src/data/seoRoutes";
 import { airportLandingPages } from "../src/data/airportLandingData";
+import { blogPosts } from "../src/data/blogPosts";
+import { cruiseDestinations } from "../src/data/cruiseDestinations";
 
 const BASE_URL = "https://tripile.com";
 const today = new Date().toISOString().slice(0, 10);
