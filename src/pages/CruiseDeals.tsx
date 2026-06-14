@@ -196,10 +196,11 @@ const CruiseDeals = () => {
     {
       title: "Cruise Deals",
       links: [
-        { text: "Alaska Cruises", href: "#" },
-        { text: "Caribbean Cruises", href: "#" },
-        { text: "Mediterranean Cruises", href: "#" },
-        { text: "Bahamas Cruises", href: "#" },
+        { text: "Alaska Cruises", href: "/cruises/alaska-cruises" },
+        { text: "Caribbean Cruises", href: "/cruises/caribbean-cruises" },
+        { text: "Mediterranean Cruises", href: "/cruises/mediterranean-cruises" },
+        { text: "Luxury Cruises", href: "/cruises/luxury-cruises" },
+        { text: "Family Cruises", href: "/cruises/family-cruises" },
       ],
     },
   ];
