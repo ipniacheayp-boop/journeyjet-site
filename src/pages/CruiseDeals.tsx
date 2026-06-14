@@ -356,7 +356,36 @@ const CruiseDeals = () => {
           </div>
         </section>
 
-        {/* Content Section */}
+        {/* Cruises by Destination — internal links */}
+        <section className="py-12 px-4">
+          <div className="container mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-3">
+              Browse Cruises by Destination
+            </h2>
+            <p className="text-center text-muted-foreground mb-10 max-w-2xl mx-auto">
+              Explore detailed guides, itineraries and FAQs for the world's most popular cruise destinations.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl mx-auto">
+              {cruiseDestinations.map((d) => (
+                <Link
+                  key={d.slug}
+                  to={`/cruises/${d.slug}`}
+                  className="group flex items-center justify-between rounded-xl border border-border bg-card p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-md"
+                >
+                  <div>
+                    <span className="block font-semibold text-foreground group-hover:text-primary">
+                      {d.name}
+                    </span>
+                    <span className="text-sm text-muted-foreground">{d.tagline}</span>
+                  </div>
+                  <Ship className="h-5 w-5 flex-shrink-0 text-primary" />
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+
         <section className="py-16 px-4 bg-muted/50 dark:bg-muted/30">
           <div className="container mx-auto max-w-4xl">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-8">
