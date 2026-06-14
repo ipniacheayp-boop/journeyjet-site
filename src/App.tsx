@@ -52,6 +52,7 @@ const FxSavingsDashboard = lazy(() => import("./pages/FxSavingsDashboard"));
 const Sitemap = lazy(() => import("./pages/Sitemap"));
 const TaxesFees = lazy(() => import("./pages/TaxesFees"));
 const CruiseDeals = lazy(() => import("./pages/CruiseDeals"));
+const CruiseDestinationPage = lazy(() => import("./pages/CruiseDestinationPage"));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogDetail = lazy(() => import("./pages/BlogDetail"));
 const FlightRoutePage = lazy(() => import("./pages/seo/FlightRoutePage"));
@@ -168,9 +169,14 @@ const App = () => (
                   <Route path="/error" element={<ErrorPage />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/privacy" element={<PrivacyPolicy />} />
+                  {/* SEO: keep legacy/external inbound links working (fix 404s) */}
+                  <Route path="/privacy-policy" element={<Navigate to="/privacy" replace />} />
+                  <Route path="/contact-us" element={<Navigate to="/support" replace />} />
+                  <Route path="/contact" element={<Navigate to="/support" replace />} />
                   <Route path="/sitemap" element={<Sitemap />} />
                   <Route path="/taxes-fees" element={<TaxesFees />} />
                   <Route path="/cruise-deals" element={<CruiseDeals />} />
+                  <Route path="/cruises/:slug" element={<CruiseDestinationPage />} />
                   <Route path="/blog" element={<Blog />} />
                   <Route path="/blog/:slug" element={<BlogDetail />} />
                   <Route path="/destinations-checklist" element={<TravelChecklists />} />
