@@ -206,6 +206,206 @@ async function searchSerpApi(params: any) {
   return { data: offers, dictionaries: { carriers: allCarriers }, empty: offers.length === 0 } as const;
 }
 
+// ============================================================
+// FlightAPI.io provider (primary)
+// Docs: https://docs.flightapi.io  — key is embedded in the URL path.
+// ============================================================
+
+const CABIN_TO_FLIGHTAPI: Record<string, string> = {
+  ECONOMY: "Economy",
+  PREMIUM_ECONOMY: "Premium_Economy",
+  BUSINESS: "Business",
+  FIRST: "First",
+};
+
+function flightApiCabin(travelClass?: string): string {
+  return CABIN_TO_FLIGHTAPI[String(travelClass || "ECONOMY").toUpperCase()] || "Economy";
+}
+
+interface FaPlace { id: number; display_code?: string; name?: string }
+interface FaCarrier { id: number; display_code?: string; name?: string }
+interface FaSegment {
+  id: string;
+  origin_place_id: number;
+  destination_place_id: number;
+  departure: string;
+  arrival: string;
+  duration?: number;
+  marketing_flight_number?: string;
+  marketing_carrier_id?: number;
+}
+interface FaLeg {
+  id: string;
+  segment_ids?: string[];
+  duration?: number;
+  stop_count?: number;
+}
+interface FaItinerary {
+  id: string;
+  leg_ids?: string[];
+  cheapest_price?: { amount?: number };
+  pricing_options?: Array<{
+    price?: { amount?: number };
+    items?: Array<{ url?: string }>;
+  }>;
+}
+
+function flightApiToOffers(json: any, adults: number, currency: string, max: number) {
+  const places: Record<number, FaPlace> = {};
+  for (const p of (json.places || []) as FaPlace[]) places[p.id] = p;
+  const carriers: Record<number, FaCarrier> = {};
+  for (const c of (json.carriers || []) as FaCarrier[]) carriers[c.id] = c;
+  const legsById: Record<string, FaLeg> = {};
+  for (const l of (json.legs || []) as FaLeg[]) legsById[l.id] = l;
+  const segsById: Record<string, FaSegment> = {};
+  for (const s of (json.segments || []) as FaSegment[]) segsById[s.id] = s;
+
+  const carriersDict: Record<string, string> = {};
+  const itineraries: FaItinerary[] = (json.itineraries || []).slice(0, max);
+
+  const offers = itineraries.map((it, idx) => {
+    // pick cheapest pricing option
+    let bestPrice = it.cheapest_price?.amount;
+    let deeplink: string | null = null;
+    for (const po of it.pricing_options || []) {
+      const amt = po.price?.amount;
+      if (amt != null && (bestPrice == null || amt < bestPrice)) bestPrice = amt;
+      if (!deeplink && po.items?.[0]?.url) deeplink = po.items[0].url;
+    }
+    const total = Number(bestPrice ?? 0);
+
+    const offerItineraries = (it.leg_ids || [])
+      .map((legId) => legsById[legId])
+      .filter(Boolean)
+      .map((leg) => {
+        const segments = (leg.segment_ids || [])
+          .map((sid) => segsById[sid])
+          .filter(Boolean)
+          .map((s, i) => {
+            const mc = s.marketing_carrier_id != null ? carriers[s.marketing_carrier_id] : undefined;
+            const code = mc?.display_code || "XX";
+            if (mc?.name) carriersDict[code] = mc.name;
+            return {
+              departure: { iataCode: places[s.origin_place_id]?.display_code || "", at: s.departure },
+              arrival: { iataCode: places[s.destination_place_id]?.display_code || "", at: s.arrival },
+              carrierCode: code,
+              number: s.marketing_flight_number || String(i),
+              aircraft: { code: "" },
+              duration: minutesToISODuration(s.duration),
+              id: `${idx}-${i}`,
+              numberOfStops: 0,
+              blacklistedInEU: false,
+            };
+          });
+        return { duration: minutesToISODuration(leg.duration), segments };
+      })
+      .filter((i) => i.segments.length > 0);
+
+    if (offerItineraries.length === 0) return null;
+
+    const validating = Object.keys(carriersDict).slice(0, 1);
+    return {
+      type: "flight-offer",
+      id: String(idx + 1),
+      source: "FLIGHTAPI",
+      instantTicketingRequired: false,
+      nonHomogeneous: false,
+      oneWay: offerItineraries.length === 1,
+      lastTicketingDate: new Date(Date.now() + 86400000).toISOString().slice(0, 10),
+      numberOfBookableSeats: 9,
+      itineraries: offerItineraries,
+      price: {
+        currency,
+        total: String(total),
+        base: String(total),
+        fees: [{ amount: "0.00", type: "SUPPLIER" }],
+        grandTotal: String(total),
+      },
+      pricingOptions: { fareType: ["PUBLISHED"], includedCheckedBagsOnly: false },
+      validatingAirlineCodes: validating,
+      travelerPricings: Array.from({ length: adults }, (_, i) => ({
+        travelerId: String(i + 1),
+        fareOption: "STANDARD",
+        travelerType: "ADULT",
+        price: {
+          currency,
+          total: String((total / adults).toFixed(2)),
+          base: String((total / adults).toFixed(2)),
+        },
+        fareDetailsBySegment: offerItineraries[0].segments.map((s) => ({
+          segmentId: s.id,
+          cabin: "ECONOMY",
+          fareBasis: "PUBLISHED",
+          class: "Y",
+          includedCheckedBags: { quantity: 0 },
+        })),
+      })),
+      bookingToken: deeplink,
+    };
+  }).filter(Boolean);
+
+  return { data: offers, dictionaries: { carriers: carriersDict }, empty: offers.length === 0 } as const;
+}
+
+async function searchFlightApi(params: any) {
+  const KEY = Deno.env.get("FLIGHT_API_KEY");
+  if (!KEY) return { error: "FLIGHT_API_KEY missing" } as const;
+
+  const origin = String(params.originLocationCode).toUpperCase();
+  const dest = String(params.destinationLocationCode).toUpperCase();
+  const cabin = flightApiCabin(params.travelClass);
+  const currency = String(params.currencyCode || "USD");
+  const adults = Number(params.adults) || 1;
+  const children = Number(params.children) || 0;
+  const infants = Number(params.infants) || 0;
+
+  const base = "https://api.flightapi.io";
+  const url = params.returnDate
+    ? `${base}/roundtrip/${KEY}/${origin}/${dest}/${params.departureDate}/${params.returnDate}/${adults}/${children}/${infants}/${cabin}/${currency}`
+    : `${base}/onewaytrip/${KEY}/${origin}/${dest}/${params.departureDate}/${adults}/${children}/${infants}/${cabin}/${currency}`;
+
+  // FlightAPI is occasionally flaky on the first call and asks to retry.
+  const MAX_TRIES = 3;
+  let json: any = null;
+  for (let attempt = 1; attempt <= MAX_TRIES; attempt++) {
+    console.log(`🔎 FlightAPI ${origin}→${dest} ${params.departureDate} (attempt ${attempt}/${MAX_TRIES})`);
+    const res = await fetch(url.replace(KEY, KEY));
+    const status = res.status;
+
+    if (status === 410) {
+      return { data: [] as any[], dictionaries: { carriers: {} }, empty: true, message: "No flights for this date." } as const;
+    }
+    if (status === 429) {
+      return { error: "429 Quota limit exceeded" } as const;
+    }
+
+    let parsed: any = null;
+    try {
+      parsed = await res.json();
+    } catch {
+      parsed = null;
+    }
+
+    if (status === 200 && parsed && Array.isArray(parsed.itineraries)) {
+      json = parsed;
+      break;
+    }
+
+    // 400 "something went wrong, please try again" → retry
+    const msg = parsed?.message || `HTTP ${status}`;
+    console.warn(`⚠️ FlightAPI attempt ${attempt} failed: ${msg}`);
+    if (attempt === MAX_TRIES) {
+      return { error: `FlightAPI failed (${status}): ${String(msg).slice(0, 200)}` } as const;
+    }
+    await new Promise((r) => setTimeout(r, 1500 * attempt));
+  }
+
+  const currencyCode = String(params.currencyCode || "USD");
+  const result = flightApiToOffers(json, adults, currencyCode, params.max || 50);
+  console.log(`✅ FlightAPI returned ${result.data.length} offers`);
+  return result;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -223,16 +423,39 @@ serve(async (req) => {
       );
     }
 
-    if (!Deno.env.get("SERPAPI_KEY")) {
+    const hasFlightApi = !!Deno.env.get("FLIGHT_API_KEY");
+    const hasSerp = !!Deno.env.get("SERPAPI_KEY");
+
+    if (!hasFlightApi && !hasSerp) {
       return new Response(
-        JSON.stringify({ error: "Flight search not configured", code: "SERPAPI_MISSING", data: [] }),
+        JSON.stringify({ error: "Flight search not configured", code: "PROVIDER_MISSING", data: [] }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
 
-    const result: any = await searchSerpApi(body);
+    let result: any = null;
+    let provider = "";
+
+    // Primary provider: FlightAPI.io
+    if (hasFlightApi) {
+      result = await searchFlightApi(body);
+      provider = "flightapi";
+      if (result.error) {
+        console.error("⚠️ FlightAPI error:", result.error);
+        // Fall back to SerpAPI if available
+        if (hasSerp) {
+          console.log("↩️ Falling back to SerpAPI");
+          result = await searchSerpApi(body);
+          provider = "serpapi-google-flights";
+        }
+      }
+    } else {
+      result = await searchSerpApi(body);
+      provider = "serpapi-google-flights";
+    }
+
     if (result.error) {
-      console.error("⚠️ SerpAPI error:", result.error);
+      console.error("⚠️ Flight search error:", result.error);
       return new Response(
         JSON.stringify({ error: result.error, data: [], dictionaries: { carriers: {} } }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
@@ -244,19 +467,10 @@ serve(async (req) => {
         data: result.data || [],
         dictionaries: result.dictionaries || { carriers: {} },
         meta: {
-          provider: "serpapi-google-flights",
+          provider,
           count: (result.data || []).length,
           ...(result.empty ? { empty: true, message: "No flights found for this route/date." } : {}),
         },
-      }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
-
-    return new Response(
-      JSON.stringify({
-        data: result.data,
-        dictionaries: result.dictionaries,
-        meta: { provider: "serpapi-google-flights", count: result.data.length },
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
