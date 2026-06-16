@@ -334,7 +334,7 @@ function flightApiToOffers(json: any, adults: number, currency: string, max: num
         },
         fareDetailsBySegment: offerItineraries[0].segments.map((s) => ({
           segmentId: s.id,
-          cabin: String(currency ? "" : "") || "ECONOMY",
+          cabin: "ECONOMY",
           fareBasis: "PUBLISHED",
           class: "Y",
           includedCheckedBags: { quantity: 0 },
