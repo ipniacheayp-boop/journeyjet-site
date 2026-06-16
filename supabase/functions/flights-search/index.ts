@@ -423,16 +423,39 @@ serve(async (req) => {
       );
     }
 
-    if (!Deno.env.get("SERPAPI_KEY")) {
+    const hasFlightApi = !!Deno.env.get("FLIGHT_API_KEY");
+    const hasSerp = !!Deno.env.get("SERPAPI_KEY");
+
+    if (!hasFlightApi && !hasSerp) {
       return new Response(
-        JSON.stringify({ error: "Flight search not configured", code: "SERPAPI_MISSING", data: [] }),
+        JSON.stringify({ error: "Flight search not configured", code: "PROVIDER_MISSING", data: [] }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
 
-    const result: any = await searchSerpApi(body);
+    let result: any = null;
+    let provider = "";
+
+    // Primary provider: FlightAPI.io
+    if (hasFlightApi) {
+      result = await searchFlightApi(body);
+      provider = "flightapi";
+      if (result.error) {
+        console.error("⚠️ FlightAPI error:", result.error);
+        // Fall back to SerpAPI if available
+        if (hasSerp) {
+          console.log("↩️ Falling back to SerpAPI");
+          result = await searchSerpApi(body);
+          provider = "serpapi-google-flights";
+        }
+      }
+    } else {
+      result = await searchSerpApi(body);
+      provider = "serpapi-google-flights";
+    }
+
     if (result.error) {
-      console.error("⚠️ SerpAPI error:", result.error);
+      console.error("⚠️ Flight search error:", result.error);
       return new Response(
         JSON.stringify({ error: result.error, data: [], dictionaries: { carriers: {} } }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
@@ -444,19 +467,10 @@ serve(async (req) => {
         data: result.data || [],
         dictionaries: result.dictionaries || { carriers: {} },
         meta: {
-          provider: "serpapi-google-flights",
+          provider,
           count: (result.data || []).length,
           ...(result.empty ? { empty: true, message: "No flights found for this route/date." } : {}),
         },
-      }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
-
-    return new Response(
-      JSON.stringify({
-        data: result.data,
-        dictionaries: result.dictionaries,
-        meta: { provider: "serpapi-google-flights", count: result.data.length },
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
