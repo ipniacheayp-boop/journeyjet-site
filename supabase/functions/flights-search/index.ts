@@ -365,7 +365,9 @@ async function searchFlightApi(params: any) {
     : `${base}/onewaytrip/${KEY}/${origin}/${dest}/${params.departureDate}/${adults}/${children}/${infants}/${cabin}/${currency}`;
 
   // FlightAPI is occasionally flaky on the first call and asks to retry.
-  const MAX_TRIES = 3;
+  // Keep this short: when the pricing trial/quota is spent it 400s on every
+  // route, so we retry only once and fall back to Google Flights quickly.
+  const MAX_TRIES = 2;
   let json: any = null;
   for (let attempt = 1; attempt <= MAX_TRIES; attempt++) {
     console.log(`🔎 FlightAPI ${origin}→${dest} ${params.departureDate} (attempt ${attempt}/${MAX_TRIES})`);
@@ -397,7 +399,7 @@ async function searchFlightApi(params: any) {
     if (attempt === MAX_TRIES) {
       return { error: `FlightAPI failed (${status}): ${String(msg).slice(0, 200)}` } as const;
     }
-    await new Promise((r) => setTimeout(r, 1500 * attempt));
+    await new Promise((r) => setTimeout(r, 1000));
   }
 
   const currencyCode = String(params.currencyCode || "USD");
