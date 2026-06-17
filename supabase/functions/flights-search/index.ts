@@ -399,7 +399,7 @@ async function searchFlightApi(params: any) {
     if (attempt === MAX_TRIES) {
       return { error: `FlightAPI failed (${status}): ${String(msg).slice(0, 200)}` } as const;
     }
-    await new Promise((r) => setTimeout(r, 1500 * attempt));
+    await new Promise((r) => setTimeout(r, 1000));
   }
 
   const currencyCode = String(params.currencyCode || "USD");
