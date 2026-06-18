@@ -294,7 +294,7 @@ const StripePaymentForm = ({
           </div>
           <div className="text-left">
             <span className="font-semibold text-sm text-foreground block">Secure Payment</span>
-            <span className="text-xs text-muted-foreground">Credit / Debit Card via Stripe</span>
+            <span className="text-xs text-muted-foreground">Credit / Debit Card via <strong className="text-foreground">Stripe</strong></span>
           </div>
         </div>
         <div className="flex items-center gap-2">
