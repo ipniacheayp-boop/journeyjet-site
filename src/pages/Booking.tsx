@@ -626,8 +626,75 @@ const Booking = () => {
                           <span className="text-primary">{formatCurrency(finalTotal, currency)}</span>
                         </div>
                       </div>
+
+                      {/* Compliance summary */}
+                      <div className="p-4 rounded-lg border border-border bg-muted/20">
+                        <p className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                          <ShieldCheck className="w-4 h-4 text-green-600" />
+                          Payment Compliance
+                        </p>
+                        <ul className="space-y-1.5 text-sm text-foreground/90">
+                          <li className="flex items-start gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                            Payments processed securely through Stripe
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                            U.S. customers only
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                            No payments accepted from restricted jurisdictions
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                            No alternative payment methods offered for blocked regions
+                          </li>
+                        </ul>
+                      </div>
                     </CardContent>
                   </Card>
+
+                  {/* Billing Country (U.S. only) */}
+                  <div className="p-4 bg-card border border-border rounded-lg space-y-2">
+                    <Label htmlFor="billing-country" className="text-sm font-medium text-foreground">
+                      Billing Country <span className="text-destructive">*</span>
+                    </Label>
+                    <Select
+                      value={billingCountry}
+                      onValueChange={setBillingCountry}
+                      disabled={isProcessing || paymentReady}
+                    >
+                      <SelectTrigger id="billing-country" className="bg-background">
+                        <SelectValue placeholder="Select your billing country" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="United States">United States</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {!isUsCustomer ? (
+                      <p className="text-xs text-destructive flex items-center gap-1.5">
+                        <AlertTriangle className="w-3.5 h-3.5" />
+                        Only U.S.-based customers may complete bookings at this time.
+                      </p>
+                    ) : (
+                      <p className="text-xs text-muted-foreground">
+                        Tripile currently accepts bookings and payments only from customers located in the United
+                        States.
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Payment Notice */}
+                  <div className="p-4 rounded-lg border border-amber-500/40 bg-amber-500/10 flex items-start gap-3">
+                    <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-foreground/90">
+                      <span className="font-semibold text-foreground">Payment Notice:</span> Tripile currently accepts
+                      bookings and payments only from customers located in the United States. Transactions from
+                      restricted countries or jurisdictions cannot be processed.
+                    </p>
+                  </div>
+
 
                   {/* Terms */}
                   <div className="flex items-start space-x-3 p-4 bg-muted/50 rounded-lg">
