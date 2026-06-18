@@ -202,6 +202,14 @@ const Booking = () => {
       return;
     }
 
+    // Geographic compliance gate — block any non-U.S. billing country.
+    if (!isUsCustomer) {
+      toast.error(
+        "We are unable to process payments from your region. Tripile currently serves customers located in the United States only.",
+      );
+      return;
+    }
+
     const productType = bookingType as "flight" | "hotel" | "car" | "flights" | "hotels" | "cars";
     const validationResult = await validatePrebooking(productType, validatedOffer || offer, clientRequestIdRef.current);
 
