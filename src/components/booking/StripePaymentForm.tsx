@@ -18,6 +18,8 @@ interface StripePaymentFormProps {
   onError: (error: string) => void;
   disabled?: boolean;
   termsAccepted?: boolean;
+  /** Billing country — payments are only processed for "United States". */
+  billingCountry?: string;
 }
 
 interface BillingDetails {
