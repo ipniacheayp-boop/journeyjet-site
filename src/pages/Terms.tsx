@@ -81,6 +81,18 @@ const Terms = () => {
             </section>
 
             <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-foreground mb-4">
+                Payments, Eligibility &amp; Restricted Jurisdictions
+              </h2>
+              <p className="text-base leading-7 text-foreground/90 mb-4">
+                Tripile provides travel booking services exclusively to customers located within the United States.
+                Payments are processed solely through Stripe. Customers located in restricted or sanctioned
+                jurisdictions are not permitted to complete transactions. Tripile does not provide alternate payment
+                instructions or non-Stripe payment methods for restricted regions.
+              </p>
+            </section>
+
+            <section className="mb-8">
               <h2 className="text-2xl font-semibold text-foreground mb-4">User Representation</h2>
               <p className="text-base leading-7 text-foreground/90 mb-4">By using the website you imply that:</p>
               <ul className="list-disc pl-6 space-y-2 text-base leading-7 text-foreground/90 mb-4">
