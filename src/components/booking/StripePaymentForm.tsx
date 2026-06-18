@@ -229,8 +229,15 @@ const StripePaymentForm = ({
         if (keyErr || !keyData?.publishableKey) throw new Error("Failed to load payment configuration");
         setStripePromise(loadStripe(keyData.publishableKey));
 
+        // Block non-U.S. customers before initializing payment.
+        if ((billingCountry || "").trim().toLowerCase() !== "united states") {
+          throw new Error(
+            "We are unable to process payments from your region. Tripile currently serves customers located in the United States only."
+          );
+        }
+
         const { data: intentData, error: intentErr } = await supabase.functions.invoke("payments-stripe-create-intent", {
-          body: { bookingId, amount },
+          body: { bookingId, amount, billingCountry },
         });
         if (intentErr || !intentData?.clientSecret) throw new Error(intentData?.error || "Failed to initialize payment");
         setClientSecret(intentData.clientSecret);
