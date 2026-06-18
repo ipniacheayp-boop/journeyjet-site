@@ -727,29 +727,42 @@ const Booking = () => {
                       onError={handlePaymentError}
                       disabled={isProcessing}
                       termsAccepted={acceptedTerms}
+                      billingCountry={billingCountry}
                     />
                   ) : (
-                    <div className="flex justify-between items-center">
-                      <Button variant="outline" onClick={goBack} className="gap-2">
-                        <ArrowLeft className="w-4 h-4" /> Back
-                      </Button>
-                      <Button
-                        size="lg"
-                        onClick={handleSubmit}
-                        disabled={isProcessing || !acceptedTerms}
-                        className="gap-2"
-                      >
-                        {isProcessing ? (
-                          <>
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                            {validating ? "Validating Price..." : "Creating Booking..."}
-                          </>
-                        ) : (
-                          "Proceed to Payment"
-                        )}
-                      </Button>
+                    <div className="space-y-3">
+                      {!isUsCustomer && (
+                        <div className="p-4 rounded-lg border border-destructive/40 bg-destructive/10 flex items-start gap-3">
+                          <AlertTriangle className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
+                          <p className="text-sm text-destructive">
+                            We are unable to process payments from your region. Tripile currently serves customers
+                            located in the United States only.
+                          </p>
+                        </div>
+                      )}
+                      <div className="flex justify-between items-center">
+                        <Button variant="outline" onClick={goBack} className="gap-2">
+                          <ArrowLeft className="w-4 h-4" /> Back
+                        </Button>
+                        <Button
+                          size="lg"
+                          onClick={handleSubmit}
+                          disabled={isProcessing || !acceptedTerms || !isUsCustomer}
+                          className="gap-2"
+                        >
+                          {isProcessing ? (
+                            <>
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                              {validating ? "Validating Price..." : "Creating Booking..."}
+                            </>
+                          ) : (
+                            "Proceed to Payment"
+                          )}
+                        </Button>
+                      </div>
                     </div>
                   )}
+
 
                   {paymentReady && (
                     <Button variant="ghost" onClick={goBack} className="gap-2 text-muted-foreground">
