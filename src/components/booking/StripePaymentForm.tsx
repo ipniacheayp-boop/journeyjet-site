@@ -313,17 +313,17 @@ const StripePaymentForm = ({
             className="overflow-hidden"
           >
             <CardContent className="p-6 space-y-6">
-              {/* Prominent processor notice */}
-              <div className="flex items-center gap-3 p-3 rounded-lg border border-primary/20 bg-primary/5">
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <Globe className="w-4 h-4 text-primary" />
+              {/* Prominent Stripe processor notice */}
+              <div className="flex items-center gap-3 p-4 rounded-lg border border-primary/30 bg-primary/10">
+                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                  <Globe className="w-5 h-5 text-primary" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-foreground">
-                    Payment made using Stripe
+                  <p className="text-base font-bold text-foreground">
+                    Payment processed securely via Stripe
                   </p>
-                  <p className="text-xs text-muted-foreground">
-                    United States only • USD transactions • Secure card processing
+                  <p className="text-sm text-muted-foreground mt-0.5">
+                    United States customers only • USD currency • PCI-compliant card processing
                   </p>
                 </div>
               </div>
