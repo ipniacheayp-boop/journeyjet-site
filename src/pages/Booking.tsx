@@ -8,7 +8,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useBookingFlow } from "@/hooks/useBookingFlow";
 import { toast } from "sonner";
-import { Loader2, CheckCircle, ArrowLeft, ArrowRight } from "lucide-react";
+import { Loader2, CheckCircle, ArrowLeft, ArrowRight, AlertTriangle, ShieldCheck } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { formatCurrency } from "@/lib/utils";
@@ -40,6 +42,11 @@ const Booking = () => {
   const [agentId, setAgentId] = useState<string | undefined>(undefined);
   const [currentStep, setCurrentStep] = useState(0);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+
+  // Geographic compliance — Tripile only accepts U.S.-based customers.
+  const ALLOWED_BILLING_COUNTRY = "United States";
+  const [billingCountry, setBillingCountry] = useState(ALLOWED_BILLING_COUNTRY);
+  const isUsCustomer = billingCountry === ALLOWED_BILLING_COUNTRY;
 
   // Passenger & contact state
   const [passengers, setPassengers] = useState<Passenger[]>([{ ...emptyPassenger }]);
@@ -192,6 +199,14 @@ const Booking = () => {
     }
     if (!offer) {
       toast.error("No offer selected");
+      return;
+    }
+
+    // Geographic compliance gate — block any non-U.S. billing country.
+    if (!isUsCustomer) {
+      toast.error(
+        "We are unable to process payments from your region. Tripile currently serves customers located in the United States only.",
+      );
       return;
     }
 
@@ -611,8 +626,75 @@ const Booking = () => {
                           <span className="text-primary">{formatCurrency(finalTotal, currency)}</span>
                         </div>
                       </div>
+
+                      {/* Compliance summary */}
+                      <div className="p-4 rounded-lg border border-border bg-muted/20">
+                        <p className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                          <ShieldCheck className="w-4 h-4 text-green-600" />
+                          Payment Compliance
+                        </p>
+                        <ul className="space-y-1.5 text-sm text-foreground/90">
+                          <li className="flex items-start gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                            Payments processed securely through Stripe
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                            U.S. customers only
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                            No payments accepted from restricted jurisdictions
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                            No alternative payment methods offered for blocked regions
+                          </li>
+                        </ul>
+                      </div>
                     </CardContent>
                   </Card>
+
+                  {/* Billing Country (U.S. only) */}
+                  <div className="p-4 bg-card border border-border rounded-lg space-y-2">
+                    <Label htmlFor="billing-country" className="text-sm font-medium text-foreground">
+                      Billing Country <span className="text-destructive">*</span>
+                    </Label>
+                    <Select
+                      value={billingCountry}
+                      onValueChange={setBillingCountry}
+                      disabled={isProcessing || paymentReady}
+                    >
+                      <SelectTrigger id="billing-country" className="bg-background">
+                        <SelectValue placeholder="Select your billing country" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="United States">United States</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {!isUsCustomer ? (
+                      <p className="text-xs text-destructive flex items-center gap-1.5">
+                        <AlertTriangle className="w-3.5 h-3.5" />
+                        Only U.S.-based customers may complete bookings at this time.
+                      </p>
+                    ) : (
+                      <p className="text-xs text-muted-foreground">
+                        Tripile currently accepts bookings and payments only from customers located in the United
+                        States.
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Payment Notice */}
+                  <div className="p-4 rounded-lg border border-amber-500/40 bg-amber-500/10 flex items-start gap-3">
+                    <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-foreground/90">
+                      <span className="font-semibold text-foreground">Payment Notice:</span> Tripile currently accepts
+                      bookings and payments only from customers located in the United States. Transactions from
+                      restricted countries or jurisdictions cannot be processed.
+                    </p>
+                  </div>
+
 
                   {/* Terms */}
                   <div className="flex items-start space-x-3 p-4 bg-muted/50 rounded-lg">
@@ -645,29 +727,42 @@ const Booking = () => {
                       onError={handlePaymentError}
                       disabled={isProcessing}
                       termsAccepted={acceptedTerms}
+                      billingCountry={billingCountry}
                     />
                   ) : (
-                    <div className="flex justify-between items-center">
-                      <Button variant="outline" onClick={goBack} className="gap-2">
-                        <ArrowLeft className="w-4 h-4" /> Back
-                      </Button>
-                      <Button
-                        size="lg"
-                        onClick={handleSubmit}
-                        disabled={isProcessing || !acceptedTerms}
-                        className="gap-2"
-                      >
-                        {isProcessing ? (
-                          <>
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                            {validating ? "Validating Price..." : "Creating Booking..."}
-                          </>
-                        ) : (
-                          "Proceed to Payment"
-                        )}
-                      </Button>
+                    <div className="space-y-3">
+                      {!isUsCustomer && (
+                        <div className="p-4 rounded-lg border border-destructive/40 bg-destructive/10 flex items-start gap-3">
+                          <AlertTriangle className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
+                          <p className="text-sm text-destructive">
+                            We are unable to process payments from your region. Tripile currently serves customers
+                            located in the United States only.
+                          </p>
+                        </div>
+                      )}
+                      <div className="flex justify-between items-center">
+                        <Button variant="outline" onClick={goBack} className="gap-2">
+                          <ArrowLeft className="w-4 h-4" /> Back
+                        </Button>
+                        <Button
+                          size="lg"
+                          onClick={handleSubmit}
+                          disabled={isProcessing || !acceptedTerms || !isUsCustomer}
+                          className="gap-2"
+                        >
+                          {isProcessing ? (
+                            <>
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                              {validating ? "Validating Price..." : "Creating Booking..."}
+                            </>
+                          ) : (
+                            "Proceed to Payment"
+                          )}
+                        </Button>
+                      </div>
                     </div>
                   )}
+
 
                   {paymentReady && (
                     <Button variant="ghost" onClick={goBack} className="gap-2 text-muted-foreground">

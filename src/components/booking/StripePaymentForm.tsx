@@ -18,6 +18,8 @@ interface StripePaymentFormProps {
   onError: (error: string) => void;
   disabled?: boolean;
   termsAccepted?: boolean;
+  /** Billing country — payments are only processed for "United States". */
+  billingCountry?: string;
 }
 
 interface BillingDetails {
@@ -207,7 +209,7 @@ const CheckoutForm = ({
 };
 
 const StripePaymentForm = ({
-  bookingId, amount, currency, onSuccess, onError, disabled, termsAccepted = true,
+  bookingId, amount, currency, onSuccess, onError, disabled, termsAccepted = true, billingCountry = "United States",
 }: StripePaymentFormProps) => {
   const [stripePromise, setStripePromise] = useState<ReturnType<typeof loadStripe> | null>(null);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
@@ -227,8 +229,15 @@ const StripePaymentForm = ({
         if (keyErr || !keyData?.publishableKey) throw new Error("Failed to load payment configuration");
         setStripePromise(loadStripe(keyData.publishableKey));
 
+        // Block non-U.S. customers before initializing payment.
+        if ((billingCountry || "").trim().toLowerCase() !== "united states") {
+          throw new Error(
+            "We are unable to process payments from your region. Tripile currently serves customers located in the United States only."
+          );
+        }
+
         const { data: intentData, error: intentErr } = await supabase.functions.invoke("payments-stripe-create-intent", {
-          body: { bookingId, amount },
+          body: { bookingId, amount, billingCountry },
         });
         if (intentErr || !intentData?.clientSecret) throw new Error(intentData?.error || "Failed to initialize payment");
         setClientSecret(intentData.clientSecret);
@@ -241,7 +250,7 @@ const StripePaymentForm = ({
       }
     };
     if (bookingId && amount > 0) init();
-  }, [bookingId, amount]);
+  }, [bookingId, amount, billingCountry]);
 
   if (loading) {
     return (

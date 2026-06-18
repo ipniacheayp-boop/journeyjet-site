@@ -13,12 +13,37 @@ serve(async (req) => {
   }
 
   try {
-    const { bookingId, amount } = await req.json();
+    const { bookingId, amount, billingCountry } = await req.json();
     // ALWAYS use USD for Stripe payments
     const currency = 'USD';
 
     if (!bookingId || !amount) {
       throw new Error("Missing required fields");
+    }
+
+    // ── Geographic compliance: U.S.-only payments ──────────────────────────
+    // Normalize the submitted billing country. Accept only the United States.
+    const ALLOWED_COUNTRIES = new Set([
+      "united states", "united states of america", "usa", "us", "u.s.", "u.s.a.",
+    ]);
+    const normalizedCountry = String(billingCountry ?? "").trim().toLowerCase();
+
+    if (!normalizedCountry || !ALLOWED_COUNTRIES.has(normalizedCountry)) {
+      // Log the rejected transaction for compliance review.
+      console.warn(
+        `[COMPLIANCE-REJECT] Non-U.S. billing country blocked. bookingId=${bookingId} submittedCountry="${billingCountry ?? "(none)"}"`
+      );
+      return new Response(
+        JSON.stringify({
+          error:
+            "We are unable to process payments from your region. Tripile currently serves customers located in the United States only.",
+          code: "REGION_NOT_SUPPORTED",
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 403,
+        }
+      );
     }
 
     const supabaseClient = createClient(
@@ -49,6 +74,7 @@ serve(async (req) => {
       receipt_email: booking.contact_email || undefined,
       metadata: {
         bookingId,
+        billing_country: "United States",
       },
       description: `Booking #${bookingId.slice(0, 8)}`,
     });
