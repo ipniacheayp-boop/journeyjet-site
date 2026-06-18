@@ -250,7 +250,7 @@ const StripePaymentForm = ({
       }
     };
     if (bookingId && amount > 0) init();
-  }, [bookingId, amount]);
+  }, [bookingId, amount, billingCountry]);
 
   if (loading) {
     return (
