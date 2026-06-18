@@ -28,8 +28,8 @@ import CarSummaryCard from "@/components/booking/CarSummaryCard";
 const STEPS = ["Flight", "Hotel", "Passengers", "Coupons", "Payment"];
 
 const emptyPassenger: Passenger = {
-  firstName: "", lastName: "", dateOfBirth: "", gender: "", nationality: "",
-  passportNumber: "", passportExpiry: "", passportCountry: "",
+  firstName: "", lastName: "", dateOfBirth: "", gender: "", nationality: "United States",
+  passportNumber: "", passportExpiry: "", passportCountry: "United States",
   seatPreference: "", mealPreference: "",
 };
 
