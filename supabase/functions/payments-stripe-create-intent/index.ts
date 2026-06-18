@@ -74,6 +74,7 @@ serve(async (req) => {
       receipt_email: booking.contact_email || undefined,
       metadata: {
         bookingId,
+        billing_country: "United States",
       },
       description: `Booking #${bookingId.slice(0, 8)}`,
     });
