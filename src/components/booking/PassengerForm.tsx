@@ -172,7 +172,7 @@ const PassengerForm = ({ passengers, contact, onPassengersChange, onContactChang
                     disabled={disabled}
                     value={passenger.passportCountry}
                     onChange={(e) => updatePassenger(index, "passportCountry", e.target.value)}
-                    placeholder="e.g. India"
+                    placeholder="e.g. United States"
                   />
                 </div>
               </div>
