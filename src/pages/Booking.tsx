@@ -43,6 +43,11 @@ const Booking = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
 
+  // Geographic compliance — Tripile only accepts U.S.-based customers.
+  const ALLOWED_BILLING_COUNTRY = "United States";
+  const [billingCountry, setBillingCountry] = useState(ALLOWED_BILLING_COUNTRY);
+  const isUsCustomer = billingCountry === ALLOWED_BILLING_COUNTRY;
+
   // Passenger & contact state
   const [passengers, setPassengers] = useState<Passenger[]>([{ ...emptyPassenger }]);
   const [contact, setContact] = useState<ContactDetails>({ email: "", phone: "" });
