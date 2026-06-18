@@ -209,7 +209,7 @@ const CheckoutForm = ({
 };
 
 const StripePaymentForm = ({
-  bookingId, amount, currency, onSuccess, onError, disabled, termsAccepted = true,
+  bookingId, amount, currency, onSuccess, onError, disabled, termsAccepted = true, billingCountry = "United States",
 }: StripePaymentFormProps) => {
   const [stripePromise, setStripePromise] = useState<ReturnType<typeof loadStripe> | null>(null);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
