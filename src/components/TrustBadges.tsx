@@ -48,7 +48,7 @@ const TrustBadges = () => {
     {
       name: "Trustpilot",
       rating: "4.4",
-      reviews: "9,865 reviews",
+      reviews: "127 reviews",
       logo: "https://upload.wikimedia.org/wikipedia/commons/7/78/Trustpilot_Logo_%282022%29.svg",
     },
     {
