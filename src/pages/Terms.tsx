@@ -1154,8 +1154,16 @@ const Terms = () => {
               </p>
             </footer>
           </article>
+
+          {/* FAQ Section */}
+          <FaqSection
+            faqs={termsFaqs}
+            subtitle="Common questions about eligibility, payments, and your responsibilities when using Tripile."
+            className="mt-16 max-w-4xl mx-auto"
+          />
         </div>
       </main>
+
 
       <Footer />
     </div>
