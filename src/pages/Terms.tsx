@@ -1,6 +1,35 @@
 import { useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import FaqSection from "@/components/FaqSection";
+
+const termsFaqs = [
+  {
+    question: "Who can use Tripile.com?",
+    answer:
+      "The Website is offered to users who are 18 years of age or older and who reside in the United States or its territories or possessions, or Canada. By using the Website you confirm you meet these eligibility requirements.",
+  },
+  {
+    question: "How are payments processed on Tripile?",
+    answer:
+      "Tripile provides travel booking services exclusively to customers located in the United States, and all payments are processed solely through Stripe. We do not offer non-Stripe payment methods or alternate instructions for restricted or sanctioned jurisdictions.",
+  },
+  {
+    question: "Can Tripile change these Terms of Use?",
+    answer:
+      "Yes. We may revise and update these Terms of Use at our sole discretion. Changes are effective immediately when posted, and your continued use of the Website means you accept the revised terms. Please review this page each time you use the Website.",
+  },
+  {
+    question: "What information am I responsible for providing?",
+    answer:
+      "You represent that all information you provide is true, accurate, and complete, and that you have the legal authority to create a binding obligation. Trivoya Ventures LLC may request documentation to validate a reservation, and bookings may be cancelled if requested documents are not provided.",
+  },
+  {
+    question: "How is my personal information handled?",
+    answer:
+      "All information you provide is governed by our Privacy Policy, which is incorporated into these Terms of Use by reference. You should keep any username and password confidential and notify us immediately of any unauthorized account access.",
+  },
+];
 
 const Terms = () => {
   useEffect(() => {
