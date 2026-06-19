@@ -48,37 +48,37 @@ const TrustBadges = () => {
     {
       name: "Trustpilot",
       rating: "4.4",
-      reviews: "9,865 reviews",
+      reviews: "127 reviews",
       logo: "https://upload.wikimedia.org/wikipedia/commons/7/78/Trustpilot_Logo_%282022%29.svg",
     },
     {
       name: "Google",
       rating: "4.1",
-      reviews: "1,605 reviews",
+      reviews: "143 reviews",
       logo: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg",
     },
     {
       name: "Sitejabber",
       rating: "4.7",
-      reviews: "22,801 reviews",
+      reviews: "189 reviews",
       logo: "https://m.bbb.org/prod/ProfileImages/2023/ee858f63-8ffb-4758-94f1-80cd0b3c2fbc.png",
     },
     {
       name: "Reviews.io",
       rating: "4.1",
-      reviews: "4,585 reviews",
+      reviews: "156 reviews",
       logo: "https://cdn.prod.website-files.com/642419dd2be643c50e400f66/66e00d77b400163fc0d831d0_4d3b0b51312903ee62e3ff7df64fc4af_reviewsio-logo.svg",
     },
     {
       name: "Facebook",
       rating: "4.4",
-      reviews: "483 reviews",
+      reviews: "112 reviews",
       logo: "https://upload.wikimedia.org/wikipedia/commons/9/93/Facebook_logo_%282023%29.svg",
     },
     {
       name: "ResellerRatings",
       rating: "4.6",
-      reviews: "18,200 reviews",
+      reviews: "168 reviews",
       logo: "https://www.hubspot.com/hubfs/Reseller%20Ratings-2.svg",
     },
   ];
