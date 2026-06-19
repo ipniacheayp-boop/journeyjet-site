@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Star, BadgeCheck, ExternalLink, ChevronRight, ShieldCheck, Award, PlaneTakeoff, Lock, PenLine } from "lucide-react";
 import { motion } from "framer-motion";
-import trustPilotImage from "@/assets/trustpilot1.png";
-import TrustpilotSlider from "@/components/ReviewSlider";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import WriteReviewModal from "@/components/WriteReviewModal";
@@ -187,30 +185,6 @@ const CustomerReviewsDark = () => {
           </p>
         </header>
 
-        <div className="mb-10 rounded-3xl border border-white/10 bg-white/5 p-4 shadow-2xl backdrop-blur-xl md:p-6">
-          <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <img
-                src={trustPilotImage}
-                alt="Tripile trust rating indicator"
-                title="Tripile Trustpilot verified traveler reviews"
-                loading="lazy"
-                decoding="async"
-                className="h-16 w-auto object-contain md:h-20"
-              />
-              <div>
-                <p className="text-xs uppercase tracking-widest text-blue-200/70">Trustpilot Verified Reviews</p>
-                <p className="text-sm font-semibold text-white">Rated #1 Flight Comparison Platform</p>
-              </div>
-            </div>
-            <div className="rounded-2xl border border-blue-400/30 bg-blue-500/10 px-5 py-3 text-left">
-              <p className="text-xl font-extrabold text-white">{aggregate.rating.toFixed(1)}/5</p>
-              <p className="text-xs text-blue-100/80">{aggregate.total.toLocaleString()} verified reviews</p>
-            </div>
-          </div>
-          <TrustpilotSlider />
-          <div className="mt-5 flex items-center gap-1 text-amber-400">{renderStars(5)}</div>
-        </div>
 
         <div className="md:hidden">
           <div className="scrollbar-hide flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4">
