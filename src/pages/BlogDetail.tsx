@@ -488,9 +488,23 @@ const BlogDetail = () => {
         title={`${post.title} | Tripile.com Blog`}
         description={post.excerpt}
         keywords={post.tags.join(", ")}
-        canonicalUrl={`https://tripile.com/blog/${post.slug}`}
+        canonicalUrl={canonicalUrl}
         ogType="article"
       />
+
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify(articleSchema)}</script>
+      </Helmet>
+
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", url: "https://tripile.com/" },
+          { name: "Blog", url: "https://tripile.com/blog" },
+          { name: post.title, url: canonicalUrl },
+        ]}
+      />
+
+      <FAQSchema faqs={faqs} />
 
       <Header />
 
