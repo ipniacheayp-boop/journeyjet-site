@@ -13,7 +13,17 @@ import {
   Send,
   User,
   Loader2,
+  HelpCircle,
 } from "lucide-react";
+import { Helmet } from "react-helmet";
+import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
+import FAQSchema from "@/components/seo/FAQSchema";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import Header from "@/components/Header";
 import { FaWhatsapp, FaPinterestP, FaXTwitter } from "react-icons/fa6";
 import Footer from "@/components/Footer";
@@ -243,6 +253,62 @@ const BlogDetail = () => {
     day: "numeric",
   });
 
+  const canonicalUrl = `https://tripile.com/blog/${post.slug}`;
+
+  // FAQs derived from the guide — rendered visibly AND emitted as FAQPage schema
+  const faqs = [
+    {
+      question: `What does the "${post.title}" guide cover?`,
+      answer: post.excerpt,
+    },
+    {
+      question: `How long does this ${post.category.toLowerCase()} guide take to read?`,
+      answer: `This guide takes about ${post.readTime} minutes to read and is regularly updated with the latest travel tips and advice.`,
+    },
+    {
+      question: `What is the key takeaway from this guide?`,
+      answer: post.summary.takeaway,
+    },
+    {
+      question: `How can Tripile help me book this trip?`,
+      answer: `Tripile lets you compare cheap flights, hotels, and car rentals across the USA with a Price Match Guarantee and 24/7 support. Browse our deals to put the tips in this guide into action.`,
+    },
+  ];
+
+  const absoluteImage =
+    post.featuredImage.startsWith("http://") || post.featuredImage.startsWith("https://")
+      ? post.featuredImage
+      : `https://tripile.com${post.featuredImage.startsWith("/") ? "" : "/"}${post.featuredImage}`;
+
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": post.title,
+    "description": post.excerpt,
+    "image": [absoluteImage],
+    "datePublished": new Date(post.publishedAt).toISOString(),
+    "dateModified": new Date(post.publishedAt).toISOString(),
+    "author": {
+      "@type": "Person",
+      "name": post.author.name,
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Tripile.com",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://tripile.com/favicon-tripile.png",
+      },
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": canonicalUrl,
+    },
+    "articleSection": post.category,
+    "keywords": post.tags.join(", "),
+    "url": canonicalUrl,
+  };
+
   const handleShare = async () => {
     const url = window.location.href;
     if (navigator.share) {
@@ -422,9 +488,23 @@ const BlogDetail = () => {
         title={`${post.title} | Tripile.com Blog`}
         description={post.excerpt}
         keywords={post.tags.join(", ")}
-        canonicalUrl={`https://tripile.com/blog/${post.slug}`}
+        canonicalUrl={canonicalUrl}
         ogType="article"
       />
+
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify(articleSchema)}</script>
+      </Helmet>
+
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", url: "https://tripile.com/" },
+          { name: "Blog", url: "https://tripile.com/blog" },
+          { name: post.title, url: canonicalUrl },
+        ]}
+      />
+
+      <FAQSchema faqs={faqs} />
 
       <Header />
 
@@ -584,7 +664,27 @@ const BlogDetail = () => {
                 ))}
               </div>
 
-              {/* Comments / Review Section */}
+              {/* FAQ Section — matches FAQPage structured data */}
+              <section className="mt-12 bg-card rounded-3xl p-6 md:p-10 border border-border/50 shadow-sm">
+                <h2 className="text-2xl font-bold flex items-center gap-3 mb-6 text-foreground">
+                  <HelpCircle className="w-6 h-6 text-primary" />
+                  Frequently Asked Questions
+                </h2>
+                <Accordion type="single" collapsible className="w-full">
+                  {faqs.map((faq, i) => (
+                    <AccordionItem key={i} value={`faq-${i}`}>
+                      <AccordionTrigger className="text-left text-base font-semibold hover:text-primary transition-colors">
+                        {faq.question}
+                      </AccordionTrigger>
+                      <AccordionContent className="text-muted-foreground leading-relaxed">
+                        {faq.answer}
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </section>
+
+
               <div className="mt-16 bg-muted/20 rounded-[32px] p-6 md:p-10 border border-border/50 shadow-sm">
                 <h3 className="text-2xl font-bold flex items-center gap-3 mb-8 text-foreground">
                   <MessageSquare className="w-6 h-6 text-primary" />
