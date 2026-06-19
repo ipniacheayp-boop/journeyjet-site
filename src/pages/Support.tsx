@@ -31,6 +31,40 @@ import {
   Cloud,
 } from "lucide-react";
 import { toast } from "sonner";
+import FaqSection from "@/components/FaqSection";
+
+const supportFaqs = [
+  {
+    question: "How do I check the status of my booking?",
+    answer:
+      "Select \"Check Booking Status\" above, or sign in to your Tripile account and open My Bookings. You can also call our 24/7 support line at +1-800-963-4330 with your booking reference for an instant update.",
+  },
+  {
+    question: "How long do refunds take to process?",
+    answer:
+      "Once a refund is approved, it is processed back to your original Stripe payment method. Most refunds appear within 5–10 business days, depending on your bank or card issuer.",
+  },
+  {
+    question: "Can I change or cancel my trip after booking?",
+    answer:
+      "Yes. Use \"Change Your Trip\" or \"Cancel Your Trip\" above, or contact our support team. Change and cancellation rules depend on the fare or rate conditions of your booking, which are shown before you pay.",
+  },
+  {
+    question: "How can I get my itinerary or boarding pass?",
+    answer:
+      "Choose \"View / Email / Print Itinerary\" to resend your confirmation, or \"Check-in / Boarding Pass\" for check-in help. Itineraries are also available anytime in your Tripile account.",
+  },
+  {
+    question: "What are your customer support hours?",
+    answer:
+      "Tripile support is available 24/7. You can reach us by phone at +1-800-963-4330, by email at Support@Tripile.com, or through live chat on this page.",
+  },
+  {
+    question: "How is my payment processed and is it secure?",
+    answer:
+      "All payments are processed securely through Stripe in USD. Tripile never stores your full card details, and every transaction is encrypted and protected.",
+  },
+];
 
 const Support = () => {
   const [showContactForm, setShowContactForm] = useState(false);
@@ -435,8 +469,16 @@ const Support = () => {
               </div>
             </Card>
           </div>
+
+          {/* FAQ Section */}
+          <FaqSection
+            faqs={supportFaqs}
+            subtitle="Quick answers to the most common questions about bookings, refunds, and support."
+            className="mt-24 max-w-5xl mx-auto"
+          />
         </div>
       </main>
+
 
       {/* Contact Form Dialog */}
       <Dialog open={showContactForm} onOpenChange={setShowContactForm}>
