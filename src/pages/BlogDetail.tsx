@@ -13,7 +13,17 @@ import {
   Send,
   User,
   Loader2,
+  HelpCircle,
 } from "lucide-react";
+import { Helmet } from "react-helmet";
+import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
+import FAQSchema from "@/components/seo/FAQSchema";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import Header from "@/components/Header";
 import { FaWhatsapp, FaPinterestP, FaXTwitter } from "react-icons/fa6";
 import Footer from "@/components/Footer";
