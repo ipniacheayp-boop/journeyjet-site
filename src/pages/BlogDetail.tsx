@@ -253,6 +253,62 @@ const BlogDetail = () => {
     day: "numeric",
   });
 
+  const canonicalUrl = `https://tripile.com/blog/${post.slug}`;
+
+  // FAQs derived from the guide — rendered visibly AND emitted as FAQPage schema
+  const faqs = [
+    {
+      question: `What does the "${post.title}" guide cover?`,
+      answer: post.excerpt,
+    },
+    {
+      question: `How long does this ${post.category.toLowerCase()} guide take to read?`,
+      answer: `This guide takes about ${post.readTime} minutes to read and is regularly updated with the latest travel tips and advice.`,
+    },
+    {
+      question: `What is the key takeaway from this guide?`,
+      answer: post.summary.takeaway,
+    },
+    {
+      question: `How can Tripile help me book this trip?`,
+      answer: `Tripile lets you compare cheap flights, hotels, and car rentals across the USA with a Price Match Guarantee and 24/7 support. Browse our deals to put the tips in this guide into action.`,
+    },
+  ];
+
+  const absoluteImage =
+    post.featuredImage.startsWith("http://") || post.featuredImage.startsWith("https://")
+      ? post.featuredImage
+      : `https://tripile.com${post.featuredImage.startsWith("/") ? "" : "/"}${post.featuredImage}`;
+
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": post.title,
+    "description": post.excerpt,
+    "image": [absoluteImage],
+    "datePublished": new Date(post.publishedAt).toISOString(),
+    "dateModified": new Date(post.publishedAt).toISOString(),
+    "author": {
+      "@type": "Person",
+      "name": post.author.name,
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Tripile.com",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://tripile.com/favicon-tripile.png",
+      },
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": canonicalUrl,
+    },
+    "articleSection": post.category,
+    "keywords": post.tags.join(", "),
+    "url": canonicalUrl,
+  };
+
   const handleShare = async () => {
     const url = window.location.href;
     if (navigator.share) {
