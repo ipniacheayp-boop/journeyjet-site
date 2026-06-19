@@ -469,8 +469,16 @@ const Support = () => {
               </div>
             </Card>
           </div>
+
+          {/* FAQ Section */}
+          <FaqSection
+            faqs={supportFaqs}
+            subtitle="Quick answers to the most common questions about bookings, refunds, and support."
+            className="mt-24 max-w-5xl mx-auto"
+          />
         </div>
       </main>
+
 
       {/* Contact Form Dialog */}
       <Dialog open={showContactForm} onOpenChange={setShowContactForm}>
