@@ -664,7 +664,27 @@ const BlogDetail = () => {
                 ))}
               </div>
 
-              {/* Comments / Review Section */}
+              {/* FAQ Section — matches FAQPage structured data */}
+              <section className="mt-12 bg-card rounded-3xl p-6 md:p-10 border border-border/50 shadow-sm">
+                <h2 className="text-2xl font-bold flex items-center gap-3 mb-6 text-foreground">
+                  <HelpCircle className="w-6 h-6 text-primary" />
+                  Frequently Asked Questions
+                </h2>
+                <Accordion type="single" collapsible className="w-full">
+                  {faqs.map((faq, i) => (
+                    <AccordionItem key={i} value={`faq-${i}`}>
+                      <AccordionTrigger className="text-left text-base font-semibold hover:text-primary transition-colors">
+                        {faq.question}
+                      </AccordionTrigger>
+                      <AccordionContent className="text-muted-foreground leading-relaxed">
+                        {faq.answer}
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </section>
+
+
               <div className="mt-16 bg-muted/20 rounded-[32px] p-6 md:p-10 border border-border/50 shadow-sm">
                 <h3 className="text-2xl font-bold flex items-center gap-3 mb-8 text-foreground">
                   <MessageSquare className="w-6 h-6 text-primary" />
