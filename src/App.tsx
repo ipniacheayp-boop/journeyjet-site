@@ -195,6 +195,10 @@ const App = () => (
                   <Route path="/price-match" element={<PriceMatch />} />
                   <Route path="/trip-planner" element={<TripPlanner />} />
                   <Route path="/explore" element={<Explore />} />
+                  {/* Travel Guides (programmatic city & country guides) */}
+                  <Route path="/travel-guides" element={<TravelGuidesHub />} />
+                  <Route path="/travel-guide/country/:slug" element={<CountryGuidePage />} />
+                  <Route path="/travel-guide/:slug" element={<CityGuidePage />} />
                   <Route path="/flights-to/:slug" element={<FlightsToDestination />} />
                   <Route path="/flights/:from-to-:to" element={<CityFlightPage />} />
                   <Route path="/airlines/:slug" element={<AirlinePage />} />
