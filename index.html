@@ -134,6 +134,25 @@
         }
       }
     </script>
+
+    <!-- Structured Data: WebSite + SearchAction (Google sitelinks search box) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Tripile",
+        "alternateName": "Tripile.com",
+        "url": "https://tripile.com/",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://tripile.com/travel-guides?q={search_term_string}"
+          },
+          "query-input": "required name=search_term_string"
+        }
+      }
+    </script>
   </head>
   <body>
     <article
