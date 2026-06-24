@@ -100,6 +100,19 @@ airportLandingPages.forEach((ap) =>
   entries.push({ path: `/airport/${ap.slug}`, changefreq: "monthly", priority: "0.6" })
 );
 
+// Travel guides hub
+entries.push({ path: "/travel-guides", changefreq: "weekly", priority: "0.85", lastmod: today });
+
+// Country travel guides (CountryGuidePage — /travel-guide/country/:slug)
+getCountryGuides().forEach((c) =>
+  entries.push({ path: `/travel-guide/country/${c.slug}`, changefreq: "weekly", priority: "0.8" })
+);
+
+// City travel guides (CityGuidePage — /travel-guide/:slug)
+cityGuides.forEach((c) =>
+  entries.push({ path: `/travel-guide/${c.slug}`, changefreq: "weekly", priority: "0.75" })
+);
+
 // De-dupe by path
 const seen = new Set<string>();
 const unique = entries.filter((e) => (seen.has(e.path) ? false : (seen.add(e.path), true)));
