@@ -18,6 +18,8 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
+import { isRestrictedOffer, COMPLIANCE_COPY } from "@/config/sanctionsCompliance";
+import { AlertTriangle } from "lucide-react";
 interface HotelResultCardProps {
   hotel: any;
   onBook: (hotel: any) => void;
