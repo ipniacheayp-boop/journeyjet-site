@@ -12,9 +12,12 @@ serve(async (req) => {
   }
 
   try {
+    // Use the service role so public (anonymous) review display keeps working
+    // after the `reviews` table SELECT policy was restricted to authenticated
+    // users (prevents anonymous enumeration of booking_id / user_id via the Data API).
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
     );
 
     const url = new URL(req.url);

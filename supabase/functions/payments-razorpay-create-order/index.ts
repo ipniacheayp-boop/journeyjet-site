@@ -18,6 +18,24 @@ serve(async (req) => {
       throw new Error("Missing required fields");
     }
 
+    // Validate amount: must be a positive, finite number within a sane range.
+    const numericAmount = Number(amount);
+    if (!Number.isFinite(numericAmount) || numericAmount <= 0 || numericAmount > 1000000) {
+      return new Response(
+        JSON.stringify({ error: "Invalid payment amount.", code: "INVALID_AMOUNT" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
+      );
+    }
+
+    // Validate bookingId format (UUID).
+    if (typeof bookingId !== "string" ||
+        !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(bookingId)) {
+      return new Response(
+        JSON.stringify({ error: "Invalid booking reference.", code: "INVALID_BOOKING" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
+      );
+    }
+
     const razorpayKeyId = Deno.env.get("RAZORPAY_KEY_ID");
     const razorpayKeySecret = Deno.env.get("RAZORPAY_KEY_SECRET");
 
