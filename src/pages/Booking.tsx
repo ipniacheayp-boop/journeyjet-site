@@ -141,6 +141,14 @@ const Booking = () => {
 
   const isProcessing = loading || validating;
 
+  // ⚠️ STRIPE SANCTIONS COMPLIANCE — block checkout for restricted destinations.
+  // When true: Stripe is never initialised and no Payment Intent / booking is created.
+  const restrictedMatch = getRestrictedDestinationMatch(
+    ...getOfferDestinationText(offer),
+    hotelUpsellOffer ? getOfferDestinationText(hotelUpsellOffer).join(" ") : "",
+  );
+  const isRestrictedBooking = restrictedMatch !== null || isRestrictedOffer(offer);
+
   // Extract flight destination info for hotel upsell
   const flightSegments = offer?.itineraries?.[0]?.segments || [];
   const lastFlightSegment = flightSegments[flightSegments.length - 1];
