@@ -18,6 +18,8 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
+import { isRestrictedOffer, COMPLIANCE_COPY } from "@/config/sanctionsCompliance";
+import { AlertTriangle } from "lucide-react";
 interface HotelResultCardProps {
   hotel: any;
   onBook: (hotel: any) => void;
@@ -51,6 +53,9 @@ function formatBusinessStatus(s?: string): string {
 
 export function HotelResultCard({ hotel, onBook }: HotelResultCardProps) {
   const offer = hotel.offers?.[0] || hotel;
+  // ⚠️ STRIPE SANCTIONS COMPLIANCE — block booking for restricted destinations
+  // even if a restricted hotel reaches this card via a direct API response.
+  const isRestricted = isRestrictedOffer(hotel);
   const price = parseFloat(offer.price?.total || "0");
   const currency = offer.price?.currency || "USD";
   const rating = typeof hotel.rating === "number" ? hotel.rating : 0;
@@ -359,9 +364,23 @@ export function HotelResultCard({ hotel, onBook }: HotelResultCardProps) {
                 View on Google Maps
               </Button>
             )}
-            <Button onClick={() => onBook(hotel)} className="w-full">
-              Book Now
-            </Button>
+            {isRestricted ? (
+              <div className="space-y-2">
+                <div className="rounded-lg border-2 border-red-500/60 bg-red-50 dark:bg-red-950/30 p-3 flex items-start gap-2">
+                  <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
+                  <p className="text-xs text-red-700 dark:text-red-300 font-medium">
+                    {COMPLIANCE_COPY.shortNotice}
+                  </p>
+                </div>
+                <Button disabled className="w-full" variant="secondary">
+                  {COMPLIANCE_COPY.paymentDisabledLabel}
+                </Button>
+              </div>
+            ) : (
+              <Button onClick={() => onBook(hotel)} className="w-full">
+                Book Now
+              </Button>
+            )}
           </div>
         </div>
       </CardContent>

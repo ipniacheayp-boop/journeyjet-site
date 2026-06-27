@@ -7,13 +7,59 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+/**
+ * ⚠️ STRIPE SANCTIONS COMPLIANCE
+ * Comprehensively-sanctioned jurisdictions. Any booking whose destination
+ * matches this list must be rejected with HTTP 403 and Stripe must NEVER be
+ * invoked for the request.
+ */
+const RESTRICTED_PATTERNS: { label: string; terms: string[] }[] = [
+  { label: "Cuba", terms: ["cuba", "havana", "varadero"] },
+  { label: "Iran", terms: ["iran", "tehran", "islamic republic of iran"] },
+  { label: "North Korea", terms: ["north korea", "dprk", "democratic people's republic of korea", "pyongyang"] },
+  { label: "Syria", terms: ["syria", "syrian arab republic", "damascus", "aleppo"] },
+  { label: "Crimea", terms: ["crimea", "sevastopol", "simferopol"] },
+  { label: "Donetsk", terms: ["donetsk"] },
+  { label: "Luhansk", terms: ["luhansk", "lugansk"] },
+];
+
+function getRestrictedDestination(...texts: any[]): string | null {
+  const haystack = texts
+    .filter((v) => typeof v === "string" && v.length > 0)
+    .join(" | ")
+    .toLowerCase();
+  if (!haystack) return null;
+  for (const entry of RESTRICTED_PATTERNS) {
+    for (const term of entry.terms) {
+      const re = new RegExp(`(^|[^a-z])${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([^a-z]|$)`, "i");
+      if (re.test(haystack)) return entry.label;
+    }
+  }
+  return null;
+}
+
+/** Pull location-relevant strings out of a stored booking_details offer. */
+function offerDestinationText(offer: any): string[] {
+  if (!offer || typeof offer !== "object") return [];
+  const gp = offer.googlePlace || {};
+  const components = Array.isArray(gp.addressComponents)
+    ? gp.addressComponents.map((c: any) => c?.longText || c?.long_name || "")
+    : [];
+  return [
+    offer?.hotel?.name, offer?.hotel?.address, offer?.hotel?.cityCode, offer?.hotel?.country,
+    offer?.searchMeta?.cityQuery, offer?.address, offer?.city, offer?.country,
+    gp?.formattedAddress, gp?.shortFormattedAddress, gp?.displayName?.text,
+    offer?.pickup?.location, offer?.pickUpLocation, ...components,
+  ].filter((v: any) => typeof v === "string" && v.length > 0);
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { bookingId, amount, billingCountry } = await req.json();
+    const { bookingId, amount, billingCountry, destination } = await req.json();
     // ALWAYS use USD for Stripe payments
     const currency = 'USD';
 
@@ -54,12 +100,33 @@ serve(async (req) => {
     // Verify booking exists
     const { data: booking, error: bookingError } = await supabaseClient
       .from("bookings")
-      .select("id, amount, currency, contact_email")
+      .select("id, amount, currency, contact_email, booking_details")
       .eq("id", bookingId)
       .single();
 
     if (bookingError || !booking) {
       throw new Error("Booking not found");
+    }
+
+    // ⚠️ STRIPE SANCTIONS COMPLIANCE — re-validate the destination against the
+    // stored booking details (and any client-supplied hint). If restricted,
+    // return 403 and DO NOT create a Stripe PaymentIntent.
+    const restricted = getRestrictedDestination(
+      destination,
+      ...offerDestinationText((booking as any).booking_details),
+    );
+    if (restricted) {
+      console.warn(
+        `[COMPLIANCE-REJECT] Restricted destination blocked. bookingId=${bookingId} jurisdiction="${restricted}"`
+      );
+      return new Response(
+        JSON.stringify({
+          error:
+            "This destination is unavailable due to international sanctions and compliance regulations.",
+          code: "RESTRICTED_DESTINATION",
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 403 }
+      );
     }
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {

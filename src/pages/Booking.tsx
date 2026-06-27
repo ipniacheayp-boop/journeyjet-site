@@ -24,6 +24,13 @@ import HotelUpsellStep, { type HotelUpsellData } from "@/components/booking/Hote
 import StripePaymentForm from "@/components/booking/StripePaymentForm";
 import HotelSummaryCard from "@/components/booking/HotelSummaryCard";
 import CarSummaryCard from "@/components/booking/CarSummaryCard";
+import RestrictedDestinationNotice from "@/components/compliance/RestrictedDestinationNotice";
+import {
+  isRestrictedOffer,
+  getRestrictedDestinationMatch,
+  getOfferDestinationText,
+  COMPLIANCE_COPY,
+} from "@/config/sanctionsCompliance";
 
 const STEPS = ["Flight", "Hotel", "Passengers", "Coupons", "Payment"];
 
@@ -134,6 +141,14 @@ const Booking = () => {
 
   const isProcessing = loading || validating;
 
+  // ⚠️ STRIPE SANCTIONS COMPLIANCE — block checkout for restricted destinations.
+  // When true: Stripe is never initialised and no Payment Intent / booking is created.
+  const restrictedMatch = getRestrictedDestinationMatch(
+    ...getOfferDestinationText(offer),
+    hotelUpsellOffer ? getOfferDestinationText(hotelUpsellOffer).join(" ") : "",
+  );
+  const isRestrictedBooking = restrictedMatch !== null || isRestrictedOffer(offer);
+
   // Extract flight destination info for hotel upsell
   const flightSegments = offer?.itineraries?.[0]?.segments || [];
   const lastFlightSegment = flightSegments[flightSegments.length - 1];
@@ -201,6 +216,14 @@ const Booking = () => {
       toast.error("No offer selected");
       return;
     }
+
+    // ⚠️ STRIPE SANCTIONS COMPLIANCE — never create a booking or initialise
+    // Stripe for restricted/sanctioned destinations.
+    if (isRestrictedBooking) {
+      toast.error(COMPLIANCE_COPY.shortNotice);
+      return;
+    }
+
 
     // Geographic compliance gate — block any non-U.S. billing country.
     if (!isUsCustomer) {
@@ -524,7 +547,34 @@ const Booking = () => {
               )}
 
               {/* Step 4: Payment */}
-              {currentStep === 4 && (
+              {/* ⚠️ STRIPE SANCTIONS COMPLIANCE — restricted destination at checkout.
+                  Stripe is NOT initialised and no Payment Intent is created. */}
+              {currentStep === 4 && isRestrictedBooking && (
+                <div className="space-y-6">
+                  <RestrictedDestinationNotice destination={restrictedMatch} />
+
+                  <div className="space-y-3">
+                    <Button
+                      size="lg"
+                      disabled
+                      className="w-full gap-2"
+                      variant="secondary"
+                    >
+                      {COMPLIANCE_COPY.paymentDisabledLabel}
+                    </Button>
+                    <p className="text-xs text-muted-foreground text-center">
+                      {COMPLIANCE_COPY.noProviderNote}
+                    </p>
+                    <div className="flex justify-start pt-2">
+                      <Button variant="outline" onClick={goBack} className="gap-2">
+                        <ArrowLeft className="w-4 h-4" /> Back
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {currentStep === 4 && !isRestrictedBooking && (
                 <div className="space-y-6">
                   {/* Booking Summary */}
                   <Card className="bg-card border-border">

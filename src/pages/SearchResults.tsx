@@ -16,6 +16,8 @@ import { FlightTimeFilter, getTimeSlot, type TimeSlot } from "@/components/fligh
 import { toast } from "sonner";
 import { Shield } from "lucide-react";
 import SEOHead from "@/components/SEOHead";
+import RestrictedDestinationNotice from "@/components/compliance/RestrictedDestinationNotice";
+import { getRestrictedDestinationMatch, isRestrictedOffer } from "@/config/sanctionsCompliance";
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
@@ -43,9 +45,22 @@ const SearchResults = () => {
     return counts;
   }, [results, type]);
 
+  // ⚠️ STRIPE SANCTIONS COMPLIANCE — detect if the searched destination is restricted.
+  const restrictedSearchMatch = useMemo(() => {
+    const candidates = [
+      searchParams.get("cityCode"),
+      searchParams.get("city"),
+      searchParams.get("destinationLocationCode"),
+      searchParams.get("pickUpLocationCode"),
+    ];
+    return getRestrictedDestinationMatch(...candidates);
+  }, [searchParams]);
+
   const filteredResults = useMemo(() => {
-    if (type !== "flights" || timeFilter === "all") return results;
-    return results.filter((f) => {
+    // Remove any results located in a restricted (sanctioned) destination.
+    const compliant = results.filter((r) => !isRestrictedOffer(r));
+    if (type !== "flights" || timeFilter === "all") return compliant;
+    return compliant.filter((f) => {
       const dep = f.itineraries?.[0]?.segments?.[0]?.departure?.at;
       return getTimeSlot(dep) === timeFilter;
     });
@@ -173,6 +188,28 @@ const SearchResults = () => {
     ? `Compare cheap flights from ${origin} to ${destination}. Find the best deals across 500+ airlines on Tripile.com.`
     : `Compare and book the best ${type} deals on Tripile.com. Find cheap ${type} across the USA.`;
 
+  // ⚠️ STRIPE SANCTIONS COMPLIANCE — restricted destination searched directly:
+  // show a dedicated compliance page instead of any hotel/flight/car results.
+  if (restrictedSearchMatch) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <SEOHead title="Destination Unavailable | Tripile.com" description="This destination is unavailable due to international compliance requirements." canonicalUrl={canonicalBase} noIndex />
+        <Header />
+        <main className="flex-1 pt-24 pb-16 bg-background">
+          <div className="container mx-auto px-4 max-w-2xl">
+            <RestrictedDestinationNotice destination={restrictedSearchMatch} />
+            <div className="mt-6 text-center">
+              <Button onClick={() => (window.location.href = "/")} size="lg">
+                Start a New Search
+              </Button>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <SEOHead title={dynamicTitle} description={dynamicDesc} canonicalUrl={canonicalBase} noIndex />
@@ -191,7 +228,7 @@ const SearchResults = () => {
               {loading ? "Finding the best available price for you..." : 
                 type === "flights" && timeFilter !== "all" 
                   ? `Showing ${filteredResults.length} of ${results.length} result(s)` 
-                  : `Found ${results.length} result(s)`}
+                  : `Found ${filteredResults.length} result(s)`}
             </p>
           </div>
 
@@ -225,7 +262,7 @@ const SearchResults = () => {
                 ))}
               </div>
             </div>
-          ) : results.length === 0 ? (
+          ) : filteredResults.length === 0 ? (
             <Card className="bg-card border-border">
               <CardContent className="py-12 text-center">
                 <div className="max-w-lg mx-auto">

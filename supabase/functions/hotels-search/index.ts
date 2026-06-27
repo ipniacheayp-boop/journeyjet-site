@@ -14,6 +14,39 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+/**
+ * ⚠️ STRIPE SANCTIONS COMPLIANCE
+ * Hotels located in comprehensively-sanctioned jurisdictions must never be
+ * returned in search results. The same list is enforced again at booking and
+ * payment time on the backend.
+ */
+const RESTRICTED_PATTERNS: { label: string; terms: string[] }[] = [
+  { label: "Cuba", terms: ["cuba", "havana", "varadero"] },
+  { label: "Iran", terms: ["iran", "tehran", "islamic republic of iran"] },
+  { label: "North Korea", terms: ["north korea", "dprk", "democratic people's republic of korea", "pyongyang"] },
+  { label: "Syria", terms: ["syria", "syrian arab republic", "damascus", "aleppo"] },
+  { label: "Crimea", terms: ["crimea", "sevastopol", "simferopol"] },
+  { label: "Donetsk", terms: ["donetsk"] },
+  { label: "Luhansk", terms: ["luhansk", "lugansk"] },
+];
+
+function isRestrictedText(...texts: (string | undefined | null)[]): boolean {
+  const haystack = texts
+    .filter((v): v is string => typeof v === "string" && v.length > 0)
+    .join(" | ")
+    .toLowerCase();
+  if (!haystack) return false;
+  for (const entry of RESTRICTED_PATTERNS) {
+    for (const term of entry.terms) {
+      const re = new RegExp(`(^|[^a-z])${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([^a-z]|$)`, "i");
+      if (re.test(haystack)) return true;
+    }
+  }
+  return false;
+}
+
+
+
 const GOOGLE_PLACES_ENDPOINT = "https://places.googleapis.com/v1/places:searchText";
 
 /**
@@ -214,6 +247,22 @@ Deno.serve(async (req) => {
       );
     }
 
+    // ⚠️ STRIPE SANCTIONS COMPLIANCE — never search a restricted jurisdiction.
+    if (isRestrictedText(cityCode)) {
+      console.warn(`[COMPLIANCE] Restricted destination searched: "${cityCode}"`);
+      return new Response(
+        JSON.stringify({
+          data: [],
+          restricted: true,
+          message:
+            "This destination is unavailable due to international sanctions and compliance regulations.",
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+
+
     const googleApiKey = Deno.env.get("GOOGLE_PLACES_API_KEY") || Deno.env.get("VITE_GOOGLE_PLACES_API_KEY");
     if (!googleApiKey) {
       throw new Error("Google Places API key is not configured");
@@ -280,6 +329,13 @@ Deno.serve(async (req) => {
     }
 
     let places = [...byKey.values()];
+
+    // ⚠️ STRIPE SANCTIONS COMPLIANCE — drop any individual result that resolves
+    // to a restricted destination (defends against mixed/region-bleed results).
+    places = places.filter(
+      (p) => !isRestrictedText(p.formattedAddress, p.shortFormattedAddress, p.displayName?.text),
+    );
+
 
     const lodgingLike = places.filter((p) => isLikelyLodging(p) && !isLikelyNonBusinessLocality(p));
     if (lodgingLike.length > 0) {
