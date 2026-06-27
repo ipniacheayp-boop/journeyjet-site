@@ -228,7 +228,7 @@ const SearchResults = () => {
               {loading ? "Finding the best available price for you..." : 
                 type === "flights" && timeFilter !== "all" 
                   ? `Showing ${filteredResults.length} of ${results.length} result(s)` 
-                  : `Found ${results.length} result(s)`}
+                  : `Found ${filteredResults.length} result(s)`}
             </p>
           </div>
 
