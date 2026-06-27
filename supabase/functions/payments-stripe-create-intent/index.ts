@@ -100,12 +100,33 @@ serve(async (req) => {
     // Verify booking exists
     const { data: booking, error: bookingError } = await supabaseClient
       .from("bookings")
-      .select("id, amount, currency, contact_email")
+      .select("id, amount, currency, contact_email, booking_details")
       .eq("id", bookingId)
       .single();
 
     if (bookingError || !booking) {
       throw new Error("Booking not found");
+    }
+
+    // ⚠️ STRIPE SANCTIONS COMPLIANCE — re-validate the destination against the
+    // stored booking details (and any client-supplied hint). If restricted,
+    // return 403 and DO NOT create a Stripe PaymentIntent.
+    const restricted = getRestrictedDestination(
+      destination,
+      ...offerDestinationText((booking as any).booking_details),
+    );
+    if (restricted) {
+      console.warn(
+        `[COMPLIANCE-REJECT] Restricted destination blocked. bookingId=${bookingId} jurisdiction="${restricted}"`
+      );
+      return new Response(
+        JSON.stringify({
+          error:
+            "This destination is unavailable due to international sanctions and compliance regulations.",
+          code: "RESTRICTED_DESTINATION",
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 403 }
+      );
     }
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
