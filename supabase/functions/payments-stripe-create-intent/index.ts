@@ -59,7 +59,7 @@ serve(async (req) => {
   }
 
   try {
-    const { bookingId, amount, billingCountry } = await req.json();
+    const { bookingId, amount, billingCountry, destination } = await req.json();
     // ALWAYS use USD for Stripe payments
     const currency = 'USD';
 
