@@ -247,6 +247,22 @@ Deno.serve(async (req) => {
       );
     }
 
+    // ⚠️ STRIPE SANCTIONS COMPLIANCE — never search a restricted jurisdiction.
+    if (isRestrictedText(cityCode)) {
+      console.warn(`[COMPLIANCE] Restricted destination searched: "${cityCode}"`);
+      return new Response(
+        JSON.stringify({
+          data: [],
+          restricted: true,
+          message:
+            "This destination is unavailable due to international sanctions and compliance regulations.",
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+
+
     const googleApiKey = Deno.env.get("GOOGLE_PLACES_API_KEY") || Deno.env.get("VITE_GOOGLE_PLACES_API_KEY");
     if (!googleApiKey) {
       throw new Error("Google Places API key is not configured");
