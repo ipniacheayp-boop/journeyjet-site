@@ -188,6 +188,28 @@ const SearchResults = () => {
     ? `Compare cheap flights from ${origin} to ${destination}. Find the best deals across 500+ airlines on Tripile.com.`
     : `Compare and book the best ${type} deals on Tripile.com. Find cheap ${type} across the USA.`;
 
+  // ⚠️ STRIPE SANCTIONS COMPLIANCE — restricted destination searched directly:
+  // show a dedicated compliance page instead of any hotel/flight/car results.
+  if (restrictedSearchMatch) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <SEOHead title="Destination Unavailable | Tripile.com" description="This destination is unavailable due to international compliance requirements." canonicalUrl={canonicalBase} noIndex />
+        <Header />
+        <main className="flex-1 pt-24 pb-16 bg-background">
+          <div className="container mx-auto px-4 max-w-2xl">
+            <RestrictedDestinationNotice destination={restrictedSearchMatch} />
+            <div className="mt-6 text-center">
+              <Button onClick={() => (window.location.href = "/")} size="lg">
+                Start a New Search
+              </Button>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <SEOHead title={dynamicTitle} description={dynamicDesc} canonicalUrl={canonicalBase} noIndex />
