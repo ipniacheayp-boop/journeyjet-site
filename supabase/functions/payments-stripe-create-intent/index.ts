@@ -7,6 +7,52 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+/**
+ * ⚠️ STRIPE SANCTIONS COMPLIANCE
+ * Comprehensively-sanctioned jurisdictions. Any booking whose destination
+ * matches this list must be rejected with HTTP 403 and Stripe must NEVER be
+ * invoked for the request.
+ */
+const RESTRICTED_PATTERNS: { label: string; terms: string[] }[] = [
+  { label: "Cuba", terms: ["cuba", "havana", "varadero"] },
+  { label: "Iran", terms: ["iran", "tehran", "islamic republic of iran"] },
+  { label: "North Korea", terms: ["north korea", "dprk", "democratic people's republic of korea", "pyongyang"] },
+  { label: "Syria", terms: ["syria", "syrian arab republic", "damascus", "aleppo"] },
+  { label: "Crimea", terms: ["crimea", "sevastopol", "simferopol"] },
+  { label: "Donetsk", terms: ["donetsk"] },
+  { label: "Luhansk", terms: ["luhansk", "lugansk"] },
+];
+
+function getRestrictedDestination(...texts: any[]): string | null {
+  const haystack = texts
+    .filter((v) => typeof v === "string" && v.length > 0)
+    .join(" | ")
+    .toLowerCase();
+  if (!haystack) return null;
+  for (const entry of RESTRICTED_PATTERNS) {
+    for (const term of entry.terms) {
+      const re = new RegExp(`(^|[^a-z])${term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([^a-z]|$)`, "i");
+      if (re.test(haystack)) return entry.label;
+    }
+  }
+  return null;
+}
+
+/** Pull location-relevant strings out of a stored booking_details offer. */
+function offerDestinationText(offer: any): string[] {
+  if (!offer || typeof offer !== "object") return [];
+  const gp = offer.googlePlace || {};
+  const components = Array.isArray(gp.addressComponents)
+    ? gp.addressComponents.map((c: any) => c?.longText || c?.long_name || "")
+    : [];
+  return [
+    offer?.hotel?.name, offer?.hotel?.address, offer?.hotel?.cityCode, offer?.hotel?.country,
+    offer?.searchMeta?.cityQuery, offer?.address, offer?.city, offer?.country,
+    gp?.formattedAddress, gp?.shortFormattedAddress, gp?.displayName?.text,
+    offer?.pickup?.location, offer?.pickUpLocation, ...components,
+  ].filter((v: any) => typeof v === "string" && v.length > 0);
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
