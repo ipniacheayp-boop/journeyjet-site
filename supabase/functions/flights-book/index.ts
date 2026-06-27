@@ -38,6 +38,26 @@ serve(async (req) => {
       );
     }
 
+    // Validate contact details server-side
+    if (!isValidEmail(userDetails.email)) {
+      return new Response(
+        JSON.stringify({ error: 'Please provide a valid email address.' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    if (!isValidName(userDetails.name)) {
+      return new Response(
+        JSON.stringify({ error: 'Please provide a valid name (2-100 characters).' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    if (!isValidPhone(userDetails.phone)) {
+      return new Response(
+        JSON.stringify({ error: 'Please provide a valid phone number.' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Initialize Supabase client
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
