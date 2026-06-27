@@ -330,6 +330,13 @@ Deno.serve(async (req) => {
 
     let places = [...byKey.values()];
 
+    // ⚠️ STRIPE SANCTIONS COMPLIANCE — drop any individual result that resolves
+    // to a restricted destination (defends against mixed/region-bleed results).
+    places = places.filter(
+      (p) => !isRestrictedText(p.formattedAddress, p.shortFormattedAddress, p.displayName?.text),
+    );
+
+
     const lodgingLike = places.filter((p) => isLikelyLodging(p) && !isLikelyNonBusinessLocality(p));
     if (lodgingLike.length > 0) {
       places = lodgingLike;
