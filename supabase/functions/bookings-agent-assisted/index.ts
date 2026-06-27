@@ -84,6 +84,22 @@ serve(async (req) => {
       );
     }
 
+    // ⚠️ STRIPE SANCTIONS COMPLIANCE — reject restricted destinations with 403
+    // before creating any booking. Stripe is never invoked for these requests.
+    const restricted = getRestrictedDestination(validatedOffer || offer);
+    if (restricted) {
+      logStep('Blocked restricted destination', { restricted });
+      return new Response(
+        JSON.stringify({
+          ok: false,
+          code: 'RESTRICTED_DESTINATION',
+          message: 'This destination is unavailable due to international sanctions and compliance regulations.',
+        }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+
     if (!userDetails?.email) {
       return new Response(
         JSON.stringify({ ok: false, code: 'EMAIL_REQUIRED', message: 'Email is required for booking' }),
