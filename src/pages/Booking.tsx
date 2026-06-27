@@ -217,6 +217,14 @@ const Booking = () => {
       return;
     }
 
+    // ⚠️ STRIPE SANCTIONS COMPLIANCE — never create a booking or initialise
+    // Stripe for restricted/sanctioned destinations.
+    if (isRestrictedBooking) {
+      toast.error(COMPLIANCE_COPY.shortNotice);
+      return;
+    }
+
+
     // Geographic compliance gate — block any non-U.S. billing country.
     if (!isUsCustomer) {
       toast.error(
