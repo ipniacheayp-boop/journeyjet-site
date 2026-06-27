@@ -43,9 +43,22 @@ const SearchResults = () => {
     return counts;
   }, [results, type]);
 
+  // ⚠️ STRIPE SANCTIONS COMPLIANCE — detect if the searched destination is restricted.
+  const restrictedSearchMatch = useMemo(() => {
+    const candidates = [
+      searchParams.get("cityCode"),
+      searchParams.get("city"),
+      searchParams.get("destinationLocationCode"),
+      searchParams.get("pickUpLocationCode"),
+    ];
+    return getRestrictedDestinationMatch(...candidates);
+  }, [searchParams]);
+
   const filteredResults = useMemo(() => {
-    if (type !== "flights" || timeFilter === "all") return results;
-    return results.filter((f) => {
+    // Remove any results located in a restricted (sanctioned) destination.
+    const compliant = results.filter((r) => !isRestrictedOffer(r));
+    if (type !== "flights" || timeFilter === "all") return compliant;
+    return compliant.filter((f) => {
       const dep = f.itineraries?.[0]?.segments?.[0]?.departure?.at;
       return getTimeSlot(dep) === timeFilter;
     });
