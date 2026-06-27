@@ -547,7 +547,34 @@ const Booking = () => {
               )}
 
               {/* Step 4: Payment */}
-              {currentStep === 4 && (
+              {/* ⚠️ STRIPE SANCTIONS COMPLIANCE — restricted destination at checkout.
+                  Stripe is NOT initialised and no Payment Intent is created. */}
+              {currentStep === 4 && isRestrictedBooking && (
+                <div className="space-y-6">
+                  <RestrictedDestinationNotice destination={restrictedMatch} />
+
+                  <div className="space-y-3">
+                    <Button
+                      size="lg"
+                      disabled
+                      className="w-full gap-2"
+                      variant="secondary"
+                    >
+                      {COMPLIANCE_COPY.paymentDisabledLabel}
+                    </Button>
+                    <p className="text-xs text-muted-foreground text-center">
+                      {COMPLIANCE_COPY.noProviderNote}
+                    </p>
+                    <div className="flex justify-start pt-2">
+                      <Button variant="outline" onClick={goBack} className="gap-2">
+                        <ArrowLeft className="w-4 h-4" /> Back
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {currentStep === 4 && !isRestrictedBooking && (
                 <div className="space-y-6">
                   {/* Booking Summary */}
                   <Card className="bg-card border-border">
