@@ -7,6 +7,15 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// ── Server-side input validation helpers ──
+const isValidEmail = (email: unknown): boolean =>
+  typeof email === 'string' && email.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const isValidName = (name: unknown): boolean =>
+  typeof name === 'string' && name.trim().length >= 2 && name.trim().length <= 100;
+const isValidPhone = (phone: unknown): boolean =>
+  phone === undefined || phone === null || phone === '' ||
+  (typeof phone === 'string' && phone.length >= 7 && phone.length <= 20 && /^[+\d\s\-()]+$/.test(phone));
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
