@@ -53,6 +53,9 @@ function formatBusinessStatus(s?: string): string {
 
 export function HotelResultCard({ hotel, onBook }: HotelResultCardProps) {
   const offer = hotel.offers?.[0] || hotel;
+  // ⚠️ STRIPE SANCTIONS COMPLIANCE — block booking for restricted destinations
+  // even if a restricted hotel reaches this card via a direct API response.
+  const isRestricted = isRestrictedOffer(hotel);
   const price = parseFloat(offer.price?.total || "0");
   const currency = offer.price?.currency || "USD";
   const rating = typeof hotel.rating === "number" ? hotel.rating : 0;
