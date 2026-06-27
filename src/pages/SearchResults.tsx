@@ -16,6 +16,8 @@ import { FlightTimeFilter, getTimeSlot, type TimeSlot } from "@/components/fligh
 import { toast } from "sonner";
 import { Shield } from "lucide-react";
 import SEOHead from "@/components/SEOHead";
+import RestrictedDestinationNotice from "@/components/compliance/RestrictedDestinationNotice";
+import { getRestrictedDestinationMatch, isRestrictedOffer } from "@/config/sanctionsCompliance";
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
