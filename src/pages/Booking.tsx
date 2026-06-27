@@ -24,6 +24,13 @@ import HotelUpsellStep, { type HotelUpsellData } from "@/components/booking/Hote
 import StripePaymentForm from "@/components/booking/StripePaymentForm";
 import HotelSummaryCard from "@/components/booking/HotelSummaryCard";
 import CarSummaryCard from "@/components/booking/CarSummaryCard";
+import RestrictedDestinationNotice from "@/components/compliance/RestrictedDestinationNotice";
+import {
+  isRestrictedOffer,
+  getRestrictedDestinationMatch,
+  getOfferDestinationText,
+  COMPLIANCE_COPY,
+} from "@/config/sanctionsCompliance";
 
 const STEPS = ["Flight", "Hotel", "Passengers", "Coupons", "Payment"];
 
