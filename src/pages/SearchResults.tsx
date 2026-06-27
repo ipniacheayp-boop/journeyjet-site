@@ -262,7 +262,7 @@ const SearchResults = () => {
                 ))}
               </div>
             </div>
-          ) : results.length === 0 ? (
+          ) : filteredResults.length === 0 ? (
             <Card className="bg-card border-border">
               <CardContent className="py-12 text-center">
                 <div className="max-w-lg mx-auto">
