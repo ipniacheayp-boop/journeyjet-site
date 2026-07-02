@@ -83,6 +83,17 @@ const Index = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
+  // SEO: the homepage ignores query params, but Google keeps crawling legacy/search
+  // and tracking variants (?type=flights&originLocationCode=..., ?ref=...) as duplicate
+  // "alternative" URLs. Strip them client-side so all signals consolidate on the clean
+  // canonical (https://tripile.com/). Uses replaceState to avoid a history entry.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.location.search) {
+      window.history.replaceState(null, "", window.location.pathname + window.location.hash);
+    }
+  }, []);
+
   const pinnedDeals = useMemo(() => mockDeals.filter((deal) => deal.isPinned).slice(0, 2), []);
   const unpinnedDeals = useMemo(() => mockDeals.filter((deal) => !deal.isPinned), []);
 
