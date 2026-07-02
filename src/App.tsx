@@ -176,6 +176,9 @@ const App = () => (
                   <Route path="/privacy-policy" element={<Navigate to="/privacy" replace />} />
                   <Route path="/contact-us" element={<Navigate to="/support" replace />} />
                   <Route path="/contact" element={<Navigate to="/support" replace />} />
+                  {/* SEO: legacy/marketing landing paths that no longer exist → home (kills soft 404s) */}
+                  <Route path="/lander" element={<Navigate to="/" replace />} />
+                  <Route path="/landing" element={<Navigate to="/" replace />} />
                   <Route path="/sitemap" element={<Sitemap />} />
                   <Route path="/taxes-fees" element={<TaxesFees />} />
                   <Route path="/cruise-deals" element={<CruiseDeals />} />
