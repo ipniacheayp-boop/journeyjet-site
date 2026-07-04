@@ -835,7 +835,7 @@ const BlogDetail = () => {
                             })}
                           </div>
                           <span className="text-primary text-[12px] font-bold mt-1.5 inline-block group-hover:underline">
-                            Read more
+                            Continue reading article
                           </span>
                         </div>
                       </Link>

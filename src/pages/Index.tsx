@@ -172,6 +172,7 @@ const Index = () => {
       iconBg: "bg-blue-600",
       link: "/deals",
       linkTitle: "Tripile best price guarantee — compare travel deals",
+      linkLabel: "Learn more about our Price Guarantee",
     },
     {
       icon: Clock,
@@ -183,6 +184,7 @@ const Index = () => {
       iconBg: "bg-emerald-600",
       link: "/support",
       linkTitle: "Contact Tripile support — 24/7 travel help",
+      linkLabel: "Learn more about 24/7 support",
     },
     {
       icon: Headphones,
@@ -195,6 +197,7 @@ const Index = () => {
       iconBg: "bg-indigo-600",
       link: "/support",
       linkTitle: "Tripile travel experts — personalized flight search",
+      linkLabel: "Learn more about personalized search",
     },
     {
       icon: CreditCard,
@@ -207,6 +210,7 @@ const Index = () => {
       iconBg: "bg-amber-500",
       link: "/support?topic=flexpay",
       linkTitle: "Tripile FlexPay — flexible payment options for travel",
+      linkLabel: "Learn more about FlexPay",
     },
   ];
 
@@ -497,6 +501,7 @@ const Index = () => {
                   <Link
                     to="/deals"
                     title="View flight deals on Tripile"
+                    aria-label="View flight deals"
                     className="shrink-0 mt-1 inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-600/20 border border-blue-500/30 text-blue-400 hover:bg-blue-600 hover:text-white transition-all duration-200"
                   >
                     <ArrowRight className="w-4 h-4" />
@@ -553,6 +558,7 @@ const Index = () => {
                   <Link
                     to="/deals"
                     title="View senior & special fare deals on Tripile"
+                    aria-label="View senior & special fare deals"
                     className="shrink-0 mt-1 inline-flex items-center justify-center w-8 h-8 rounded-full bg-rose-600/20 border border-rose-500/30 text-rose-400 hover:bg-rose-600 hover:text-white transition-all duration-200"
                   >
                     <ArrowRight className="w-4 h-4" />
@@ -681,7 +687,7 @@ const Index = () => {
                     title={item.linkTitle}
                     className={`inline-flex items-center gap-1 mt-3 text-xs font-semibold ${item.color} hover:opacity-80 transition-opacity`}
                   >
-                    Learn more <ArrowRight className="w-3 h-3" />
+                    {item.linkLabel} <ArrowRight className="w-3 h-3" />
                   </Link>
                 </div>
               </motion.div>
