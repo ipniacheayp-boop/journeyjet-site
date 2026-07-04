@@ -257,7 +257,7 @@ const CustomerReviewsDark = () => {
                   className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-blue-300 hover:text-blue-200"
                   onClick={() => toggleExpanded(`${review.id}-${index}`)}
                 >
-                  {expandedReviewIds[`${review.id}-${index}`] ? "Read less" : "Read more"}
+                  {expandedReviewIds[`${review.id}-${index}`] ? "Show less" : "Read full review"}
                   <ChevronRight className="h-3.5 w-3.5" />
                 </button>
 
