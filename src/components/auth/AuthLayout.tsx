@@ -20,7 +20,7 @@ const AuthLayout = ({ title, subtitle, footer, children }: AuthLayoutProps) => {
       <div className="relative z-10 flex min-h-screen flex-col">
         <header className="container mx-auto flex items-center justify-between px-4 py-5">
           <Link to="/" className="flex items-center gap-2" aria-label="Tripile home">
-            <img src={tripileLogo} alt="Tripile" className="h-8 w-auto" />
+            <img src={tripileLogo} alt="Tripile travel logo" className="h-8 w-auto" />
           </Link>
           <Link
             to="/"

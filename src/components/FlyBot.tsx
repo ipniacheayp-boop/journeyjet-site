@@ -270,7 +270,7 @@ const FlyBot = () => {
         >
           <img
             src={flyBotLogo}
-            alt="FlyBot"
+            alt="FlyBot travel assistant"
             title="FlyBot — Tripile travel assistant for flights and bookings"
             className="h-full w-full object-contain"
           />
