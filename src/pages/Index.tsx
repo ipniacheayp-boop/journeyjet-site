@@ -172,6 +172,7 @@ const Index = () => {
       iconBg: "bg-blue-600",
       link: "/deals",
       linkTitle: "Tripile best price guarantee — compare travel deals",
+      linkLabel: "Learn more about our Price Guarantee",
     },
     {
       icon: Clock,
@@ -183,6 +184,7 @@ const Index = () => {
       iconBg: "bg-emerald-600",
       link: "/support",
       linkTitle: "Contact Tripile support — 24/7 travel help",
+      linkLabel: "Learn more about 24/7 support",
     },
     {
       icon: Headphones,
@@ -195,6 +197,7 @@ const Index = () => {
       iconBg: "bg-indigo-600",
       link: "/support",
       linkTitle: "Tripile travel experts — personalized flight search",
+      linkLabel: "Learn more about personalized search",
     },
     {
       icon: CreditCard,
@@ -207,6 +210,7 @@ const Index = () => {
       iconBg: "bg-amber-500",
       link: "/support?topic=flexpay",
       linkTitle: "Tripile FlexPay — flexible payment options for travel",
+      linkLabel: "Learn more about FlexPay",
     },
   ];
 
