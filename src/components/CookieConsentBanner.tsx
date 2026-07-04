@@ -74,7 +74,7 @@ export default function CookieConsentBanner() {
       : "Our site uses cookies so we can provide you with the best possible web experience. ";
 
   const learnMore =
-    language === "es" ? "Obtenga más información sobre cómo usamos cookies." : "Learn more about how we use cookies.";
+    language === "es" ? "Cómo usamos las cookies" : "How we use cookies";
 
   const acceptLabel = language === "es" ? "Aceptar y continuar" : "Accept & Continue";
 
