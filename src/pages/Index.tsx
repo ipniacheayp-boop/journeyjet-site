@@ -558,6 +558,7 @@ const Index = () => {
                   <Link
                     to="/deals"
                     title="View senior & special fare deals on Tripile"
+                    aria-label="View senior & special fare deals"
                     className="shrink-0 mt-1 inline-flex items-center justify-center w-8 h-8 rounded-full bg-rose-600/20 border border-rose-500/30 text-rose-400 hover:bg-rose-600 hover:text-white transition-all duration-200"
                   >
                     <ArrowRight className="w-4 h-4" />
