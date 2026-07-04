@@ -227,7 +227,18 @@ const Index = () => {
           content="cheap flights USA, flight deals, cheap hotels USA, car rentals USA, travel booking USA"
         />
         <link rel="canonical" href="https://tripile.com/" />
-        {/* Open Graph & Twitter: defined once in index.html to avoid duplicate meta tags */}
+        {/* Per-route Open Graph so each page gets its own social preview */}
+        <meta property="og:url" content="https://tripile.com/" />
+        <meta property="og:title" content="Tripile – Cheap Flights, Hotels & Car Rentals USA" />
+        <meta
+          property="og:description"
+          content="Compare cheap flights, hotels & car rentals across the USA. Price Match Guarantee. Trusted by 2M+ travelers. Search Tripile—compare fares, hotels & cars today."
+        />
+        <meta name="twitter:title" content="Tripile – Cheap Flights, Hotels & Car Rentals USA" />
+        <meta
+          name="twitter:description"
+          content="Compare cheap flights, hotels & car rentals across the USA. Price Match Guarantee. Trusted by 2M+ travelers. Search Tripile—compare fares, hotels & cars today."
+        />
       </Helmet>
       <Header />
 
