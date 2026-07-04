@@ -25,6 +25,7 @@ const CallSupportPopup = ({ onClose }: Props) => {
         {/* Close Button */}
         <button
           onClick={onClose}
+          aria-label="Close support popup"
           className="absolute top-3 right-3 z-10 text-white bg-black/50 rounded-full p-1 hover:bg-black"
         >
           <X size={18} />
