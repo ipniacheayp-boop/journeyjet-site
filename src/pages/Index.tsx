@@ -685,7 +685,7 @@ const Index = () => {
                     title={item.linkTitle}
                     className={`inline-flex items-center gap-1 mt-3 text-xs font-semibold ${item.color} hover:opacity-80 transition-opacity`}
                   >
-                    Learn more <ArrowRight className="w-3 h-3" />
+                    {item.linkLabel} <ArrowRight className="w-3 h-3" />
                   </Link>
                 </div>
               </motion.div>
