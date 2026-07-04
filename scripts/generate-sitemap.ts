@@ -9,6 +9,7 @@ import { airportLandingPages } from "../src/data/airportLandingData";
 import { blogPosts } from "../src/data/blogPosts";
 import { cruiseDestinations } from "../src/data/cruiseDestinations";
 import { cityGuides, getCountryGuides } from "../src/data/travelGuides";
+import { dealSlugs } from "../src/data/dealSlugs";
 
 const BASE_URL = "https://tripile.com";
 const today = new Date().toISOString().slice(0, 10);
@@ -49,6 +50,18 @@ const core: Entry[] = [
   { path: "/privacy", changefreq: "monthly", priority: "0.4" },
 ];
 entries.push(...core);
+
+// Search results hub
+entries.push({ path: "/search-results", changefreq: "daily", priority: "0.7", lastmod: today });
+
+// Auth-protected user pages (included for completeness)
+entries.push({ path: "/account", changefreq: "monthly", priority: "0.5", lastmod: today });
+entries.push({ path: "/my-bookings", changefreq: "weekly", priority: "0.6", lastmod: today });
+
+// Published deal detail pages (DealDetail — /deals/:id)
+dealSlugs.forEach((slug) =>
+  entries.push({ path: `/deals/${slug}`, changefreq: "weekly", priority: "0.75" })
+);
 
 // Blog posts (sourced dynamically from blog data so the sitemap stays in sync)
 blogPosts.forEach((post) =>
