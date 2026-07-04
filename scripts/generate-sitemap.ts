@@ -51,6 +51,18 @@ const core: Entry[] = [
 ];
 entries.push(...core);
 
+// Search results hub
+entries.push({ path: "/search-results", changefreq: "daily", priority: "0.7", lastmod: today });
+
+// Auth-protected user pages (included for completeness)
+entries.push({ path: "/account", changefreq: "monthly", priority: "0.5", lastmod: today });
+entries.push({ path: "/my-bookings", changefreq: "weekly", priority: "0.6", lastmod: today });
+
+// Published deal detail pages (DealDetail — /deals/:id)
+dealSlugs.forEach((slug) =>
+  entries.push({ path: `/deals/${slug}`, changefreq: "weekly", priority: "0.75" })
+);
+
 // Blog posts (sourced dynamically from blog data so the sitemap stays in sync)
 blogPosts.forEach((post) =>
   entries.push({ path: `/blog/${post.slug}`, changefreq: "monthly", priority: "0.7" })
