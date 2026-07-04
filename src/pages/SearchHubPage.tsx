@@ -11,7 +11,7 @@ const HUB_CONFIG: Record<
 > = {
   "/flights": {
     defaultTab: "flights",
-    title: "Search Cheap Flights | Tripile.com — Compare 500+ Airlines",
+    title: "Search Cheap Flights | Tripile.com",
     description:
       "Search and compare cheap flights across the USA on Tripile.com. Compare 500+ airlines, flexible dates, transparent fares, and 24/7 support when plans change.",
     canonical: "https://tripile.com/flights",
@@ -27,7 +27,7 @@ const HUB_CONFIG: Record<
     defaultTab: "cars",
     title: "Cheap Car Rentals | Tripile.com — Compare Rates",
     description:
-      "Compare car rental rates from major brands. Choose pick-up and drop-off locations, dates, and vehicle class—built for US road trips and airport pickups on Tripile.com.",
+      "Compare car rental rates from top brands. Pick locations, dates, and vehicle class for US road trips and airport pickups on Tripile.com.",
     canonical: "https://tripile.com/car-rentals",
   },
 };
