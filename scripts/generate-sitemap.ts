@@ -51,12 +51,12 @@ const core: Entry[] = [
 ];
 entries.push(...core);
 
-// Search results hub
-entries.push({ path: "/search-results", changefreq: "daily", priority: "0.7", lastmod: today });
+// Note: /search-results, /account, /my-bookings, /booking/:id and /auth/* are
+// intentionally excluded from the sitemap. They are private, auth-gated, or
+// transient flow pages and are blocked from crawling in public/robots.txt, so
+// listing them here would send conflicting index signals.
 
-// Auth-protected user pages (included for completeness)
-entries.push({ path: "/account", changefreq: "monthly", priority: "0.5", lastmod: today });
-entries.push({ path: "/my-bookings", changefreq: "weekly", priority: "0.6", lastmod: today });
+
 
 // Published deal detail pages (DealDetail — /deals/:id)
 dealSlugs.forEach((slug) =>
