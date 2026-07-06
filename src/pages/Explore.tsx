@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -69,6 +70,10 @@ export default function Explore() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Explore Destinations — Travel Inspiration | Tripile"
+        description="Discover trending travel destinations with Tripile. Explore beaches, cities and hidden gems by season, budget and vibe to plan your next getaway."
+      />
       <Header />
 
       {/* Cinematic Hero Search Area */}
