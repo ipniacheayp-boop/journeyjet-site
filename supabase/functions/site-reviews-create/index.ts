@@ -102,7 +102,7 @@ serve(async (req) => {
   } catch (error: any) {
     console.error('Error creating site review:', error);
     return new Response(
-      JSON.stringify({ error: error.message || 'Internal server error' }),
+      JSON.stringify({ error: 'Unable to submit your review. Please try again.', code: 'SERVICE_ERROR' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
