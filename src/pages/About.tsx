@@ -8,18 +8,18 @@ const About = () => {
   return (
     <div className="min-h-screen flex flex-col font-poppins bg-background text-foreground transition-colors duration-300">
       <Helmet>
-        <title>About Tripile | Trusted US Travel Booking Platform</title>
+        <title>About Tripile | Trusted Travel Booking Platform</title>
         <meta
           name="description"
-          content="Learn about Tripile.com — America's trusted travel booking platform. We help millions of travelers find the best deals on flights, hotels, and car rentals across the USA."
+          content="Learn about Tripile, a travel platform helping users discover affordable flights, hotels, car rentals, cruises, and travel deals."
         />
         <meta
           name="keywords"
           content="about Tripile, US travel company, travel booking platform, flight deals company, trusted travel partner, Tripile.com"
         />
         <link rel="canonical" href="https://tripile.com/about" />
-        <meta property="og:title" content="About Tripile | Trusted US Travel Booking Platform" />
-        <meta property="og:description" content="Learn about Tripile.com — America's trusted travel booking platform helping millions find the best deals on flights, hotels, and car rentals." />
+        <meta property="og:title" content="About Tripile | Trusted Travel Booking Platform" />
+        <meta property="og:description" content="Learn about Tripile, a travel platform helping users discover affordable flights, hotels, car rentals, cruises, and travel deals." />
         <meta property="og:url" content="https://tripile.com/about" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://tripile.com/og-image.png" />
@@ -29,10 +29,10 @@ const About = () => {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@tripile" />
         <meta name="twitter:creator" content="@tripile" />
-        <meta name="twitter:title" content="About Tripile | Trusted US Travel Booking Platform" />
+        <meta name="twitter:title" content="About Tripile | Trusted Travel Booking Platform" />
         <meta
           name="twitter:description"
-          content="Learn about Tripile.com — America's trusted travel booking platform helping millions find the best deals on flights, hotels, and car rentals."
+          content="Learn about Tripile, a travel platform helping users discover affordable flights, hotels, car rentals, cruises, and travel deals."
         />
         <meta name="twitter:image" content="https://tripile.com/og-image.png" />
         <script type="application/ld+json">

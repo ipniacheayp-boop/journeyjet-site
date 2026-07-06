@@ -42,11 +42,12 @@ export default function Sitemap() {
   return (
     <>
       <Helmet>
-        <title>Sitemap – Cheap Flights, Airlines & Destinations | Tripile.com</title>
+        <title>Tripile Sitemap | Explore Website Pages</title>
         <meta
           name="description"
-          content="Browse our complete site map. Find cheap flights and hotels in 50+ destinations, compare 30+ airlines, and discover travel deals."
+          content="Browse Tripile website pages including flights, hotels, cruises, guides, deals, and support resources."
         />
+        <link rel="canonical" href="https://tripile.com/sitemap" />
       </Helmet>
 
       <Header />

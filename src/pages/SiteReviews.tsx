@@ -115,8 +115,8 @@ export default function SiteReviews() {
   return (
     <div className="min-h-screen flex flex-col pt-10">
       <SEOHead
-        title="Tripile Customer Reviews & Ratings — Real Traveler Feedback"
-        description="Read verified Tripile customer reviews and ratings from real travelers. See what people say about booking flights, hotels and car rentals with Tripile."
+        title="Tripile Customer Reviews & Travel Experiences"
+        description="Read traveler feedback, ratings, and experiences from users planning trips with Tripile."
       />
       <Header />
 

@@ -100,8 +100,8 @@ const TaxesFees = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background pt-16">
       <SEOHead
-        title="Airline Taxes, Fees & Post-Ticketing Charges | Tripile.com"
-        description="Understand airline taxes, service fees, and post-ticketing charges including changes, cancellations, and refunds."
+        title="Airline Taxes, Fees & Travel Charges Guide"
+        description="Understand airline fees, travel taxes, booking charges, and post-ticketing costs."
         canonicalUrl="https://tripile.com/taxes-fees"
         keywords="airline taxes, flight fees, post-ticketing fees, cancellation fees, change fees, baggage fees, refund policy"
       />

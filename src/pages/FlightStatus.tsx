@@ -392,8 +392,8 @@ const FlightStatus = () => {
   return (
     <>
       <SEOHead
-        title="Flight Status – Real-Time Tracking | Tripile.com"
-        description="Check real-time flight status by flight number or route on Tripile.com. See departures, arrivals, delays, gate updates, and cancellations—then book flights, hotels, and cars in one place."
+        title="Real-Time Flight Status Checker | Tripile"
+        description="Check current flight status, airline updates, departure times, and arrival information."
         keywords="flight status, flight tracker, airline delays, airport departures, Tripile flight status"
         canonicalUrl="https://tripile.com/flight-status"
       />

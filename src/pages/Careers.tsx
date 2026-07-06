@@ -67,8 +67,8 @@ const Careers = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title="Careers at Tripile — Travel Industry Jobs & Openings"
-        description="Explore career opportunities at Tripile. Browse open roles across engineering, support, marketing and more, and join a fast-growing travel company."
+        title="Careers at Tripile | Join Our Team"
+        description="Explore career opportunities at Tripile and help build innovative travel technology solutions."
       />
       <Header />
       {/* Hero Section with Unsplash Background */}

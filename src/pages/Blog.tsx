@@ -41,8 +41,8 @@ const Blog = () => {
   return (
     <>
       <SEOHead
-        title="Travel Blog | Tripile.com - Tips, Guides & Inspiration"
-        description="Explore our travel blog for expert tips, destination guides, flight deals, and travel inspiration. Plan your next adventure with insider knowledge from Tripile.com."
+        title="Travel Blog, Tips & Destination Guides | Tripile"
+        description="Read travel tips, destination guides, booking advice, and money-saving travel articles from Tripile."
         keywords="travel blog, travel tips, destination guides, flight deals, travel inspiration, budget travel, Tripile blog"
         canonicalUrl="https://tripile.com/blog"
       />

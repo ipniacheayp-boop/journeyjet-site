@@ -336,19 +336,19 @@ const Deals = () => {
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden bg-background pt-16 ">
       <Helmet>
-        <title>Exclusive Flight Deals & Travel Offers | Tripile.com USA</title>
+        <title>Exclusive Travel Deals & Offers | Tripile</title>
         <meta
           name="description"
-          content="Discover exclusive flight deals and travel offers across the USA. Save up to 50% on roundtrip flights with Tripile.com's best price guarantee. Compare fares from 500+ airlines."
+          content="Explore limited-time discounts on flights, hotels, cruises, vacations, and travel packages."
         />
         <meta
           name="keywords"
           content="flight deals USA, cheap airline tickets, travel offers, discounted flights, last minute deals, best flight prices, Tripile deals"
         />
-        <meta property="og:title" content="Exclusive Flight Deals & Travel Offers | Tripile.com" />
+        <meta property="og:title" content="Exclusive Travel Deals & Offers | Tripile" />
         <meta
           property="og:description"
-          content="Discover exclusive travel deals on flights across the USA. Save up to 50% on roundtrip flights."
+          content="Explore limited-time discounts on flights, hotels, cruises, vacations, and travel packages."
         />
         <meta property="og:url" content="https://tripile.com/deals" />
         <meta property="og:type" content="website" />
@@ -359,10 +359,10 @@ const Deals = () => {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@tripile" />
         <meta name="twitter:creator" content="@tripile" />
-        <meta name="twitter:title" content="Exclusive Flight Deals &amp; Travel Offers | Tripile.com" />
+        <meta name="twitter:title" content="Exclusive Travel Deals & Offers | Tripile" />
         <meta
           name="twitter:description"
-          content="Discover exclusive travel deals on flights across the USA. Save up to 50% on roundtrip flights."
+          content="Explore limited-time discounts on flights, hotels, cruises, vacations, and travel packages."
         />
         <meta name="twitter:image" content="https://tripile.com/og-image.png" />
         <link rel="canonical" href="https://tripile.com/deals" />
