@@ -189,7 +189,7 @@ serve(async (req) => {
   } catch (error: any) {
     console.error("Payment intent creation error:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: "Unable to initialize payment. Please try again.", code: "PAYMENT_ERROR" }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 500,
