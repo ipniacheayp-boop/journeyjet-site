@@ -842,6 +842,10 @@ const PrivacyPolicy = () => {
 export default function App() {
   return (
     <div className="font-sans antialiased text-foreground bg-background min-h-screen">
+      <SEOHead
+        title="Privacy Policy | Tripile"
+        description="Read Tripile's Privacy Policy to learn how we collect, use, and protect your personal information when you book flights, hotels and car rentals."
+      />
       <main className="max-w-4xl mx-auto bg-card shadow-lg rounded-lg my-10">
         <PrivacyPolicy />
       </main>
