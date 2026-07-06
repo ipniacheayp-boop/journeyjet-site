@@ -301,7 +301,7 @@ serve(async (req) => {
   } catch (e) {
     console.error("FlyBot chat error:", e);
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
+      JSON.stringify({ error: "The assistant is temporarily unavailable. Please try again.", code: "SERVICE_ERROR" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
