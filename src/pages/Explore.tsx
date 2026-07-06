@@ -70,6 +70,10 @@ export default function Explore() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEOHead
+        title="Explore Destinations — Travel Inspiration | Tripile"
+        description="Discover trending travel destinations with Tripile. Explore beaches, cities and hidden gems by season, budget and vibe to plan your next getaway."
+      />
       <Header />
 
       {/* Cinematic Hero Search Area */}
