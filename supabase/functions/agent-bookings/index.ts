@@ -39,7 +39,7 @@ serve(async (req) => {
     
     if (authError) {
       console.error('[agent-bookings] Auth error:', authError.message);
-      return new Response(JSON.stringify({ error: 'Unauthorized', details: authError.message }), {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 401,
       });
@@ -123,7 +123,7 @@ serve(async (req) => {
     );
   } catch (error) {
     console.error('[agent-bookings] Unexpected error:', error);
-    return new Response(JSON.stringify({ error: String(error) }), {
+    return new Response(JSON.stringify({ error: 'An error occurred processing your request', code: 'INTERNAL_ERROR' }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,
     });

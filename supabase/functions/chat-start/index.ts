@@ -105,11 +105,20 @@ serve(async (req) => {
       ? 'Hello! An agent will be with you shortly.'
       : 'Hello! All our agents are currently busy. Your message has been queued and an agent will respond as soon as possible.';
 
-    const { error: messageError } = await supabaseClient
+    // System messages are inserted with the service-role client so the
+    // sender_type-enforcement trigger allows the 'system' type (client inserts
+    // are constrained to 'user'/'agent' based on the caller's real role).
+    const supabaseAdmin = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      { auth: { persistSession: false } }
+    );
+
+    const { error: messageError } = await supabaseAdmin
       .from('chat_messages')
       .insert({
         conversation_id: conversation.id,
-        sender_id: user.id, // System message uses user_id but sender_type will be 'system'
+        sender_id: user.id, // System message uses user_id but sender_type is 'system'
         sender_type: 'system',
         message: welcomeMessage,
       });
@@ -125,7 +134,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error:', error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
+      JSON.stringify({ error: 'Unable to start chat. Please try again.', code: 'SERVICE_ERROR' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
