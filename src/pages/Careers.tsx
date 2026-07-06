@@ -8,6 +8,7 @@ import JobFilters from "@/components/careers/JobFilters";
 import { jobRoles, departments } from "@/data/careerRoles";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SEOHead from "@/components/SEOHead";
 
 const Careers = () => {
   const [search, setSearch] = useState("");
