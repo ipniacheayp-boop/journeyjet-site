@@ -184,15 +184,15 @@ const Support = () => {
   return (
     <div className="min-h-screen flex flex-col font-poppins bg-background text-foreground transition-colors duration-300">
       <Helmet>
-        <title>Customer Support | Tripile.com - 24/7 Travel Assistance</title>
+        <title>Customer Support & Travel Help | Tripile</title>
         <meta
           name="description"
-          content="Get 24/7 customer support for your travel bookings. Contact Tripile.com for help with flights, hotels, car rentals, refunds, cancellations, and more."
+          content="Get assistance with travel bookings, questions, and Tripile customer support services."
         />
         <meta name="keywords" content="Tripile support, travel help, flight booking support, 24/7 travel assistance, refund help, booking cancellation" />
         <link rel="canonical" href="https://tripile.com/support" />
-        <meta property="og:title" content="Customer Support | Tripile.com - 24/7 Travel Assistance" />
-        <meta property="og:description" content="Get 24/7 customer support for your travel bookings with Tripile.com." />
+        <meta property="og:title" content="Customer Support & Travel Help | Tripile" />
+        <meta property="og:description" content="Get assistance with travel bookings, questions, and Tripile customer support services." />
         <meta property="og:url" content="https://tripile.com/support" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://tripile.com/og-image.png" />
@@ -202,8 +202,8 @@ const Support = () => {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@tripile" />
         <meta name="twitter:creator" content="@tripile" />
-        <meta name="twitter:title" content="Customer Support | Tripile.com - 24/7 Travel Assistance" />
-        <meta name="twitter:description" content="Get 24/7 customer support for your travel bookings with Tripile.com." />
+        <meta name="twitter:title" content="Customer Support & Travel Help | Tripile" />
+        <meta name="twitter:description" content="Get assistance with travel bookings, questions, and Tripile customer support services." />
         <meta name="twitter:image" content="https://tripile.com/og-image.png" />
         <script type="application/ld+json">
           {JSON.stringify({

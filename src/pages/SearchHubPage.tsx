@@ -11,23 +11,23 @@ const HUB_CONFIG: Record<
 > = {
   "/flights": {
     defaultTab: "flights",
-    title: "Search Cheap Flights | Tripile.com",
+    title: "Search Cheap Flights & Airline Deals | Tripile",
     description:
-      "Search and compare cheap flights across the USA on Tripile.com. Compare 500+ airlines, flexible dates, transparent fares, and 24/7 support when plans change.",
+      "Find and compare cheap flights, airline tickets, and travel offers from multiple providers using Tripile.",
     canonical: "https://tripile.com/flights",
   },
   "/hotels": {
     defaultTab: "hotels",
-    title: "Find Cheap Hotels | Tripile.com — US & International Stays",
+    title: "Find Cheap Hotels Worldwide | Tripile",
     description:
-      "Find hotel deals and compare nightly rates for US cities and international destinations. Filter by neighborhood, star rating, and amenities on Tripile.com.",
+      "Discover affordable hotels, stays, and accommodation deals worldwide with Tripile hotel search.",
     canonical: "https://tripile.com/hotels",
   },
   "/car-rentals": {
     defaultTab: "cars",
-    title: "Cheap Car Rentals | Tripile.com — Compare Rates",
+    title: "Cheap Car Rentals & Vehicle Deals | Tripile",
     description:
-      "Compare car rental rates from top brands. Pick locations, dates, and vehicle class for US road trips and airport pickups on Tripile.com.",
+      "Compare rental car prices, vehicle options, and travel transportation deals easily with Tripile.",
     canonical: "https://tripile.com/car-rentals",
   },
 };

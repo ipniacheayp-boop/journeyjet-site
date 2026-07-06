@@ -28,7 +28,7 @@ export const cruiseDestinations: CruiseDestination[] = [
     name: "Caribbean Cruises",
     seoTitle: "Caribbean Cruises 2026 | Cheap Caribbean Cruise Deals",
     metaDescription:
-      "Book cheap Caribbean cruise deals for 2026. Compare Eastern, Western & Southern Caribbean itineraries with free perks, onboard credit and the best low prices.",
+      "Find Caribbean cruise offers, islands, itineraries, and vacation deals.",
     keywords:
       "caribbean cruises, cheap caribbean cruise, eastern caribbean cruise, western caribbean cruise, caribbean cruise deals 2026, bahamas cruise",
     h1: "Caribbean Cruises: Sun, Sea & Unforgettable Island Escapes",
@@ -60,7 +60,7 @@ export const cruiseDestinations: CruiseDestination[] = [
     name: "Mediterranean Cruises",
     seoTitle: "Mediterranean Cruises 2026 | Best Med Cruise Deals",
     metaDescription:
-      "Explore the best Mediterranean cruise deals for 2026. Visit Italy, Greece, Spain & France on Western and Eastern Med itineraries with exclusive savings and perks.",
+      "Find Mediterranean cruise trips, destinations, and vacation packages.",
     keywords:
       "mediterranean cruises, mediterranean cruise deals, greek isles cruise, western mediterranean cruise, italy cruise, europe cruise 2026",
     h1: "Mediterranean Cruises: History, Culture & Coastal Beauty",
@@ -92,7 +92,7 @@ export const cruiseDestinations: CruiseDestination[] = [
     name: "Alaska Cruises",
     seoTitle: "Alaska Cruises 2026 | Cheap Alaska Cruise Deals",
     metaDescription:
-      "Find the best Alaska cruise deals for 2026. Sail the Inside Passage and Glacier Bay to see glaciers, whales and wildlife with exclusive savings on top cruise lines.",
+      "Explore Alaska cruise deals, routes, prices, and travel packages.",
     keywords:
       "alaska cruises, alaska cruise deals, inside passage cruise, glacier bay cruise, alaska cruise 2026, hubbard glacier cruise",
     h1: "Alaska Cruises: Glaciers, Wildlife & Wilderness",
@@ -124,7 +124,7 @@ export const cruiseDestinations: CruiseDestination[] = [
     name: "Luxury Cruises",
     seoTitle: "Luxury Cruises 2026 | All-Inclusive Luxury Cruise Deals",
     metaDescription:
-      "Discover all-inclusive luxury cruise deals for 2026. Sail in spacious suites with personal butlers, fine dining and curated shore experiences on the world's best ships.",
+      "Discover premium luxury cruise experiences, destinations, and exclusive deals.",
     keywords:
       "luxury cruises, all-inclusive cruise, luxury cruise deals, premium cruise lines, suite cruise, world cruise 2026",
     h1: "Luxury Cruises: All-Inclusive Voyages in Effortless Style",
@@ -156,7 +156,7 @@ export const cruiseDestinations: CruiseDestination[] = [
     name: "Family Cruises",
     seoTitle: "Family Cruises 2026 | Best Family Cruise Deals & Kids Sail Free",
     metaDescription:
-      "Plan the perfect family cruise for 2026. Compare family-friendly cruise deals with kids clubs, water parks and Kids Sail Free offers on top cruise lines.",
+      "Compare family-friendly cruise packages, activities, and travel offers.",
     keywords:
       "family cruises, family cruise deals, kids sail free, best family cruise, cruise with kids, family friendly cruise 2026",
     h1: "Family Cruises: Adventure & Relaxation for Every Age",

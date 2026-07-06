@@ -234,8 +234,8 @@ const CruiseDeals = () => {
       <Header />
       <div className="min-h-screen bg-background pt-20">
         <SEOHead
-          title="Best Cruise Deals | Up to 25% Off Luxury Cruises"
-          description="Book the best cruise deals with up to 25% off on Royal Caribbean, Carnival, Norwegian, Princess, and more. Exclusive cruise packages to Alaska, Caribbean, and Mediterranean destinations."
+          title="Best Cruise Deals & Vacation Offers | Tripile"
+          description="Find affordable cruise deals, luxury cruises, family cruises, and vacation packages."
           canonicalUrl="https://tripile.com/cruise-deals"
           keywords="cruise deals, cheap cruises, Royal Caribbean, Carnival, Norwegian, Princess, Alaska cruise, Caribbean cruise, Mediterranean cruise"
         />

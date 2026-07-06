@@ -217,10 +217,10 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>Tripile – Cheap Flights, Hotels & Car Rentals USA</title>
+        <title>Tripile | Cheap Flights, Hotels & Car Rentals</title>
         <meta
           name="description"
-          content="Compare cheap flights, hotels & car rentals across the USA. Price Match Guarantee. Trusted by 2M+ travelers. Search Tripile—compare fares, hotels & cars today."
+          content="Compare flights, hotels, rental cars, and travel deals worldwide with Tripile. Find affordable prices and plan your perfect trip easily."
         />
         <meta
           name="keywords"
@@ -229,15 +229,15 @@ const Index = () => {
         <link rel="canonical" href="https://tripile.com/" />
         {/* Per-route Open Graph so each page gets its own social preview */}
         <meta property="og:url" content="https://tripile.com/" />
-        <meta property="og:title" content="Tripile – Cheap Flights, Hotels & Car Rentals USA" />
+        <meta property="og:title" content="Tripile | Cheap Flights, Hotels & Car Rentals" />
         <meta
           property="og:description"
-          content="Compare cheap flights, hotels & car rentals across the USA. Price Match Guarantee. Trusted by 2M+ travelers. Search Tripile—compare fares, hotels & cars today."
+          content="Compare flights, hotels, rental cars, and travel deals worldwide with Tripile. Find affordable prices and plan your perfect trip easily."
         />
-        <meta name="twitter:title" content="Tripile – Cheap Flights, Hotels & Car Rentals USA" />
+        <meta name="twitter:title" content="Tripile | Cheap Flights, Hotels & Car Rentals" />
         <meta
           name="twitter:description"
-          content="Compare cheap flights, hotels & car rentals across the USA. Price Match Guarantee. Trusted by 2M+ travelers. Search Tripile—compare fares, hotels & cars today."
+          content="Compare flights, hotels, rental cars, and travel deals worldwide with Tripile. Find affordable prices and plan your perfect trip easily."
         />
       </Helmet>
       <Header />

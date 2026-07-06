@@ -76,8 +76,8 @@ const TripPlanner = () => {
   return (
     <div className="min-h-screen bg-background selection:bg-primary/20 selection:text-primary overflow-x-hidden">
       <SEOHead
-        title="AI Trip Planner — Build Your Itinerary | Tripile"
-        description="Plan your perfect trip with Tripile's AI trip planner. Get personalized day-by-day itineraries, budgets, and travel tips for any destination in seconds."
+        title="AI Trip Planner & Travel Itinerary Generator"
+        description="Create customized travel plans and itineraries with Tripile's smart trip planning tools."
       />
       <Header />
 
