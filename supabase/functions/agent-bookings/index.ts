@@ -39,7 +39,7 @@ serve(async (req) => {
     
     if (authError) {
       console.error('[agent-bookings] Auth error:', authError.message);
-      return new Response(JSON.stringify({ error: 'Unauthorized', details: authError.message }), {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 401,
       });
