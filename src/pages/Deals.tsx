@@ -370,6 +370,14 @@ const Deals = () => {
         />
         <meta name="twitter:image" content="https://tripile.com/og-image.png" />
         <link rel="canonical" href="https://tripile.com/deals" />
+        <meta
+          name="robots"
+          content={
+            hasParams
+              ? "noindex, follow"
+              : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+          }
+        />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
