@@ -3,8 +3,6 @@ import { Link, useLocation } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SearchWidget from "@/components/SearchWidget";
-
-import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import { Plane, Hotel, Car } from "lucide-react";
 
 const HUB_CONFIG: Record<
@@ -187,12 +185,9 @@ function HubSeoArticle({ tabKey }: { tabKey: "flights" | "hotels" | "cars" }) {
  * SEO-friendly hubs for flight / hotel / car search (no hash-based URLs).
  */
 const SearchHubPage = () => {
-  const { pathname, search } = useLocation();
+  const { pathname } = useLocation();
   const config = HUB_CONFIG[pathname] ?? HUB_CONFIG["/flights"];
   const tabKey = config.defaultTab;
-  // Search/filter permutations (?originLocationCode=…, ?checkIn=…) must not be
-  // indexed — they consolidate onto the clean canonical below.
-  const hasParams = search.length > 1;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -216,28 +211,9 @@ const SearchHubPage = () => {
         <meta name="twitter:image" content="https://tripile.com/og-image.png" />
         <meta
           name="robots"
-          content={
-            hasParams
-              ? "noindex, follow"
-              : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
-          }
+          content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
         />
       </Helmet>
-
-      <BreadcrumbSchema
-        items={[
-          { name: "Home", url: "https://tripile.com/" },
-          {
-            name:
-              tabKey === "flights"
-                ? "Flights"
-                : tabKey === "hotels"
-                ? "Hotels"
-                : "Car Rentals",
-            url: config.canonical,
-          },
-        ]}
-      />
 
       <Header />
 

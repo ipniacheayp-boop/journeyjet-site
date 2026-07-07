@@ -5,7 +5,6 @@ import Footer from "@/components/Footer";
 import DealCardEnhanced from "@/components/DealCardEnhanced";
 import DealQuickView from "@/components/DealQuickView";
 import DealsSkeleton from "@/components/DealsSkeleton";
-
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
@@ -30,7 +29,7 @@ import {
   Luggage,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { mockDeals, type Deal } from "@/data/mockDeals";
 import { toast } from "@/hooks/use-toast";
 
@@ -167,9 +166,6 @@ const specialOffers = [
 
 const Deals = () => {
   const navigate = useNavigate();
-  const { search } = useLocation();
-  // Filter/sort permutations (?airline=…, ?airport=…, ?type=…) are noindex,follow.
-  const hasParams = search.length > 1;
   const { t } = useLanguage();
   const [priceRange, setPriceRange] = useState([0, 2000]);
   const [selectedAirline, setSelectedAirline] = useState<string>("all");
@@ -370,14 +366,6 @@ const Deals = () => {
         />
         <meta name="twitter:image" content="https://tripile.com/og-image.png" />
         <link rel="canonical" href="https://tripile.com/deals" />
-        <meta
-          name="robots"
-          content={
-            hasParams
-              ? "noindex, follow"
-              : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
-          }
-        />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
@@ -396,7 +384,6 @@ const Deals = () => {
           })}
         </script>
       </Helmet>
-
 
       {/* Animated Background Shapes */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
