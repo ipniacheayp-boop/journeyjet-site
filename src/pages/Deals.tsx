@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import DealCardEnhanced from "@/components/DealCardEnhanced";
 import DealQuickView from "@/components/DealQuickView";
 import DealsSkeleton from "@/components/DealsSkeleton";
-import NoindexOnParams from "@/components/seo/NoindexOnParams";
+
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
