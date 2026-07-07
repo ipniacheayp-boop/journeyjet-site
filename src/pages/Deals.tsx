@@ -397,9 +397,6 @@ const Deals = () => {
         </script>
       </Helmet>
 
-      {/* Filter permutations (?airline=…, ?airport=…, ?type=…) are noindex,follow
-          so Google consolidates on the clean /deals canonical. */}
-      <NoindexOnParams />
 
       {/* Animated Background Shapes */}
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
