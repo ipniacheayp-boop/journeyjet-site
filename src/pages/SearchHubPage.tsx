@@ -3,6 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SearchWidget from "@/components/SearchWidget";
+import NoindexOnParams from "@/components/seo/NoindexOnParams";
+import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import { Plane, Hotel, Car } from "lucide-react";
 
 const HUB_CONFIG: Record<
