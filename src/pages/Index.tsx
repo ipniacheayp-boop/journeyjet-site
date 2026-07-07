@@ -83,16 +83,38 @@ const Index = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
-  // SEO: the homepage ignores query params, but Google keeps crawling legacy/search
-  // and tracking variants (?type=flights&originLocationCode=..., ?ref=...) as duplicate
-  // "alternative" URLs. Strip them client-side so all signals consolidate on the clean
-  // canonical (https://tripile.com/). Uses replaceState to avoid a history entry.
+  // SEO: Google keeps crawling legacy query-parameter variants of the homepage
+  // (?type=hotels, ?type=flights&originLocationCode=…, ?ref=…) as duplicate
+  // "alternative" URLs. Map recognised search intents to their clean, indexable
+  // routes (/hotels, /flights, /car-rentals) and strip everything else so all
+  // signals consolidate on the clean canonical (https://tripile.com/).
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (window.location.search) {
-      window.history.replaceState(null, "", window.location.pathname + window.location.hash);
+    const search = window.location.search;
+    if (!search) return;
+
+    const params = new URLSearchParams(search);
+    const type = (params.get("type") || "").toLowerCase();
+    const typeMap: Record<string, string> = {
+      hotels: "/hotels",
+      hotel: "/hotels",
+      flights: "/flights",
+      flight: "/flights",
+      cars: "/car-rentals",
+      car: "/car-rentals",
+    };
+
+    if (typeMap[type]) {
+      params.delete("type");
+      const rest = params.toString();
+      navigate(typeMap[type] + (rest ? `?${rest}` : ""), { replace: true });
+      return;
     }
-  }, []);
+
+    // No recognised search intent → drop tracking/query params (canonical "/").
+    window.history.replaceState(null, "", window.location.pathname + window.location.hash);
+  }, [navigate]);
+
 
   const pinnedDeals = useMemo(() => mockDeals.filter((deal) => deal.isPinned).slice(0, 2), []);
   const unpinnedDeals = useMemo(() => mockDeals.filter((deal) => !deal.isPinned), []);
