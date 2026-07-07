@@ -167,6 +167,9 @@ const specialOffers = [
 
 const Deals = () => {
   const navigate = useNavigate();
+  const { search } = useLocation();
+  // Filter/sort permutations (?airline=…, ?airport=…, ?type=…) are noindex,follow.
+  const hasParams = search.length > 1;
   const { t } = useLanguage();
   const [priceRange, setPriceRange] = useState([0, 2000]);
   const [selectedAirline, setSelectedAirline] = useState<string>("all");
