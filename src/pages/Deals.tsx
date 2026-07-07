@@ -30,7 +30,7 @@ import {
   Luggage,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { mockDeals, type Deal } from "@/data/mockDeals";
 import { toast } from "@/hooks/use-toast";
 
