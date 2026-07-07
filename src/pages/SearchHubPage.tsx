@@ -187,9 +187,12 @@ function HubSeoArticle({ tabKey }: { tabKey: "flights" | "hotels" | "cars" }) {
  * SEO-friendly hubs for flight / hotel / car search (no hash-based URLs).
  */
 const SearchHubPage = () => {
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   const config = HUB_CONFIG[pathname] ?? HUB_CONFIG["/flights"];
   const tabKey = config.defaultTab;
+  // Search/filter permutations (?originLocationCode=…, ?checkIn=…) must not be
+  // indexed — they consolidate onto the clean canonical below.
+  const hasParams = search.length > 1;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
