@@ -216,13 +216,13 @@ const SearchHubPage = () => {
         <meta name="twitter:image" content="https://tripile.com/og-image.png" />
         <meta
           name="robots"
-          content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+          content={
+            hasParams
+              ? "noindex, follow"
+              : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+          }
         />
       </Helmet>
-
-      {/* Mark search/filter query-param variants (e.g. ?originLocationCode=…) as
-          noindex,follow so crawl signals consolidate on the clean canonical. */}
-      <NoindexOnParams />
 
       <BreadcrumbSchema
         items={[
