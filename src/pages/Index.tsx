@@ -79,6 +79,7 @@ const shuffleArray = <T,>(array: T[]): T[] => {
 };
 
 const Index = () => {
+  const navigate = useNavigate();
   const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
