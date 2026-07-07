@@ -217,6 +217,25 @@ const SearchHubPage = () => {
         />
       </Helmet>
 
+      {/* Mark search/filter query-param variants (e.g. ?originLocationCode=…) as
+          noindex,follow so crawl signals consolidate on the clean canonical. */}
+      <NoindexOnParams />
+
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", url: "https://tripile.com/" },
+          {
+            name:
+              tabKey === "flights"
+                ? "Flights"
+                : tabKey === "hotels"
+                ? "Hotels"
+                : "Car Rentals",
+            url: config.canonical,
+          },
+        ]}
+      />
+
       <Header />
 
       <main id="main-content" className="flex-1 pt-24 pb-16">
