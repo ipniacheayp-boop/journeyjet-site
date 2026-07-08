@@ -227,8 +227,13 @@ const SearchHubPage = () => {
         <meta name="twitter:image" content="https://tripile.com/og-image.png" />
         <meta
           name="robots"
-          content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+          content={
+            hasQuery
+              ? "noindex, follow"
+              : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+          }
         />
+        <script type="application/ld+json">{JSON.stringify(breadcrumb)}</script>
       </Helmet>
 
       <Header />
