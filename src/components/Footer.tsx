@@ -14,11 +14,11 @@ const Footer = () => {
     {
       title: "Quick Links",
       links: [
-        { label: "Popular Airlines", href: "/deals?filter=airlines" },
-        { label: "Popular Flight Routes", href: "/deals?filter=routes" },
-        { label: "Top U.S. Destinations", href: "/deals?filter=us" },
-        { label: "Top International Destinations", href: "/deals?filter=international" },
-        { label: "Top Airports", href: "/deals?filter=airports" },
+        { label: "Popular Airlines", href: "/deals" },
+        { label: "Popular Flight Routes", href: "/deals" },
+        { label: "Top U.S. Destinations", href: "/deals" },
+        { label: "Top International Destinations", href: "/deals" },
+        { label: "Top Airports", href: "/deals" },
         { label: "Cruise", href: "/cruise-deals" },
       ],
     },
