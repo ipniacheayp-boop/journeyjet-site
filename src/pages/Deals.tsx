@@ -341,6 +341,7 @@ const Deals = () => {
     <div className="min-h-screen flex flex-col relative overflow-hidden bg-background pt-16 ">
       <Helmet>
         <title>Exclusive Travel Deals & Offers | Tripile</title>
+        <meta name="robots" content={hasQuery ? "noindex, follow" : "index, follow"} />
         <meta
           name="description"
           content="Explore limited-time discounts on flights, hotels, cruises, vacations, and travel packages."
