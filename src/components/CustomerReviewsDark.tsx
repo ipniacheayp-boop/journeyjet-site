@@ -321,7 +321,7 @@ const CustomerReviewsDark = () => {
             <PenLine className="mr-2 h-4 w-4" />
             Write Review
           </Button>
-          <Link to="/reviews?filter=recent">
+          <Link to="/reviews">
             <Button className="rounded-xl bg-blue-600 px-6 hover:bg-blue-500">Read More Reviews</Button>
           </Link>
           <Link to="/booking">
@@ -332,7 +332,7 @@ const CustomerReviewsDark = () => {
               Compare Flight Prices
             </Button>
           </Link>
-          <Link to="/reviews?filter=recent" className="inline-flex items-center gap-1 text-sm font-medium text-blue-200 hover:text-white">
+          <Link to="/reviews" className="inline-flex items-center gap-1 text-sm font-medium text-blue-200 hover:text-white">
             See verified reviews <ExternalLink className="h-3.5 w-3.5" />
           </Link>
         </div>

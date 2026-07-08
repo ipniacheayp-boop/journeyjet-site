@@ -29,7 +29,7 @@ import {
   Luggage,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { mockDeals, type Deal } from "@/data/mockDeals";
 import { toast } from "@/hooks/use-toast";
 
@@ -166,6 +166,10 @@ const specialOffers = [
 
 const Deals = () => {
   const navigate = useNavigate();
+  const { search } = useLocation();
+  // Filter/query variants (?filter=airlines, ?airline=…, ?airport=…, ?sort=…, ?page=…)
+  // must not be indexed separately — they consolidate on the /deals canonical.
+  const hasQuery = search.length > 0;
   const { t } = useLanguage();
   const [priceRange, setPriceRange] = useState([0, 2000]);
   const [selectedAirline, setSelectedAirline] = useState<string>("all");
@@ -337,6 +341,7 @@ const Deals = () => {
     <div className="min-h-screen flex flex-col relative overflow-hidden bg-background pt-16 ">
       <Helmet>
         <title>Exclusive Travel Deals & Offers | Tripile</title>
+        <meta name="robots" content={hasQuery ? "noindex, follow" : "index, follow"} />
         <meta
           name="description"
           content="Explore limited-time discounts on flights, hotels, cruises, vacations, and travel packages."

@@ -185,9 +185,25 @@ function HubSeoArticle({ tabKey }: { tabKey: "flights" | "hotels" | "cars" }) {
  * SEO-friendly hubs for flight / hotel / car search (no hash-based URLs).
  */
 const SearchHubPage = () => {
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   const config = HUB_CONFIG[pathname] ?? HUB_CONFIG["/flights"];
   const tabKey = config.defaultTab;
+  // Search/filter variants (?originLocationCode=…, ?dates=…, ?sort=…) must not be
+  // indexed as separate pages — they all consolidate on the clean canonical.
+  const hasQuery = search.length > 0;
+  const labelMap: Record<string, string> = {
+    flights: "Flights",
+    hotels: "Hotels",
+    cars: "Car rentals",
+  };
+  const breadcrumb = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://tripile.com/" },
+      { "@type": "ListItem", position: 2, name: labelMap[tabKey], item: config.canonical },
+    ],
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -211,8 +227,13 @@ const SearchHubPage = () => {
         <meta name="twitter:image" content="https://tripile.com/og-image.png" />
         <meta
           name="robots"
-          content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+          content={
+            hasQuery
+              ? "noindex, follow"
+              : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+          }
         />
+        <script type="application/ld+json">{JSON.stringify(breadcrumb)}</script>
       </Helmet>
 
       <Header />

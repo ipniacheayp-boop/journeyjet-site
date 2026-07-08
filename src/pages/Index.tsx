@@ -51,7 +51,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 // Animation variants
 const fadeInUp = {
@@ -83,16 +83,30 @@ const Index = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
-  // SEO: the homepage ignores query params, but Google keeps crawling legacy/search
-  // and tracking variants (?type=flights&originLocationCode=..., ?ref=...) as duplicate
-  // "alternative" URLs. Strip them client-side so all signals consolidate on the clean
-  // canonical (https://tripile.com/). Uses replaceState to avoid a history entry.
+  // SEO: Google keeps crawling legacy query-parameter variants of the homepage
+  // (?type=hotels, ?type=flights&originLocationCode=..., ?ref=...) as separate
+  // "Crawled - currently not indexed" URLs. Redirect the meaningful ?type= variants
+  // to their dedicated clean routes, and strip all other tracking/search params so
+  // every signal consolidates on the clean canonical (https://tripile.com/).
+  const navigate = useNavigate();
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (window.location.search) {
-      window.history.replaceState(null, "", window.location.pathname + window.location.hash);
+    const search = window.location.search;
+    if (!search) return;
+    const type = new URLSearchParams(search).get("type");
+    const typeRoute: Record<string, string> = {
+      flights: "/flights",
+      hotels: "/hotels",
+      cars: "/car-rentals",
+      "car-rentals": "/car-rentals",
+    };
+    if (type && typeRoute[type]) {
+      navigate(typeRoute[type], { replace: true });
+      return;
     }
-  }, []);
+    window.history.replaceState(null, "", window.location.pathname + window.location.hash);
+  }, [navigate]);
+
 
   const pinnedDeals = useMemo(() => mockDeals.filter((deal) => deal.isPinned).slice(0, 2), []);
   const unpinnedDeals = useMemo(() => mockDeals.filter((deal) => !deal.isPinned), []);

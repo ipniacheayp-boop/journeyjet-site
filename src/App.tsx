@@ -117,6 +117,9 @@ const App = () => (
                   <Route path="/hotels" element={<SearchHubPage />} />
                   <Route path="/car-rentals" element={<SearchHubPage />} />
                   <Route path="/deals" element={<Deals />} />
+                  {/* Clean-URL aliases → consolidate on /deals canonical */}
+                  <Route path="/flight-deals" element={<Navigate to="/deals" replace />} />
+                  <Route path="/hotel-deals" element={<Navigate to="/deals" replace />} />
                   <Route path="/deals/:id" element={<DealDetail />} />
                   <Route path="/search-results" element={<SearchResults />} />
                   <Route path="/booking/:id" element={<Booking />} />
