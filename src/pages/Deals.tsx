@@ -166,6 +166,10 @@ const specialOffers = [
 
 const Deals = () => {
   const navigate = useNavigate();
+  const { search } = useLocation();
+  // Filter/query variants (?filter=airlines, ?airline=…, ?airport=…, ?sort=…, ?page=…)
+  // must not be indexed separately — they consolidate on the /deals canonical.
+  const hasQuery = search.length > 0;
   const { t } = useLanguage();
   const [priceRange, setPriceRange] = useState([0, 2000]);
   const [selectedAirline, setSelectedAirline] = useState<string>("all");
