@@ -72,12 +72,17 @@
 
     --radius: 0.5rem;
 
-    /* Refined shadows - Subtle and professional */
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.04);
-    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.08);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.06);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.06);
-    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.04);
+    /* Refined shadows - Soft, blue-tinted and premium */
+    --shadow-sm: 0 1px 2px 0 hsl(215 40% 25% / 0.06);
+    --shadow: 0 2px 8px -2px hsl(215 40% 25% / 0.08), 0 1px 2px -1px hsl(215 40% 25% / 0.06);
+    --shadow-md: 0 8px 20px -6px hsl(215 45% 25% / 0.12), 0 2px 6px -2px hsl(215 40% 25% / 0.07);
+    --shadow-lg: 0 16px 32px -10px hsl(215 45% 25% / 0.14), 0 6px 12px -6px hsl(215 40% 25% / 0.08);
+    --shadow-xl: 0 28px 50px -14px hsl(215 50% 25% / 0.18), 0 10px 18px -8px hsl(215 40% 25% / 0.08);
+
+    /* Premium gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(215 100% 25%), hsl(217 98% 42%));
+    --gradient-soft-blue: linear-gradient(180deg, hsl(210 60% 98%), hsl(0 0% 100%));
+    --gradient-cta: linear-gradient(135deg, hsl(217 98% 52%), hsl(224 90% 48%));
 
     /* Support page colors */
     --support-sky: 217 98% 52%;
