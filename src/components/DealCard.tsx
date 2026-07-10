@@ -61,7 +61,7 @@ const DealCard = ({ deal, onClick }: DealCardProps) => {
 
   return (
     <div
-      className="group relative overflow-hidden rounded-2xl border border-border bg-card hover:shadow-xl hover:border-primary/20 transition-all duration-300 cursor-pointer h-full flex flex-col"
+      className="group relative overflow-hidden rounded-3xl border border-border/70 bg-card shadow-md hover:shadow-card-hover hover:border-primary/30 hover:-translate-y-1 transition-all duration-300 cursor-pointer h-full flex flex-col"
       onClick={handleClick}
       role="button"
       tabIndex={0}
