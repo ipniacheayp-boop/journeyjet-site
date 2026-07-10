@@ -171,7 +171,7 @@ const DealCard = ({ deal, onClick }: DealCardProps) => {
 
         {/* CTA */}
         <Button
-          className="w-full rounded-xl font-semibold bg-primary hover:bg-primary/90 gap-2 mt-1"
+          className="w-full h-11 rounded-xl font-semibold bg-primary hover:bg-primary/90 gap-2 mt-1 shadow-sm hover:shadow-lg hover:shadow-primary/25 transition-all"
           onClick={(e) => {
             e.stopPropagation();
             handleClick();
