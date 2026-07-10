@@ -10,7 +10,9 @@
 */
 
 .font-display {
-  font-family: "Playfair Display", Georgia, serif;
+  font-family: "Plus Jakarta Sans", "Inter", system-ui, -apple-system, sans-serif;
+  letter-spacing: -0.025em;
+  font-weight: 800;
 }
 
 @layer base {
