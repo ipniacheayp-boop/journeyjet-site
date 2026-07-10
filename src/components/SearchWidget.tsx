@@ -424,7 +424,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
               <Button
                 type="submit"
                 size="lg"
-                className="h-11 w-full gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all text-sm"
+                className="h-12 w-full gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all text-[15px]"
               >
                 <Search className="w-4 h-4" />
                 Search Flights
@@ -542,7 +542,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                 <Button
                   type="submit"
                   size="lg"
-                  className="h-11 w-full gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all text-sm"
+                  className="h-12 w-full gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all text-[15px]"
                 >
                   <Search className="w-4 h-4" />
                   Search Hotels
@@ -635,7 +635,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
             <Button
               type="submit"
               size="lg"
-              className="h-11 w-full gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all text-sm"
+              className="h-12 w-full gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all text-[15px]"
             >
               <Search className="w-4 h-4" />
               Search Cars
@@ -730,7 +730,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
             <Button
               type="submit"
               size="lg"
-              className="h-11 w-full gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all text-sm"
+              className="h-12 w-full gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 transition-all text-[15px]"
             >
               <Search className="w-4 h-4" />
               Search Cruises
