@@ -102,7 +102,7 @@ const RouteLoadingFallback = () => (
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider defaultTheme="dark" storageKey="tripile-theme">
+    <ThemeProvider defaultTheme="light" storageKey="tripile-theme">
       <TooltipProvider>
         <Toaster />
         <Sonner />

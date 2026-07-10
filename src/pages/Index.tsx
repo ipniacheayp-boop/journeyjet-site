@@ -444,7 +444,7 @@ const Index = () => {
         className="container mx-auto px-4 relative z-20 mt-2 mb-6"
       >
         {/* ── Outer wrapper: dark gradient shell ── */}
-        <div className="relative rounded-3xl overflow-hidden shadow-2xl bg-slate-900/20">
+        <div className="relative rounded-3xl overflow-hidden shadow-premium bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 ring-1 ring-white/10">
           {/* Ambient glow orbs */}
           <div className="pointer-events-none absolute -top-16 -left-16 w-72 h-72 rounded-full bg-blue-600/20 blur-[80px]" />
           <div className="pointer-events-none absolute -bottom-16 -right-16 w-64 h-64 rounded-full bg-indigo-500/20 blur-[70px]" />
