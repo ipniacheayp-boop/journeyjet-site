@@ -278,7 +278,7 @@ const Index = () => {
               <Shield className="w-3.5 h-3.5 text-sky-300" aria-hidden="true" />
               Flights &amp; Hotels — All 50 States
             </p>
-            <h1 className="font-display text-balance text-3xl sm:text-4xl md:text-[2.75rem] font-extrabold text-white leading-[1.15] mb-4 drop-shadow-sm">
+            <h1 className="font-sans text-balance text-3xl sm:text-4xl md:text-5xl font-bold text-white leading-snug tracking-normal mb-4 drop-shadow-md max-w-4xl mx-auto">
               Search Cheap Flights &amp; Hotels in the USA
             </h1>
             <p className="text-base md:text-lg text-white/85 leading-relaxed max-w-2xl mx-auto">
