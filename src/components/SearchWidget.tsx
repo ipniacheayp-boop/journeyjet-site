@@ -236,33 +236,33 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
     <div className="w-full">
       <Tabs value={searchType} onValueChange={setSearchType} className="w-full">
         {/* Tab Bar */}
-        <TabsList className="grid w-full grid-cols-4 mb-5 h-12 bg-muted/60 dark:bg-muted/30 rounded-xl p-1 gap-1">
+        <TabsList className="grid w-full grid-cols-4 mb-5 h-12 bg-slate-100 dark:bg-slate-900 rounded-xl p-1 gap-1">
           <TabsTrigger
             value="flights"
-            className="flex items-center gap-2 rounded-lg h-10 text-sm font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md data-[state=active]:shadow-primary/25 text-muted-foreground transition-all"
+            className="search-tab-trigger search-tab-flights flex items-center gap-2 rounded-lg h-10 text-sm font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm text-muted-foreground"
           >
-            <Plane className="w-4 h-4" />
+            <Plane className="tab-icon w-4 h-4" />
             <span className="hidden sm:inline">Flights</span>
           </TabsTrigger>
           <TabsTrigger
             value="hotels"
-            className="flex items-center gap-2 rounded-lg h-10 text-sm font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md data-[state=active]:shadow-primary/25 text-muted-foreground transition-all"
+            className="search-tab-trigger search-tab-hotels flex items-center gap-2 rounded-lg h-10 text-sm font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm text-muted-foreground"
           >
-            <Hotel className="w-4 h-4" />
+            <Hotel className="tab-icon w-4 h-4" />
             <span className="hidden sm:inline">Hotels</span>
           </TabsTrigger>
           <TabsTrigger
             value="cars"
-            className="flex items-center gap-2 rounded-lg h-10 text-sm font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md data-[state=active]:shadow-primary/25 text-muted-foreground transition-all"
+            className="search-tab-trigger search-tab-cars flex items-center gap-2 rounded-lg h-10 text-sm font-semibold data-[state=active]:bg-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-sm data-[state=active]:shadow-emerald-500/30 text-muted-foreground"
           >
-            <Car className="w-4 h-4" />
+            <Car className="car-tab-icon w-4 h-4" />
             <span className="hidden sm:inline">Cars</span>
           </TabsTrigger>
           <TabsTrigger
             value="cruise"
-            className="flex items-center gap-2 rounded-lg h-10 text-sm font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md data-[state=active]:shadow-primary/25 text-muted-foreground transition-all"
+            className="search-tab-trigger search-tab-cruise flex items-center gap-2 rounded-lg h-10 text-sm font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm text-muted-foreground"
           >
-            <Ship className="w-4 h-4" />
+            <Ship className="tab-icon w-4 h-4" />
             <span className="hidden sm:inline">Cruise</span>
           </TabsTrigger>
         </TabsList>

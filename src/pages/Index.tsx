@@ -4,8 +4,11 @@ import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SearchWidget from "@/components/SearchWidget";
+import HeroBackground from "@/components/HeroBackground";
 import DealCard from "@/components/DealCard";
 import FAQSchema from "@/components/seo/FAQSchema";
+import HomePageSchema from "@/components/seo/HomePageSchema";
+import { popularDestinations } from "@/data/destinationsData";
 import {
   Accordion,
   AccordionContent,
@@ -22,10 +25,10 @@ const FeatureHighlights = lazy(() => import("@/components/FeatureHighlights"));
 const ForTravelPros = lazy(() => import("@/components/ForTravelPros"));
 const PartnerLogos = lazy(() => import("@/components/PartnerLogos"));
 const AppDownload = lazy(() => import("@/components/AppDownload"));
+const FlightsHotelsSearch = lazy(() => import("@/components/FlightsHotelsSearch"));
 const PopularFlights = lazy(() => import("@/components/PopularFlights"));
 const CustomerReviewsDark = lazy(() => import("@/components/CustomerReviewsDark"));
 import { mockDeals, type Deal } from "@/data/mockDeals";
-import heroBlackFriday from "@/assets/hero-black-friday.jpg";
 import dealLastMinute from "@/assets/deal-last-minute.jpg";
 import dealBudget from "@/assets/deal-budget.jpg";
 import dealSeniors from "@/assets/deal-seniors.jpg";
@@ -35,20 +38,16 @@ import dealAirlines from "@/assets/deal-airlines.jpg";
 import rewardsIllustration2 from "@/assets/reward.webp";
 import {
   ArrowRight,
-  Check,
   RefreshCw,
   Shield,
   Clock,
   Headphones,
   CreditCard,
-  ShieldCheck,
-  BadgeDollarSign,
   Star,
-  Wallet,
   Users,
   Plane,
-  TrendingDown,
   ChevronRight,
+  Hotel,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
@@ -228,412 +227,227 @@ const Index = () => {
     },
   ];
 
+  const heroDestinations = popularDestinations.filter((d) =>
+    ["new-york", "los-angeles", "miami", "las-vegas", "chicago", "orlando"].includes(d.slug),
+  );
+
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>Tripile | Cheap Flights, Hotels & Car Rentals</title>
+        <title>Cheap Flights, Hotels & Car Rentals USA | Tripile.com</title>
         <meta
           name="description"
-          content="Compare flights, hotels, rental cars, and travel deals worldwide with Tripile. Find affordable prices and plan your perfect trip easily."
+          content="Book cheap flights, hotels & car rentals across the USA. Compare 500+ airlines, rent cars from $26/day in top cities, Price Match Guarantee & 24/7 US support."
         />
         <meta
           name="keywords"
-          content="cheap flights USA, flight deals, cheap hotels USA, car rentals USA, travel booking USA"
+          content="cheap flights USA, car rentals USA, cheap car rental, rent a car USA, flight deals, cheap hotels USA, airport car rental, US travel deals, Enterprise Hertz Avis"
         />
         <link rel="canonical" href="https://tripile.com/" />
-        {/* Per-route Open Graph so each page gets its own social preview */}
+        <link rel="alternate" hrefLang="en-us" href="https://tripile.com/" />
+        <link rel="alternate" hrefLang="x-default" href="https://tripile.com/" />
         <meta property="og:url" content="https://tripile.com/" />
-        <meta property="og:title" content="Tripile | Cheap Flights, Hotels & Car Rentals" />
+        <meta property="og:title" content="Cheap Flights, Hotels & Car Rentals USA | Tripile.com" />
         <meta
           property="og:description"
-          content="Compare flights, hotels, rental cars, and travel deals worldwide with Tripile. Find affordable prices and plan your perfect trip easily."
+          content="Book cheap flights, hotels & car rentals across the USA. Compare 500+ airlines, Price Match Guarantee, no hidden fees & 24/7 US support."
         />
-        <meta name="twitter:title" content="Tripile | Cheap Flights, Hotels & Car Rentals" />
+        <meta property="og:locale" content="en_US" />
+        <meta name="twitter:title" content="Cheap Flights, Hotels & Car Rentals USA | Tripile.com" />
         <meta
           name="twitter:description"
-          content="Compare flights, hotels, rental cars, and travel deals worldwide with Tripile. Find affordable prices and plan your perfect trip easily."
+          content="Book cheap flights, hotels & car rentals across the USA. Compare 500+ airlines, Price Match Guarantee, no hidden fees & 24/7 US support."
         />
       </Helmet>
+      <HomePageSchema />
       <Header />
 
       <main id="main-content">
-      {/* Professional Hero Section */}
-      <section className="relative min-h-[680px] md:min-h-[780px] w-full overflow-hidden z-10" aria-label="Hero">
-        {/* LCP hero image — real img for fetch priority + SEO title */}
-        <div className="absolute inset-0 overflow-hidden">
-          <img
-            src={heroBlackFriday}
-            alt="Cheap flights, hotels and car rentals across the USA — compare travel deals on Tripile"
-            title="Cheap flights USA — Tripile flight, hotel and car rental comparison"
-            width={1920}
-            height={1080}
-            fetchPriority="high"
-            loading="eager"
-            decoding="async"
-            className="absolute inset-0 h-full w-full object-cover object-center scale-[1.04] transition-transform duration-[8000ms] ease-out"
-          />
-        </div>
+      {/* Hero — cinematic background with parallax & effects */}
+      <section className="relative w-full overflow-hidden min-h-[540px] md:min-h-[600px]" aria-label="Search flights and hotels in the USA">
+        <HeroBackground />
 
-        {/* Multi-layer overlay: dark base + directional gradient for text contrast */}
-        <div className="absolute inset-0 bg-slate-950/55" />
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/30 via-transparent to-slate-950/80" />
-
-        {/* Subtle animated glow orbs */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-blue-600/10 blur-[120px] pointer-events-none" />
-        <div className="absolute top-1/3 right-1/4 w-80 h-80 rounded-full bg-indigo-500/8 blur-[100px] pointer-events-none" />
-
-        {/* Content */}
-        <div className="container mx-auto px-4 relative z-10 flex flex-col items-center justify-center pt-28 pb-44">
-          {/* Eyebrow badge */}
+        <div className="container mx-auto px-4 relative z-10 pt-28 md:pt-36 pb-10 md:pb-14">
           <motion.div
-            initial={{ opacity: 0, y: -16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15, duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-xs font-semibold text-white/90 tracking-widest uppercase mb-7 shadow-lg"
-          >
-            <Plane className="w-3.5 h-3.5 text-blue-300" />
-            #1 Rated US Flight Comparison
-          </motion.div>
-
-          {/* Single H1 per page — matches visible hero copy for crawlers */}
-          <motion.h1
-            initial={{ opacity: 0, y: 28 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25, duration: 0.7, ease: "easeOut" }}
-            className="font-display text-balance text-center text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-[1.12] mb-6 max-w-5xl mx-auto px-2"
-          >
-            <span className="text-white drop-shadow-lg">Cheap Flights, Hotels &amp; Car Rentals USA</span>
-            <span className="block mt-3 text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-300 via-sky-300 to-blue-200 bg-clip-text text-transparent">
-              | Tripile
-            </span>
-          </motion.h1>
-
-          {/* Sub-headline */}
-          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.38, duration: 0.6 }}
-            className="text-base md:text-lg text-white/75 mb-10 max-w-xl text-center leading-relaxed"
+            transition={{ duration: 0.5 }}
+            className="text-center max-w-3xl mx-auto mb-7"
           >
-            Compare <span className="text-white font-semibold">500+ airlines</span> in seconds, unlock exclusive fares,
-            and travel smarter — with <span className="text-sky-300 font-semibold">zero hidden fees</span>.
-          </motion.p>
-
-          {/* Primary CTA */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.92 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.5, duration: 0.5 }}
-            className="flex flex-col sm:flex-row items-center gap-4 mb-12"
-          >
-            <Link
-              to="/flights"
-              title="Search cheap flights on Tripile — dedicated flight search"
-              className="group inline-flex items-center gap-3 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white text-base font-bold px-8 py-4 rounded-2xl shadow-[0_4px_32px_rgba(59,130,246,0.55)] hover:shadow-[0_6px_40px_rgba(59,130,246,0.7)] transition-all duration-200 hover:-translate-y-0.5"
-            >
-              <Plane className="w-5 h-5 transition-all duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:transition-all group-hover:duration-500 " />
-              Find Your Next Flight
-              <ChevronRight className="w-4 h-4 opacity-70 group-hover:translate-x-1 group-hover:transition-all group-hover:duration-500 transition-all duration-500" />
-            </Link>
-
-            <Link
-              to="/deals"
-              title="See today’s best travel deals on Tripile"
-              className="inline-flex items-center gap-2 text-white/80 hover:text-white text-sm font-medium px-5 py-4 rounded-2xl border border-white/20 hover:border-white/40 bg-white/5 hover:bg-white/10 backdrop-blur-sm transition-all duration-200"
-            >
-              <TrendingDown className="w-4 h-4 text-green-400" />
-              See Today's Deals
-            </Link>
+            <p className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-xs font-semibold text-white uppercase tracking-wider mb-5 shadow-lg">
+              <Shield className="w-3.5 h-3.5 text-sky-300" aria-hidden="true" />
+              Flights &amp; Hotels — All 50 States
+            </p>
+            <h1 className="font-display text-balance text-3xl sm:text-4xl md:text-[2.75rem] font-extrabold text-white leading-[1.15] mb-4 drop-shadow-sm">
+              Search Cheap Flights &amp; Hotels in the USA
+            </h1>
+            <p className="text-base md:text-lg text-white/85 leading-relaxed max-w-2xl mx-auto">
+              Compare <strong className="text-white font-semibold">500+ airlines</strong>, find hotels in every major
+              city, and book with <strong className="text-sky-300 font-semibold">transparent pricing</strong> — zero
+              hidden fees, 24/7 US support.
+            </p>
           </motion.div>
 
-          <motion.nav
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.55, duration: 0.45 }}
-            aria-label="Popular Tripile booking pages"
-            className="flex flex-wrap justify-center items-center gap-x-4 gap-y-2 mb-10 text-xs sm:text-sm"
-          >
-            <Link
-              to="/hotels"
-              title="Search hotels on Tripile"
-              className="text-white/80 hover:text-white underline-offset-4 hover:underline font-medium"
-            >
-              Hotels
-            </Link>
-            <span className="text-white/30" aria-hidden>
-              |
-            </span>
-            <Link
-              to="/car-rentals"
-              title="Compare car rentals on Tripile"
-              className="text-white/80 hover:text-white underline-offset-4 hover:underline font-medium"
-            >
-              Car rentals
-            </Link>
-            <span className="text-white/30" aria-hidden>
-              |
-            </span>
-            <Link
-              to="/flight-status"
-              title="Check flight status on Tripile"
-              className="text-white/80 hover:text-white underline-offset-4 hover:underline font-medium"
-            >
-              Flight status
-            </Link>
-            <span className="text-white/30 hidden sm:inline" aria-hidden>
-              |
-            </span>
-            <Link
-              to="/flights"
-              title="Dedicated flight search on Tripile"
-              className="text-white/80 hover:text-white underline-offset-4 hover:underline font-medium hidden sm:inline"
-            >
-              Flight search
-            </Link>
-          </motion.nav>
-
-          {/* Popular destination tags */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.65, duration: 0.5 }}
-            className="flex flex-wrap justify-center gap-2"
-          >
-            {["New York", "Los Angeles", "Miami", "Las Vegas", "Chicago", "Orlando"].map((dest) => (
-              <span
-                key={dest}
-                className="px-4 py-1.5 rounded-full text-xs font-medium text-white/70 border border-white/15 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:text-white/90 transition-all duration-150 cursor-pointer"
+          {/* Quick service pills with hover — SEO internal links */}
+          <nav aria-label="Book flights or hotels" className="flex flex-wrap justify-center gap-2 mb-6 max-w-md mx-auto">
+            {[
+              { to: "/flights", label: "Search Flights", icon: Plane, title: "Search cheap flights USA — Tripile", className: "search-tab-flights" },
+              { to: "/hotels", label: "Search Hotels", icon: Hotel, title: "Search cheap hotels USA — Tripile", className: "search-tab-hotels" },
+            ].map(({ to, label, icon: Icon, title, className }) => (
+              <Link
+                key={to}
+                to={to}
+                title={title}
+                className={`hero-service-pill ${className} inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold text-white/90 bg-white/10 border border-white/20 backdrop-blur-sm`}
               >
-                {dest}
-              </span>
+                <Icon className="hero-pill-icon w-4 h-4" aria-hidden="true" />
+                {label}
+              </Link>
             ))}
+          </nav>
+
+          {/* Search widget */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15, duration: 0.5 }}
+            className="max-w-5xl mx-auto"
+          >
+            <div
+              id="search-widget"
+              className="hero-search-widget bg-white dark:bg-slate-950 rounded-2xl border border-white/20 dark:border-slate-700 p-4 md:p-6"
+            >
+              <SearchWidget />
+            </div>
           </motion.div>
+
+          {/* Popular US destinations — SEO internal links */}
+          <nav
+            aria-label="Popular US travel destinations"
+            className="flex flex-wrap justify-center gap-2 mt-6 max-w-3xl mx-auto"
+          >
+            <span className="text-xs text-white/60 font-medium self-center mr-1">Trending flights:</span>
+            {heroDestinations.map((dest) => (
+              <Link
+                key={dest.slug}
+                to={`/flights-to/${dest.slug}`}
+                title={`Cheap flights to ${dest.city}, ${dest.country === "US" ? "USA" : dest.country} — Tripile`}
+                className="px-3.5 py-1.5 rounded-full text-xs font-medium text-white/90 bg-white/10 border border-white/20 hover:bg-white/25 hover:text-white hover:-translate-y-0.5 hover:shadow-md transition-all duration-200"
+              >
+                {dest.city}
+              </Link>
+            ))}
+          </nav>
         </div>
       </section>
 
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.7, duration: 0.6 }}
-        className="relative z-20 container mx-auto px-4 -mt-10 mb-2"
-      >
-        <div className="bg-card border border-border/60 rounded-2xl shadow-lg px-6 py-4 grid grid-cols-2 sm:grid-cols-4 gap-y-4 gap-x-6 text-center">
-          {[
-            { icon: Users, value: "2M+", label: "Happy Travelers", color: "text-blue-500" },
-            { icon: Plane, value: "500+", label: "Airlines Compared", color: "text-indigo-500" },
-            { icon: TrendingDown, value: "46%", label: "Max Savings", color: "text-green-500" },
-            { icon: Star, value: "4.5", label: "Average Rating", color: "text-amber-500" },
-          ].map(({ icon: Icon, value, label, color }) => (
-            <div key={label} className="flex flex-col items-center gap-1">
-              <div className="flex items-center gap-1.5">
-                <Icon className={`w-4 h-4 ${color}`} />
-                <span className="text-xl font-extrabold tracking-tight text-foreground">{value}</span>
-              </div>
-              <span className="text-xs text-muted-foreground font-medium">{label}</span>
-            </div>
-          ))}
-        </div>
-      </motion.div>
-
-      {/* Eye-catching Offers Strip */}
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-40px" }}
-        transition={{ duration: 0.55, delay: 0.1 }}
-        className="container mx-auto px-4 relative z-20 mt-2 mb-6"
-      >
-        {/* ── Outer wrapper: dark gradient shell ── */}
-        <div className="relative rounded-3xl overflow-hidden shadow-premium bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 ring-1 ring-white/10">
-          {/* Ambient glow orbs */}
-          <div className="pointer-events-none absolute -top-16 -left-16 w-72 h-72 rounded-full bg-blue-600/20 blur-[80px]" />
-          <div className="pointer-events-none absolute -bottom-16 -right-16 w-64 h-64 rounded-full bg-indigo-500/20 blur-[70px]" />
-          <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-40 rounded-full bg-sky-400/8 blur-[60px]" />
-
-          <div className="relative z-10 px-6 pt-6 pb-5">
-            {/* ── Top bar: label + live badge + offer pills ── */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
-              <div className="flex items-center gap-3">
-                {/* Animated live badge */}
-                <span className="inline-flex items-center gap-1.5 bg-red-600/90 text-white text-[10px] font-extrabold tracking-widest uppercase px-3 py-1 rounded-full shadow-lg">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-white" />
-                  </span>
-                  Live Deals
-                </span>
-                <div>
-                  <p className="text-[10px] font-semibold text-indigo-300/80 uppercase tracking-widest">
-                    Today's Exclusive Savings
-                  </p>
-                  <h2 className="font-display text-lg md:text-xl font-extrabold text-white leading-tight">
-                    Book smarter — save <span className="text-sky-400">more</span>
-                  </h2>
-                </div>
-              </div>
-            </div>
-
-            {/* ── Deal cards row ── */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Card 1 — Flights */}
-              <motion.div
-                whileHover={{ y: -4, scale: 1.01 }}
-                transition={{ duration: 0.2 }}
-                className="group relative rounded-2xl overflow-hidden cursor-pointer"
-                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.10)" }}
-              >
-                {/* Image */}
-                <div className="relative h-36 overflow-hidden">
-                  <img
-                    src={dealLastMinute}
-                    alt="Last Minute Flights Deal"
-                    title="Last minute cheap flight deals USA — Tripile"
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover object-[center_70%] group-hover:scale-105 transition-all duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
-
-                  {/* Discount badge */}
-                  <div className="absolute top-3 left-3 flex items-center gap-1.5">
-                    <span className="bg-blue-600 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full shadow-lg uppercase tracking-wide">
-                      Up to 46% off
-                    </span>
-                  </div>
-
-                  {/* Save callout — bottom-right corner of image */}
-                  <div className="absolute bottom-3 right-3 bg-emerald-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
-                    <BadgeDollarSign className="w-3 h-3" /> Save up to $50
-                  </div>
-                </div>
-
-                {/* Body */}
-                <div className="p-4 flex items-start gap-3">
-                  <div className="shrink-0 w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center mt-0.5">
-                    <TrendingDown className="w-5 h-5 text-blue-400" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[10px] font-semibold text-blue-400/80 uppercase tracking-widest mb-0.5">
-                      Flights
-                    </p>
-                    <p className="font-display text-base font-extrabold text-white leading-tight mb-1">
-                      Instant Savings
-                    </p>
-                    <p className="text-xs text-white/50 leading-relaxed">
-                      Compare fares & unlock limited-time deals today.
-                    </p>
-                  </div>
-                  <Link
-                    to="/deals"
-                    title="View flight deals on Tripile"
-                    aria-label="View flight deals"
-                    className="shrink-0 mt-1 inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-600/20 border border-blue-500/30 text-blue-400 hover:bg-blue-600 hover:text-white transition-all duration-200"
-                  >
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </div>
-              </motion.div>
-
-              {/* Card 2 — Seniors */}
-              <motion.div
-                whileHover={{ y: -4, scale: 1.01 }}
-                transition={{ duration: 0.2 }}
-                className="group relative rounded-2xl overflow-hidden cursor-pointer"
-                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.10)" }}
-              >
-                {/* Image */}
-                <div className="relative h-36 overflow-hidden">
-                  <img
-                    src={dealSeniors}
-                    alt="Senior Citizens Travel Deal"
-                    title="Senior traveler flight deals USA — Tripile"
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover object-[center_14%] group-hover:scale-105 transition-all duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
-
-                  {/* Discount badge */}
-                  <div className="absolute top-3 left-3">
-                    <span className="bg-rose-600 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full shadow-lg uppercase tracking-wide">
-                      Up to 46% off
-                    </span>
-                  </div>
-
-                  {/* Save callout */}
-                  <div className="absolute bottom-3 right-3 bg-amber-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
-                    <Wallet className="w-3 h-3" /> Save up to $60
-                  </div>
-                </div>
-
-                {/* Body */}
-                <div className="p-4 flex items-start gap-3">
-                  <div className="shrink-0 w-10 h-10 rounded-xl bg-rose-600/20 border border-rose-500/30 flex items-center justify-center mt-0.5">
-                    <Users className="w-5 h-5 text-rose-400" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[10px] font-semibold text-rose-400/80 uppercase tracking-widest mb-0.5">
-                      Senior Citizens
-                    </p>
-                    <p className="font-display text-base font-extrabold text-white leading-tight mb-1">Special Fares</p>
-                    <p className="text-xs text-white/50 leading-relaxed">
-                      Eligibility-based offers crafted for seniors.
-                    </p>
-                  </div>
-                  <Link
-                    to="/deals"
-                    title="View senior & special fare deals on Tripile"
-                    aria-label="View senior & special fare deals"
-                    className="shrink-0 mt-1 inline-flex items-center justify-center w-8 h-8 rounded-full bg-rose-600/20 border border-rose-500/30 text-rose-400 hover:bg-rose-600 hover:text-white transition-all duration-200"
-                  >
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </div>
-              </motion.div>
-            </div>
-
-            {/* ── Bottom trust strip ── */}
-            <div className="mt-4 pt-4 border-t border-white/8 flex flex-wrap items-center justify-between gap-3">
-              <div className="flex flex-wrap items-center gap-4 text-[11px] text-white/80 font-medium">
-                {[
-                  { icon: ShieldCheck, label: "Best Price Guarantee" },
-                  { icon: Clock, label: "Limited Time Only" },
-                  { icon: CreditCard, label: "No Hidden Fees" },
-                ].map(({ icon: Icon, label }) => (
-                  <span key={label} className="inline-flex items-center gap-1.5">
-                    <Icon className="w-3.5 h-3.5 text-indigo-400/70" />
-                    {label}
-                  </span>
-                ))}
-              </div>
+      {/* Trust stats bar */}
+      <section aria-label="Tripile trust metrics" className="bg-white dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800">
+        <div className="container mx-auto px-4 py-5">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 max-w-4xl mx-auto">
+            {[
+              { icon: Users, value: "2M+", label: "US Travelers", color: "text-primary", href: "/reviews" },
+              { icon: Plane, value: "500+", label: "Airlines Compared", color: "text-indigo-600", href: "/flights" },
+              { icon: Hotel, value: "$79", label: "Hotels From", color: "text-indigo-600", href: "/hotels" },
+              { icon: Star, value: "4.5★", label: "Average Rating", color: "text-amber-500", href: "/reviews" },
+            ].map(({ icon: Icon, value, label, color, href }) => (
               <Link
-                to="/deals"
-                title="See all Tripile travel deals"
-                className="inline-flex items-center gap-1.5 text-[11px] font-bold text-sky-400 hover:text-sky-300 transition-colors duration-150"
+                key={label}
+                to={href}
+                title={`${label} — Tripile`}
+                className="flex items-center justify-center gap-3 group hover:opacity-80 transition-opacity"
               >
-                See all deals <ChevronRight className="w-3.5 h-3.5" />
+                <div className={`w-10 h-10 rounded-xl bg-slate-50 dark:bg-slate-900 flex items-center justify-center ${color} group-hover:scale-110 transition-transform duration-200`}>
+                  <Icon className="w-5 h-5" aria-hidden="true" />
+                </div>
+                <div className="text-left">
+                  <p className="text-lg font-extrabold text-foreground leading-none">{value}</p>
+                  <p className="text-xs text-muted-foreground font-medium mt-0.5">{label}</p>
+                </div>
               </Link>
-            </div>
+            ))}
           </div>
         </div>
-      </motion.div>
+      </section>
 
-      {/* Structured Search Widget Container */}
-      <div className="container mx-auto px-4 mt-6 relative z-20">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.6 }}
-          className="relative"
-        >
-          <div
-            id="search-widget"
-            className="bg-card text-card-foreground rounded-2xl shadow-xl border border-border p-3 md:p-4 relative"
-          >
-            <SearchWidget />
+      {/* Flights & Hotels search — popular destinations */}
+      <Suspense fallback={<div className="py-16" />}>
+        <FlightsHotelsSearch />
+      </Suspense>
+
+      {/* Today's deals — clean cards on white background */}
+      <section aria-labelledby="today-deals-heading" className="py-10 bg-slate-50/80 dark:bg-slate-900/30">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-6">
+            <div>
+              <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-1">Limited Time</p>
+              <h2 id="today-deals-heading" className="font-display text-2xl md:text-3xl font-bold text-foreground">
+                Today&apos;s Best Travel Deals
+              </h2>
+            </div>
+            <Link
+              to="/deals"
+              title="See all Tripile travel deals"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
+            >
+              View all deals <ChevronRight className="w-4 h-4" />
+            </Link>
           </div>
-        </motion.div>
-      </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {[
+              {
+                image: dealLastMinute,
+                alt: "Last minute flight deals USA",
+                badge: "Flights",
+                title: "Last-Minute Flight Deals",
+                desc: "Save up to $50 on same-week departures.",
+                href: "/deals",
+              },
+              {
+                image: dealBudget,
+                alt: "Budget flights under $199",
+                badge: "Budget",
+                title: "Flights Under $199",
+                desc: "Round-trip fares to top US destinations.",
+                href: "/deals",
+              },
+              {
+                image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80",
+                alt: "Cheap hotels USA — compare rates on Tripile",
+                badge: "Hotels",
+                title: "Hotels From $79/Night",
+                desc: "Top-rated stays in NYC, Vegas, Miami & more.",
+                href: "/hotels",
+              },
+            ].map((deal) => (
+              <Link
+                key={deal.title}
+                to={deal.href}
+                title={`${deal.title} — Tripile`}
+                className="group bg-white dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
+              >
+                <div className="relative h-40 overflow-hidden">
+                  <img
+                    src={deal.image}
+                    alt={deal.alt}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <span className="absolute top-3 left-3 bg-primary text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide">
+                    {deal.badge}
+                  </span>
+                </div>
+                <div className="p-4">
+                  <h3 className="font-bold text-foreground mb-1">{deal.title}</h3>
+                  <p className="text-sm text-muted-foreground">{deal.desc}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Feature Highlights Strip - Three Columns */}
       <Suspense fallback={<div className="py-12" />}>
@@ -992,10 +806,11 @@ const Index = () => {
       {/* Homepage FAQ Section */}
       <FAQSchema faqs={[
         { question: "How do I find the cheapest flights on Tripile.com?", answer: "Use our search tool to compare fares across 500+ airlines. Be flexible with dates, book midweek, and set price alerts for the best deals." },
-        { question: "Does Tripile.com charge any hidden fees?", answer: "No. The price shown includes all taxes and fees. We offer complete transparency with zero hidden charges." },
+        { question: "How do I find cheap hotels on Tripile?", answer: "Select the Hotels tab in our search widget, enter your destination and dates, and compare rates across top neighborhoods. Hotel deals start from $79/night in cities like Las Vegas and Orlando." },
+        { question: "Does Tripile.com charge any hidden fees?", answer: "No. The price shown includes all taxes and fees. We offer complete transparency with zero hidden charges on flights, hotels, and car rentals." },
         { question: "What is the Price Match Guarantee?", answer: "If you find a cheaper fare within 24 hours of booking, we'll match the price and give you an extra 10% off. That's our promise." },
         { question: "Can I cancel or change my booking?", answer: "Most bookings offer free cancellation within 24 hours. Changes depend on your fare type. Our 24/7 support team can assist with modifications." },
-        { question: "How does Tripile.com compare to other travel sites?", answer: "Tripile.com searches 500+ airlines simultaneously, offers a Price Match Guarantee, transparent pricing, and 24/7 expert support — trusted by 2M+ travelers." },
+        { question: "How does Tripile.com compare to other travel sites?", answer: "Tripile.com searches 500+ airlines simultaneously, compares car rentals nationwide, offers a Price Match Guarantee, transparent pricing, and 24/7 expert support — trusted by 2M+ travelers." },
       ]} />
       <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4 max-w-3xl">
@@ -1003,10 +818,11 @@ const Index = () => {
           <Accordion type="single" collapsible>
             {[
               { q: "How do I find the cheapest flights on Tripile.com?", a: "Use our search tool to compare fares across 500+ airlines. Be flexible with dates, book midweek, and set price alerts for the best deals." },
-              { q: "Does Tripile.com charge any hidden fees?", a: "No. The price shown includes all taxes and fees. We offer complete transparency with zero hidden charges." },
+              { q: "How do I find cheap hotels on Tripile?", a: "Select the Hotels tab in our search widget, enter your destination and dates, and compare rates across top neighborhoods. Hotel deals start from $79/night." },
+              { q: "Does Tripile.com charge any hidden fees?", a: "No. The price shown includes all taxes and fees. We offer complete transparency with zero hidden charges on flights, hotels, and car rentals." },
               { q: "What is the Price Match Guarantee?", a: "If you find a cheaper fare within 24 hours of booking, we'll match the price and give you an extra 10% off. That's our promise." },
               { q: "Can I cancel or change my booking?", a: "Most bookings offer free cancellation within 24 hours. Changes depend on your fare type. Our 24/7 support team can assist with modifications." },
-              { q: "How does Tripile.com compare to other travel sites?", a: "Tripile.com searches 500+ airlines simultaneously, offers a Price Match Guarantee, transparent pricing, and 24/7 expert support — trusted by 2M+ travelers." },
+              { q: "How does Tripile.com compare to other travel sites?", a: "Tripile.com searches 500+ airlines simultaneously, compares car rentals nationwide, offers a Price Match Guarantee, transparent pricing, and 24/7 expert support — trusted by 2M+ travelers." },
             ].map((faq, i) => (
               <AccordionItem key={i} value={`home-faq-${i}`} className="border-border">
                 <AccordionTrigger className="text-sm text-left hover:text-primary transition-colors">

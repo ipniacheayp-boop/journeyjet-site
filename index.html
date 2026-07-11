@@ -3,8 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tripile – Cheap Flights, Hotels &amp; Car Rentals USA</title>
+    <title>Cheap Flights, Hotels &amp; Car Rentals USA | Tripile.com</title>
     <!-- Per-route <meta name="description"> is set via react-helmet so each page gets a unique description -->
+    <meta
+      name="description"
+      content="Book cheap flights, hotels &amp; car rentals across the USA. Compare 500+ airlines, Price Match Guarantee, no hidden fees &amp; 24/7 US support. Trusted by 2M+ travelers."
+    />
 
     <meta
       name="keywords"
@@ -14,6 +18,8 @@
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="googlebot" content="index, follow" />
     <meta name="bingbot" content="index, follow" />
+
+    <link rel="preload" as="image" href="/images/hero-flights-hotels.jpg" fetchpriority="high" />
 
     <!-- Preconnect to external origins for faster loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -97,8 +103,10 @@
         "image": ["https://tripile.com/og-image.png"],
         "address": {
           "@type": "PostalAddress",
-          "streetAddress": "Online travel booking — service nationwide",
-          "addressLocality": "United States",
+          "streetAddress": "5900 Balcones Drive STE 100",
+          "addressLocality": "Austin",
+          "addressRegion": "TX",
+          "postalCode": "78731",
           "addressCountry": "US"
         },
         "areaServed": {
@@ -135,9 +143,9 @@
           "@type": "SearchAction",
           "target": {
             "@type": "EntryPoint",
-            "urlTemplate": "https://tripile.com/travel-guides?q={search_term_string}"
+            "urlTemplate": "https://tripile.com/flights?originLocationCode={origin}&destinationLocationCode={destination}"
           },
-          "query-input": "required name=search_term_string"
+          "query-input": ["required name=origin", "required name=destination"]
         }
       }
     </script>
@@ -149,11 +157,9 @@
     >
       <h1>Cheap Flights, Hotels &amp; Car Rentals USA | Tripile</h1>
       <p>
-        Tripile helps travelers compare <strong>cheap flights USA</strong> options, hotels, and rental cars in one
-        place. Instead of switching between multiple booking websites, you can review schedules, prices, and policies
-        together. This saves time and helps you book with more confidence. Whether you are planning a business trip,
-        family vacation, weekend city break, or last-minute getaway, Tripile gives you faster access to better options
-        and transparent pricing.
+        Tripile helps US travelers compare <strong>cheap flights</strong>, <strong>hotels</strong>, and
+        <strong>car rentals</strong> in one place. Search 500+ airlines, book hotels in every major city, and compare
+        rental cars from Enterprise, Hertz, Avis, and Budget — starting from $26/day in cities like Phoenix and Orlando.
       </p>
       <h2>Why Choose Tripile</h2>
       <p>
@@ -176,6 +182,9 @@
         <li><a href="/flights">Search cheap flights across the USA</a></li>
         <li><a href="/hotels">Compare cheap hotels in the USA</a></li>
         <li><a href="/car-rentals">Find car rentals across the USA</a></li>
+        <li><a href="/cheap-car-rentals-in-los-angeles">Cheap car rentals in Los Angeles</a></li>
+        <li><a href="/cheap-car-rentals-in-miami">Cheap car rentals in Miami</a></li>
+        <li><a href="/cheap-car-rentals-in-las-vegas">Cheap car rentals in Las Vegas</a></li>
         <li><a href="/deals">Browse current travel deals</a></li>
       </ul>
       <h2>Frequently Asked Questions</h2>

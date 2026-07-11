@@ -140,6 +140,10 @@ const Footer = () => {
 
           {/* Company Info & Copyright */}
           <div className="flex flex-col gap-4 mb-6 pb-6 border-b border-white/10">
+            <p className="text-xs text-sky-200/80 max-w-2xl leading-relaxed">
+              Tripile is a US-based online travel agency serving travelers in all 50 states. Compare flights, hotels,
+              and car rentals with transparent pricing, a Price Match Guarantee, and 24/7 customer support.
+            </p>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:gap-3 text-xs text-white/50">
               <span className="font-semibold text-white/70">Trivoya Ventures LLC</span>
               <span className="hidden sm:inline" aria-hidden="true">

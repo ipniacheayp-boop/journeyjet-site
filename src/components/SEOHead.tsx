@@ -48,6 +48,8 @@ const SEOHead = ({
       <meta name="author" content="Tripile.com" />
       <meta name="robots" content={noIndex ? "noindex, nofollow" : "index, follow"} />
       <link rel="canonical" href={resolvedCanonical} />
+      <link rel="alternate" hrefLang="en-us" href={resolvedCanonical} />
+      <link rel="alternate" hrefLang="x-default" href={resolvedCanonical} />
 
       {/* Open Graph / Facebook */}
       <meta property="og:type" content={ogType} />

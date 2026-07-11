@@ -16,6 +16,9 @@ import {
   PlaneTakeoff,
   Tag,
   ChevronDown,
+  ShieldCheck,
+  Clock,
+  BadgeDollarSign,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import tripileLogo from "@/assets/tripile-logo.svg";
@@ -52,8 +55,7 @@ const serviceLinks = [
     linkTitle: "Compare car rentals — Tripile",
   },
   { label: "Deals", href: "/deals", icon: Tag, linkTitle: "Today’s travel deals on Tripile" },
-  { label: "F.Status", href: "/flight-status", icon: PlaneTakeoff, linkTitle: "Check flight status — Tripile" },
-  { label: "F.Tracker", href: "/flight-tracker", icon: Globe, linkTitle: "Live flight tracker — Tripile" },
+  { label: "Flight Status", href: "/flight-status", icon: PlaneTakeoff, linkTitle: "Check flight status — Tripile" },
 ];
 
 // Secondary utility links — lower priority, go in right area
@@ -100,17 +102,42 @@ const Header = () => {
     const url = new URL(href, window.location.origin);
     return location.pathname === url.pathname;
   };
+  const trustItems = [
+    { icon: ShieldCheck, label: "Price Match Guarantee" },
+    { icon: Clock, label: "24/7 US Support" },
+    { icon: BadgeDollarSign, label: "No Hidden Fees" },
+  ];
+
   return (
     <>
+      {/* Trust strip — visible on desktop, reinforces US credibility */}
+      <div className="hidden md:block fixed top-0 left-0 right-0 z-[51] bg-slate-900 text-white border-b border-white/10">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-9 text-[11px] font-medium">
+            <div className="flex items-center gap-5">
+              {trustItems.map(({ icon: Icon, label }) => (
+                <span key={label} className="inline-flex items-center gap-1.5 text-white/80">
+                  <Icon className="w-3 h-3 text-sky-400" aria-hidden="true" />
+                  {label}
+                </span>
+              ))}
+            </div>
+            <span className="text-white/60 hidden lg:inline">
+              🇺🇸 US-Based Travel Experts · Serving all 50 states
+            </span>
+          </div>
+        </div>
+      </div>
+
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed left-0 right-0 z-50 transition-all duration-300 md:top-9 top-0 ${
           isScrolled
             ? "bg-white/97 dark:bg-slate-950/97 backdrop-blur-md shadow-sm border-b border-slate-200/80 dark:border-slate-800/80"
-            : "bg-white/85 dark:bg-slate-950/85 backdrop-blur-sm"
+            : "bg-white/95 dark:bg-slate-950/95 backdrop-blur-sm border-b border-slate-100/80 dark:border-slate-800/50"
         }`}
       >
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-[68px] gap-4">
+          <div className="flex items-center justify-between h-16 md:h-[68px] gap-4">
             {/* ── Logo ── */}
             <Link
               to="/"
@@ -363,7 +390,7 @@ const Header = () => {
 
           {/* ── Mobile Menu ── */}
           {isMobileMenuOpen && (
-            <div className="lg:hidden absolute left-0 right-0 top-[68px] bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 shadow-xl pb-6 px-4 z-50">
+            <div className="lg:hidden absolute left-0 right-0 top-16 md:top-[68px] bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 shadow-xl pb-6 px-4 z-50">
               {/* Services group */}
               <div className="pt-4 pb-2">
                 <p className="px-2 mb-2 text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
