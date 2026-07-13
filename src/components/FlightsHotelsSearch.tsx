@@ -6,21 +6,28 @@ import { seoHotelCities, hotelListingPath } from "@/data/seoRoutes";
 
 const CITY_SLUGS = ["los-angeles", "las-vegas", "miami", "orlando", "phoenix"];
 
+/** Local images — avoids broken external Unsplash URLs (404) */
 const flightImages: Record<string, string> = {
-  "los-angeles": "https://images.unsplash.com/photo-1534190239941-6229bb994a98?auto=format&fit=crop&w=600&q=80",
-  "las-vegas": "https://images.unsplash.com/photo-1581351721015-39a7d0770703?auto=format&fit=crop&w=600&q=80",
-  miami: "https://images.unsplash.com/photo-1533104816931-20fa69124498?auto=format&fit=crop&w=600&q=80",
-  orlando: "https://images.unsplash.com/photo-1597466599360-3bb977743178?auto=format&fit=crop&w=600&q=80",
-  phoenix: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=600&q=80",
+  "los-angeles": "/images/destinations/flights/los-angeles.jpg",
+  "las-vegas": "/images/destinations/flights/las-vegas.jpg",
+  miami: "/images/destinations/flights/miami.jpg",
+  orlando: "/images/destinations/flights/orlando.jpg",
+  phoenix: "/images/destinations/flights/phoenix.jpg",
 };
 
 const hotelImages: Record<string, string> = {
-  "cheap-hotels-in-los-angeles": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80",
-  "cheap-hotels-in-las-vegas": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=600&q=80",
-  "cheap-hotels-in-miami": "https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=600&q=80",
-  "cheap-hotels-in-orlando": "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=600&q=80",
-  "cheap-hotels-in-phoenix": "https://images.unsplash.com/photo-1618773928121-c94142e2f0b0?auto=format&fit=crop&w=600&q=80",
+  "cheap-hotels-in-los-angeles": "/images/destinations/hotels/los-angeles.jpg",
+  "cheap-hotels-in-las-vegas": "/images/destinations/hotels/las-vegas.jpg",
+  "cheap-hotels-in-miami": "/images/destinations/hotels/miami.jpg",
+  "cheap-hotels-in-orlando": "/images/destinations/hotels/orlando.jpg",
+  "cheap-hotels-in-phoenix": "/images/destinations/hotels/phoenix.jpg",
 };
+
+const getFlightImage = (slug: string) =>
+  flightImages[slug] ?? "/images/destinations/flights/los-angeles.jpg";
+
+const getHotelImage = (slug: string) =>
+  hotelImages[slug] ?? "/images/destinations/hotels/los-angeles.jpg";
 
 const flightFromPrices: Record<string, number> = {
   "los-angeles": 89,
@@ -30,10 +37,12 @@ const flightFromPrices: Record<string, number> = {
   phoenix: 69,
 };
 
-const flightDestinations = popularDestinations.filter((d) => CITY_SLUGS.includes(d.slug));
-const hotelDestinations = seoHotelCities.filter((h) =>
-  CITY_SLUGS.some((s) => h.slug === `cheap-hotels-in-${s}`),
+const flightDestinations = CITY_SLUGS.map((slug) => popularDestinations.find((d) => d.slug === slug)).filter(
+  (d): d is (typeof popularDestinations)[number] => d != null,
 );
+const hotelDestinations = CITY_SLUGS.map((slug) =>
+  seoHotelCities.find((h) => h.slug === `cheap-hotels-in-${slug}`),
+).filter((h): h is (typeof seoHotelCities)[number] => h != null);
 
 const FlightsHotelsSearch = () => {
   return (
@@ -107,7 +116,7 @@ const FlightsHotelsSearch = () => {
                 >
                   <div className="relative h-32 overflow-hidden">
                     <img
-                      src={flightImages[dest.slug]}
+                      src={getFlightImage(dest.slug)}
                       alt={`Cheap flights to ${dest.city}, USA — book on Tripile`}
                       loading="lazy"
                       decoding="async"
@@ -171,7 +180,7 @@ const FlightsHotelsSearch = () => {
                 >
                   <div className="relative h-32 overflow-hidden">
                     <img
-                      src={hotelImages[city.slug]}
+                      src={getHotelImage(city.slug)}
                       alt={`Cheap hotels in ${city.city}, ${city.state} — compare rates on Tripile`}
                       loading="lazy"
                       decoding="async"
