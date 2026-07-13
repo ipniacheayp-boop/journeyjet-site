@@ -219,3 +219,6 @@ verify_jwt = false
 
 [functions.bookings-agent-assisted]
 verify_jwt = false
+
+[functions.trip-planner]
+verify_jwt = false
