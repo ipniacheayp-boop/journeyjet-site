@@ -16,6 +16,7 @@ const SignIn = lazy(() => import("./pages/auth/SignIn"));
 const SignUp = lazy(() => import("./pages/auth/SignUp"));
 const ForgotPassword = lazy(() => import("./pages/auth/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/auth/ResetPassword"));
+const VerifyEmail = lazy(() => import("./pages/auth/VerifyEmail"));
 const AuthCallback = lazy(() => import("./pages/auth/AuthCallback"));
 const Index = lazy(() => import("./pages/Index"));
 const Deals = lazy(() => import("./pages/Deals"));
@@ -146,6 +147,7 @@ const App = () => (
                   <Route path="/auth/forgot-password" element={<ForgotPassword />} />
                   <Route path="/auth/reset-password" element={<ResetPassword />} />
                   <Route path="/auth/callback" element={<AuthCallback />} />
+                  <Route path="/auth/verify-email" element={<VerifyEmail />} />
                   {/* Legacy redirects */}
                   <Route path="/login" element={<Navigate to="/auth/signin" replace />} />
                   <Route path="/signup" element={<Navigate to="/auth/signup" replace />} />
