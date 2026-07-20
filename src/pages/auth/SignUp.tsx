@@ -167,6 +167,35 @@ const SignUp = () => {
             </div>
 
             <div className="space-y-1.5">
+              <Label htmlFor="signup-phone">Mobile number</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="signup-country"
+                  className="w-20"
+                  autoComplete="tel-country-code"
+                  placeholder="+1"
+                  value={countryCode}
+                  onChange={(event) => setCountryCode(event.target.value)}
+                  disabled={submitting}
+                  aria-label="Country code"
+                />
+                <Input
+                  id="signup-phone"
+                  type="tel"
+                  autoComplete="tel-national"
+                  placeholder="555 123 4567"
+                  value={phoneNumber}
+                  onChange={(event) => setPhoneNumber(event.target.value)}
+                  disabled={submitting}
+                  aria-invalid={!!errors.phone}
+                />
+              </div>
+              {errors.phone ? (
+                <p className="text-xs text-destructive">{errors.phone}</p>
+              ) : null}
+            </div>
+
+            <div className="space-y-1.5">
               <Label htmlFor="signup-password">Password</Label>
               <Input
                 id="signup-password"
