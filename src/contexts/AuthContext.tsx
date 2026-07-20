@@ -169,7 +169,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
 
     return () => subscription.unsubscribe();
-  }, [refreshAdminStatus]);
+  }, [refreshAdminStatus, refreshProfile]);
 
   const signUp = useCallback<AuthContextType["signUp"]>(async ({ email, password, fullName }) => {
     const { data, error } = await supabase.auth.signUp({
