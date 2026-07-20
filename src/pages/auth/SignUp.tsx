@@ -34,11 +34,13 @@ const SignUp = () => {
   const next = searchParams.get("next") || "/account";
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [countryCode, setCountryCode] = useState("+1");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [errors, setErrors] = useState<{ fullName?: string; email?: string; password?: string; confirmPassword?: string }>({});
+  const [errors, setErrors] = useState<{ fullName?: string; email?: string; phone?: string; password?: string; confirmPassword?: string }>({});
 
   useEffect(() => {
     if (!authLoading && user) {
@@ -51,6 +53,9 @@ const SignUp = () => {
     if (!fullName.trim()) nextErrors.fullName = "Please enter your name.";
     if (!email) nextErrors.email = "Email is required.";
     else if (!EMAIL_REGEX.test(email)) nextErrors.email = "Please enter a valid email.";
+    if (!phoneNumber.trim()) nextErrors.phone = "Mobile number is required.";
+    else if (!/^\d{6,15}$/.test(phoneNumber.replace(/\D/g, ""))) nextErrors.phone = "Enter a valid mobile number.";
+    if (!/^\+\d{1,4}$/.test(countryCode)) nextErrors.phone = "Enter a valid country code (e.g. +1).";
     if (!password) nextErrors.password = "Password is required.";
     else if (!passwordRules.every((rule) => rule.test(password))) nextErrors.password = "Password does not meet requirements.";
     if (confirmPassword !== password) nextErrors.confirmPassword = "Passwords do not match.";
@@ -63,13 +68,19 @@ const SignUp = () => {
     if (!validate()) return;
     setSubmitting(true);
     try {
-      const { requiresEmailConfirmation } = await signUp({ email, password, fullName });
+      const { requiresEmailConfirmation } = await signUp({
+        email,
+        password,
+        fullName,
+        phoneNumber: phoneNumber.replace(/\D/g, ""),
+        countryCode,
+      });
       if (requiresEmailConfirmation) {
-        toast.success("Account created! Check your email to verify your account.");
+        toast.success("Account created! Check your email to sign in.");
         navigate(`/auth/signin?next=${encodeURIComponent(next)}`, { replace: true });
       } else {
-        toast.success("Welcome to Tripile!");
-        navigate(next, { replace: true });
+        toast.success("Account created! Verify your email to continue.");
+        navigate(`/auth/verify-email?next=${encodeURIComponent(next)}`, { replace: true });
       }
     } catch (error: any) {
       toast.error(friendlyError(error?.message));
