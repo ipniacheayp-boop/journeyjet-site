@@ -9,6 +9,8 @@ interface SignUpInput {
   email: string;
   password: string;
   fullName?: string;
+  phoneNumber?: string;
+  countryCode?: string;
 }
 
 interface SignInInput {
@@ -23,6 +25,8 @@ interface AuthContextType {
   isAdmin: boolean;
   userRole: AppRole | null;
   loading: boolean;
+  emailVerified: boolean;
+  phoneVerified: boolean;
   signIn: (input: SignInInput) => Promise<void>;
   signUp: (input: SignUpInput) => Promise<{ requiresEmailConfirmation: boolean }>;
   signInWithGoogle: (redirectTo?: string) => Promise<void>;
@@ -30,6 +34,7 @@ interface AuthContextType {
   updatePassword: (newPassword: string) => Promise<void>;
   signOut: () => Promise<void>;
   refreshAdminStatus: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -81,7 +86,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [userRole, setUserRole] = useState<AppRole | null>(null);
   const [loading, setLoading] = useState(true);
+  const [emailVerified, setEmailVerified] = useState(false);
+  const [phoneVerified, setPhoneVerified] = useState(false);
   const navigate = useNavigate();
+
+  const refreshProfile = useCallback(async () => {
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      const uid = userData.user?.id;
+      if (!uid) {
+        setEmailVerified(false);
+        setPhoneVerified(false);
+        return;
+      }
+      const { data } = await supabase
+        .from("profiles")
+        .select("is_email_verified, is_phone_verified")
+        .eq("id", uid)
+        .maybeSingle();
+      setEmailVerified(Boolean(data?.is_email_verified));
+      setPhoneVerified(Boolean(data?.is_phone_verified));
+    } catch {
+      setEmailVerified(false);
+      setPhoneVerified(false);
+    }
+  }, []);
 
   const refreshAdminStatus = useCallback(async () => {
     try {
@@ -105,13 +134,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (nextSession?.user) {
         setUserRole(readStoredRole() ?? "user");
         await upsertProfile(nextSession.user);
-        // Defer admin RPC slightly so token is stored.
         setTimeout(() => {
           void refreshAdminStatus();
+          void refreshProfile();
         }, 0);
       } else {
         setIsAdmin(false);
         setUserRole(null);
+        setEmailVerified(false);
+        setPhoneVerified(false);
         localStorage.removeItem(ROLE_STORAGE_KEY);
       }
     });
@@ -125,6 +156,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setUserRole(readStoredRole() ?? "user");
           await upsertProfile(data.session.user);
           await refreshAdminStatus();
+          await refreshProfile();
         }
       })
       .catch((error) => {
@@ -137,20 +169,38 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
 
     return () => subscription.unsubscribe();
-  }, [refreshAdminStatus]);
+  }, [refreshAdminStatus, refreshProfile]);
 
-  const signUp = useCallback<AuthContextType["signUp"]>(async ({ email, password, fullName }) => {
+  const signUp = useCallback<AuthContextType["signUp"]>(async ({ email, password, fullName, phoneNumber, countryCode }) => {
     const { data, error } = await supabase.auth.signUp({
       email: email.trim(),
       password,
       options: {
         emailRedirectTo: `${window.location.origin}/auth/callback`,
-        data: fullName ? { full_name: fullName.trim() } : undefined,
+        data: {
+          ...(fullName ? { full_name: fullName.trim() } : {}),
+          ...(phoneNumber ? { phone_number: phoneNumber.trim() } : {}),
+          ...(countryCode ? { country_code: countryCode.trim() } : {}),
+        },
       },
     });
     if (error) throw error;
 
-    // If email confirmations are disabled, Supabase returns a session immediately.
+    // Persist phone details to profile once session exists.
+    if (data.user && (phoneNumber || countryCode)) {
+      try {
+        await supabase
+          .from("profiles")
+          .update({
+            ...(phoneNumber ? { phone_number: phoneNumber.trim() } : {}),
+            ...(countryCode ? { country_code: countryCode.trim() } : {}),
+          })
+          .eq("id", data.user.id);
+      } catch {
+        // best-effort; user can update later from account settings
+      }
+    }
+
     return { requiresEmailConfirmation: !data.session };
   }, []);
 
@@ -213,6 +263,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       isAdmin,
       userRole,
       loading,
+      emailVerified,
+      phoneVerified,
       signIn,
       signUp,
       signInWithGoogle,
@@ -220,6 +272,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       updatePassword,
       signOut,
       refreshAdminStatus,
+      refreshProfile,
     }),
     [
       user,
@@ -227,6 +280,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       isAdmin,
       userRole,
       loading,
+      emailVerified,
+      phoneVerified,
       signIn,
       signUp,
       signInWithGoogle,
@@ -234,6 +289,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       updatePassword,
       signOut,
       refreshAdminStatus,
+      refreshProfile,
     ],
   );
 

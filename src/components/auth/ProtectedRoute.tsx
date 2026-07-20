@@ -10,7 +10,7 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children, redirectTo = "/auth/signin", requireAdmin = false }: ProtectedRouteProps) => {
-  const { user, loading, isAdmin } = useAuth();
+  const { user, loading, isAdmin, emailVerified } = useAuth();
   const location = useLocation();
 
   if (loading) {
@@ -25,6 +25,13 @@ const ProtectedRoute = ({ children, redirectTo = "/auth/signin", requireAdmin = 
     const from = `${location.pathname}${location.search}`;
     const redirectUrl = `${redirectTo}?next=${encodeURIComponent(from)}`;
     return <Navigate to={redirectUrl} replace />;
+  }
+
+  // OAuth users (Google/Apple) already have verified emails via the provider.
+  const isOAuthUser = Boolean(user.app_metadata?.provider && user.app_metadata.provider !== "email");
+  if (!isOAuthUser && !emailVerified && location.pathname !== "/auth/verify-email") {
+    const from = `${location.pathname}${location.search}`;
+    return <Navigate to={`/auth/verify-email?next=${encodeURIComponent(from)}`} replace />;
   }
 
   if (requireAdmin && !isAdmin) {
