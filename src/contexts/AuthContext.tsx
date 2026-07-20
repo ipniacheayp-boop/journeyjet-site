@@ -86,7 +86,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [userRole, setUserRole] = useState<AppRole | null>(null);
   const [loading, setLoading] = useState(true);
+  const [emailVerified, setEmailVerified] = useState(false);
+  const [phoneVerified, setPhoneVerified] = useState(false);
   const navigate = useNavigate();
+
+  const refreshProfile = useCallback(async () => {
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      const uid = userData.user?.id;
+      if (!uid) {
+        setEmailVerified(false);
+        setPhoneVerified(false);
+        return;
+      }
+      const { data } = await supabase
+        .from("profiles")
+        .select("is_email_verified, is_phone_verified")
+        .eq("id", uid)
+        .maybeSingle();
+      setEmailVerified(Boolean(data?.is_email_verified));
+      setPhoneVerified(Boolean(data?.is_phone_verified));
+    } catch {
+      setEmailVerified(false);
+      setPhoneVerified(false);
+    }
+  }, []);
 
   const refreshAdminStatus = useCallback(async () => {
     try {
