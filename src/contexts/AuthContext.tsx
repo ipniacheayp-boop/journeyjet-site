@@ -134,13 +134,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (nextSession?.user) {
         setUserRole(readStoredRole() ?? "user");
         await upsertProfile(nextSession.user);
-        // Defer admin RPC slightly so token is stored.
         setTimeout(() => {
           void refreshAdminStatus();
+          void refreshProfile();
         }, 0);
       } else {
         setIsAdmin(false);
         setUserRole(null);
+        setEmailVerified(false);
+        setPhoneVerified(false);
         localStorage.removeItem(ROLE_STORAGE_KEY);
       }
     });
