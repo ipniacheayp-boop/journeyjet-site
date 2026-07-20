@@ -633,34 +633,85 @@ export type Database = {
           },
         ]
       }
+      otp_codes: {
+        Row: {
+          attempts: number
+          code_hash: string
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          purpose: string
+          user_id: string | null
+          verified_at: string | null
+        }
+        Insert: {
+          attempts?: number
+          code_hash: string
+          created_at?: string
+          email: string
+          expires_at: string
+          id?: string
+          purpose: string
+          user_id?: string | null
+          verified_at?: string | null
+        }
+        Update: {
+          attempts?: number
+          code_hash?: string
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          purpose?: string
+          user_id?: string | null
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
+          country_code: string | null
           created_at: string | null
           email: string | null
           id: string
+          is_email_verified: boolean
+          is_phone_verified: boolean
           last_login: string | null
+          last_otp_sent_at: string | null
           login_method: string | null
           name: string | null
+          phone_number: string | null
           profile_image: string | null
           updated_at: string | null
         }
         Insert: {
+          country_code?: string | null
           created_at?: string | null
           email?: string | null
           id: string
+          is_email_verified?: boolean
+          is_phone_verified?: boolean
           last_login?: string | null
+          last_otp_sent_at?: string | null
           login_method?: string | null
           name?: string | null
+          phone_number?: string | null
           profile_image?: string | null
           updated_at?: string | null
         }
         Update: {
+          country_code?: string | null
           created_at?: string | null
           email?: string | null
           id?: string
+          is_email_verified?: boolean
+          is_phone_verified?: boolean
           last_login?: string | null
+          last_otp_sent_at?: string | null
           login_method?: string | null
           name?: string | null
+          phone_number?: string | null
           profile_image?: string | null
           updated_at?: string | null
         }
