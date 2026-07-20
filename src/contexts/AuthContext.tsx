@@ -171,18 +171,36 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => subscription.unsubscribe();
   }, [refreshAdminStatus, refreshProfile]);
 
-  const signUp = useCallback<AuthContextType["signUp"]>(async ({ email, password, fullName }) => {
+  const signUp = useCallback<AuthContextType["signUp"]>(async ({ email, password, fullName, phoneNumber, countryCode }) => {
     const { data, error } = await supabase.auth.signUp({
       email: email.trim(),
       password,
       options: {
         emailRedirectTo: `${window.location.origin}/auth/callback`,
-        data: fullName ? { full_name: fullName.trim() } : undefined,
+        data: {
+          ...(fullName ? { full_name: fullName.trim() } : {}),
+          ...(phoneNumber ? { phone_number: phoneNumber.trim() } : {}),
+          ...(countryCode ? { country_code: countryCode.trim() } : {}),
+        },
       },
     });
     if (error) throw error;
 
-    // If email confirmations are disabled, Supabase returns a session immediately.
+    // Persist phone details to profile once session exists.
+    if (data.user && (phoneNumber || countryCode)) {
+      try {
+        await supabase
+          .from("profiles")
+          .update({
+            ...(phoneNumber ? { phone_number: phoneNumber.trim() } : {}),
+            ...(countryCode ? { country_code: countryCode.trim() } : {}),
+          })
+          .eq("id", data.user.id);
+      } catch {
+        // best-effort; user can update later from account settings
+      }
+    }
+
     return { requiresEmailConfirmation: !data.session };
   }, []);
 
