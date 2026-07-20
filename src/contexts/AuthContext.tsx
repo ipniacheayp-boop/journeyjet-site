@@ -9,6 +9,8 @@ interface SignUpInput {
   email: string;
   password: string;
   fullName?: string;
+  phoneNumber?: string;
+  countryCode?: string;
 }
 
 interface SignInInput {
@@ -23,6 +25,8 @@ interface AuthContextType {
   isAdmin: boolean;
   userRole: AppRole | null;
   loading: boolean;
+  emailVerified: boolean;
+  phoneVerified: boolean;
   signIn: (input: SignInInput) => Promise<void>;
   signUp: (input: SignUpInput) => Promise<{ requiresEmailConfirmation: boolean }>;
   signInWithGoogle: (redirectTo?: string) => Promise<void>;
@@ -30,6 +34,7 @@ interface AuthContextType {
   updatePassword: (newPassword: string) => Promise<void>;
   signOut: () => Promise<void>;
   refreshAdminStatus: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
