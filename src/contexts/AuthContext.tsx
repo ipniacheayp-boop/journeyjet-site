@@ -263,6 +263,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       isAdmin,
       userRole,
       loading,
+      emailVerified,
+      phoneVerified,
       signIn,
       signUp,
       signInWithGoogle,
@@ -270,6 +272,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       updatePassword,
       signOut,
       refreshAdminStatus,
+      refreshProfile,
     }),
     [
       user,
@@ -277,6 +280,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       isAdmin,
       userRole,
       loading,
+      emailVerified,
+      phoneVerified,
       signIn,
       signUp,
       signInWithGoogle,
@@ -284,6 +289,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       updatePassword,
       signOut,
       refreshAdminStatus,
+      refreshProfile,
     ],
   );
 
