@@ -156,6 +156,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setUserRole(readStoredRole() ?? "user");
           await upsertProfile(data.session.user);
           await refreshAdminStatus();
+          await refreshProfile();
         }
       })
       .catch((error) => {
