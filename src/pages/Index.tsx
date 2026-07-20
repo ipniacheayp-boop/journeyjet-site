@@ -281,11 +281,6 @@ const Index = () => {
             <h1 className="font-sans text-balance text-3xl sm:text-4xl md:text-5xl font-bold text-white leading-snug tracking-normal mb-4 drop-shadow-md max-w-4xl mx-auto">
               Search Cheap Flights &amp; Hotels in the USA
             </h1>
-            <p className="text-base md:text-lg text-white/85 leading-relaxed max-w-2xl mx-auto">
-              Compare <strong className="text-white font-semibold">500+ airlines</strong>, find hotels in every major
-              city, and book with <strong className="text-sky-300 font-semibold">transparent pricing</strong> — zero
-              hidden fees, 24/7 US support.
-            </p>
           </motion.div>
 
           {/* Quick service pills with hover — SEO internal links */}
