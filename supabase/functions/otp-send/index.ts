@@ -120,8 +120,8 @@ Deno.serve(async (req) => {
     if (last) {
       const elapsed = (Date.now() - new Date(last.created_at).getTime()) / 1000;
       if (elapsed < RESEND_COOLDOWN_SEC) {
-        return new Response(JSON.stringify({ error: 'cooldown', retryAfter: Math.ceil(RESEND_COOLDOWN_SEC - elapsed) }), {
-          status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        return new Response(JSON.stringify({ ok: false, error: 'cooldown', retryAfter: Math.ceil(RESEND_COOLDOWN_SEC - elapsed) }), {
+          status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
     }
@@ -154,8 +154,8 @@ Deno.serve(async (req) => {
   } catch (err) {
     console.error('otp-send error', err);
     if (err instanceof EmailSendError) {
-      return new Response(JSON.stringify({ error: err.publicCode, message: err.message }), {
-        status: err.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      return new Response(JSON.stringify({ ok: false, error: err.publicCode, message: err.message }), {
+        status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
