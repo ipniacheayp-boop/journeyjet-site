@@ -41,10 +41,11 @@ async function sendEmail(to: string, code: string, purpose: string) {
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: 'Tripile <onboarding@resend.dev>',
+        from: 'Tripile Support <support@tripile.com>',
         to: [to],
         subject,
         html,
+        reply_to: 'support@tripile.com',
       }),
     });
     if (!res.ok) {
