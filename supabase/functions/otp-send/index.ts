@@ -10,6 +10,18 @@ const ANON = Deno.env.get('SUPABASE_ANON_KEY')!;
 const OTP_TTL_MIN = 5;
 const RESEND_COOLDOWN_SEC = 30;
 
+class EmailSendError extends Error {
+  public readonly publicCode: string;
+  public readonly status: number;
+
+  constructor(publicCode: string, message: string, status = 502) {
+    super(message);
+    this.name = 'EmailSendError';
+    this.publicCode = publicCode;
+    this.status = status;
+  }
+}
+
 async function sha256(text: string): Promise<string> {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
@@ -51,10 +63,19 @@ async function sendEmail(to: string, code: string, purpose: string) {
     if (!res.ok) {
       const body = await res.text();
       console.error('resend send failed', res.status, body);
-      throw new Error('email_send_failed');
+      const providerMessage = body.toLowerCase();
+      if (res.status === 403 && providerMessage.includes('domain') && providerMessage.includes('not verified')) {
+        throw new EmailSendError(
+          'sender_domain_unverified',
+          'The sender domain is still being verified. Please complete DNS verification before requesting a new code.',
+          503,
+        );
+      }
+      throw new EmailSendError('email_send_failed', 'Unable to send the verification email right now. Please try again.', 502);
     }
   } else {
-    console.warn('RESEND_API_KEY missing; OTP not emailed. Code:', code);
+    console.error('RESEND_API_KEY missing; OTP email was not sent.');
+    throw new EmailSendError('email_not_configured', 'Email sending is not configured yet.', 503);
   }
 }
 
@@ -109,24 +130,37 @@ Deno.serve(async (req) => {
     const code_hash = await sha256(code);
     const expires_at = new Date(Date.now() + OTP_TTL_MIN * 60_000).toISOString();
 
-    const { error: insErr } = await admin.from('otp_codes').insert({
+    const { data: insertedOtp, error: insErr } = await admin.from('otp_codes').insert({
       user_id: userId, email, purpose, code_hash, expires_at,
-    });
+    }).select('id').single();
     if (insErr) throw insErr;
+
+    try {
+      await sendEmail(email, code, purpose);
+    } catch (err) {
+      if (insertedOtp?.id) {
+        await admin.from('otp_codes').delete().eq('id', insertedOtp.id);
+      }
+      throw err;
+    }
 
     if (userId) {
       await admin.from('profiles').update({ last_otp_sent_at: new Date().toISOString() }).eq('id', userId);
     }
-
-    await sendEmail(email, code, purpose);
 
     return new Response(JSON.stringify({ ok: true, expiresInMinutes: OTP_TTL_MIN }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (err) {
     console.error('otp-send error', err);
+    if (err instanceof EmailSendError) {
+      return new Response(JSON.stringify({ error: err.publicCode, message: err.message }), {
+        status: err.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     return new Response(JSON.stringify({ error: 'send_failed' }), {
-      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 });

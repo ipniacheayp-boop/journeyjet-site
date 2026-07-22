@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Loader2 } from "lucide-react";
+import { AlertTriangle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import SEOHead from "@/components/SEOHead";
@@ -20,8 +21,27 @@ const errorMessage = (code?: string) => {
     case "no_code": return "No code found. Please request a new one.";
     case "already_used": return "This code was already used. Request a new one.";
     case "cooldown": return "Please wait a moment before requesting another code.";
+    case "sender_domain_unverified": return "Email verification is temporarily unavailable while the sender domain finishes DNS verification.";
+    case "email_not_configured": return "Email verification is not configured yet. Please contact support.";
+    case "email_send_failed":
+    case "send_failed": return "We could not send the verification email right now. Please try again shortly.";
     default: return "Something went wrong. Please try again.";
   }
+};
+
+const readFunctionError = async (err: any): Promise<{ code?: string; message?: string }> => {
+  const context = err?.context;
+  if (context && typeof context.clone === "function") {
+    try {
+      const text = await context.clone().text();
+      const payload = JSON.parse(text);
+      return { code: payload?.error, message: payload?.message };
+    } catch {
+      return { code: err?.message };
+    }
+  }
+
+  return { code: typeof err?.message === "string" ? err.message : undefined };
 };
 
 const VerifyEmail = () => {
@@ -34,6 +54,7 @@ const VerifyEmail = () => {
   const [submitting, setSubmitting] = useState(false);
   const [sending, setSending] = useState(false);
   const [cooldown, setCooldown] = useState(0);
+  const [deliveryError, setDeliveryError] = useState<string | null>(null);
   const autoSent = useRef(false);
 
   useEffect(() => {
@@ -58,11 +79,14 @@ const VerifyEmail = () => {
       });
       if (error) throw error;
       if ((data as any)?.error) throw new Error((data as any).error);
+      setDeliveryError(null);
       toast.success("Verification code sent to your email.");
       setCooldown(RESEND_COOLDOWN);
     } catch (err: any) {
-      const msg = typeof err?.message === "string" ? err.message : "";
-      toast.error(errorMessage(msg));
+      const details = await readFunctionError(err);
+      const msg = details.code || "send_failed";
+      setDeliveryError(msg);
+      toast.error(details.message || errorMessage(msg));
       if (msg === "cooldown") setCooldown(RESEND_COOLDOWN);
     } finally {
       setSending(false);
@@ -111,6 +135,14 @@ const VerifyEmail = () => {
         }
       >
         <div className="space-y-5">
+          {deliveryError ? (
+            <Alert variant="destructive">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Verification email not sent</AlertTitle>
+              <AlertDescription>{errorMessage(deliveryError)}</AlertDescription>
+            </Alert>
+          ) : null}
+
           <div className="flex justify-center">
             <InputOTP maxLength={6} value={code} onChange={setCode} disabled={submitting}>
               <InputOTPGroup>
