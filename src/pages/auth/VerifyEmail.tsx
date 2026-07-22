@@ -44,6 +44,17 @@ const readFunctionError = async (err: any): Promise<{ code?: string; message?: s
   return { code: typeof err?.message === "string" ? err.message : undefined };
 };
 
+const handleSendFailure = (
+  payload: { error?: string; message?: string; retryAfter?: number } | null | undefined,
+  setDeliveryError: (value: string | null) => void,
+  setCooldown: (value: number) => void,
+) => {
+  const code = payload?.error || "send_failed";
+  setDeliveryError(code);
+  if (code === "cooldown") setCooldown(payload?.retryAfter || RESEND_COOLDOWN);
+  toast.error(payload?.message || errorMessage(code));
+};
+
 const VerifyEmail = () => {
   const navigate = useNavigate();
   const [params] = useSearchParams();
@@ -78,7 +89,11 @@ const VerifyEmail = () => {
         body: { purpose: "email_verify" },
       });
       if (error) throw error;
-      if ((data as any)?.error) throw new Error((data as any).error);
+      const payload = data as { ok?: boolean; error?: string; message?: string; retryAfter?: number } | null;
+      if (payload?.error || payload?.ok === false) {
+        handleSendFailure(payload, setDeliveryError, setCooldown);
+        return;
+      }
       setDeliveryError(null);
       toast.success("Verification code sent to your email.");
       setCooldown(RESEND_COOLDOWN);
