@@ -9,7 +9,7 @@ const HomePageSchema = () => {
         url: "https://tripile.com/",
         name: "Cheap Flights, Hotels & Car Rentals USA | Tripile",
         description:
-          "Compare cheap flights, hotels, and car rentals across the United States. Price Match Guarantee, no hidden fees, 24/7 US-based support. Trusted by 2M+ travelers.",
+          "Compare cheap flights, hotels, and car rentals across the United States. Price Match Guarantee, no hidden fees, 24/7 US-based support. Trusted by 50K+ travelers.",
         isPartOf: { "@id": "https://tripile.com/#website" },
         about: { "@id": "https://tripile.com/#organization" },
         inLanguage: "en-US",
