@@ -199,7 +199,7 @@ const About = () => {
             </p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
-                { icon: Users, value: "50K+", label: "Travelers Served", desc: "Trusted by thousands across the USA since 2023" },
+                { icon: Users, value: "2,500+", label: "Travelers Served", desc: "Trusted by travelers across the USA since 2023" },
                 { icon: Star, value: "4.5★", label: "Average Rating", desc: "Based on verified customer reviews" },
                 { icon: Clock, value: "24/7", label: "Expert Support", desc: "Real travel specialists, always available" },
                 { icon: ShieldCheck, value: "500+", label: "Airline Partners", desc: "Licensed and verified carrier partnerships" },

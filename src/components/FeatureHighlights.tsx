@@ -34,8 +34,8 @@ const FeatureHighlights = () => {
     },
     {
       icon: Users,
-      title: "Trusted by 50K+ Travelers",
-      subtitle: "Thousands of satisfied travelers rely on Tripile for smooth, reliable bookings every day.",
+      title: "Trusted by 2,500+ Travelers",
+      subtitle: "A growing community of satisfied travelers relies on Tripile for smooth, reliable bookings every day.",
       link: "/reviews",
       linkText: "Read Reviews",
       linkTitle: "Read Tripile traveler reviews",
