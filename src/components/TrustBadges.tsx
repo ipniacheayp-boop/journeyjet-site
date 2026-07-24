@@ -4,7 +4,7 @@ const TrustBadges = () => {
   const stats = [
     {
       icon: Users,
-      value: "50K+",
+      value: "2,500+",
       label: "Verified Travelers",
       color: "text-blue-600 dark:text-blue-400",
       bg: "bg-blue-50 dark:bg-blue-500/10",

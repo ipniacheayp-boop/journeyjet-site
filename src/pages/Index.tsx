@@ -341,7 +341,7 @@ const Index = () => {
         <div className="container mx-auto px-4 py-5">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 max-w-4xl mx-auto">
             {[
-              { icon: Users, value: "50K+", label: "US Travelers", color: "text-primary", href: "/reviews" },
+              { icon: Users, value: "2,500+", label: "US Travelers", color: "text-primary", href: "/reviews" },
               { icon: Plane, value: "500+", label: "Airlines Compared", color: "text-indigo-600", href: "/flights" },
               { icon: Hotel, value: "$79", label: "Hotels From", color: "text-indigo-600", href: "/hotels" },
               { icon: Star, value: "4.5★", label: "Average Rating", color: "text-amber-500", href: "/reviews" },
@@ -478,7 +478,7 @@ const Index = () => {
             <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-2">Why Tripile</p>
             <h2 className="font-display text-2xl md:text-3xl font-bold mb-3">Why Travelers Choose Tripile</h2>
             <p className="text-muted-foreground max-w-xl mx-auto text-sm">
-              Join over <strong className="text-foreground">2 million</strong> satisfied travelers who trust us to find
+              Join over <strong className="text-foreground">2,500</strong> satisfied travelers who trust us to find
               the best deals, every day.
             </p>
           </motion.div>
@@ -779,7 +779,7 @@ const Index = () => {
             {/* Quick proof stats */}
             <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-white/50">
               {[
-                { val: "50K+", label: "happy travelers" },
+                { val: "2,500+", label: "happy travelers" },
                 { val: "500+", label: "airlines compared" },
                 { val: "$0", label: "hidden fees" },
                 { val: "24/7", label: "expert support" },
@@ -805,7 +805,7 @@ const Index = () => {
         { question: "Does Tripile.com charge any hidden fees?", answer: "No. The price shown includes all taxes and fees. We offer complete transparency with zero hidden charges on flights, hotels, and car rentals." },
         { question: "What is the Price Match Guarantee?", answer: "If you find a cheaper fare within 24 hours of booking, we'll match the price and give you an extra 10% off. That's our promise." },
         { question: "Can I cancel or change my booking?", answer: "Most bookings offer free cancellation within 24 hours. Changes depend on your fare type. Our 24/7 support team can assist with modifications." },
-        { question: "How does Tripile.com compare to other travel sites?", answer: "Tripile.com searches 500+ airlines simultaneously, compares car rentals nationwide, offers a Price Match Guarantee, transparent pricing, and 24/7 expert support — trusted by 50K+ travelers." },
+        { question: "How does Tripile.com compare to other travel sites?", answer: "Tripile.com searches 500+ airlines simultaneously, compares car rentals nationwide, offers a Price Match Guarantee, transparent pricing, and 24/7 expert support — trusted by 2,500+ travelers." },
       ]} />
       <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4 max-w-3xl">
@@ -817,7 +817,7 @@ const Index = () => {
               { q: "Does Tripile.com charge any hidden fees?", a: "No. The price shown includes all taxes and fees. We offer complete transparency with zero hidden charges on flights, hotels, and car rentals." },
               { q: "What is the Price Match Guarantee?", a: "If you find a cheaper fare within 24 hours of booking, we'll match the price and give you an extra 10% off. That's our promise." },
               { q: "Can I cancel or change my booking?", a: "Most bookings offer free cancellation within 24 hours. Changes depend on your fare type. Our 24/7 support team can assist with modifications." },
-              { q: "How does Tripile.com compare to other travel sites?", a: "Tripile.com searches 500+ airlines simultaneously, compares car rentals nationwide, offers a Price Match Guarantee, transparent pricing, and 24/7 expert support — trusted by 50K+ travelers." },
+              { q: "How does Tripile.com compare to other travel sites?", a: "Tripile.com searches 500+ airlines simultaneously, compares car rentals nationwide, offers a Price Match Guarantee, transparent pricing, and 24/7 expert support — trusted by 2,500+ travelers." },
             ].map((faq, i) => (
               <AccordionItem key={i} value={`home-faq-${i}`} className="border-border">
                 <AccordionTrigger className="text-sm text-left hover:text-primary transition-colors">

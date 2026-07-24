@@ -130,7 +130,7 @@ const CityFlightPage = () => {
 
             <h2>Why Book {fromCity} to {toCity} Flights on Tripile.com?</h2>
             <p>
-              Tripile.com is trusted by over 2 million travelers to find the cheapest flight deals. We search 500+ airlines simultaneously, show transparent pricing with zero hidden fees, and back every booking with our Price Match Guarantee and 24/7 expert support.
+              Tripile.com is trusted by over 2,500 travelers to find the cheapest flight deals. We search 500+ airlines simultaneously, show transparent pricing with zero hidden fees, and back every booking with our Price Match Guarantee and 24/7 expert support.
             </p>
           </section>
 
