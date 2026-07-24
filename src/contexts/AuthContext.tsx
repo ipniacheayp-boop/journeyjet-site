@@ -172,7 +172,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => subscription.unsubscribe();
   }, [refreshAdminStatus, refreshProfile]);
 
-  const signUp = useCallback<AuthContextType["signUp"]>(async ({ email, password, fullName, phoneNumber, countryCode }) => {
+  const signUp = useCallback<AuthContextType["signUp"]>(async ({ email, password, fullName, phoneNumber, countryCode, marketingSmsOptIn }) => {
     const { data, error } = await supabase.auth.signUp({
       email: email.trim(),
       password,
@@ -182,19 +182,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           ...(fullName ? { full_name: fullName.trim() } : {}),
           ...(phoneNumber ? { phone_number: phoneNumber.trim() } : {}),
           ...(countryCode ? { country_code: countryCode.trim() } : {}),
+          ...(typeof marketingSmsOptIn === "boolean" ? { marketing_sms_opt_in: marketingSmsOptIn } : {}),
         },
       },
     });
     if (error) throw error;
 
-    // Persist phone details to profile once session exists.
-    if (data.user && (phoneNumber || countryCode)) {
+    // Persist phone details + marketing consent to profile once session exists.
+    if (data.user && (phoneNumber || countryCode || typeof marketingSmsOptIn === "boolean")) {
       try {
         await supabase
           .from("profiles")
           .update({
             ...(phoneNumber ? { phone_number: phoneNumber.trim() } : {}),
             ...(countryCode ? { country_code: countryCode.trim() } : {}),
+            ...(typeof marketingSmsOptIn === "boolean"
+              ? {
+                  marketing_sms_opt_in: marketingSmsOptIn,
+                  marketing_sms_opt_in_at: marketingSmsOptIn ? new Date().toISOString() : null,
+                }
+              : {}),
           })
           .eq("id", data.user.id);
       } catch {
