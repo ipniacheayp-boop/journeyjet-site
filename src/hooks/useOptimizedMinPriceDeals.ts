@@ -223,6 +223,9 @@ const fetchMinPriceDeals = async (limit: number, forceRefresh = false): Promise<
       deals = [...deals, ...fallbackDeals];
     }
     
+    // Enforce realistic minimum prices (upstream test APIs sometimes return unrealistic lows)
+    deals = deals.map(enforceRealisticPrice);
+
     // Sort by price (lowest first)
     deals.sort((a, b) => a.price - b.price);
     
