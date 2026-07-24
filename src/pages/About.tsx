@@ -195,7 +195,7 @@ const About = () => {
               Why Travelers <span className="text-blue-500">Trust</span> Tripile
             </h2>
             <p className="text-center text-muted-foreground max-w-2xl mx-auto mb-10">
-              Backed by real expertise, real partners, and millions of successful bookings.
+              Backed by real expertise, real partners, and thousands of successful bookings.
             </p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
