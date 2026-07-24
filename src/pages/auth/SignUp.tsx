@@ -76,6 +76,7 @@ const SignUp = () => {
         fullName,
         phoneNumber: phoneNumber.replace(/\D/g, ""),
         countryCode,
+        marketingSmsOptIn,
       });
       if (requiresEmailConfirmation) {
         toast.success("Account created! Check your email to sign in.");
