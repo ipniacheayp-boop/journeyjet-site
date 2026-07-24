@@ -92,27 +92,58 @@ const getReturnDate = (departDate: string): string => {
   return depart.toISOString().split('T')[0];
 };
 
-// Generate a random price based on destination
+// Realistic price ranges (USD roundtrip economy) by destination
+const PRICE_RANGES: Record<string, [number, number]> = {
+  // Domestic US
+  'LAX': [249, 449],
+  'SFO': [279, 479],
+  'JFK': [259, 459],
+  'ORD': [229, 429],
+  'MIA': [269, 469],
+  'LAS': [239, 439],
+  'DEN': [249, 439],
+  'SEA': [279, 489],
+  'BOS': [259, 459],
+  'ATL': [229, 419],
+  'DFW': [239, 429],
+  'PHX': [249, 439],
+  'MCO': [259, 459],
+  'HNL': [499, 899],
+  'ANC': [449, 799],
+  'SJU': [399, 699],
+  // Mexico / Caribbean
+  'CUN': [389, 649],
+  'MEX': [369, 629],
+  // Europe
+  'CDG': [649, 1149],
+  'LHR': [599, 1099],
+  'BCN': [629, 1099],
+  'FCO': [649, 1149],
+  'AMS': [599, 1049],
+  'LIS': [579, 999],
+  'IST': [699, 1199],
+  'DUB': [569, 999],
+  // Asia / Middle East / Oceania
+  'NRT': [899, 1499],
+  'DXB': [849, 1399],
+  'SIN': [1049, 1699],
+  'BKK': [899, 1499],
+  'SYD': [1249, 1999],
+  'MLE': [1099, 1799],
+};
+
 const getRandomPrice = (destCode: string): number => {
-  const basePrices: Record<string, [number, number]> = {
-    'CUN': [299, 499],
-    'HNL': [399, 699],
-    'CDG': [499, 899],
-    'LHR': [449, 799],
-    'BCN': [479, 849],
-    'FCO': [499, 899],
-    'AMS': [449, 799],
-    'LIS': [429, 779],
-    'IST': [529, 899],
-    'NRT': [699, 1199],
-    'DXB': [649, 1099],
-    'SIN': [799, 1299],
-    'BKK': [699, 1149],
-    'SYD': [999, 1599],
-    'MLE': [899, 1499],
-  };
-  const [min, max] = basePrices[destCode] || [399, 799];
+  const [min, max] = PRICE_RANGES[destCode] || [349, 699];
   return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+// Enforce realistic minimum on any deal (API or fallback) so unrealistically low
+// test prices from upstream providers never surface to the user.
+const enforceRealisticPrice = (deal: MinPriceDeal): MinPriceDeal => {
+  const [min, max] = PRICE_RANGES[deal.destination] || [349, 699];
+  if (deal.price >= min) return deal;
+  const bumped = Math.floor(Math.random() * (max - min + 1)) + min;
+  return { ...deal, price: bumped, currency: 'USD' };
 };
 
 // Generate fallback deals to fill the gap
@@ -192,6 +223,9 @@ const fetchMinPriceDeals = async (limit: number, forceRefresh = false): Promise<
       deals = [...deals, ...fallbackDeals];
     }
     
+    // Enforce realistic minimum prices (upstream test APIs sometimes return unrealistic lows)
+    deals = deals.map(enforceRealisticPrice);
+
     // Sort by price (lowest first)
     deals.sort((a, b) => a.price - b.price);
     
