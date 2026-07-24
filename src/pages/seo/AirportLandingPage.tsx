@@ -340,7 +340,7 @@ const AirportLandingPage = () => {
               </div>
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Users className="h-5 w-5 text-primary" />
-                <span className="text-sm">2M+ Happy Travelers</span>
+                <span className="text-sm">50K+ Happy Travelers</span>
               </div>
             </div>
           </div>

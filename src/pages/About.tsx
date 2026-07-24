@@ -195,11 +195,11 @@ const About = () => {
               Why Travelers <span className="text-blue-500">Trust</span> Tripile
             </h2>
             <p className="text-center text-muted-foreground max-w-2xl mx-auto mb-10">
-              Backed by real expertise, real partners, and millions of successful bookings.
+              Backed by real expertise, real partners, and thousands of successful bookings.
             </p>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
-                { icon: Users, value: "2M+", label: "Travelers Served", desc: "Trusted by millions across the USA since 2023" },
+                { icon: Users, value: "50K+", label: "Travelers Served", desc: "Trusted by thousands across the USA since 2023" },
                 { icon: Star, value: "4.5★", label: "Average Rating", desc: "Based on verified customer reviews" },
                 { icon: Clock, value: "24/7", label: "Expert Support", desc: "Real travel specialists, always available" },
                 { icon: ShieldCheck, value: "500+", label: "Airline Partners", desc: "Licensed and verified carrier partnerships" },

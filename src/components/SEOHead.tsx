@@ -25,7 +25,7 @@ interface SEOHeadProps {
 const SEOHead = ({
   title = "Tripile.com – Buy Cheap Flights, Hotels & Car Rentals | Best US Travel Deals",
   description =
-    "Buy cheap flights, hotels & car rentals across the USA on Tripile.com. Compare 500+ airlines, get Price Match Guarantee, and save up to 46%. Trusted by 2M+ travelers.",
+    "Buy cheap flights, hotels & car rentals across the USA on Tripile.com. Compare 500+ airlines, get Price Match Guarantee, and save up to 46%. Trusted by 50K+ travelers.",
   keywords = "cheap flights USA, flight deals, book flights online, US travel deals, last-minute flights, discounted airline tickets, cheap hotels, car rentals USA, travel booking, airfare deals",
   canonicalUrl,
   ogImage = DEFAULT_OG_IMAGE,
