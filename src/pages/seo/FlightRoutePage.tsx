@@ -227,7 +227,7 @@ const FlightRoutePage = () => {
                 <div className="flex items-center gap-3 p-4 bg-secondary/20 rounded-lg">
                   <Star className="h-6 w-6 text-yellow-500" />
                   <div>
-                    <p className="font-medium text-foreground">Trusted by Millions</p>
+                    <p className="font-medium text-foreground">Trusted by Travelers</p>
                     <p className="text-sm text-muted-foreground">4.6/5 average rating</p>
                   </div>
                 </div>
