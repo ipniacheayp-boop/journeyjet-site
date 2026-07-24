@@ -4,7 +4,7 @@ const TrustBadges = () => {
   const stats = [
     {
       icon: Users,
-      value: "2M+",
+      value: "50K+",
       label: "Verified Travelers",
       color: "text-blue-600 dark:text-blue-400",
       bg: "bg-blue-50 dark:bg-blue-500/10",
@@ -92,7 +92,7 @@ const TrustBadges = () => {
         {/* Heading */}
         <div className="text-center mb-16 max-w-2xl mx-auto">
           <h2 id="trust-badges-title" className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white mb-4">
-            Trusted by Millions of Travelers
+            Trusted by Travelers
           </h2>
 
           <p className="text-slate-600 dark:text-slate-400 text-lg">

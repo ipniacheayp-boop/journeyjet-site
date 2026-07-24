@@ -341,7 +341,7 @@ const Index = () => {
         <div className="container mx-auto px-4 py-5">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 max-w-4xl mx-auto">
             {[
-              { icon: Users, value: "2M+", label: "US Travelers", color: "text-primary", href: "/reviews" },
+              { icon: Users, value: "50K+", label: "US Travelers", color: "text-primary", href: "/reviews" },
               { icon: Plane, value: "500+", label: "Airlines Compared", color: "text-indigo-600", href: "/flights" },
               { icon: Hotel, value: "$79", label: "Hotels From", color: "text-indigo-600", href: "/hotels" },
               { icon: Star, value: "4.5★", label: "Average Rating", color: "text-amber-500", href: "/reviews" },
@@ -779,7 +779,7 @@ const Index = () => {
             {/* Quick proof stats */}
             <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-white/50">
               {[
-                { val: "2M+", label: "happy travelers" },
+                { val: "50K+", label: "happy travelers" },
                 { val: "500+", label: "airlines compared" },
                 { val: "$0", label: "hidden fees" },
                 { val: "24/7", label: "expert support" },
