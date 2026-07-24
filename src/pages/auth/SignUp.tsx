@@ -41,6 +41,7 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [marketingSmsOptIn, setMarketingSmsOptIn] = useState(false);
   const [errors, setErrors] = useState<{ fullName?: string; email?: string; phone?: string; password?: string; confirmPassword?: string }>({});
 
   useEffect(() => {
