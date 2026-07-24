@@ -11,6 +11,7 @@ interface SignUpInput {
   fullName?: string;
   phoneNumber?: string;
   countryCode?: string;
+  marketingSmsOptIn?: boolean;
 }
 
 interface SignInInput {
