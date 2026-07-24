@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import SEOHead from "@/components/SEOHead";
 import AuthLayout from "@/components/auth/AuthLayout";
@@ -40,6 +41,7 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [marketingSmsOptIn, setMarketingSmsOptIn] = useState(false);
   const [errors, setErrors] = useState<{ fullName?: string; email?: string; phone?: string; password?: string; confirmPassword?: string }>({});
 
   useEffect(() => {
@@ -74,6 +76,7 @@ const SignUp = () => {
         fullName,
         phoneNumber: phoneNumber.replace(/\D/g, ""),
         countryCode,
+        marketingSmsOptIn,
       });
       if (requiresEmailConfirmation) {
         toast.success("Account created! Check your email to sign in.");
@@ -240,6 +243,23 @@ const SignUp = () => {
               {errors.confirmPassword ? (
                 <p className="text-xs text-destructive">{errors.confirmPassword}</p>
               ) : null}
+            </div>
+
+            <div className="flex items-start gap-2 rounded-md border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900/40">
+              <Checkbox
+                id="signup-marketing-sms"
+                checked={marketingSmsOptIn}
+                onCheckedChange={(checked) => setMarketingSmsOptIn(checked === true)}
+                disabled={submitting}
+                className="mt-0.5"
+              />
+              <Label
+                htmlFor="signup-marketing-sms"
+                className="text-xs font-normal leading-relaxed text-slate-600 dark:text-slate-300"
+              >
+                I agree to receive marketing text messages from Tripile about travel deals and offers.
+                Msg &amp; data rates may apply. Msg frequency varies. Reply STOP to unsubscribe, HELP for help.
+              </Label>
             </div>
 
             <Button type="submit" className="w-full" disabled={submitting}>

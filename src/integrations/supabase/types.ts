@@ -767,6 +767,8 @@ export type Database = {
           last_login: string | null
           last_otp_sent_at: string | null
           login_method: string | null
+          marketing_sms_opt_in: boolean
+          marketing_sms_opt_in_at: string | null
           name: string | null
           phone_number: string | null
           profile_image: string | null
@@ -782,6 +784,8 @@ export type Database = {
           last_login?: string | null
           last_otp_sent_at?: string | null
           login_method?: string | null
+          marketing_sms_opt_in?: boolean
+          marketing_sms_opt_in_at?: string | null
           name?: string | null
           phone_number?: string | null
           profile_image?: string | null
@@ -797,6 +801,8 @@ export type Database = {
           last_login?: string | null
           last_otp_sent_at?: string | null
           login_method?: string | null
+          marketing_sms_opt_in?: boolean
+          marketing_sms_opt_in_at?: string | null
           name?: string | null
           phone_number?: string | null
           profile_image?: string | null
