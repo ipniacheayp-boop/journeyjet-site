@@ -245,6 +245,23 @@ const SignUp = () => {
               ) : null}
             </div>
 
+            <div className="flex items-start gap-2 rounded-md border border-slate-200 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-900/40">
+              <Checkbox
+                id="signup-marketing-sms"
+                checked={marketingSmsOptIn}
+                onCheckedChange={(checked) => setMarketingSmsOptIn(checked === true)}
+                disabled={submitting}
+                className="mt-0.5"
+              />
+              <Label
+                htmlFor="signup-marketing-sms"
+                className="text-xs font-normal leading-relaxed text-slate-600 dark:text-slate-300"
+              >
+                I agree to receive marketing text messages from Tripile about travel deals and offers.
+                Msg &amp; data rates may apply. Msg frequency varies. Reply STOP to unsubscribe, HELP for help.
+              </Label>
+            </div>
+
             <Button type="submit" className="w-full" disabled={submitting}>
               {submitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
               Create account
