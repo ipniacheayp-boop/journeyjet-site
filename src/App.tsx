@@ -58,6 +58,7 @@ const Blog = lazy(() => import("./pages/Blog"));
 const BlogDetail = lazy(() => import("./pages/BlogDetail"));
 const FlightRoutePage = lazy(() => import("./pages/seo/FlightRoutePage"));
 const HotelCityPage = lazy(() => import("./pages/seo/HotelCityPage"));
+const HotelDestinations = lazy(() => import("./pages/seo/HotelDestinations"));
 const CarRentalCityPage = lazy(() => import("./pages/seo/CarRentalCityPage"));
 const AirportLandingPage = lazy(() => import("./pages/seo/AirportLandingPage"));
 const CityFlightPage = lazy(() => import("./pages/seo/CityFlightPage"));
@@ -195,6 +196,7 @@ const App = () => (
                   <Route path="/airport/:slug" element={<AirportLandingPage />} />
                   <Route path="/cheap-flights-from-:slug" element={<FlightRoutePage />} />
                   <Route path="/cheap-hotels-in/:slug" element={<HotelCityPage />} />
+                  <Route path="/hotel-destinations" element={<HotelDestinations />} />
                   <Route path="/cheap-car-rentals-in-:slug" element={<CarRentalCityPage />} />
                   <Route path="/webcheck-in" element={<WebCheckIn />} />
                   <Route path="/flight-status" element={<FlightStatus />} />
