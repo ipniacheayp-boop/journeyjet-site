@@ -18,6 +18,7 @@ import {
   destinationRegionLabel,
   destinationShortLabel,
   indexableHotelDestinations,
+  nearbyDestinations,
   hotelDestinationPath,
   SITE_ORIGIN,
 } from "@/data/hotelDestinations";
@@ -45,10 +46,7 @@ const HotelCityPage = () => {
   );
 
   const related = useMemo(
-    () =>
-      indexableHotelDestinations
-        .filter((d) => d.slug !== destination?.slug && d.country === destination?.country)
-        .slice(0, 8),
+    () => (destination ? nearbyDestinations(destination, 8) : []),
     [destination],
   );
 

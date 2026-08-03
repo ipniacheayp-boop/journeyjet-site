@@ -22,7 +22,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "fs";
 import { resolve, dirname } from "path";
 import { popularDestinations, airlinesData } from "../src/data/destinationsData";
 import { seoFlightRoutes, seoHotelCities } from "../src/data/seoRoutes";
-import { indexableHotelDestinations, hotelDestinationPath } from "../src/data/hotelDestinations";
+import { indexableHotelDestinations, hotelDestinationPath, nearbyDestinations } from "../src/data/hotelDestinations";
 import { airportLandingPages } from "../src/data/airportLandingData";
 import { blogPosts } from "../src/data/blogPosts";
 import { cruiseDestinations } from "../src/data/cruiseDestinations";
@@ -747,6 +747,10 @@ indexableHotelDestinations.forEach((d) => {
         : []),
     ],
     links: [
+      ...nearbyDestinations(d, 6).map((n) => ({
+        href: hotelDestinationPath(n.slug),
+        label: `Hotels in ${n.name}`,
+      })),
       { href: `/flights-to/${d.slug}`, label: `Flights to ${d.name}` },
       { href: `/cheap-car-rentals-in-${d.slug}`, label: `Car rentals in ${d.name}` },
       { href: "/hotel-destinations", label: "All hotel destinations" },
