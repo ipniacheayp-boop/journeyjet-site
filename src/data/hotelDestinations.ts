@@ -16,6 +16,8 @@
  * - Arbitrary user-typed Places locations are NOT added here automatically.
  */
 
+import { US_SEEDS, INTERNATIONAL_SEEDS } from "./hotelDestinationSeeds";
+
 export interface HotelDestination {
   /** Frozen URL segment for /cheap-hotels-in/{slug}. Never change for an existing entry. */
   slug: string;
@@ -82,7 +84,11 @@ export function destinationDedupeKey(d: {
   ].join("|");
 }
 
-const RAW_DESTINATIONS: HotelDestination[] = [
+/**
+ * The ORIGINAL, already-indexed destinations. Their slugs are FROZEN — never rename one.
+ * These entries carry coordinates that were already stored in the application.
+ */
+const FROZEN_DESTINATIONS: HotelDestination[] = [
   // United States
   { slug: "new-york", name: "New York", state: "New York", stateCode: "NY", country: "United States", countryCode: "US", latitude: 40.7128, longitude: -74.006, isIndexable: true },
   { slug: "los-angeles", name: "Los Angeles", state: "California", stateCode: "CA", country: "United States", countryCode: "US", latitude: 34.0522, longitude: -118.2437, isIndexable: true },
@@ -137,6 +143,88 @@ const RAW_DESTINATIONS: HotelDestination[] = [
   { slug: "athens", name: "Athens", state: "Attica", country: "Greece", countryCode: "GR", latitude: 37.9838, longitude: 23.7275, isIndexable: true },
   { slug: "lisbon", name: "Lisbon", state: "Lisbon", country: "Portugal", countryCode: "PT", latitude: 38.7223, longitude: -9.1393, isIndexable: true },
 ];
+
+/** Frozen slugs — the URLs that are already indexed. Expansion must never touch these. */
+export const FROZEN_SLUGS: ReadonlySet<string> = new Set(FROZEN_DESTINATIONS.map((d) => d.slug));
+
+/**
+ * Expanded catalog, built from the maintained seed lists in `hotelDestinationSeeds.ts`.
+ *
+ * Slugs are derived deterministically:
+ * - a frozen slug always wins, so previously indexed URLs never change;
+ * - when a city name is not globally unique in the catalog, the new entry is disambiguated
+ *   with its US state code (or ISO country code outside the US);
+ * - a final numeric suffix guards against any residual collision.
+ *
+ * No Place IDs or coordinates are set here — those are only stored when the app has
+ * actually resolved them through the existing Google Places (New) integration.
+ */
+const EXPANDED_DESTINATIONS: HotelDestination[] = (() => {
+  interface Seed {
+    name: string;
+    state?: string;
+    stateCode?: string;
+    country: string;
+    countryCode: string;
+  }
+
+  const seeds: Seed[] = [];
+  for (const [state, stateCode, cities] of US_SEEDS) {
+    for (const name of cities) {
+      seeds.push({ name, state, stateCode, country: "United States", countryCode: "US" });
+    }
+  }
+  for (const [country, countryCode, cities] of INTERNATIONAL_SEEDS) {
+    for (const [name, region] of cities) {
+      seeds.push({ name, state: region, country, countryCode });
+    }
+  }
+
+  // How often does each base slug appear across frozen + seeded destinations?
+  const baseCount = new Map<string, number>();
+  const bump = (value: string) => baseCount.set(value, (baseCount.get(value) ?? 0) + 1);
+  FROZEN_DESTINATIONS.forEach((d) => bump(slugifyDestination(d.name)));
+  seeds.forEach((s) => bump(slugifyDestination(s.name)));
+
+  const taken = new Set<string>(FROZEN_SLUGS);
+  const out: HotelDestination[] = [];
+  const seenKeys = new Set<string>(FROZEN_DESTINATIONS.map((d) => destinationDedupeKey(d)));
+
+  for (const s of seeds) {
+    const key = destinationDedupeKey(s);
+    if (seenKeys.has(key)) continue; // same city already in the catalog (frozen or seeded)
+    seenKeys.add(key);
+
+    const base = slugifyDestination(s.name);
+    const admin = s.countryCode === "US" ? s.stateCode || s.state : s.countryCode;
+    let slug = base;
+    if ((baseCount.get(base) ?? 0) > 1 || taken.has(base)) {
+      slug = admin ? `${base}-${slugifyDestination(admin)}` : `${base}-${slugifyDestination(s.countryCode)}`;
+    }
+    if (taken.has(slug)) {
+      slug = `${base}-${slugifyDestination(s.state ?? s.country)}-${slugifyDestination(s.countryCode)}`;
+    }
+    let n = 2;
+    while (taken.has(slug)) slug = `${base}-${slugifyDestination(admin ?? s.countryCode)}-${n++}`;
+    taken.add(slug);
+
+    out.push({
+      slug,
+      name: s.name,
+      state: s.state,
+      stateCode: s.stateCode,
+      country: s.country,
+      countryCode: s.countryCode,
+      // Meaningful, well-known travel destinations with destination-specific landing pages.
+      isIndexable: true,
+    });
+  }
+  return out;
+})();
+
+const RAW_DESTINATIONS: HotelDestination[] = [...FROZEN_DESTINATIONS, ...EXPANDED_DESTINATIONS];
+
+
 
 /** Dedupe by Place ID (when present) or normalized city/admin/country. */
 export const hotelDestinations: HotelDestination[] = (() => {
@@ -249,4 +337,23 @@ export function groupedIndexableDestinations(): {
           })),
       };
     });
+}
+
+/**
+ * Relevant nearby / related destinations for internal linking.
+ * Same state or region first (e.g. Miami → Fort Lauderdale, Miami Beach, Hollywood),
+ * then other destinations in the same country. Never links unrelated destinations.
+ */
+export function nearbyDestinations(
+  destination: HotelDestination,
+  limit = 8,
+): HotelDestination[] {
+  const pool = indexableHotelDestinations.filter((d) => d.slug !== destination.slug);
+  const sameRegion = pool.filter(
+    (d) => d.country === destination.country && (d.state ?? d.country) === (destination.state ?? destination.country),
+  );
+  const sameCountry = pool.filter(
+    (d) => d.country === destination.country && !sameRegion.includes(d),
+  );
+  return [...sameRegion, ...sameCountry].slice(0, limit);
 }
