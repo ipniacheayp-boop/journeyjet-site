@@ -1,263 +1,357 @@
-import { useParams, Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
-import { Building2, MapPin, Star, ArrowRight, Shield, CheckCircle, Wifi, Car, Coffee } from 'lucide-react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import BreadcrumbSchema from '@/components/seo/BreadcrumbSchema';
-import FAQSchema from '@/components/seo/FAQSchema';
-import ReviewSchema from '@/components/seo/ReviewSchema';
-import { findHotelCityByRouteParam, hotelListingCanonicalUrl } from '@/data/seoRoutes';
+import { useMemo, useState } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet";
+import { Building2, MapPin, ArrowRight, Shield, Wifi, Car, Coffee, Search } from "lucide-react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
+import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
+import FAQSchema from "@/components/seo/FAQSchema";
+import { seoHotelCities } from "@/data/seoRoutes";
+import {
+  getHotelDestinationBySlug,
+  hotelDestinationCanonical,
+  destinationSearchQuery,
+  destinationRegionLabel,
+  destinationShortLabel,
+  indexableHotelDestinations,
+  hotelDestinationPath,
+  SITE_ORIGIN,
+} from "@/data/hotelDestinations";
+
+function isoDate(daysFromNow: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + daysFromNow);
+  return d.toISOString().slice(0, 10);
+}
 
 const HotelCityPage = () => {
   const { slug } = useParams<{ slug: string }>();
-  
-  const city = findHotelCityByRouteParam(slug);
-  
-  if (!city) {
+  const navigate = useNavigate();
+  const destination = getHotelDestinationBySlug(slug);
+
+  const [checkIn, setCheckIn] = useState(isoDate(14));
+  const [checkOut, setCheckOut] = useState(isoDate(16));
+  const [guests, setGuests] = useState("2");
+  const [rooms, setRooms] = useState("1");
+
+  /** Legacy editorial content (neighbourhoods) for destinations that already had it. */
+  const legacy = useMemo(
+    () => seoHotelCities.find((c) => c.slug === `cheap-hotels-in-${slug}`),
+    [slug],
+  );
+
+  const related = useMemo(
+    () =>
+      indexableHotelDestinations
+        .filter((d) => d.slug !== destination?.slug && d.country === destination?.country)
+        .slice(0, 8),
+    [destination],
+  );
+
+  if (!destination) {
     return (
       <>
+        <Helmet>
+          <title>Hotel Destination Not Found | Tripile</title>
+          <meta name="robots" content="noindex, follow" />
+        </Helmet>
         <Header />
         <div className="container mx-auto px-4 py-20 text-center">
-          <h1 className="text-2xl font-bold mb-4">City Not Found</h1>
-          <Link to="/deals" className="text-primary hover:underline">Browse All Deals</Link>
+          <h1 className="text-2xl font-bold mb-4">Hotel destination not found</h1>
+          <Link to="/hotel-destinations" className="text-primary hover:underline">
+            Browse all hotel destinations
+          </Link>
         </div>
         <Footer />
       </>
     );
   }
 
-  const pageTitle = `Cheap Hotels in ${city.city} | Best Deals & Discounts – Tripile.com`;
-  const pageDescription = `Book cheap hotels in ${city.city}, ${city.state} with exclusive discounts. Compare prices, ratings, and amenities. Hotels starting at $${city.avgPrice}/night.`;
-  const canonicalUrl = hotelListingCanonicalUrl(city.slug);
+  const shortLabel = destinationShortLabel(destination);
+  const regionLabel = destinationRegionLabel(destination);
+  const searchQuery = destinationSearchQuery(destination);
+  const canonicalUrl = hotelDestinationCanonical(destination.slug);
+
+  const pageTitle = `Cheap Hotels in ${shortLabel} | Compare Hotel Deals | Tripile`;
+  const pageDescription = `Search and compare hotels in ${regionLabel}. Explore accommodation options and find hotels for your ${destination.name} trip with Tripile.`;
+
+  const runSearch = () => {
+    const params = new URLSearchParams({
+      type: "hotel",
+      cityCode: searchQuery,
+      city: destination.name,
+      checkInDate: checkIn,
+      checkOutDate: checkOut,
+      adults: guests,
+      roomQuantity: rooms,
+    });
+    if (destination.placeId) params.set("placeId", destination.placeId);
+    if (destination.latitude != null && destination.longitude != null) {
+      params.set("lat", String(destination.latitude));
+      params.set("lng", String(destination.longitude));
+    }
+    navigate(`/search-results?${params.toString()}`);
+  };
 
   const faqs = [
     {
-      question: `What is the cheapest hotel in ${city.city}?`,
-      answer: `Budget hotels in ${city.city} start around $${city.avgPrice} per night. Popular areas for affordable stays include ${city.topAreas.slice(0, 2).join(' and ')}. Book in advance for the best rates.`
+      question: `How do I find hotels in ${destination.name}?`,
+      answer: `Enter your check-in and check-out dates above and select Search Hotels. Tripile searches live availability for ${regionLabel} and shows the accommodation options returned for your dates.`,
     },
     {
-      question: `What are the best areas to stay in ${city.city}?`,
-      answer: `The most popular areas to stay in ${city.city} include ${city.topAreas.join(', ')}. Each neighborhood offers unique attractions and different price points.`
+      question: `What areas can I stay in when visiting ${destination.name}?`,
+      answer: legacy
+        ? `Popular areas to stay in ${destination.name} include ${legacy.topAreas.join(", ")}. Each neighbourhood offers different attractions and price points.`
+        : `${destination.name} has a range of central and outlying neighbourhoods. Run a search above to see the areas where properties are currently available for your dates.`,
     },
     {
-      question: `When is the cheapest time to book hotels in ${city.city}?`,
-      answer: `The cheapest times to book hotels in ${city.city} are typically during off-peak seasons. Booking 2-3 weeks in advance often yields the best rates. Avoid major holidays and events for lower prices.`
-    }
+      question: `Are hotel prices in ${destination.name} shown live?`,
+      answer: `Yes. Tripile does not publish fixed nightly rates on this page — all rates and availability come from live search results for the dates you select.`,
+    },
   ];
 
   const breadcrumbs = [
-    { name: 'Home', url: 'https://tripile.com/' },
-    { name: 'Hotels', url: 'https://tripile.com/deals' },
-    { name: city.city, url: canonicalUrl }
+    { name: "Home", url: `${SITE_ORIGIN}/` },
+    { name: "Hotel Destinations", url: `${SITE_ORIGIN}/hotel-destinations` },
+    { name: destination.name, url: canonicalUrl },
   ];
 
   return (
     <>
       <Header />
-      
+
       <Helmet>
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
-        <meta name="keywords" content={`cheap hotels ${city.city}, ${city.city} hotel deals, budget hotels ${city.city} ${city.state}, discount hotels ${city.city}`} />
         <link rel="canonical" href={canonicalUrl} />
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={pageDescription} />
         <meta property="og:url" content={canonicalUrl} />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://tripile.com/og-image.png" />
-        <meta property="og:image:secure_url" content="https://tripile.com/og-image.png" />
-        <meta property="og:site_name" content="Tripile.com" />
-        <meta property="og:locale" content="en_US" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@tripile" />
-        <meta name="twitter:creator" content="@tripile" />
         <meta name="twitter:title" content={pageTitle} />
         <meta name="twitter:description" content={pageDescription} />
-        <meta name="twitter:image" content="https://tripile.com/og-image.png" />
       </Helmet>
 
       <BreadcrumbSchema items={breadcrumbs} />
       <FAQSchema faqs={faqs} />
-      <ReviewSchema ratingValue={4.5} reviewCount={1523} />
 
-      <main className="min-h-screen bg-background pt-20">
-        {/* Breadcrumb Navigation */}
-        <nav className="container mx-auto px-4 py-4">
-          <ol className="flex items-center gap-2 text-sm text-muted-foreground">
-            <li><Link to="/" className="hover:text-primary">Home</Link></li>
-            <li>/</li>
-            <li><Link to="/deals" className="hover:text-primary">Hotels</Link></li>
-            <li>/</li>
-            <li className="text-foreground font-medium">{city.city}</li>
+      <main className="pt-20">
+        <nav aria-label="Breadcrumb" className="container mx-auto px-4 py-4">
+          <ol className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+            <li>
+              <Link to="/" className="hover:text-primary">
+                Home
+              </Link>
+            </li>
+            <li aria-hidden="true">/</li>
+            <li>
+              <Link to="/hotel-destinations" className="hover:text-primary">
+                Hotel Destinations
+              </Link>
+            </li>
+            <li aria-hidden="true">/</li>
+            <li className="text-foreground font-medium">{destination.name}</li>
           </ol>
         </nav>
 
-        {/* Hero Section */}
         <section className="bg-gradient-to-br from-primary/5 via-background to-accent/5 py-12 md:py-16">
           <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto text-center">
-              <div className="flex items-center justify-center gap-4 mb-6">
+            <div className="max-w-3xl mx-auto text-center">
+              <div className="flex items-center justify-center mb-6">
                 <div className="bg-primary/10 rounded-full p-3">
-                  <Building2 className="h-6 w-6 text-primary" />
+                  <Building2 className="h-6 w-6 text-primary" aria-hidden="true" />
                 </div>
               </div>
-              
+
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-                Cheap Hotels in {city.city}
+                Cheap Hotels in {regionLabel}
               </h1>
-              
-              <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-                Find the best hotel deals in {city.city}, {city.state}. Compare prices from hundreds of hotels 
-                and book your perfect stay at the lowest price guaranteed.
+
+              <p className="text-lg text-muted-foreground mb-8">
+                Search and compare hotels in {regionLabel}. Choose your dates and see live
+                availability for your {destination.name} trip.
               </p>
 
-              {/* Quick Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-                <Card className="bg-card/50 backdrop-blur">
-                  <CardContent className="p-4 text-center">
-                    <Building2 className="h-5 w-5 text-primary mx-auto mb-2" />
-                    <p className="text-2xl font-bold text-foreground">${city.avgPrice}</p>
-                    <p className="text-sm text-muted-foreground">Avg/Night</p>
-                  </CardContent>
-                </Card>
-                <Card className="bg-card/50 backdrop-blur">
-                  <CardContent className="p-4 text-center">
-                    <MapPin className="h-5 w-5 text-primary mx-auto mb-2" />
-                    <p className="text-2xl font-bold text-foreground">{city.topAreas.length}</p>
-                    <p className="text-sm text-muted-foreground">Top Areas</p>
-                  </CardContent>
-                </Card>
-                <Card className="bg-card/50 backdrop-blur">
-                  <CardContent className="p-4 text-center">
-                    <Star className="h-5 w-5 text-yellow-500 mx-auto mb-2" />
-                    <p className="text-2xl font-bold text-foreground">4.5</p>
-                    <p className="text-sm text-muted-foreground">Avg Rating</p>
-                  </CardContent>
-                </Card>
-              </div>
+              <Card className="text-left">
+                <CardContent className="p-4 md:p-6 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="hotel-destination">Destination</Label>
+                      <Input
+                        id="hotel-destination"
+                        value={searchQuery}
+                        readOnly
+                        aria-label={`Hotel destination: ${searchQuery}`}
+                        className="bg-background"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <Label htmlFor="hotel-checkin">Check-in</Label>
+                        <Input
+                          id="hotel-checkin"
+                          type="date"
+                          value={checkIn}
+                          min={isoDate(0)}
+                          onChange={(e) => setCheckIn(e.target.value)}
+                          className="bg-background"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="hotel-checkout">Check-out</Label>
+                        <Input
+                          id="hotel-checkout"
+                          type="date"
+                          value={checkOut}
+                          min={checkIn}
+                          onChange={(e) => setCheckOut(e.target.value)}
+                          className="bg-background"
+                        />
+                      </div>
+                    </div>
+                  </div>
 
-              <Link to={`/search-results?type=hotel&city=${city.city}`}>
-                <Button size="lg" className="gap-2">
-                  Search Hotels <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="hotel-guests-count">Guests</Label>
+                      <Input
+                        id="hotel-guests-count"
+                        type="number"
+                        min="1"
+                        max="9"
+                        value={guests}
+                        onChange={(e) => setGuests(e.target.value)}
+                        className="bg-background"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="hotel-rooms-count">Rooms</Label>
+                      <Input
+                        id="hotel-rooms-count"
+                        type="number"
+                        min="1"
+                        max="5"
+                        value={rooms}
+                        onChange={(e) => setRooms(e.target.value)}
+                        className="bg-background"
+                      />
+                    </div>
+                    <Button
+                      size="lg"
+                      className="gap-2 w-full"
+                      onClick={runSearch}
+                      aria-label={`Search hotels in ${regionLabel}`}
+                    >
+                      <Search className="h-4 w-4" aria-hidden="true" /> Search Hotels
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </section>
 
-        {/* City Information */}
         <section className="py-12">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-2xl font-bold text-foreground mb-6">
-                About Hotels in {city.city}
+                About Hotels in {destination.name}
               </h2>
-              
-              <div className="prose prose-slate max-w-none">
-                <p className="text-muted-foreground leading-relaxed mb-6">
-                  Looking for cheap hotels in {city.city}? We compare prices from hundreds of booking sites to 
-                  find you the best hotel deals. Whether you're looking for a budget-friendly stay or a luxury 
-                  experience, {city.city} offers accommodations for every traveler and budget.
-                </p>
 
-                <p className="text-muted-foreground leading-relaxed mb-6">
-                  With average nightly rates starting around ${city.avgPrice}, you'll find great value in 
-                  popular areas like {city.topAreas.join(', ')}. Book in advance for the best rates and 
-                  be sure to check our exclusive deals for additional savings.
-                </p>
-              </div>
+              <p className="text-muted-foreground leading-relaxed mb-6">
+                Looking for hotels in {regionLabel}? Tripile searches live accommodation
+                availability so you can compare the options returned for your travel dates —
+                from budget stays to full-service hotels — without guesswork about rates.
+              </p>
 
-              {/* Popular Areas */}
-              <div className="mt-8">
-                <h3 className="text-xl font-semibold text-foreground mb-4">
-                  Popular Areas to Stay
-                </h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {city.topAreas.map((area, index) => (
-                    <div 
-                      key={index}
-                      className="flex items-center gap-2 p-3 bg-secondary/30 rounded-lg"
-                    >
-                      <MapPin className="h-4 w-4 text-primary" />
-                      <span className="text-sm font-medium text-foreground">{area}</span>
-                    </div>
-                  ))}
+              {legacy && (
+                <div className="mt-8">
+                  <h3 className="text-xl font-semibold text-foreground mb-4">
+                    Popular Areas to Stay in {destination.name}
+                  </h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {legacy.topAreas.map((area) => (
+                      <div
+                        key={area}
+                        className="flex items-center gap-2 p-3 bg-secondary/30 rounded-lg"
+                      >
+                        <MapPin className="h-4 w-4 text-primary" aria-hidden="true" />
+                        <span className="text-sm font-medium text-foreground">{area}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* Amenities */}
               <div className="mt-8">
                 <h3 className="text-xl font-semibold text-foreground mb-4">
                   Common Hotel Amenities
                 </h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="flex items-center gap-3 p-4 bg-card rounded-lg border">
-                    <Wifi className="h-5 w-5 text-primary" />
+                    <Wifi className="h-5 w-5 text-primary" aria-hidden="true" />
                     <span className="text-sm text-foreground">Free WiFi</span>
                   </div>
                   <div className="flex items-center gap-3 p-4 bg-card rounded-lg border">
-                    <Car className="h-5 w-5 text-primary" />
+                    <Car className="h-5 w-5 text-primary" aria-hidden="true" />
                     <span className="text-sm text-foreground">Parking</span>
                   </div>
                   <div className="flex items-center gap-3 p-4 bg-card rounded-lg border">
-                    <Coffee className="h-5 w-5 text-primary" />
+                    <Coffee className="h-5 w-5 text-primary" aria-hidden="true" />
                     <span className="text-sm text-foreground">Breakfast</span>
                   </div>
                   <div className="flex items-center gap-3 p-4 bg-card rounded-lg border">
-                    <Shield className="h-5 w-5 text-primary" />
+                    <Shield className="h-5 w-5 text-primary" aria-hidden="true" />
                     <span className="text-sm text-foreground">24/7 Security</span>
                   </div>
                 </div>
               </div>
 
-              {/* Trust Badges */}
-              <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="flex items-center gap-3 p-4 bg-secondary/20 rounded-lg">
-                  <Shield className="h-6 w-6 text-primary" />
-                  <div>
-                    <p className="font-medium text-foreground">Secure Booking</p>
-                    <p className="text-sm text-muted-foreground">256-bit SSL encryption</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 p-4 bg-secondary/20 rounded-lg">
-                  <Star className="h-6 w-6 text-yellow-500" />
-                  <div>
-                    <p className="font-medium text-foreground">Verified Reviews</p>
-                    <p className="text-sm text-muted-foreground">Real guest feedback</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 p-4 bg-secondary/20 rounded-lg">
-                  <CheckCircle className="h-6 w-6 text-green-500" />
-                  <div>
-                    <p className="font-medium text-foreground">Free Cancellation</p>
-                    <p className="text-sm text-muted-foreground">On most bookings</p>
-                  </div>
-                </div>
+              <div className="mt-10">
+                <h2 className="text-2xl font-bold text-foreground mb-4">
+                  Frequently Asked Questions
+                </h2>
+                <dl className="space-y-4">
+                  {faqs.map((faq) => (
+                    <div key={faq.question} className="p-4 bg-card border rounded-lg">
+                      <dt className="font-semibold text-foreground mb-1">{faq.question}</dt>
+                      <dd className="text-sm text-muted-foreground">{faq.answer}</dd>
+                    </div>
+                  ))}
+                </dl>
               </div>
-            </div>
-          </div>
-        </section>
 
-        {/* FAQs */}
-        <section className="py-12 bg-secondary/10">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-2xl font-bold text-foreground mb-8 text-center">
-                Frequently Asked Questions
-              </h2>
-              
-              <div className="space-y-4">
-                {faqs.map((faq, index) => (
-                  <Card key={index}>
-                    <CardContent className="p-6">
-                      <h3 className="font-semibold text-foreground mb-2">{faq.question}</h3>
-                      <p className="text-muted-foreground">{faq.answer}</p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+              {related.length > 0 && (
+                <div className="mt-10">
+                  <h2 className="text-2xl font-bold text-foreground mb-4">
+                    More Hotel Destinations in {destination.country}
+                  </h2>
+                  <ul className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                    {related.map((d) => (
+                      <li key={d.slug}>
+                        <Link
+                          to={hotelDestinationPath(d.slug)}
+                          className="text-sm text-muted-foreground hover:text-primary"
+                        >
+                          Hotels in {d.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                  <Link
+                    to="/hotel-destinations"
+                    className="inline-flex items-center gap-2 mt-6 text-primary hover:underline"
+                  >
+                    View all hotel destinations{" "}
+                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </section>
