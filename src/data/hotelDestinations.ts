@@ -338,3 +338,22 @@ export function groupedIndexableDestinations(): {
       };
     });
 }
+
+/**
+ * Relevant nearby / related destinations for internal linking.
+ * Same state or region first (e.g. Miami → Fort Lauderdale, Miami Beach, Hollywood),
+ * then other destinations in the same country. Never links unrelated destinations.
+ */
+export function nearbyDestinations(
+  destination: HotelDestination,
+  limit = 8,
+): HotelDestination[] {
+  const pool = indexableHotelDestinations.filter((d) => d.slug !== destination.slug);
+  const sameRegion = pool.filter(
+    (d) => d.country === destination.country && (d.state ?? d.country) === (destination.state ?? destination.country),
+  );
+  const sameCountry = pool.filter(
+    (d) => d.country === destination.country && !sameRegion.includes(d),
+  );
+  return [...sameRegion, ...sameCountry].slice(0, limit);
+}
