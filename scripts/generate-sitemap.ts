@@ -134,24 +134,47 @@ cityGuides.forEach((c) =>
 const seen = new Set<string>();
 const unique = entries.filter((e) => (seen.has(e.path) ? false : (seen.add(e.path), true)));
 
-const xml = [
+function renderUrlset(list: Entry[]): string {
+  return [
+    `<?xml version="1.0" encoding="UTF-8"?>`,
+    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`,
+    ...list.map((e) =>
+      [
+        `  <url>`,
+        `    <loc>${BASE_URL}${e.path}</loc>`,
+        e.lastmod ? `    <lastmod>${e.lastmod}</lastmod>` : null,
+        e.changefreq ? `    <changefreq>${e.changefreq}</changefreq>` : null,
+        e.priority ? `    <priority>${e.priority}</priority>` : null,
+        `  </url>`,
+      ]
+        .filter(Boolean)
+        .join("\n")
+    ),
+    `</urlset>`,
+    ``,
+  ].join("\n");
+}
+
+writeFileSync(resolve("public/sitemap.xml"), renderUrlset(unique));
+console.log(`sitemap.xml written (${unique.length} entries)`);
+
+// Dedicated hotel destination sitemap, generated from the destination catalog.
+const hotelSitemapEntries: Entry[] = [
+  { path: "/hotel-destinations", changefreq: "weekly", priority: "0.8" },
+  ...hotelEntries,
+];
+writeFileSync(resolve("public/sitemap-hotels.xml"), renderUrlset(hotelSitemapEntries));
+console.log(`sitemap-hotels.xml written (${hotelSitemapEntries.length} entries)`);
+
+// Sitemap index so crawlers can discover both files from one entry point.
+const sitemapIndex = [
   `<?xml version="1.0" encoding="UTF-8"?>`,
-  `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`,
-  ...unique.map((e) =>
-    [
-      `  <url>`,
-      `    <loc>${BASE_URL}${e.path}</loc>`,
-      e.lastmod ? `    <lastmod>${e.lastmod}</lastmod>` : null,
-      e.changefreq ? `    <changefreq>${e.changefreq}</changefreq>` : null,
-      e.priority ? `    <priority>${e.priority}</priority>` : null,
-      `  </url>`,
-    ]
-      .filter(Boolean)
-      .join("\n")
-  ),
-  `</urlset>`,
+  `<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`,
+  `  <sitemap><loc>${BASE_URL}/sitemap.xml</loc></sitemap>`,
+  `  <sitemap><loc>${BASE_URL}/sitemap-hotels.xml</loc></sitemap>`,
+  `</sitemapindex>`,
   ``,
 ].join("\n");
+writeFileSync(resolve("public/sitemap-index.xml"), sitemapIndex);
+console.log("sitemap-index.xml written (2 sitemaps)");
 
-writeFileSync(resolve("public/sitemap.xml"), xml);
-console.log(`sitemap.xml written (${unique.length} entries)`);
