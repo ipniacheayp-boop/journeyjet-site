@@ -27,6 +27,7 @@ const Footer = () => {
       links: [
         { label: "Search Flights", href: "/flights" },
         { label: "Search Hotels", href: "/hotels" },
+        { label: "Hotel Destinations", href: "/hotel-destinations" },
         { label: "Car Rentals", href: "/car-rentals" },
         { label: "Featured Deals", href: "/deals" },
         { label: "Flight Status", href: "/flight-status" },
