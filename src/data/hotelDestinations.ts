@@ -16,6 +16,8 @@
  * - Arbitrary user-typed Places locations are NOT added here automatically.
  */
 
+import { US_SEEDS, INTERNATIONAL_SEEDS } from "./hotelDestinationSeeds";
+
 export interface HotelDestination {
   /** Frozen URL segment for /cheap-hotels-in/{slug}. Never change for an existing entry. */
   slug: string;
