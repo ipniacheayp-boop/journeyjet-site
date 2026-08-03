@@ -687,41 +687,73 @@ popularDestinations.forEach((d) => {
   });
 });
 
-// Hotel city pages
-seoHotelCities.forEach((h) => {
-  const seg = h.slug.replace(/^cheap-hotels-in-/, "");
+// Hotel destination directory
+programmaticPages.push({
+  path: "/hotel-destinations",
+  title: `Hotel Destinations Directory | Tripile.com`.slice(0, 65),
+  description:
+    `Browse every hotel destination on Tripile, organised by country and region. Select a city to search live hotel availability for your dates.`.slice(
+      0,
+      160
+    ),
+  h1: "Hotel Destinations",
+  blocks: [
+    {
+      paragraphs: [
+        `Tripile supports hotel search across ${indexableHotelDestinations.length} destinations worldwide. Browse the directory by country and region, then open a destination to search live availability for your travel dates.`,
+      ],
+    },
+  ],
+  links: indexableHotelDestinations.map((d) => ({
+    href: hotelDestinationPath(d.slug),
+    label: `Cheap Hotels in ${d.name}`,
+  })),
+});
+
+// Hotel destination pages (generated from the destination catalog)
+indexableHotelDestinations.forEach((d) => {
+  const legacy = seoHotelCities.find((h) => h.slug === `cheap-hotels-in-${d.slug}`);
+  const shortLabel = [d.name, d.stateCode ?? (d.countryCode === "US" ? d.state : d.country)]
+    .filter(Boolean)
+    .join(", ");
+  const regionLabel = [d.name, d.state ?? d.country].filter(Boolean).join(", ");
   programmaticPages.push({
-    path: `/cheap-hotels-in/${seg}`,
-    title: `Cheap Hotels in ${h.city}, ${h.state} | Tripile.com`.slice(0, 65),
+    path: hotelDestinationPath(d.slug),
+    title: `Cheap Hotels in ${shortLabel} | Compare Hotel Deals | Tripile`.slice(0, 65),
     description:
-      `Find cheap hotels in ${h.city}, ${h.state} from around $${h.avgPrice}/night on Tripile. Compare rates in ${h.topAreas
-        .slice(0, 2)
-        .join(" & ")} and more.`.slice(0, 160),
-    h1: `Cheap Hotels in ${h.city}, ${h.state}`,
+      `Search and compare hotels in ${regionLabel}. Explore accommodation options and find hotels for your ${d.name} trip with Tripile.`.slice(
+        0,
+        160
+      ),
+    h1: `Cheap Hotels in ${regionLabel}`,
     blocks: [
       {
         paragraphs: [
-          `Compare cheap hotels in ${h.city}, ${h.state} on Tripile, with rates starting around $${h.avgPrice} per night. Search by dates to compare prices, guest ratings, and cancellation policies across popular areas including ${h.topAreas.join(
-            ", "
-          )}.`,
+          `Compare hotels in ${regionLabel} on Tripile. Choose your check-in and check-out dates to see live availability, guest ratings, amenities, and cancellation policies for the properties returned for your stay.`,
         ],
       },
-      {
-        heading: `Best Areas to Stay in ${h.city}`,
-        paragraphs: [
-          `Popular neighborhoods for visitors include ${h.topAreas.join(
-            ", "
-          )}. Stay central for sightseeing, near transit for easy day trips, or close to the airport for early departures.`,
-        ],
-      },
+      ...(legacy
+        ? [
+            {
+              heading: `Best Areas to Stay in ${d.name}`,
+              paragraphs: [
+                `Popular neighborhoods for visitors include ${legacy.topAreas.join(
+                  ", "
+                )}. Stay central for sightseeing, near transit for easy day trips, or close to the airport for early departures.`,
+              ],
+            },
+          ]
+        : []),
     ],
     links: [
-      { href: `/flights-to/${seg}`, label: `Flights to ${h.city}` },
-      { href: `/cheap-car-rentals-in-${seg}`, label: `Car rentals in ${h.city}` },
+      { href: `/flights-to/${d.slug}`, label: `Flights to ${d.name}` },
+      { href: `/cheap-car-rentals-in-${d.slug}`, label: `Car rentals in ${d.name}` },
+      { href: "/hotel-destinations", label: "All hotel destinations" },
       { href: "/hotels", label: "Search all hotels" },
     ],
   });
 });
+
 
 // Car rental city pages
 popularDestinations.forEach((d) => {
