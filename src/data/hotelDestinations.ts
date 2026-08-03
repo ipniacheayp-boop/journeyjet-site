@@ -82,7 +82,11 @@ export function destinationDedupeKey(d: {
   ].join("|");
 }
 
-const RAW_DESTINATIONS: HotelDestination[] = [
+/**
+ * The ORIGINAL, already-indexed destinations. Their slugs are FROZEN — never rename one.
+ * These entries carry coordinates that were already stored in the application.
+ */
+const FROZEN_DESTINATIONS: HotelDestination[] = [
   // United States
   { slug: "new-york", name: "New York", state: "New York", stateCode: "NY", country: "United States", countryCode: "US", latitude: 40.7128, longitude: -74.006, isIndexable: true },
   { slug: "los-angeles", name: "Los Angeles", state: "California", stateCode: "CA", country: "United States", countryCode: "US", latitude: 34.0522, longitude: -118.2437, isIndexable: true },
