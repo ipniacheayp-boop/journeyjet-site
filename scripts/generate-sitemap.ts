@@ -78,12 +78,15 @@ popularDestinations.forEach((d) =>
   entries.push({ path: `/flights-to/${d.slug}`, changefreq: "weekly", priority: "0.85" })
 );
 
-// Hotel city landing pages (HotelCityPage — /cheap-hotels-in/:slug)
-// Strip stored prefix to match React Router segment.
-seoHotelCities.forEach((h) => {
-  const seg = h.slug.replace(/^cheap-hotels-in-/, "");
-  entries.push({ path: `/cheap-hotels-in/${seg}`, changefreq: "weekly", priority: "0.85" });
-});
+// Hotel destination landing pages (HotelCityPage — /cheap-hotels-in/:slug)
+// Generated from the maintained destination catalog; never hardcoded city-by-city.
+entries.push({ path: "/hotel-destinations", changefreq: "weekly", priority: "0.8" });
+const hotelEntries: Entry[] = indexableHotelDestinations.map((d) => ({
+  path: hotelDestinationPath(d.slug),
+  changefreq: "weekly",
+  priority: "0.85",
+}));
+entries.push(...hotelEntries);
 
 // Car rental city landing pages (CarRentalCityPage — /cheap-car-rentals-in-:slug)
 popularDestinations.forEach((d) =>
