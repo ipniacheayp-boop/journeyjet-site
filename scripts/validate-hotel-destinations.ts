@@ -1,6 +1,8 @@
 // Validates the hotel destination catalog. Runs in predev/prebuild so the build FAILS
 // loudly on duplicate slugs, missing data, malformed URLs or changed frozen slugs.
 
+import { existsSync, readFileSync } from "fs";
+import { resolve } from "path";
 import {
   hotelDestinations,
   indexableHotelDestinations,
@@ -43,6 +45,23 @@ for (const frozen of FROZEN_SLUGS) {
 for (const d of indexableHotelDestinations) {
   if (!d.isIndexable) errors.push(`Non-indexable destination in indexable list: ${d.slug}`);
   if (hotelDestinationPath(d.slug) !== `/cheap-hotels-in/${d.slug}`) errors.push(`Bad route path for ${d.slug}`);
+}
+
+// 5. Sitemap parity (when sitemap-hotels.xml has already been generated)
+const sitemapPath = resolve("public/sitemap-hotels.xml");
+if (existsSync(sitemapPath)) {
+  const xml = readFileSync(sitemapPath, "utf8");
+  const locs = new Set([...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]));
+  for (const d of indexableHotelDestinations) {
+    if (!locs.has(hotelDestinationCanonical(d.slug)))
+      errors.push(`Indexable destination missing from sitemap-hotels.xml: ${d.slug}`);
+  }
+  for (const loc of locs) {
+    if (!loc.includes("/cheap-hotels-in/")) continue;
+    const slug = loc.split("/cheap-hotels-in/")[1];
+    if (!indexableHotelDestinations.some((d) => d.slug === slug))
+      errors.push(`Sitemap URL has no matching indexable route: ${loc}`);
+  }
 }
 
 if (errors.length) {
