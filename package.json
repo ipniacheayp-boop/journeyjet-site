@@ -8,6 +8,7 @@
     "dev": "vite",
     "prebuild": "bunx tsx scripts/generate-sitemap.ts && bunx tsx scripts/validate-hotel-destinations.ts",
     "build": "vite build",
+    "audit:seo": "bunx tsx scripts/audit-seo.ts",
     "postbuild": "bunx tsx scripts/prerender.ts",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
