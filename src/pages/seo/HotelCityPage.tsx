@@ -18,7 +18,6 @@ import {
   destinationRegionLabel,
   destinationShortLabel,
   indexableHotelDestinations,
-  nearbyDestinations,
   hotelHubTrailFor,
   hotelHubSiblings,
   hotelDestinationPath,
