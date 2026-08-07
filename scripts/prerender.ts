@@ -751,6 +751,12 @@ hotelCountryHubs().forEach((hub) => {
           } in ${hub.country}${
             hub.regions.length > 0 ? ` across ${hub.regions.length} regions` : ""
           }. Choose a region or city below, then search live availability for your travel dates — nightly rates always come from a live search rather than stored prices.`,
+          hub.regions.length > 0
+            ? `Regions covered in ${hub.country}: ${hub.regions
+                .map((r) => `${r.region} (${r.destinations.length} ${r.destinations.length === 1 ? "city" : "cities"})`)
+                .join(", ")}.`
+            : `Cities covered in ${hub.country}: ${hub.directDestinations.map((d) => d.name).join(", ")}.`,
+          `Each destination page opens a live hotel search for that city, so you can compare property types, neighbourhoods and cancellation terms for your own dates instead of reading stored rates that may no longer be available.`,
         ],
       },
     ],
@@ -794,6 +800,15 @@ hotelCountryHubs().forEach((hub) => {
                 ? `, plus ${airports.length === 1 ? "an airport page" : `${airports.length} airport pages`} for travelers flying in`
                 : ""
             }. Open a city to search live hotel availability for your dates.`,
+            `Cities covered in ${region.region}: ${region.destinations.map((d) => d.name).join(", ")}.`,
+            ...(airports.length > 0
+              ? [
+                  `Airports serving ${region.region} on Tripile: ${airports
+                    .map((ap) => `${ap.airportName} (${ap.airportCode}) in ${ap.cityName}`)
+                    .join(", ")}.`,
+                ]
+              : []),
+            `Hotel availability and nightly rates for ${region.region} are returned live for the dates you choose — Tripile does not publish fixed prices on these pages.`,
           ],
         },
       ],
