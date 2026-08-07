@@ -19,7 +19,7 @@ Canonical host: `https://tripile.com`. robots.txt sitemap directives: `https://t
 | Duplicate URL variants (`//`, trailing slash, query) | 0 |
 | Non-canonical host | 0 |
 | Duplicate sitemap entries | 0 |
-| Pages with insufficient content (<60 words) | 164 |
+| Pages with insufficient content (<60 words) | 124 |
 | Near-duplicate content groups (same template skeleton) | 182 |
 | Dead internal link targets | 0 |
 
@@ -55,30 +55,30 @@ _none_
 
 - https://tripile.com/flight-tracker
 - https://tripile.com/support
-- https://tripile.com/cheap-car-rentals-in-chicago
-- https://tripile.com/cheap-car-rentals-in-miami
-- https://tripile.com/cheap-car-rentals-in-orlando
-- https://tripile.com/cheap-car-rentals-in-atlanta
-- https://tripile.com/cheap-car-rentals-in-dallas
-- https://tripile.com/cheap-car-rentals-in-denver
-- https://tripile.com/cheap-car-rentals-in-seattle
-- https://tripile.com/cheap-car-rentals-in-boston
-- https://tripile.com/cheap-car-rentals-in-houston
-- https://tripile.com/cheap-car-rentals-in-phoenix
-- https://tripile.com/cheap-car-rentals-in-nashville
-- https://tripile.com/cheap-car-rentals-in-tampa
-- https://tripile.com/cheap-car-rentals-in-portland
-- https://tripile.com/cheap-car-rentals-in-minneapolis
-- https://tripile.com/cheap-car-rentals-in-detroit
-- https://tripile.com/cheap-car-rentals-in-philadelphia
-- https://tripile.com/cheap-car-rentals-in-charlotte
-- https://tripile.com/cheap-car-rentals-in-honolulu
-- https://tripile.com/cheap-car-rentals-in-baltimore
-- https://tripile.com/cheap-car-rentals-in-austin
-- https://tripile.com/cheap-car-rentals-in-raleigh
-- https://tripile.com/cheap-car-rentals-in-london
-- https://tripile.com/cheap-car-rentals-in-paris
-- …and 139 more
+- https://tripile.com/airlines/air-canada
+- https://tripile.com/airlines/air-france
+- https://tripile.com/airlines/air-india
+- https://tripile.com/airlines/alaska-airlines
+- https://tripile.com/airlines/allegiant-air
+- https://tripile.com/airlines/american-airlines
+- https://tripile.com/airlines/ana
+- https://tripile.com/airlines/breeze-airways
+- https://tripile.com/airlines/british-airways
+- https://tripile.com/airlines/cathay-pacific
+- https://tripile.com/airlines/delta-air-lines
+- https://tripile.com/airlines/easyjet
+- https://tripile.com/airlines/emirates
+- https://tripile.com/airlines/etihad-airways
+- https://tripile.com/airlines/frontier-airlines
+- https://tripile.com/airlines/hawaiian-airlines
+- https://tripile.com/airlines/iberia
+- https://tripile.com/airlines/japan-airlines
+- https://tripile.com/airlines/jetblue-airways
+- https://tripile.com/airlines/klm
+- https://tripile.com/airlines/korean-air
+- https://tripile.com/airlines/latam-airlines
+- https://tripile.com/airlines/lufthansa
+- …and 99 more
 
 ## Near-duplicate content groups
 
@@ -86,7 +86,7 @@ _none_
 - 66 pages share one template skeleton, e.g. /cheap-hotels-in/savannah, /cheap-hotels-in/macon, /cheap-hotels-in/springfield-il, /cheap-hotels-in/naperville
 - 56 pages share one template skeleton, e.g. /deals/san-francisco-tokyo-2025-12-11, /deals/los-angeles-dubai-2026-02-17, /deals/san-francisco-sydney-2026-01-01, /deals/san-francisco-tokyo-2026-01-06
 - 40 pages share one template skeleton, e.g. /flights-to/chicago, /flights-to/miami, /flights-to/orlando, /flights-to/atlanta
-- 40 pages share one template skeleton, e.g. /cheap-car-rentals-in-chicago, /cheap-car-rentals-in-miami, /cheap-car-rentals-in-orlando, /cheap-car-rentals-in-atlanta
+- 39 pages share one template skeleton, e.g. /cheap-car-rentals-in-chicago, /cheap-car-rentals-in-miami, /cheap-car-rentals-in-orlando, /cheap-car-rentals-in-atlanta
 - 35 pages share one template skeleton, e.g. /cheap-hotels-in/toulouse, /cheap-hotels-in/funchal, /cheap-hotels-in/milan, /cheap-hotels-in/venice
 - 31 pages share one template skeleton, e.g. /cheap-hotels-in/calgary, /cheap-hotels-in/banff, /cheap-hotels-in/jasper, /cheap-hotels-in/edmonton
 - 30 pages share one template skeleton, e.g. /cheap-hotels-in/augusta-ga, /cheap-hotels-in/columbus-ga, /cheap-hotels-in/athens-ga, /cheap-hotels-in/alpharetta
@@ -106,46 +106,6 @@ _none_
 
 - `/flight-tracker` — insufficient content (55 words)
 - `/support` — insufficient content (59 words)
-- `/cheap-car-rentals-in-chicago` — insufficient content (59 words)
-- `/cheap-car-rentals-in-miami` — insufficient content (59 words)
-- `/cheap-car-rentals-in-orlando` — insufficient content (59 words)
-- `/cheap-car-rentals-in-atlanta` — insufficient content (59 words)
-- `/cheap-car-rentals-in-dallas` — insufficient content (59 words)
-- `/cheap-car-rentals-in-denver` — insufficient content (59 words)
-- `/cheap-car-rentals-in-seattle` — insufficient content (59 words)
-- `/cheap-car-rentals-in-boston` — insufficient content (59 words)
-- `/cheap-car-rentals-in-houston` — insufficient content (59 words)
-- `/cheap-car-rentals-in-phoenix` — insufficient content (59 words)
-- `/cheap-car-rentals-in-nashville` — insufficient content (59 words)
-- `/cheap-car-rentals-in-tampa` — insufficient content (59 words)
-- `/cheap-car-rentals-in-portland` — insufficient content (59 words)
-- `/cheap-car-rentals-in-minneapolis` — insufficient content (59 words)
-- `/cheap-car-rentals-in-detroit` — insufficient content (59 words)
-- `/cheap-car-rentals-in-philadelphia` — insufficient content (59 words)
-- `/cheap-car-rentals-in-charlotte` — insufficient content (59 words)
-- `/cheap-car-rentals-in-honolulu` — insufficient content (59 words)
-- `/cheap-car-rentals-in-baltimore` — insufficient content (59 words)
-- `/cheap-car-rentals-in-austin` — insufficient content (59 words)
-- `/cheap-car-rentals-in-raleigh` — insufficient content (59 words)
-- `/cheap-car-rentals-in-london` — insufficient content (59 words)
-- `/cheap-car-rentals-in-paris` — insufficient content (59 words)
-- `/cheap-car-rentals-in-tokyo` — insufficient content (59 words)
-- `/cheap-car-rentals-in-dubai` — insufficient content (59 words)
-- `/cheap-car-rentals-in-cancun` — insufficient content (59 words)
-- `/cheap-car-rentals-in-barcelona` — insufficient content (59 words)
-- `/cheap-car-rentals-in-rome` — insufficient content (59 words)
-- `/cheap-car-rentals-in-amsterdam` — insufficient content (59 words)
-- `/cheap-car-rentals-in-bangkok` — insufficient content (59 words)
-- `/cheap-car-rentals-in-toronto` — insufficient content (59 words)
-- `/cheap-car-rentals-in-sydney` — insufficient content (59 words)
-- `/cheap-car-rentals-in-frankfurt` — insufficient content (59 words)
-- `/cheap-car-rentals-in-singapore` — insufficient content (59 words)
-- `/cheap-car-rentals-in-istanbul` — insufficient content (59 words)
-- `/cheap-car-rentals-in-seoul` — insufficient content (59 words)
-- `/cheap-car-rentals-in-mumbai` — insufficient content (59 words)
-- `/cheap-car-rentals-in-delhi` — insufficient content (59 words)
-- `/cheap-car-rentals-in-athens` — insufficient content (59 words)
-- `/cheap-car-rentals-in-lisbon` — insufficient content (59 words)
 - `/airlines/air-canada` — insufficient content (53 words)
 - `/airlines/air-france` — insufficient content (53 words)
 - `/airlines/air-india` — insufficient content (53 words)

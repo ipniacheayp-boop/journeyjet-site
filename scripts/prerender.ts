@@ -928,6 +928,13 @@ popularDestinations.forEach((d) => {
       {
         paragraphs: [
           `Rent a car in ${d.city} for less with Tripile. Compare daily rates across economy, SUV, and premium vehicles, choose airport or city-center pickup, and review mileage and cancellation terms before you book — with transparent totals and no hidden fees.`,
+          `Most travellers collect their ${d.city} rental at ${d.iataCode} airport on arrival, and downtown pickup locations are available when you are already in the city. Rates are returned live for the pickup and drop-off times you enter, so the total you see already reflects the length of your rental.`,
+        ],
+      },
+      {
+        heading: `Planning a Trip to ${d.city}`,
+        paragraphs: [
+          `${d.city}${d.country ? `, ${d.country},` : ""} is served by ${d.iataCode}, so a rental car pairs well with a flight into the same airport. Compare flights and hotels for the same dates, then add a car once your arrival time is fixed — driving gives you the flexibility to reach neighbourhoods and day trips that are awkward to reach on public transport.`,
         ],
       },
     ],
@@ -962,6 +969,15 @@ seoFlightRoutes.forEach((r) => {
           `Popular airlines flying ${r.origin} to ${r.destination} include ${r.popularAirlines.join(
             ", "
           )}. Compare their schedules, baggage rules, and prices side by side, then book the option that fits your trip.`,
+          `With ${r.popularAirlines.length} ${
+            r.popularAirlines.length === 1 ? "carrier" : "carriers"
+          } commonly serving ${r.originCode} to ${r.destinationCode}, departure times are spread across the day, so it is worth checking early-morning and late-evening flights when you want the lowest fare on a ${r.flightDuration} sector.`,
+        ],
+      },
+      {
+        heading: `When to Book ${r.originCode} to ${r.destinationCode}`,
+        paragraphs: [
+          `Fares on this route start from around $${r.avgPrice}, and ${r.bestMonth} typically brings the lowest prices. Search with flexible dates to compare a whole month at once, check the return leg from ${r.destination} to ${r.origin} in the same search, and review the fare rules before paying so you know what a change or cancellation would cost.`,
         ],
       },
     ],
