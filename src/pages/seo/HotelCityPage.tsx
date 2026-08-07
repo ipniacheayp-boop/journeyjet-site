@@ -19,9 +19,12 @@ import {
   destinationShortLabel,
   indexableHotelDestinations,
   nearbyDestinations,
+  hotelHubTrailFor,
+  hotelHubSiblings,
   hotelDestinationPath,
   SITE_ORIGIN,
 } from "@/data/hotelDestinations";
+import { relatedLinksForDestination } from "@/data/seoLinkGraph";
 
 function isoDate(daysFromNow: number): string {
   const d = new Date();
@@ -46,7 +49,16 @@ const HotelCityPage = () => {
   );
 
   const related = useMemo(
-    () => (destination ? nearbyDestinations(destination, 8) : []),
+    () => (destination ? hotelHubSiblings(destination, 8) : []),
+    [destination],
+  );
+
+  /** Parent hubs: Home → Hotels → Country → Region → this city. */
+  const trail = useMemo(() => (destination ? hotelHubTrailFor(destination) : {}), [destination]);
+
+  /** Contextual links, only to pages that actually exist for this destination. */
+  const contextualLinks = useMemo(
+    () => (destination ? relatedLinksForDestination(destination) : []),
     [destination],
   );
 
@@ -114,7 +126,9 @@ const HotelCityPage = () => {
 
   const breadcrumbs = [
     { name: "Home", url: `${SITE_ORIGIN}/` },
-    { name: "Hotel Destinations", url: `${SITE_ORIGIN}/hotel-destinations` },
+    { name: "Hotels", url: `${SITE_ORIGIN}/hotels` },
+    ...(trail.country ? [{ name: trail.country.country, url: `${SITE_ORIGIN}${trail.country.path}` }] : []),
+    ...(trail.region ? [{ name: trail.region.region, url: `${SITE_ORIGIN}${trail.region.path}` }] : []),
     { name: destination.name, url: canonicalUrl },
   ];
 
@@ -148,10 +162,30 @@ const HotelCityPage = () => {
             </li>
             <li aria-hidden="true">/</li>
             <li>
-              <Link to="/hotel-destinations" className="hover:text-primary">
-                Hotel Destinations
+              <Link to="/hotels" className="hover:text-primary">
+                Hotels
               </Link>
             </li>
+            {trail.country && (
+              <>
+                <li aria-hidden="true">/</li>
+                <li>
+                  <Link to={trail.country.path} className="hover:text-primary">
+                    {trail.country.country}
+                  </Link>
+                </li>
+              </>
+            )}
+            {trail.region && (
+              <>
+                <li aria-hidden="true">/</li>
+                <li>
+                  <Link to={trail.region.path} className="hover:text-primary">
+                    {trail.region.region}
+                  </Link>
+                </li>
+              </>
+            )}
             <li aria-hidden="true">/</li>
             <li className="text-foreground font-medium">{destination.name}</li>
           </ol>
@@ -324,10 +358,30 @@ const HotelCityPage = () => {
                 </dl>
               </div>
 
+              {contextualLinks.length > 0 && (
+                <div className="mt-10">
+                  <h2 className="text-2xl font-bold text-foreground mb-4">
+                    Plan the rest of your {destination.name} trip
+                  </h2>
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {contextualLinks.map((l) => (
+                      <li key={l.href}>
+                        <Link
+                          to={l.href}
+                          className="text-sm text-muted-foreground hover:text-primary"
+                        >
+                          {l.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
               {related.length > 0 && (
                 <div className="mt-10">
                   <h2 className="text-2xl font-bold text-foreground mb-4">
-                    More Hotel Destinations in {destination.country}
+                    More Hotel Destinations in {trail.region?.region ?? destination.country}
                   </h2>
                   <ul className="grid grid-cols-2 md:grid-cols-4 gap-2">
                     {related.map((d) => (
@@ -342,10 +396,14 @@ const HotelCityPage = () => {
                     ))}
                   </ul>
                   <Link
-                    to="/hotel-destinations"
+                    to={trail.region?.path ?? trail.country?.path ?? "/hotel-destinations"}
                     className="inline-flex items-center gap-2 mt-6 text-primary hover:underline"
                   >
-                    View all hotel destinations{" "}
+                    {trail.region
+                      ? `All hotels in ${trail.region.region}`
+                      : trail.country
+                        ? `All hotels in ${trail.country.country}`
+                        : "View all hotel destinations"}{" "}
                     <ArrowRight className="h-4 w-4" aria-hidden="true" />
                   </Link>
                 </div>
