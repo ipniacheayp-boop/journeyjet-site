@@ -93,7 +93,9 @@ const hotelEntries: Entry[] = indexableHotelPaths()
     changefreq: "weekly",
     priority: hubPaths.has(path) ? "0.8" : "0.85",
   }));
-entries.push(...hotelEntries);
+// Hub pages belong to the main sitemap; the city landing pages live in
+// sitemap-hotels.xml so no URL is listed twice across the two sitemaps.
+entries.push(...hotelEntries.filter((e) => hubPaths.has(e.path)));
 
 // Car rental city landing pages (CarRentalCityPage — /cheap-car-rentals-in-:slug)
 popularDestinations.forEach((d) =>
@@ -165,7 +167,7 @@ writeFileSync(resolve("public/sitemap.xml"), renderUrlset(unique));
 console.log(`sitemap.xml written (${unique.length} entries)`);
 
 // Dedicated hotel destination sitemap, generated from the destination catalog.
-const hotelSitemapEntries: Entry[] = hotelEntries;
+const hotelSitemapEntries: Entry[] = hotelEntries.filter((e) => !hubPaths.has(e.path));
 writeFileSync(resolve("public/sitemap-hotels.xml"), renderUrlset(hotelSitemapEntries));
 console.log(`sitemap-hotels.xml written (${hotelSitemapEntries.length} entries)`);
 
