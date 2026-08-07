@@ -357,3 +357,154 @@ export function nearbyDestinations(
   );
   return [...sameRegion, ...sameCountry].slice(0, limit);
 }
+
+/* ------------------------------------------------------------------------- *
+ * Crawlable hub hierarchy: /hotels → /hotels/{country} → /hotels/{country}/{region} → /cheap-hotels-in/{city}
+ *
+ * These hubs are derived from the SAME indexable catalog that backs the city
+ * landing pages and the sitemaps, so navigation and sitemap URLs can never
+ * drift apart. Region hubs are only created when a region has enough cities to
+ * justify its own page; otherwise its cities are listed directly on the country
+ * hub, so every city page always has at least one crawlable parent link.
+ * ------------------------------------------------------------------------- */
+
+/** A region only gets its own hub page when it has at least this many cities. */
+const MIN_CITIES_FOR_REGION_HUB = 3;
+
+export interface HotelRegionHub {
+  region: string;
+  slug: string;
+  path: string;
+  country: string;
+  countrySlug: string;
+  destinations: HotelDestination[];
+}
+
+export interface HotelCountryHub {
+  country: string;
+  countryCode: string;
+  slug: string;
+  path: string;
+  regions: HotelRegionHub[];
+  /** Cities listed straight on the country hub (regions too small for their own page). */
+  directDestinations: HotelDestination[];
+  destinationCount: number;
+}
+
+const HOTEL_HUB_ROOT = "/hotels";
+
+export function hotelCountryHubPath(countrySlug: string): string {
+  return `${HOTEL_HUB_ROOT}/${countrySlug}`;
+}
+
+export function hotelRegionHubPath(countrySlug: string, regionSlug: string): string {
+  return `${HOTEL_HUB_ROOT}/${countrySlug}/${regionSlug}`;
+}
+
+const hotelHubs: HotelCountryHub[] = (() => {
+  const takenCountrySlugs = new Set<string>();
+  return groupedIndexableDestinations().map((group) => {
+    let countrySlug = slugifyDestination(group.country);
+    if (takenCountrySlugs.has(countrySlug)) countrySlug = `${countrySlug}-${slugifyDestination(group.countryCode)}`;
+    takenCountrySlugs.add(countrySlug);
+
+    const takenRegionSlugs = new Set<string>();
+    const regions: HotelRegionHub[] = [];
+    const directDestinations: HotelDestination[] = [];
+
+    const bigEnough = group.regions.filter((r) => r.destinations.length >= MIN_CITIES_FOR_REGION_HUB);
+    const tooSmall = group.regions.filter((r) => r.destinations.length < MIN_CITIES_FOR_REGION_HUB);
+
+    // A country with a single region adds no hierarchy — list its cities on the country hub.
+    const useRegionHubs = group.regions.length > 1 && bigEnough.length > 0;
+
+    if (useRegionHubs) {
+      for (const r of bigEnough) {
+        let regionSlug = slugifyDestination(r.region);
+        if (!regionSlug || takenRegionSlugs.has(regionSlug)) {
+          regionSlug = `${regionSlug || "region"}-${regions.length + 1}`;
+        }
+        takenRegionSlugs.add(regionSlug);
+        regions.push({
+          region: r.region,
+          slug: regionSlug,
+          path: hotelRegionHubPath(countrySlug, regionSlug),
+          country: group.country,
+          countrySlug,
+          destinations: r.destinations,
+        });
+      }
+      tooSmall.forEach((r) => directDestinations.push(...r.destinations));
+    } else {
+      group.regions.forEach((r) => directDestinations.push(...r.destinations));
+    }
+
+    directDestinations.sort((a, b) => a.name.localeCompare(b.name));
+
+    return {
+      country: group.country,
+      countryCode: group.countryCode,
+      slug: countrySlug,
+      path: hotelCountryHubPath(countrySlug),
+      regions,
+      directDestinations,
+      destinationCount: group.regions.reduce((n, r) => n + r.destinations.length, 0),
+    };
+  });
+})();
+
+/** All hotel country hubs, United States first, then alphabetical. */
+export function hotelCountryHubs(): HotelCountryHub[] {
+  return hotelHubs;
+}
+
+export function getHotelCountryHub(countrySlug?: string): HotelCountryHub | undefined {
+  if (!countrySlug) return undefined;
+  return hotelHubs.find((h) => h.slug === countrySlug);
+}
+
+export function getHotelRegionHub(
+  countrySlug?: string,
+  regionSlug?: string,
+): { country: HotelCountryHub; region: HotelRegionHub } | undefined {
+  const country = getHotelCountryHub(countrySlug);
+  if (!country || !regionSlug) return undefined;
+  const region = country.regions.find((r) => r.slug === regionSlug);
+  return region ? { country, region } : undefined;
+}
+
+/** The hub trail for a city page: used for breadcrumbs and the "parent" internal link. */
+export function hotelHubTrailFor(destination: HotelDestination): {
+  country?: HotelCountryHub;
+  region?: HotelRegionHub;
+} {
+  const country = hotelHubs.find((h) => h.country === destination.country);
+  if (!country) return {};
+  const region = country.regions.find((r) => r.destinations.some((d) => d.slug === destination.slug));
+  return { country, region };
+}
+
+/** Sibling cities in the same hub bucket — contextual links between genuinely related pages. */
+export function hotelHubSiblings(destination: HotelDestination, limit = 8): HotelDestination[] {
+  const { country, region } = hotelHubTrailFor(destination);
+  const pool = region?.destinations ?? country?.directDestinations ?? [];
+  const siblings = pool.filter((d) => d.slug !== destination.slug);
+  if (siblings.length >= limit) return siblings.slice(0, limit);
+  return [...siblings, ...nearbyDestinations(destination, limit)]
+    .filter((d, i, arr) => d.slug !== destination.slug && arr.findIndex((x) => x.slug === d.slug) === i)
+    .slice(0, limit);
+}
+
+/**
+ * Every indexable hotel URL path, in one place. The sitemap generator, the
+ * prerenderer and the audit script all read this list, so they cannot diverge.
+ */
+export function indexableHotelPaths(): string[] {
+  const paths = [HOTEL_HUB_ROOT, "/hotel-destinations"];
+  for (const hub of hotelHubs) {
+    paths.push(hub.path);
+    hub.regions.forEach((r) => paths.push(r.path));
+  }
+  indexableHotelDestinations.forEach((d) => paths.push(hotelDestinationPath(d.slug)));
+  return [...new Set(paths)];
+}
