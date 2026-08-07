@@ -363,6 +363,13 @@ ${
 
 ${list([...deadLinks.entries()].map(([href, n]) => `${href} (linked ${n}×)`))}
 
+## Notes & recommendations
+
+- **Templated near-duplicates.** ${duplicateContentGroups.length} content skeletons are shared by more than one page. This is expected for programmatic sets (city, route, airline pages) as long as each page carries unique data; groups where the *only* variable is the place name are the ones worth expanding first.
+- **Static article visibility.** The prerendered article is rendered with \`display:none\` and replaced by the React app on hydration. Google indexes it, but hidden text is a quality risk — consider making it visible (or removing it once server rendering is available).
+- **Sitemap split.** Hotel *city* pages live in \`sitemap-hotels.xml\`; every other URL, including the hotel hubs, lives in \`sitemap.xml\`. No URL appears in both.
+- **Re-run this audit** after any route, dataset or prerender change: \`bun run build && bunx tsx scripts/audit-seo.ts\`.
+
 ## Per-URL findings
 
 ${
