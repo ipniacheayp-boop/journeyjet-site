@@ -3,7 +3,12 @@ import { Link, useLocation } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SearchWidget from "@/components/SearchWidget";
-import { Plane, Hotel, Car } from "lucide-react";
+import { Plane, Hotel, Car, MapPin } from "lucide-react";
+import {
+  hotelCountryHubs,
+  hotelDestinationPath,
+  indexableHotelDestinations,
+} from "@/data/hotelDestinations";
 
 const HUB_CONFIG: Record<
   string,
@@ -182,6 +187,90 @@ function HubSeoArticle({ tabKey }: { tabKey: "flights" | "hotels" | "cars" }) {
 }
 
 /**
+ * Crawlable hotel directory: /hotels → country hub → region hub → city landing page.
+ * Rendered as plain HTML anchors so every hotel landing page is reachable by crawlers.
+ */
+function HotelHubDirectory() {
+  const hubs = hotelCountryHubs();
+  const usHub = hubs.find((h) => h.countryCode === "US");
+  const otherHubs = hubs.filter((h) => h !== usHub);
+  const featuredCities = indexableHotelDestinations.slice(0, 24);
+
+  return (
+    <section className="mt-14" aria-labelledby="hotel-directory-heading">
+      <h2
+        id="hotel-directory-heading"
+        className="text-foreground font-display text-xl md:text-2xl font-bold mb-3"
+      >
+        Browse hotel destinations
+      </h2>
+      <p className="text-sm text-muted-foreground mb-6">
+        Tripile covers {indexableHotelDestinations.length} hotel destinations. Start with a country or
+        US state, then open a city to search live availability for your dates.
+      </p>
+
+      {usHub && (
+        <div className="mb-8">
+          <h3 className="text-sm font-semibold text-foreground mb-3">
+            <Link to={usHub.path} className="hover:text-primary">
+              Hotels in the United States by state
+            </Link>
+          </h3>
+          <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-1.5">
+            {usHub.regions.map((r) => (
+              <li key={r.slug}>
+                <Link
+                  to={r.path}
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
+                  {r.region}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div className="mb-8">
+        <h3 className="text-sm font-semibold text-foreground mb-3">Hotels by country</h3>
+        <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-1.5">
+          {otherHubs.map((h) => (
+            <li key={h.slug}>
+              <Link
+                to={h.path}
+                className="text-sm text-muted-foreground hover:text-primary transition-colors"
+              >
+                {h.country}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <h3 className="text-sm font-semibold text-foreground mb-3">Popular hotel cities</h3>
+        <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-1.5">
+          {featuredCities.map((d) => (
+            <li key={d.slug}>
+              <Link
+                to={hotelDestinationPath(d.slug)}
+                className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors"
+              >
+                <MapPin className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+                Cheap hotels in {d.name}
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <Link to="/hotel-destinations" className="inline-block mt-5 text-sm text-primary hover:underline">
+          View the full hotel destination directory
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+/**
  * SEO-friendly hubs for flight / hotel / car search (no hash-based URLs).
  */
 const SearchHubPage = () => {
@@ -266,6 +355,8 @@ const SearchHubPage = () => {
           </div>
 
           <HubSeoArticle tabKey={tabKey} />
+
+          {tabKey === "hotels" && <HotelHubDirectory />}
 
           <nav className="mt-10 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm" aria-label="Related search hubs">
             <Link to="/flights" className="text-primary font-medium hover:underline" title="Search flights on Tripile">

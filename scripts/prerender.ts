@@ -22,7 +22,15 @@ import { mkdirSync, readFileSync, writeFileSync } from "fs";
 import { resolve, dirname } from "path";
 import { popularDestinations, airlinesData } from "../src/data/destinationsData";
 import { seoFlightRoutes, seoHotelCities } from "../src/data/seoRoutes";
-import { indexableHotelDestinations, hotelDestinationPath, nearbyDestinations } from "../src/data/hotelDestinations";
+import {
+  indexableHotelDestinations,
+  hotelDestinationPath,
+  hotelCountryHubs,
+  hotelCountriesWithoutHub,
+  hotelHubTrailFor,
+  hotelHubSiblings,
+} from "../src/data/hotelDestinations";
+import { relatedLinksForDestination, airportsForStateCode, countryGuidePath } from "../src/data/seoLinkGraph";
 import { airportLandingPages } from "../src/data/airportLandingData";
 import { blogPosts } from "../src/data/blogPosts";
 import { cruiseDestinations } from "../src/data/cruiseDestinations";
@@ -209,7 +217,14 @@ const corePages: Page[] = [
         ],
       },
     ],
-    links: BASE_LINKS,
+    // Every published deal detail page is linked from the deals hub so none is orphaned.
+    links: [
+      ...BASE_LINKS,
+      ...dealSlugs.map((slug) => ({
+        href: `/deals/${slug}`,
+        label: `${slug.replace(/-/g, " ")} deal`,
+      })),
+    ],
   },
   {
     path: "/cruise-deals",
@@ -297,6 +312,8 @@ const corePages: Page[] = [
       {
         paragraphs: [
           "Watch flights move across the globe with Tripile's live flight tracker. See real-time aircraft positions, routes, altitude, and speed on an interactive map, and follow a specific flight from takeoff to landing.",
+          "Search by flight number or airline to pin a single aircraft, or pan the map to see what is overhead right now. Positions, altitude and speed refresh from live aviation data, so the tracker is useful for meeting an arrival, watching for a delay, or simply following a route you plan to fly.",
+          "For scheduled departure and arrival times, gate information and delay status, use the flight status page instead — the tracker focuses on where an aircraft is at this moment rather than the timetable behind it.",
         ],
       },
     ],
@@ -367,7 +384,8 @@ const corePages: Page[] = [
         ],
       },
     ],
-    links: blogPosts.slice(0, 5).map((p) => ({
+    // Every published post is linked so no article is orphaned.
+    links: blogPosts.map((p) => ({
       href: `/blog/${p.slug}`,
       label: p.title,
     })),
@@ -403,6 +421,8 @@ const corePages: Page[] = [
       {
         paragraphs: [
           "Need a hand with your trip? Tripile's support team is available 24/7 to help with bookings, changes, cancellations, refunds, and travel questions. Call 1-800-963-4330 or email Support@Tripile.com and we'll get you sorted quickly.",
+          "Most questions about baggage allowances, name corrections, date changes and refund timelines are answered in the help topics on this page. Have your booking reference ready when you contact us so we can pull up your itinerary straight away.",
+          "For airline-specific rules such as seat selection or check-in windows, our team can point you to the carrier's own policy for your ticket, and our web check-in page links directly to each airline's check-in.",
         ],
       },
     ],
@@ -436,7 +456,28 @@ const corePages: Page[] = [
         ],
       },
     ],
-    links: BASE_LINKS,
+    // The HTML site map is the crawl entry point for every programmatic page
+    // set, so it links to all airline, route, car-rental and hub pages.
+    links: [
+      ...BASE_LINKS,
+      { href: "/hotel-destinations", label: "Hotel destinations directory" },
+      { href: "/travel-guides", label: "Travel guides" },
+      ...airlinesData.map((a) => ({ href: `/airlines/${a.slug}`, label: `${a.name} flights` })),
+      ...seoFlightRoutes.map((r) => ({ href: `/${r.slug}`, label: r.slug.replace(/-/g, " ") })),
+      ...popularDestinations.map((d) => ({
+        href: `/cheap-car-rentals-in-${d.slug}`,
+        label: `Cheap car rentals in ${d.name}`,
+      })),
+      ...popularDestinations.map((d) => ({
+        href: `/flights-to/${d.slug}`,
+        label: `Flights to ${d.name}`,
+      })),
+      ...airportLandingPages.map((ap) => ({
+        href: `/airport/${ap.slug}`,
+        label: `${ap.airportName} (${ap.airportCode})`,
+      })),
+      ...blogPosts.map((b) => ({ href: `/blog/${b.slug}`, label: b.title })),
+    ],
   },
   {
     path: "/taxes-fees",
@@ -705,10 +746,119 @@ programmaticPages.push({
       ],
     },
   ],
-  links: indexableHotelDestinations.map((d) => ({
-    href: hotelDestinationPath(d.slug),
-    label: `Cheap Hotels in ${d.name}`,
-  })),
+  links: [
+    { href: "/hotels", label: "Hotel search" },
+    ...hotelCountryHubs().flatMap((h) => [
+      { href: h.path, label: `Hotels in ${h.country}` },
+      ...h.regions.map((r) => ({ href: r.path, label: `Hotels in ${r.region}` })),
+      ...h.directDestinations.map((d) => ({
+        href: hotelDestinationPath(d.slug),
+        label: `Cheap Hotels in ${d.name}`,
+      })),
+    ]),
+    ...hotelCountriesWithoutHub().flatMap((c) =>
+      c.destinations.map((d) => ({
+        href: hotelDestinationPath(d.slug),
+        label: `Cheap Hotels in ${d.name}`,
+      })),
+    ),
+  ],
+});
+
+// Hotel country hubs (/hotels/{country}) — crawlable parents for the city pages
+hotelCountryHubs().forEach((hub) => {
+  programmaticPages.push({
+    path: hub.path,
+    title: `Hotels in ${hub.country} | ${hub.destinationCount} Destinations | Tripile`.slice(0, 65),
+    description:
+      `Browse hotels in ${hub.country} by region on Tripile. ${hub.destinationCount} destinations, each with live hotel availability search.`.slice(
+        0,
+        160
+      ),
+    h1: `Hotels in ${hub.country}`,
+    blocks: [
+      {
+        paragraphs: [
+          `Tripile covers ${hub.destinationCount} hotel ${
+            hub.destinationCount === 1 ? "destination" : "destinations"
+          } in ${hub.country}${
+            hub.regions.length > 0 ? ` across ${hub.regions.length} regions` : ""
+          }. Choose a region or city below, then search live availability for your travel dates — nightly rates always come from a live search rather than stored prices.`,
+          hub.regions.length > 0
+            ? `Regions covered in ${hub.country}: ${hub.regions
+                .map((r) => `${r.region} (${r.destinations.length} ${r.destinations.length === 1 ? "city" : "cities"})`)
+                .join(", ")}.`
+            : `Cities covered in ${hub.country}: ${hub.directDestinations.map((d) => d.name).join(", ")}.`,
+          `Each destination page opens a live hotel search for that city, so you can compare property types, neighbourhoods and cancellation terms for your own dates instead of reading stored rates that may no longer be available.`,
+        ],
+      },
+    ],
+    links: [
+      ...hub.regions.map((r) => ({
+        href: r.path,
+        label: `Hotels in ${r.region} (${r.destinations.length} cities)`,
+      })),
+      ...hub.directDestinations.map((d) => ({
+        href: hotelDestinationPath(d.slug),
+        label: `Cheap Hotels in ${d.name}`,
+      })),
+      ...(countryGuidePath(hub.country)
+        ? [{ href: countryGuidePath(hub.country)!, label: `${hub.country} travel guide` }]
+        : []),
+      { href: "/hotel-destinations", label: "Full hotel destination directory" },
+      { href: "/hotels", label: "Hotel search" },
+    ],
+  });
+
+  // Region / state hubs (/hotels/{country}/{region})
+  hub.regions.forEach((region) => {
+    const stateCode = region.destinations.find((d) => d.stateCode)?.stateCode;
+    const airports = airportsForStateCode(stateCode).slice(0, 12);
+    programmaticPages.push({
+      path: region.path,
+      title: `Hotels in ${region.region} | ${region.destinations.length} Cities | Tripile`.slice(0, 65),
+      description:
+        `Compare hotels in ${region.region}, ${hub.country}. Browse ${region.destinations.length} cities on Tripile and search live availability for your dates.`.slice(
+          0,
+          160
+        ),
+      h1: `Hotels in ${region.region}`,
+      blocks: [
+        {
+          paragraphs: [
+            `Tripile covers ${region.destinations.length} hotel ${
+              region.destinations.length === 1 ? "city" : "cities"
+            } in ${region.region}, ${hub.country}${
+              airports.length > 0
+                ? `, plus ${airports.length === 1 ? "an airport page" : `${airports.length} airport pages`} for travelers flying in`
+                : ""
+            }. Open a city to search live hotel availability for your dates.`,
+            `Cities covered in ${region.region}: ${region.destinations.map((d) => d.name).join(", ")}.`,
+            ...(airports.length > 0
+              ? [
+                  `Airports serving ${region.region} on Tripile: ${airports
+                    .map((ap) => `${ap.airportName} (${ap.airportCode}) in ${ap.cityName}`)
+                    .join(", ")}.`,
+                ]
+              : []),
+            `Hotel availability and nightly rates for ${region.region} are returned live for the dates you choose — Tripile does not publish fixed prices on these pages.`,
+          ],
+        },
+      ],
+      links: [
+        ...region.destinations.map((d) => ({
+          href: hotelDestinationPath(d.slug),
+          label: `Cheap Hotels in ${d.name}`,
+        })),
+        ...airports.map((ap) => ({
+          href: `/airport/${ap.slug}`,
+          label: `${ap.airportName} (${ap.airportCode}) flights`,
+        })),
+        { href: hub.path, label: `All hotels in ${hub.country}` },
+        { href: "/hotels", label: "Hotel search" },
+      ],
+    });
+  });
 });
 
 // Hotel destination pages (generated from the destination catalog)
@@ -731,6 +881,13 @@ indexableHotelDestinations.forEach((d) => {
       {
         paragraphs: [
           `Compare hotels in ${regionLabel} on Tripile. Choose your check-in and check-out dates to see live availability, guest ratings, amenities, and cancellation policies for the properties returned for your stay.`,
+          `${d.name} sits in ${[d.state, d.country].filter(Boolean).join(", ")}, and every result on this page comes from a live search rather than a stored rate, so the nightly price you see already matches your dates and guest count.`,
+          (() => {
+            const nearby = hotelHubSiblings(d, 4).map((n) => n.name);
+            return nearby.length > 0
+              ? `Comparing a few places at once? Travellers looking at ${d.name} often also check hotels in ${nearby.join(", ")}, which you can open from the links below and search for the same dates.`
+              : `Use the links below to move up to the wider ${d.state ?? d.country} hotel directory and compare nearby destinations for the same dates.`;
+          })(),
         ],
       },
       ...(legacy
@@ -747,12 +904,19 @@ indexableHotelDestinations.forEach((d) => {
         : []),
     ],
     links: [
-      ...nearbyDestinations(d, 6).map((n) => ({
+      ...(() => {
+        const trail = hotelHubTrailFor(d);
+        const out: { href: string; label: string }[] = [];
+        if (trail.region) out.push({ href: trail.region.path, label: `All hotels in ${trail.region.region}` });
+        if (trail.country) out.push({ href: trail.country.path, label: `All hotels in ${trail.country.country}` });
+        return out;
+      })(),
+      ...hotelHubSiblings(d, 6).map((n) => ({
         href: hotelDestinationPath(n.slug),
         label: `Hotels in ${n.name}`,
       })),
-      { href: `/flights-to/${d.slug}`, label: `Flights to ${d.name}` },
-      { href: `/cheap-car-rentals-in-${d.slug}`, label: `Car rentals in ${d.name}` },
+      // Contextual links only where the target page actually exists.
+      ...relatedLinksForDestination(d),
       { href: "/hotel-destinations", label: "All hotel destinations" },
       { href: "/hotels", label: "Search all hotels" },
     ],
@@ -775,6 +939,13 @@ popularDestinations.forEach((d) => {
       {
         paragraphs: [
           `Rent a car in ${d.city} for less with Tripile. Compare daily rates across economy, SUV, and premium vehicles, choose airport or city-center pickup, and review mileage and cancellation terms before you book — with transparent totals and no hidden fees.`,
+          `Most travellers collect their ${d.city} rental at ${d.iataCode} airport on arrival, and downtown pickup locations are available when you are already in the city. Rates are returned live for the pickup and drop-off times you enter, so the total you see already reflects the length of your rental.`,
+        ],
+      },
+      {
+        heading: `Planning a Trip to ${d.city}`,
+        paragraphs: [
+          `${d.city}${d.country ? `, ${d.country},` : ""} is served by ${d.iataCode}, so a rental car pairs well with a flight into the same airport. Compare flights and hotels for the same dates, then add a car once your arrival time is fixed — driving gives you the flexibility to reach neighbourhoods and day trips that are awkward to reach on public transport.`,
         ],
       },
     ],
@@ -809,6 +980,15 @@ seoFlightRoutes.forEach((r) => {
           `Popular airlines flying ${r.origin} to ${r.destination} include ${r.popularAirlines.join(
             ", "
           )}. Compare their schedules, baggage rules, and prices side by side, then book the option that fits your trip.`,
+          `With ${r.popularAirlines.length} ${
+            r.popularAirlines.length === 1 ? "carrier" : "carriers"
+          } commonly serving ${r.originCode} to ${r.destinationCode}, departure times are spread across the day, so it is worth checking early-morning and late-evening flights when you want the lowest fare on a ${r.flightDuration} sector.`,
+        ],
+      },
+      {
+        heading: `When to Book ${r.originCode} to ${r.destinationCode}`,
+        paragraphs: [
+          `Fares on this route start from around $${r.avgPrice}, and ${r.bestMonth} typically brings the lowest prices. Search with flexible dates to compare a whole month at once, check the return leg from ${r.destination} to ${r.origin} in the same search, and review the fare rules before paying so you know what a change or cancellation would cost.`,
         ],
       },
     ],
@@ -835,6 +1015,13 @@ airlinesData.forEach((a) => {
       {
         paragraphs: [
           `Find and compare ${a.name} (${a.code}) flights on Tripile. Search ${a.name} fares and routes, review baggage and fare rules, and book cheap tickets with transparent totals and no hidden fees. ${a.name} is a ${a.country}-based carrier.`,
+          `Enter your route and dates to see the ${a.name} flights available for your trip alongside other carriers, so you can judge whether the ${a.code} schedule, cabin baggage allowance and total price work better than the alternatives.`,
+        ],
+      },
+      {
+        heading: `Booking ${a.name} Flights`,
+        paragraphs: [
+          `Fares and seat availability for ${a.name} change constantly, so results are fetched live at search time rather than published here as fixed prices. Check the fare conditions before paying — ${a.name} sets its own rules for changes, cancellations and checked bags — and once ticketed you can use our web check-in page to open the airline's own check-in.`,
         ],
       },
     ],
@@ -914,7 +1101,11 @@ dealSlugs.forEach((slug) => {
 // ---------------------------------------------------------------------------
 const allPages = [...corePages, ...programmaticPages];
 
-const template = readFileSync(resolve(DIST, "index.html"), "utf8");
+// Strip any tags injected by a previous prerender pass so re-running the script
+// on an existing dist/ can never emit duplicate canonical / og / meta tags.
+const template = readFileSync(resolve(DIST, "index.html"), "utf8")
+  .replace(/^\s*<(?:meta|link)[^>]*data-prerendered="true"[^>]*>\s*$/gm, "")
+  .replace(/\n{3,}/g, "\n\n");
 
 const canonicalFor = (path: string): string =>
   path === "/" ? `${SITE_ORIGIN}/` : `${SITE_ORIGIN}${path}`;

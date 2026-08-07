@@ -5,7 +5,7 @@ import { writeFileSync } from "fs";
 import { resolve } from "path";
 import { popularDestinations, airlinesData } from "../src/data/destinationsData";
 import { seoFlightRoutes } from "../src/data/seoRoutes";
-import { indexableHotelDestinations, hotelDestinationPath } from "../src/data/hotelDestinations";
+import { indexableHotelPaths, hotelCountryHubs } from "../src/data/hotelDestinations";
 import { airportLandingPages } from "../src/data/airportLandingData";
 import { blogPosts } from "../src/data/blogPosts";
 import { cruiseDestinations } from "../src/data/cruiseDestinations";
@@ -13,7 +13,6 @@ import { cityGuides, getCountryGuides } from "../src/data/travelGuides";
 import { dealSlugs } from "../src/data/dealSlugs";
 
 const BASE_URL = "https://tripile.com";
-const today = new Date().toISOString().slice(0, 10);
 
 interface Entry {
   path: string;
@@ -26,11 +25,11 @@ const entries: Entry[] = [];
 
 // Core pages
 const core: Entry[] = [
-  { path: "/", changefreq: "daily", priority: "1.0", lastmod: today },
-  { path: "/flights", changefreq: "daily", priority: "0.95", lastmod: today },
-  { path: "/hotels", changefreq: "daily", priority: "0.95", lastmod: today },
-  { path: "/car-rentals", changefreq: "daily", priority: "0.9", lastmod: today },
-  { path: "/deals", changefreq: "daily", priority: "0.9", lastmod: today },
+  { path: "/", changefreq: "daily", priority: "1.0" },
+  { path: "/flights", changefreq: "daily", priority: "0.95" },
+  { path: "/hotels", changefreq: "daily", priority: "0.95" },
+  { path: "/car-rentals", changefreq: "daily", priority: "0.9" },
+  { path: "/deals", changefreq: "daily", priority: "0.9" },
   { path: "/cruise-deals", changefreq: "weekly", priority: "0.75" },
   { path: "/explore", changefreq: "weekly", priority: "0.85" },
   { path: "/trip-planner", changefreq: "weekly", priority: "0.75" },
@@ -79,15 +78,24 @@ popularDestinations.forEach((d) =>
   entries.push({ path: `/flights-to/${d.slug}`, changefreq: "weekly", priority: "0.85" })
 );
 
-// Hotel destination landing pages (HotelCityPage — /cheap-hotels-in/:slug)
-// Generated from the maintained destination catalog; never hardcoded city-by-city.
-entries.push({ path: "/hotel-destinations", changefreq: "weekly", priority: "0.8" });
-const hotelEntries: Entry[] = indexableHotelDestinations.map((d) => ({
-  path: hotelDestinationPath(d.slug),
-  changefreq: "weekly",
-  priority: "0.85",
-}));
-entries.push(...hotelEntries);
+// Hotel hub hierarchy + destination landing pages.
+// `indexableHotelPaths()` is the SAME source the hub navigation and the prerenderer
+// use, so sitemap URLs and internal links can never drift apart.
+const hubPaths = new Set<string>([
+  "/hotels",
+  "/hotel-destinations",
+  ...hotelCountryHubs().flatMap((h) => [h.path, ...h.regions.map((r) => r.path)]),
+]);
+const hotelEntries: Entry[] = indexableHotelPaths()
+  .filter((path) => path !== "/hotels") // already listed in core pages
+  .map((path) => ({
+    path,
+    changefreq: "weekly",
+    priority: hubPaths.has(path) ? "0.8" : "0.85",
+  }));
+// Hub pages belong to the main sitemap; the city landing pages live in
+// sitemap-hotels.xml so no URL is listed twice across the two sitemaps.
+entries.push(...hotelEntries.filter((e) => hubPaths.has(e.path)));
 
 // Car rental city landing pages (CarRentalCityPage — /cheap-car-rentals-in-:slug)
 popularDestinations.forEach((d) =>
@@ -118,7 +126,7 @@ airportLandingPages.forEach((ap) =>
 );
 
 // Travel guides hub
-entries.push({ path: "/travel-guides", changefreq: "weekly", priority: "0.85", lastmod: today });
+entries.push({ path: "/travel-guides", changefreq: "weekly", priority: "0.85" });
 
 // Country travel guides (CountryGuidePage — /travel-guide/country/:slug)
 getCountryGuides().forEach((c) =>
@@ -159,10 +167,7 @@ writeFileSync(resolve("public/sitemap.xml"), renderUrlset(unique));
 console.log(`sitemap.xml written (${unique.length} entries)`);
 
 // Dedicated hotel destination sitemap, generated from the destination catalog.
-const hotelSitemapEntries: Entry[] = [
-  { path: "/hotel-destinations", changefreq: "weekly", priority: "0.8" },
-  ...hotelEntries,
-];
+const hotelSitemapEntries: Entry[] = hotelEntries.filter((e) => !hubPaths.has(e.path));
 writeFileSync(resolve("public/sitemap-hotels.xml"), renderUrlset(hotelSitemapEntries));
 console.log(`sitemap-hotels.xml written (${hotelSitemapEntries.length} entries)`);
 
