@@ -125,7 +125,29 @@ const docByPath = new Map(docs.map((d) => [d.path, d]));
 
 /* --------------------------------------------------------- internal links */
 
+/**
+ * Site-wide navigation links (header, footer, homepage) come from the React
+ * components rather than the prerendered article, so they are collected from
+ * source. JS-executing crawlers follow these on every page.
+ */
+const NAV_SOURCES = [
+  "src/components/Header.tsx",
+  "src/components/Footer.tsx",
+  "src/pages/Index.tsx",
+  "src/pages/SearchHubPage.tsx",
+];
+const globalNavLinks = new Set<string>();
+for (const file of NAV_SOURCES) {
+  const full = resolve(ROOT, file);
+  if (!existsSync(full)) continue;
+  const src = readFileSync(full, "utf8");
+  for (const m of src.matchAll(/(?:to|href)="(\/[^"#?{}]*)"/g)) {
+    globalNavLinks.add(m[1].replace(/\/$/, "") || "/");
+  }
+}
+
 const inbound = new Map<string, number>();
+for (const href of globalNavLinks) inbound.set(href, (inbound.get(href) ?? 0) + 1);
 for (const doc of docs) {
   for (const href of new Set(doc.links)) {
     if (href === doc.path) continue;
@@ -159,8 +181,10 @@ interface Finding {
 }
 
 const findings: Finding[] = [];
+const uniqueSitemapUrls = [...new Set(allSitemapUrls)];
+
 const counts = {
-  total: allSitemapUrls.length,
+  total: uniqueSitemapUrls.length,
   ok200: 0,
   linked: 0,
   orphans: [] as string[],
@@ -269,7 +293,7 @@ const list = (items: string[], limit = 25) =>
 
 const report = `# Tripile SEO discovery & indexing audit
 
-Audited **${counts.total}** sitemap URLs from ${sitemapFiles.join(", ")} against ${docs.length} prerendered documents in \`dist/\`.
+Audited **${counts.total}** unique sitemap URLs (${allSitemapUrls.length} entries) from ${sitemapFiles.join(", ")} against ${docs.length} prerendered documents in \`dist/\`.
 Canonical host: \`${HOST}\`. robots.txt sitemap directives: ${sitemapDirectives.map((s) => `\`${s}\``).join(", ") || "_none_"}.
 
 ## Summary
