@@ -22,7 +22,15 @@ import { mkdirSync, readFileSync, writeFileSync } from "fs";
 import { resolve, dirname } from "path";
 import { popularDestinations, airlinesData } from "../src/data/destinationsData";
 import { seoFlightRoutes, seoHotelCities } from "../src/data/seoRoutes";
-import { indexableHotelDestinations, hotelDestinationPath, nearbyDestinations } from "../src/data/hotelDestinations";
+import {
+  indexableHotelDestinations,
+  hotelDestinationPath,
+  hotelCountryHubs,
+  hotelCountriesWithoutHub,
+  hotelHubTrailFor,
+  hotelHubSiblings,
+} from "../src/data/hotelDestinations";
+import { relatedLinksForDestination, airportsForStateCode, countryGuidePath } from "../src/data/seoLinkGraph";
 import { airportLandingPages } from "../src/data/airportLandingData";
 import { blogPosts } from "../src/data/blogPosts";
 import { cruiseDestinations } from "../src/data/cruiseDestinations";
@@ -705,10 +713,104 @@ programmaticPages.push({
       ],
     },
   ],
-  links: indexableHotelDestinations.map((d) => ({
-    href: hotelDestinationPath(d.slug),
-    label: `Cheap Hotels in ${d.name}`,
-  })),
+  links: [
+    { href: "/hotels", label: "Hotel search" },
+    ...hotelCountryHubs().flatMap((h) => [
+      { href: h.path, label: `Hotels in ${h.country}` },
+      ...h.regions.map((r) => ({ href: r.path, label: `Hotels in ${r.region}` })),
+      ...h.directDestinations.map((d) => ({
+        href: hotelDestinationPath(d.slug),
+        label: `Cheap Hotels in ${d.name}`,
+      })),
+    ]),
+    ...hotelCountriesWithoutHub().flatMap((c) =>
+      c.destinations.map((d) => ({
+        href: hotelDestinationPath(d.slug),
+        label: `Cheap Hotels in ${d.name}`,
+      })),
+    ),
+  ],
+});
+
+// Hotel country hubs (/hotels/{country}) — crawlable parents for the city pages
+hotelCountryHubs().forEach((hub) => {
+  programmaticPages.push({
+    path: hub.path,
+    title: `Hotels in ${hub.country} | ${hub.destinationCount} Destinations | Tripile`.slice(0, 65),
+    description:
+      `Browse hotels in ${hub.country} by region on Tripile. ${hub.destinationCount} destinations, each with live hotel availability search.`.slice(
+        0,
+        160
+      ),
+    h1: `Hotels in ${hub.country}`,
+    blocks: [
+      {
+        paragraphs: [
+          `Tripile covers ${hub.destinationCount} hotel ${
+            hub.destinationCount === 1 ? "destination" : "destinations"
+          } in ${hub.country}${
+            hub.regions.length > 0 ? ` across ${hub.regions.length} regions` : ""
+          }. Choose a region or city below, then search live availability for your travel dates — nightly rates always come from a live search rather than stored prices.`,
+        ],
+      },
+    ],
+    links: [
+      ...hub.regions.map((r) => ({
+        href: r.path,
+        label: `Hotels in ${r.region} (${r.destinations.length} cities)`,
+      })),
+      ...hub.directDestinations.map((d) => ({
+        href: hotelDestinationPath(d.slug),
+        label: `Cheap Hotels in ${d.name}`,
+      })),
+      ...(countryGuidePath(hub.country)
+        ? [{ href: countryGuidePath(hub.country)!, label: `${hub.country} travel guide` }]
+        : []),
+      { href: "/hotel-destinations", label: "Full hotel destination directory" },
+      { href: "/hotels", label: "Hotel search" },
+    ],
+  });
+
+  // Region / state hubs (/hotels/{country}/{region})
+  hub.regions.forEach((region) => {
+    const stateCode = region.destinations.find((d) => d.stateCode)?.stateCode;
+    const airports = airportsForStateCode(stateCode).slice(0, 12);
+    programmaticPages.push({
+      path: region.path,
+      title: `Hotels in ${region.region} | ${region.destinations.length} Cities | Tripile`.slice(0, 65),
+      description:
+        `Compare hotels in ${region.region}, ${hub.country}. Browse ${region.destinations.length} cities on Tripile and search live availability for your dates.`.slice(
+          0,
+          160
+        ),
+      h1: `Hotels in ${region.region}`,
+      blocks: [
+        {
+          paragraphs: [
+            `Tripile covers ${region.destinations.length} hotel ${
+              region.destinations.length === 1 ? "city" : "cities"
+            } in ${region.region}, ${hub.country}${
+              airports.length > 0
+                ? `, plus ${airports.length === 1 ? "an airport page" : `${airports.length} airport pages`} for travelers flying in`
+                : ""
+            }. Open a city to search live hotel availability for your dates.`,
+          ],
+        },
+      ],
+      links: [
+        ...region.destinations.map((d) => ({
+          href: hotelDestinationPath(d.slug),
+          label: `Cheap Hotels in ${d.name}`,
+        })),
+        ...airports.map((ap) => ({
+          href: `/airport/${ap.slug}`,
+          label: `${ap.airportName} (${ap.airportCode}) flights`,
+        })),
+        { href: hub.path, label: `All hotels in ${hub.country}` },
+        { href: "/hotels", label: "Hotel search" },
+      ],
+    });
+  });
 });
 
 // Hotel destination pages (generated from the destination catalog)
@@ -747,12 +849,19 @@ indexableHotelDestinations.forEach((d) => {
         : []),
     ],
     links: [
-      ...nearbyDestinations(d, 6).map((n) => ({
+      ...(() => {
+        const trail = hotelHubTrailFor(d);
+        const out: { href: string; label: string }[] = [];
+        if (trail.region) out.push({ href: trail.region.path, label: `All hotels in ${trail.region.region}` });
+        if (trail.country) out.push({ href: trail.country.path, label: `All hotels in ${trail.country.country}` });
+        return out;
+      })(),
+      ...hotelHubSiblings(d, 6).map((n) => ({
         href: hotelDestinationPath(n.slug),
         label: `Hotels in ${n.name}`,
       })),
-      { href: `/flights-to/${d.slug}`, label: `Flights to ${d.name}` },
-      { href: `/cheap-car-rentals-in-${d.slug}`, label: `Car rentals in ${d.name}` },
+      // Contextual links only where the target page actually exists.
+      ...relatedLinksForDestination(d),
       { href: "/hotel-destinations", label: "All hotel destinations" },
       { href: "/hotels", label: "Search all hotels" },
     ],
