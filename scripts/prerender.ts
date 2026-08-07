@@ -217,7 +217,14 @@ const corePages: Page[] = [
         ],
       },
     ],
-    links: BASE_LINKS,
+    // Every published deal detail page is linked from the deals hub so none is orphaned.
+    links: [
+      ...BASE_LINKS,
+      ...dealSlugs.map((slug) => ({
+        href: `/deals/${slug}`,
+        label: `${slug.replace(/-/g, " ")} deal`,
+      })),
+    ],
   },
   {
     path: "/cruise-deals",
