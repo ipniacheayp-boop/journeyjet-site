@@ -1045,7 +1045,11 @@ dealSlugs.forEach((slug) => {
 // ---------------------------------------------------------------------------
 const allPages = [...corePages, ...programmaticPages];
 
-const template = readFileSync(resolve(DIST, "index.html"), "utf8");
+// Strip any tags injected by a previous prerender pass so re-running the script
+// on an existing dist/ can never emit duplicate canonical / og / meta tags.
+const template = readFileSync(resolve(DIST, "index.html"), "utf8")
+  .replace(/^\s*<(?:meta|link)[^>]*data-prerendered="true"[^>]*>\s*$/gm, "")
+  .replace(/\n{3,}/g, "\n\n");
 
 const canonicalFor = (path: string): string =>
   path === "/" ? `${SITE_ORIGIN}/` : `${SITE_ORIGIN}${path}`;
