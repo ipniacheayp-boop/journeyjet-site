@@ -141,7 +141,7 @@ for (const file of NAV_SOURCES) {
   const full = resolve(ROOT, file);
   if (!existsSync(full)) continue;
   const src = readFileSync(full, "utf8");
-  for (const m of src.matchAll(/(?:to|href)="(\/[^"#?{}]*)"/g)) {
+  for (const m of src.matchAll(/(?:to|href)\s*[:=]\s*"(\/[^"#?{}]*)"/g)) {
     globalNavLinks.add(m[1].replace(/\/$/, "") || "/");
   }
 }

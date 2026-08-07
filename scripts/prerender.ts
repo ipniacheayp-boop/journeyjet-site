@@ -382,7 +382,8 @@ const corePages: Page[] = [
         ],
       },
     ],
-    links: blogPosts.slice(0, 5).map((p) => ({
+    // Every published post is linked so no article is orphaned.
+    links: blogPosts.map((p) => ({
       href: `/blog/${p.slug}`,
       label: p.title,
     })),
@@ -451,7 +452,28 @@ const corePages: Page[] = [
         ],
       },
     ],
-    links: BASE_LINKS,
+    // The HTML site map is the crawl entry point for every programmatic page
+    // set, so it links to all airline, route, car-rental and hub pages.
+    links: [
+      ...BASE_LINKS,
+      { href: "/hotel-destinations", label: "Hotel destinations directory" },
+      { href: "/travel-guides", label: "Travel guides" },
+      ...airlinesData.map((a) => ({ href: `/airlines/${a.slug}`, label: `${a.name} flights` })),
+      ...seoFlightRoutes.map((r) => ({ href: `/${r.slug}`, label: r.slug.replace(/-/g, " ") })),
+      ...popularDestinations.map((d) => ({
+        href: `/cheap-car-rentals-in-${d.slug}`,
+        label: `Cheap car rentals in ${d.name}`,
+      })),
+      ...popularDestinations.map((d) => ({
+        href: `/flights-to/${d.slug}`,
+        label: `Flights to ${d.name}`,
+      })),
+      ...airportLandingPages.map((ap) => ({
+        href: `/airport/${ap.slug}`,
+        label: `${ap.airportName} (${ap.airportCode})`,
+      })),
+      ...blogPosts.map((b) => ({ href: `/blog/${b.slug}`, label: b.title })),
+    ],
   },
   {
     path: "/taxes-fees",
