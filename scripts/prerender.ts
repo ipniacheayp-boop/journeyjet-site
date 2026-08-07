@@ -421,6 +421,8 @@ const corePages: Page[] = [
       {
         paragraphs: [
           "Need a hand with your trip? Tripile's support team is available 24/7 to help with bookings, changes, cancellations, refunds, and travel questions. Call 1-800-963-4330 or email Support@Tripile.com and we'll get you sorted quickly.",
+          "Most questions about baggage allowances, name corrections, date changes and refund timelines are answered in the help topics on this page. Have your booking reference ready when you contact us so we can pull up your itinerary straight away.",
+          "For airline-specific rules such as seat selection or check-in windows, our team can point you to the carrier's own policy for your ticket, and our web check-in page links directly to each airline's check-in.",
         ],
       },
     ],
