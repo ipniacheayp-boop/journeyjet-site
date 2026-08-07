@@ -19,7 +19,7 @@ Canonical host: `https://tripile.com`. robots.txt sitemap directives: `https://t
 | Duplicate URL variants (`//`, trailing slash, query) | 0 |
 | Non-canonical host | 0 |
 | Duplicate sitemap entries | 0 |
-| Pages with insufficient content (<60 words) | 1 |
+| Pages with insufficient content (<60 words) | 0 |
 | Near-duplicate content groups (same template skeleton) | 163 |
 | Dead internal link targets | 0 |
 
@@ -53,7 +53,7 @@ _none_
 
 ## Pages with insufficient content
 
-- https://tripile.com/support
+_none_
 
 ## Near-duplicate content groups
 
@@ -86,4 +86,4 @@ _none_
 
 ## Per-URL findings
 
-- `/support` — insufficient content (59 words)
+_No issues found._
