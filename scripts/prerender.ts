@@ -312,6 +312,8 @@ const corePages: Page[] = [
       {
         paragraphs: [
           "Watch flights move across the globe with Tripile's live flight tracker. See real-time aircraft positions, routes, altitude, and speed on an interactive map, and follow a specific flight from takeoff to landing.",
+          "Search by flight number or airline to pin a single aircraft, or pan the map to see what is overhead right now. Positions, altitude and speed refresh from live aviation data, so the tracker is useful for meeting an arrival, watching for a delay, or simply following a route you plan to fly.",
+          "For scheduled departure and arrival times, gate information and delay status, use the flight status page instead — the tracker focuses on where an aircraft is at this moment rather than the timetable behind it.",
         ],
       },
     ],

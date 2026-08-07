@@ -19,7 +19,7 @@ Canonical host: `https://tripile.com`. robots.txt sitemap directives: `https://t
 | Duplicate URL variants (`//`, trailing slash, query) | 0 |
 | Non-canonical host | 0 |
 | Duplicate sitemap entries | 0 |
-| Pages with insufficient content (<60 words) | 2 |
+| Pages with insufficient content (<60 words) | 1 |
 | Near-duplicate content groups (same template skeleton) | 163 |
 | Dead internal link targets | 0 |
 
@@ -53,7 +53,6 @@ _none_
 
 ## Pages with insufficient content
 
-- https://tripile.com/flight-tracker
 - https://tripile.com/support
 
 ## Near-duplicate content groups
@@ -78,7 +77,13 @@ _none_
 
 _none_
 
+## Notes & recommendations
+
+- **Templated near-duplicates.** 163 content skeletons are shared by more than one page. This is expected for programmatic sets (city, route, airline pages) as long as each page carries unique data; groups where the *only* variable is the place name are the ones worth expanding first.
+- **Static article visibility.** The prerendered article is rendered with `display:none` and replaced by the React app on hydration. Google indexes it, but hidden text is a quality risk — consider making it visible (or removing it once server rendering is available).
+- **Sitemap split.** Hotel *city* pages live in `sitemap-hotels.xml`; every other URL, including the hotel hubs, lives in `sitemap.xml`. No URL appears in both.
+- **Re-run this audit** after any route, dataset or prerender change: `bun run build && bunx tsx scripts/audit-seo.ts`.
+
 ## Per-URL findings
 
-- `/flight-tracker` — insufficient content (55 words)
 - `/support` — insufficient content (59 words)
