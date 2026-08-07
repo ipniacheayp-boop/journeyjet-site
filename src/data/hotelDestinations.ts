@@ -370,6 +370,8 @@ export function nearbyDestinations(
 
 /** A region only gets its own hub page when it has at least this many cities. */
 const MIN_CITIES_FOR_REGION_HUB = 3;
+/** A country only gets its own hub page when it has enough cities to be useful, not thin. */
+const MIN_CITIES_FOR_COUNTRY_HUB = 3;
 
 export interface HotelRegionHub {
   region: string;
@@ -401,9 +403,13 @@ export function hotelRegionHubPath(countrySlug: string, regionSlug: string): str
   return `${HOTEL_HUB_ROOT}/${countrySlug}/${regionSlug}`;
 }
 
+const hotelDestinationGroups = groupedIndexableDestinations();
+
 const hotelHubs: HotelCountryHub[] = (() => {
   const takenCountrySlugs = new Set<string>();
-  return groupedIndexableDestinations().map((group) => {
+  return hotelDestinationGroups
+    .filter((g) => g.regions.reduce((n, r) => n + r.destinations.length, 0) >= MIN_CITIES_FOR_COUNTRY_HUB)
+    .map((group) => {
     let countrySlug = slugifyDestination(group.country);
     if (takenCountrySlugs.has(countrySlug)) countrySlug = `${countrySlug}-${slugifyDestination(group.countryCode)}`;
     takenCountrySlugs.add(countrySlug);
@@ -452,6 +458,23 @@ const hotelHubs: HotelCountryHub[] = (() => {
     };
   });
 })();
+
+/**
+ * Countries with too few destinations for their own hub page. Their cities are
+ * linked directly from the /hotel-destinations directory so they are never orphaned.
+ */
+export function hotelCountriesWithoutHub(): { country: string; countryCode: string; destinations: HotelDestination[] }[] {
+  const withHub = new Set(hotelHubs.map((h) => h.country));
+  return hotelDestinationGroups
+    .filter((g) => !withHub.has(g.country))
+    .map((g) => ({
+      country: g.country,
+      countryCode: g.countryCode,
+      destinations: g.regions
+        .flatMap((r) => r.destinations)
+        .sort((a, b) => a.name.localeCompare(b.name)),
+    }));
+}
 
 /** All hotel country hubs, United States first, then alphabetical. */
 export function hotelCountryHubs(): HotelCountryHub[] {
