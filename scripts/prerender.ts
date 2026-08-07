@@ -877,6 +877,13 @@ indexableHotelDestinations.forEach((d) => {
       {
         paragraphs: [
           `Compare hotels in ${regionLabel} on Tripile. Choose your check-in and check-out dates to see live availability, guest ratings, amenities, and cancellation policies for the properties returned for your stay.`,
+          `${d.name} sits in ${[d.state, d.country].filter(Boolean).join(", ")}, and every result on this page comes from a live search rather than a stored rate, so the nightly price you see already matches your dates and guest count.`,
+          (() => {
+            const nearby = hotelHubSiblings(d, 4).map((n) => n.name);
+            return nearby.length > 0
+              ? `Comparing a few places at once? Travellers looking at ${d.name} often also check hotels in ${nearby.join(", ")}, which you can open from the links below and search for the same dates.`
+              : `Use the links below to move up to the wider ${d.state ?? d.country} hotel directory and compare nearby destinations for the same dates.`;
+          })(),
         ],
       },
       ...(legacy
@@ -1004,6 +1011,13 @@ airlinesData.forEach((a) => {
       {
         paragraphs: [
           `Find and compare ${a.name} (${a.code}) flights on Tripile. Search ${a.name} fares and routes, review baggage and fare rules, and book cheap tickets with transparent totals and no hidden fees. ${a.name} is a ${a.country}-based carrier.`,
+          `Enter your route and dates to see the ${a.name} flights available for your trip alongside other carriers, so you can judge whether the ${a.code} schedule, cabin baggage allowance and total price work better than the alternatives.`,
+        ],
+      },
+      {
+        heading: `Booking ${a.name} Flights`,
+        paragraphs: [
+          `Fares and seat availability for ${a.name} change constantly, so results are fetched live at search time rather than published here as fixed prices. Check the fare conditions before paying — ${a.name} sets its own rules for changes, cancellations and checked bags — and once ticketed you can use our web check-in page to open the airline's own check-in.`,
         ],
       },
     ],
