@@ -78,8 +78,106 @@ const deals: FlightDeal[] = [
   },
 ];
 
+const CITY_IATA: Record<string, string> = {
+  "New York": "JFK",
+  Miami: "MIA",
+  "San Francisco": "SFO",
+  "Las Vegas": "LAS",
+  Chicago: "ORD",
+  Denver: "DEN",
+  Dallas: "DFW",
+  "Los Angeles": "LAX",
+  Atlanta: "ATL",
+  Orlando: "MCO",
+  Seattle: "SEA",
+  Phoenix: "PHX",
+};
+
+const AIRLINE_CARRIER: Record<string, string> = {
+  "American Airlines": "AA",
+  Frontier: "F9",
+  "United Airlines": "UA",
+  "Delta Air Lines": "DL",
+  Southwest: "WN",
+  "Alaska Airlines": "AS",
+};
+
+const ROUTE_MINUTES: Record<string, number> = {
+  "New York-Miami": 180,
+  "San Francisco-Las Vegas": 95,
+  "Chicago-Denver": 155,
+  "Dallas-Los Angeles": 215,
+  "Atlanta-Orlando": 80,
+  "Seattle-Phoenix": 170,
+};
+
+function toIsoDate(date: Date) {
+  return date.toISOString();
+}
+
+function addMinutes(date: Date, minutes: number) {
+  return new Date(date.getTime() + minutes * 60_000);
+}
+
+function minutesToIsoDuration(minutes: number) {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return `PT${h}H${m}M`;
+}
+
+function buildFlightOffer(deal: FlightDeal) {
+  const fromCode = CITY_IATA[deal.from];
+  const toCode = CITY_IATA[deal.to];
+  const carrier = AIRLINE_CARRIER[deal.airline] || "XX";
+  const routeKey = `${deal.from}-${deal.to}`;
+  const flightMinutes = ROUTE_MINUTES[routeKey] || 180;
+
+  const departDate = new Date(deal.depart);
+  departDate.setHours(8, 0, 0, 0);
+  const outboundArrival = addMinutes(departDate, flightMinutes);
+
+  const returnDate = new Date(deal.ret);
+  returnDate.setHours(17, 0, 0, 0);
+  const returnArrival = addMinutes(returnDate, flightMinutes);
+
+  const outboundSegment = {
+    departure: { iataCode: fromCode, at: toIsoDate(departDate) },
+    arrival: { iataCode: toCode, at: toIsoDate(outboundArrival) },
+    carrierCode: carrier,
+    number: "1010",
+    duration: minutesToIsoDuration(flightMinutes),
+  };
+
+  const returnSegment = {
+    departure: { iataCode: toCode, at: toIsoDate(returnDate) },
+    arrival: { iataCode: fromCode, at: toIsoDate(returnArrival) },
+    carrierCode: carrier,
+    number: "1011",
+    duration: minutesToIsoDuration(flightMinutes),
+  };
+
+  const offer = {
+    type: "flight",
+    price: {
+      total: String(deal.price),
+      base: String(deal.price),
+      currency: "USD",
+    },
+    itineraries: [
+      { duration: minutesToIsoDuration(flightMinutes), segments: [outboundSegment] },
+      { duration: minutesToIsoDuration(flightMinutes), segments: [returnSegment] },
+    ],
+    travelerPricings: [
+      { fareDetailsBySegment: [{ cabin: "ECONOMY" }, { cabin: "ECONOMY" }] },
+    ],
+  };
+
+  return offer;
+}
+
 const HandpickedFlightDeals = () => {
   const trackRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   const scrollBy = (dir: 1 | -1) => {
     const el = trackRef.current;
