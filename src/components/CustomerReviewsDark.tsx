@@ -97,12 +97,65 @@ const homepageReviews: TravelerReview[] = [
   },
 ];
 
+interface ReviewCardProps {
+  review: TravelerReview;
+  expanded: boolean;
+  onToggle: () => void;
+}
+
+const ReviewCard = ({ review, expanded, onToggle }: ReviewCardProps) => (
+  <motion.article
+    whileHover={{ y: -6 }}
+    className="h-full rounded-3xl border border-white/15 bg-white/10 p-6 shadow-2xl backdrop-blur-xl"
+  >
+    <div className="mb-4 flex items-center gap-1">{renderStars(review.rating)}</div>
+
+    <p className="text-sm leading-relaxed text-blue-50/90">
+      {expanded ? review.text : `${review.text.slice(0, 145)}...`}
+    </p>
+    <button
+      type="button"
+      className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-blue-300 hover:text-blue-200"
+      onClick={onToggle}
+    >
+      {expanded ? "Show less" : "Read full review"}
+      <ChevronRight className="h-3.5 w-3.5" />
+    </button>
+
+    <div className="mt-4 grid gap-1 border-t border-white/15 pt-4 text-xs text-blue-100/80">
+      <p className="font-semibold text-white">{review.route}</p>
+      <p>{review.bookingType}</p>
+      <p>{formatReviewDate(review.datePublished)}</p>
+    </div>
+
+    <div className="mt-3 flex items-center gap-2">
+      {review.avatarUrl ? (
+        <img
+          src={review.avatarUrl}
+          alt={`${review.name} traveler profile`}
+          loading="lazy"
+          decoding="async"
+          className="h-10 w-10 rounded-full object-cover"
+        />
+      ) : (
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500/20 font-bold text-white">
+          {review.name.charAt(0)}
+        </div>
+      )}
+      <p className="text-sm font-semibold text-white">{review.name}</p>
+    </div>
+  </motion.article>
+);
+
 const CustomerReviewsDark = () => {
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [expandedReviewIds, setExpandedReviewIds] = useState<Record<string, boolean>>({});
   const [reviews, setReviews] = useState<TravelerReview[]>(homepageReviews);
+  const [showAllReviews, setShowAllReviews] = useState(false);
 
-  const duplicatedReviews = useMemo(() => [...reviews, ...reviews], [reviews]);
+  const displayedReviews = useMemo(() => {
+    return showAllReviews ? reviews : reviews.slice(0, 5);
+  }, [reviews, showAllReviews]);
 
   const travelTrustBlocks = [
     {
@@ -170,94 +223,37 @@ const CustomerReviewsDark = () => {
           </p>
         </header>
 
-        <div className="md:hidden">
-          <div className="scrollbar-hide flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4">
-            {reviews.map((review) => (
-              <article
-                key={review.id}
-                className="min-h-[320px] w-[290px] snap-center rounded-3xl border border-white/15 bg-white/10 p-5 shadow-2xl backdrop-blur-xl"
-              >
-                <div className="mb-4 flex items-center gap-1">{renderStars(review.rating)}</div>
-                <p className="line-clamp-5 text-sm leading-relaxed text-blue-50/90">{review.text}</p>
-                <div className="mt-4 space-y-1 border-t border-white/15 pt-4 text-xs text-blue-100/80">
-                  <p className="font-semibold text-white">{review.route}</p>
-                  <p>{review.bookingType}</p>
-                  <p>{formatReviewDate(review.datePublished)}</p>
-                </div>
-                <div className="mt-3 flex items-center gap-2">
-                  {review.avatarUrl ? (
-                    <img
-                      src={review.avatarUrl}
-                      alt={`${review.name} traveler profile`}
-                      loading="lazy"
-                      decoding="async"
-                      className="h-9 w-9 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-500/20 text-sm font-bold text-white">
-                      {review.name.charAt(0)}
-                    </div>
-                  )}
-                  <p className="text-sm font-semibold text-white">{review.name}</p>
-                </div>
-              </article>
-            ))}
-          </div>
+        <div
+          className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          aria-label={showAllReviews ? "All traveler feedback" : "Featured traveler feedback"}
+        >
+          {displayedReviews.map((review) => (
+            <ReviewCard
+              key={review.id}
+              review={review}
+              expanded={!!expandedReviewIds[review.id]}
+              onToggle={() => toggleExpanded(review.id)}
+            />
+          ))}
         </div>
 
-        <div
-          className="group relative hidden overflow-x-hidden py-5 md:block"
-          style={{
-            maskImage: "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
-            WebkitMaskImage: "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
-          }}
-        >
-          <div className="animate-marquee flex w-max gap-6 group-hover:[animation-play-state:paused]">
-            {duplicatedReviews.map((review, index) => (
-              <motion.article
-                key={`${review.id}-${index}`}
-                whileHover={{ y: -6 }}
-                className="w-[360px] rounded-3xl border border-white/15 bg-white/10 p-6 shadow-2xl backdrop-blur-xl"
-              >
-                <div className="mb-4 flex items-center gap-1">{renderStars(review.rating)}</div>
-
-                <p className="text-sm leading-relaxed text-blue-50/90">
-                  {expandedReviewIds[`${review.id}-${index}`] ? review.text : `${review.text.slice(0, 145)}...`}
-                </p>
-                <button
-                  type="button"
-                  className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-blue-300 hover:text-blue-200"
-                  onClick={() => toggleExpanded(`${review.id}-${index}`)}
-                >
-                  {expandedReviewIds[`${review.id}-${index}`] ? "Show less" : "Read full review"}
-                  <ChevronRight className="h-3.5 w-3.5" />
-                </button>
-
-                <div className="mt-4 grid gap-1 border-t border-white/15 pt-4 text-xs text-blue-100/80">
-                  <p className="font-semibold text-white">{review.route}</p>
-                  <p>{review.bookingType}</p>
-                  <p>{formatReviewDate(review.datePublished)}</p>
-                </div>
-
-                <div className="mt-3 flex items-center gap-2">
-                  {review.avatarUrl ? (
-                    <img
-                      src={review.avatarUrl}
-                      alt={`${review.name} traveler profile`}
-                      loading="lazy"
-                      decoding="async"
-                      className="h-10 w-10 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500/20 font-bold text-white">
-                      {review.name.charAt(0)}
-                    </div>
-                  )}
-                  <p className="text-sm font-semibold text-white">{review.name}</p>
-                </div>
-              </motion.article>
-            ))}
-          </div>
+        <div className="mt-8 flex justify-center">
+          {showAllReviews ? (
+            <Button
+              onClick={() => setShowAllReviews(false)}
+              variant="outline"
+              className="rounded-xl border-blue-400/40 bg-transparent px-6 text-blue-100 hover:bg-blue-500/20"
+            >
+              Show Less
+            </Button>
+          ) : (
+            <Button
+              onClick={() => setShowAllReviews(true)}
+              className="rounded-xl bg-blue-600 px-6 hover:bg-blue-500"
+            >
+              Show All Reviews
+            </Button>
+          )}
         </div>
 
         <section aria-label="Tripile traveler trust highlights" className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2">
