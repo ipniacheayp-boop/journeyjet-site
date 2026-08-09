@@ -122,9 +122,6 @@ const Header = () => {
                 </span>
               ))}
             </div>
-            <span className="text-white/60 hidden lg:inline">
-              🇺🇸 US-Based Travel Experts · Serving all 50 states
-            </span>
           </div>
         </div>
       </div>
