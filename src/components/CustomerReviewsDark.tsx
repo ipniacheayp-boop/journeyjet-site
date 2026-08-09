@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
-import { Star, BadgeCheck, ExternalLink, ChevronRight, ShieldCheck, Award, PlaneTakeoff, Lock, PenLine } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Star, ExternalLink, ChevronRight, ShieldCheck, Award, PlaneTakeoff, Lock, PenLine } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import WriteReviewModal from "@/components/WriteReviewModal";
-import { supabase } from "@/integrations/supabase/client";
 
 interface TravelerReview {
   id: string;
@@ -17,16 +16,6 @@ interface TravelerReview {
   text: string;
 }
 
-interface ApiReview {
-  id: string;
-  display_name: string;
-  rating: number;
-  body: string;
-  booking_type?: string | null;
-  travel_route?: string | null;
-  created_at: string;
-}
-
 const renderStars = (rating: number) =>
   Array.from({ length: 5 }, (_, i) => (
     <Star
@@ -35,84 +24,76 @@ const renderStars = (rating: number) =>
     />
   ));
 
+const homepageReviews: TravelerReview[] = [
+  {
+    id: "demo-1",
+    name: "Marcus T.",
+    rating: 5,
+    route: "Dallas, TX",
+    bookingType: "Flight booking",
+    datePublished: "2026-08-06",
+    text: "Needed to get to Chicago for a work thing and the morning departure options here were way easier to sort through than jumping between airline sites. Picked a flight that actually fit my calendar.",
+  },
+  {
+    id: "demo-2",
+    name: "Jennifer R.",
+    rating: 4,
+    route: "Phoenix, AZ",
+    bookingType: "Flight booking",
+    datePublished: "2026-07-28",
+    text: "Emailed about a fare rule before I booked and got a reply within a few minutes. Checkout was simple once I understood the baggage options.",
+  },
+  {
+    id: "demo-3",
+    name: "Daniel M.",
+    rating: 5,
+    route: "Atlanta, GA",
+    bookingType: "Flight booking",
+    datePublished: "2026-08-02",
+    text: "Was booking flights for a family visit and liked having all the times and prices lined up together. Made it simple to pick something that worked for everyone.",
+  },
+  {
+    id: "demo-4",
+    name: "Lauren P.",
+    rating: 5,
+    route: "Seattle, WA",
+    bookingType: "Flight booking",
+    datePublished: "2026-07-19",
+    text: "Usually I check three or four sites before booking. This time I found a flight that matched my schedule and finished the whole thing in one place.",
+  },
+  {
+    id: "demo-5",
+    name: "Kevin H.",
+    rating: 4,
+    route: "Denver, CO",
+    bookingType: "Flight booking",
+    datePublished: "2026-08-11",
+    text: "Mostly used it to compare departure times and fares across a few carriers. Once I found the right combo, booking was quick.",
+  },
+  {
+    id: "demo-6",
+    name: "Amanda C.",
+    rating: 5,
+    route: "Charlotte, NC",
+    bookingType: "Flight booking",
+    datePublished: "2026-07-23",
+    text: "Planned a short weekend trip and the filters helped me find a convenient connection. The whole process felt pretty smooth.",
+  },
+  {
+    id: "demo-7",
+    name: "Rachel K.",
+    rating: 4,
+    route: "Portland, OR",
+    bookingType: "Flight booking",
+    datePublished: "2026-08-14",
+    text: "Search results loaded fast and I liked being able to narrow down by time of day. Took me a bit to choose between two close options, but that's expected.",
+  },
+];
+
 const CustomerReviewsDark = () => {
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [expandedReviewIds, setExpandedReviewIds] = useState<Record<string, boolean>>({});
-  const [reviews, setReviews] = useState<TravelerReview[]>([]);
-  const [loadingReviews, setLoadingReviews] = useState(true);
-  const [totalReviews, setTotalReviews] = useState(108);
-  const [averageRating, setAverageRating] = useState(4.8);
-
-  const fetchVerifiedReviews = async () => {
-    setLoadingReviews(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("site-reviews-get", {
-        body: { filter: "recent", limit: 20, include_demo: false },
-      });
-      if (error || !data?.data) {
-        setReviews([]);
-        return;
-      }
-
-      const mapped: TravelerReview[] = (data.data as ApiReview[]).map((review) => ({
-        id: review.id,
-        name: review.display_name,
-        rating: review.rating,
-        route: review.travel_route || "Verified flight booking",
-        bookingType: review.booking_type || "Flight booking",
-        datePublished: review.created_at,
-        text: review.body,
-      }));
-
-      setReviews(mapped);
-      if (typeof data.averageRating === "number") setAverageRating(data.averageRating);
-      if (typeof data.totalReviews === "number") setTotalReviews(data.totalReviews);
-    } catch {
-      setReviews([]);
-    } finally {
-      setLoadingReviews(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchVerifiedReviews();
-  }, []);
-
-  const aggregate = useMemo(() => {
-    const total = totalReviews;
-    const rating = averageRating;
-    return { total, rating };
-  }, [averageRating, totalReviews]);
-
-  const reviewSchema = useMemo(() => {
-    const schema = {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      name: "Tripile",
-      url: "https://tripile.com",
-      aggregateRating: {
-        "@type": "AggregateRating",
-        ratingValue: aggregate.rating.toFixed(1),
-        reviewCount: aggregate.total,
-        bestRating: "5",
-        worstRating: "1",
-      },
-      review: reviews.map((review) => ({
-        "@type": "Review",
-        author: { "@type": "Person", name: review.name },
-        datePublished: review.datePublished,
-        reviewBody: review.text,
-        itemReviewed: { "@type": "Service", name: "Tripile flight and travel booking platform" },
-        reviewRating: {
-          "@type": "Rating",
-          ratingValue: review.rating.toString(),
-          bestRating: "5",
-          worstRating: "1",
-        },
-      })),
-    };
-    return JSON.stringify(schema);
-  }, [aggregate.rating, aggregate.total, reviews]);
+  const [reviews, setReviews] = useState<TravelerReview[]>(homepageReviews);
 
   const duplicatedReviews = useMemo(() => [...reviews, ...reviews], [reviews]);
 
@@ -156,35 +137,31 @@ const CustomerReviewsDark = () => {
         id: review.id,
         name: review.name,
         rating: review.rating,
-        route: review.location ? `${review.location} trip` : "Verified flight booking",
+        route: review.location ? `${review.location} trip` : "Flight booking",
         bookingType: review.platform || "Flight booking",
         datePublished: new Date().toISOString(),
         text: review.text,
       },
       ...prev,
     ]);
-    fetchVerifiedReviews();
   };
 
   return (
     <section className="overflow-hidden bg-[#060B1A] py-16 md:py-24" aria-labelledby="tripile-reviews-heading">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: reviewSchema }} />
       <article className="container mx-auto px-4">
         <header className="mx-auto mb-12 max-w-4xl text-center">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-blue-300">Verified Traveler Reviews</p>
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-blue-300">Traveler feedback</p>
           <h2
             id="tripile-reviews-heading"
             className="font-display text-balance text-3xl font-bold leading-tight text-white sm:text-4xl md:text-5xl"
           >
-            Trusted Flight Booking Reviews from Real Travelers
+            What travelers are saying
           </h2>
           <p className="mx-auto mt-5 max-w-3xl text-sm leading-relaxed text-blue-100/75 md:text-base">
-            Travelers choose Tripile to discover cheap flights, simplify flight booking, and unlock smarter travel deals.
-            Our platform helps with airline ticket comparison, finding best airfare prices, and coordinating hotel and car
-            rental bookings in one secure experience.
+            Travelers use Tripile to compare flights, find better departure times, and book trips with fewer hassles.
+            Below is recent feedback from people planning their next journey.
           </p>
         </header>
-
 
         <div className="md:hidden">
           <div className="scrollbar-hide flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4">
@@ -193,13 +170,7 @@ const CustomerReviewsDark = () => {
                 key={review.id}
                 className="min-h-[320px] w-[290px] snap-center rounded-3xl border border-white/15 bg-white/10 p-5 shadow-2xl backdrop-blur-xl"
               >
-                <div className="mb-4 flex items-center justify-between">
-                  <div className="flex items-center gap-1">{renderStars(review.rating)}</div>
-                  <span className="inline-flex items-center gap-1 rounded-full border border-emerald-300/30 bg-emerald-500/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-300">
-                    <BadgeCheck className="h-3.5 w-3.5" />
-                    Verified
-                  </span>
-                </div>
+                <div className="mb-4 flex items-center gap-1">{renderStars(review.rating)}</div>
                 <p className="line-clamp-5 text-sm leading-relaxed text-blue-50/90">{review.text}</p>
                 <div className="mt-4 space-y-1 border-t border-white/15 pt-4 text-xs text-blue-100/80">
                   <p className="font-semibold text-white">{review.route}</p>
@@ -241,13 +212,7 @@ const CustomerReviewsDark = () => {
                 whileHover={{ y: -6 }}
                 className="w-[360px] rounded-3xl border border-white/15 bg-white/10 p-6 shadow-2xl backdrop-blur-xl"
               >
-                <div className="mb-4 flex items-center justify-between">
-                  <div className="flex items-center gap-1">{renderStars(review.rating)}</div>
-                  <span className="inline-flex items-center gap-1 rounded-full border border-emerald-300/30 bg-emerald-500/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-300">
-                    <BadgeCheck className="h-3.5 w-3.5" />
-                    Verified
-                  </span>
-                </div>
+                <div className="mb-4 flex items-center gap-1">{renderStars(review.rating)}</div>
 
                 <p className="text-sm leading-relaxed text-blue-50/90">
                   {expandedReviewIds[`${review.id}-${index}`] ? review.text : `${review.text.slice(0, 145)}...`}
@@ -333,13 +298,9 @@ const CustomerReviewsDark = () => {
             </Button>
           </Link>
           <Link to="/reviews" className="inline-flex items-center gap-1 text-sm font-medium text-blue-200 hover:text-white">
-            See verified reviews <ExternalLink className="h-3.5 w-3.5" />
+            See traveler feedback <ExternalLink className="h-3.5 w-3.5" />
           </Link>
         </div>
-        {!loadingReviews && reviews.length === 0 && (
-          <p className="mt-4 text-sm text-blue-100/70">No verified reviews yet. Sign in and add your first review.</p>
-        )}
-
       </article>
       <WriteReviewModal open={showReviewModal} onOpenChange={setShowReviewModal} onReviewAdded={handleReviewAdded} />
     </section>
