@@ -182,7 +182,7 @@ const CustomerReviewsDark = () => {
                 <div className="mt-4 space-y-1 border-t border-white/15 pt-4 text-xs text-blue-100/80">
                   <p className="font-semibold text-white">{review.route}</p>
                   <p>{review.bookingType}</p>
-                  <p>{new Date(review.datePublished).toLocaleDateString()}</p>
+                  <p>{formatReviewDate(review.datePublished)}</p>
                 </div>
                 <div className="mt-3 flex items-center gap-2">
                   {review.avatarUrl ? (
@@ -236,7 +236,7 @@ const CustomerReviewsDark = () => {
                 <div className="mt-4 grid gap-1 border-t border-white/15 pt-4 text-xs text-blue-100/80">
                   <p className="font-semibold text-white">{review.route}</p>
                   <p>{review.bookingType}</p>
-                  <p>{new Date(review.datePublished).toLocaleDateString()}</p>
+                  <p>{formatReviewDate(review.datePublished)}</p>
                 </div>
 
                 <div className="mt-3 flex items-center gap-2">
