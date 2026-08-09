@@ -263,10 +263,19 @@ const HandpickedFlightDeals = () => {
                         <p className="text-2xl font-extrabold text-emerald-600">${Math.ceil(deal.price)}</p>
                         <p className="text-xs text-muted-foreground">Per Person</p>
                       </div>
-                      <Button asChild className="rounded-xl">
-                        <Link to="/deals" title={`Book ${deal.from} to ${deal.to} flight deal`}>
-                          Book Now
-                        </Link>
+                      <Button
+                        className="rounded-xl"
+                        onClick={() => {
+                          const offer = buildFlightOffer(deal);
+                          sessionStorage.setItem(
+                            "selectedOffer",
+                            JSON.stringify({ type: "flights", offer, agentId: undefined })
+                          );
+                          navigate("/booking/flights");
+                        }}
+                        aria-label={`Book ${deal.from} to ${deal.to} flight deal`}
+                      >
+                        Book Now
                       </Button>
                     </div>
                   </div>
