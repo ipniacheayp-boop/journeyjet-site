@@ -370,79 +370,11 @@ const Index = () => {
         <FlightsHotelsSearch />
       </Suspense>
 
-      {/* Today's deals — clean cards on white background */}
-      <section aria-labelledby="today-deals-heading" className="py-10 bg-slate-50/80 dark:bg-slate-900/30">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-6">
-            <div>
-              <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-1">Limited Time</p>
-              <h2 id="today-deals-heading" className="font-display text-2xl md:text-3xl font-bold text-foreground">
-                Today&apos;s Best Travel Deals
-              </h2>
-            </div>
-            <Link
-              to="/deals"
-              title="See all Tripile travel deals"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
-            >
-              View all deals <ChevronRight className="w-4 h-4" />
-            </Link>
-          </div>
+      {/* Handpicked top flight deals */}
+      <Suspense fallback={<div className="py-10" />}>
+        <HandpickedFlightDeals />
+      </Suspense>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {[
-              {
-                image: dealLastMinute,
-                alt: "Last minute flight deals USA",
-                badge: "Flights",
-                title: "Last-Minute Flight Deals",
-                desc: "Save up to $50 on same-week departures.",
-                href: "/deals",
-              },
-              {
-                image: dealBudget,
-                alt: "Budget flights under $199",
-                badge: "Budget",
-                title: "Flights Under $199",
-                desc: "Round-trip fares to top US destinations.",
-                href: "/deals",
-              },
-              {
-                image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80",
-                alt: "Cheap hotels USA — compare rates on Tripile",
-                badge: "Hotels",
-                title: "Hotels From $79/Night",
-                desc: "Top-rated stays in NYC, Vegas, Miami & more.",
-                href: "/hotels",
-              },
-            ].map((deal) => (
-              <Link
-                key={deal.title}
-                to={deal.href}
-                title={`${deal.title} — Tripile`}
-                className="group bg-white dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
-              >
-                <div className="relative h-40 overflow-hidden">
-                  <img
-                    src={deal.image}
-                    alt={deal.alt}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <span className="absolute top-3 left-3 bg-primary text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide">
-                    {deal.badge}
-                  </span>
-                </div>
-                <div className="p-4">
-                  <h3 className="font-bold text-foreground mb-1">{deal.title}</h3>
-                  <p className="text-sm text-muted-foreground">{deal.desc}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Feature Highlights Strip - Three Columns */}
       <Suspense fallback={<div className="py-12" />}>
