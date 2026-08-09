@@ -53,7 +53,7 @@ const deals: FlightDeal[] = [
     depart: "Aug 29, 2026",
     ret: "Sep 2, 2026",
     price: 279,
-    image: "https://images.unsplash.com/photo-1534190239940-9ba8944ea261?auto=format&fit=crop&w=800&q=70",
+    image: "https://images.unsplash.com/photo-1580655653885-65763b2597d0?auto=format&fit=crop&w=800&q=70",
   },
   {
     from: "Atlanta",
