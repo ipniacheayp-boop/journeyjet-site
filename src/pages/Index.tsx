@@ -29,6 +29,7 @@ const FlightsHotelsSearch = lazy(() => import("@/components/FlightsHotelsSearch"
 const PopularFlights = lazy(() => import("@/components/PopularFlights"));
 const CustomerReviewsDark = lazy(() => import("@/components/CustomerReviewsDark"));
 const HandpickedFlightDeals = lazy(() => import("@/components/HandpickedFlightDeals"));
+import { SavingsRevealButton } from "@/components/SavingsRevealDialog";
 import { mockDeals, type Deal } from "@/data/mockDeals";
 import dealLastMinute from "@/assets/deal-last-minute.jpg";
 import dealBudget from "@/assets/deal-budget.jpg";
@@ -375,6 +376,11 @@ const Index = () => {
       <Suspense fallback={<div className="py-10" />}>
         <HandpickedFlightDeals />
       </Suspense>
+
+      <div className="flex justify-center pb-10 bg-slate-50/80 dark:bg-slate-900/30">
+        <SavingsRevealButton />
+      </div>
+
 
 
       {/* Feature Highlights Strip - Three Columns */}
