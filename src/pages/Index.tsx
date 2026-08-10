@@ -29,6 +29,7 @@ const FlightsHotelsSearch = lazy(() => import("@/components/FlightsHotelsSearch"
 const PopularFlights = lazy(() => import("@/components/PopularFlights"));
 const CustomerReviewsDark = lazy(() => import("@/components/CustomerReviewsDark"));
 const HandpickedFlightDeals = lazy(() => import("@/components/HandpickedFlightDeals"));
+import { SavingsRevealButton } from "@/components/SavingsRevealDialog";
 import { mockDeals, type Deal } from "@/data/mockDeals";
 import dealLastMinute from "@/assets/deal-last-minute.jpg";
 import dealBudget from "@/assets/deal-budget.jpg";
