@@ -104,7 +104,14 @@ const RouteLoadingFallback = () => (
   </main>
 );
 
+const TravelGuideArticleRedirect = () => {
+  const { pathname } = useLocation();
+  const slug = pathname.replace(/^\/travel-guides\//, "").replace(/\/$/, "");
+  return <Navigate to={`/blog/${slug}`} replace />;
+};
+
 const App = () => (
+
   <QueryClientProvider client={queryClient}>
     <ThemeProvider defaultTheme="light" storageKey="tripile-theme">
       <TooltipProvider>
