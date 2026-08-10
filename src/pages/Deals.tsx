@@ -553,7 +553,12 @@ const Deals = () => {
             Exclusive offers handpicked for you. Save up to <span className="text-primary font-bold">50%</span> on
             flights worldwide
           </p>
+
+          <div className="relative z-10 flex justify-center pt-2">
+            <SavingsRevealButton ctaHref="/deals#deals-grid" />
+          </div>
         </motion.div>
+
 
         {/* Gift Rewards Banner */}
         <motion.div
