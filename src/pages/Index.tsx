@@ -376,6 +376,11 @@ const Index = () => {
         <HandpickedFlightDeals />
       </Suspense>
 
+      <div className="flex justify-center pb-10 bg-slate-50/80 dark:bg-slate-900/30">
+        <SavingsRevealButton />
+      </div>
+
+
 
       {/* Feature Highlights Strip - Three Columns */}
       <Suspense fallback={<div className="py-12" />}>
