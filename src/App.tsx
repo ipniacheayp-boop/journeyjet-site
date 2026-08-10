@@ -104,7 +104,14 @@ const RouteLoadingFallback = () => (
   </main>
 );
 
+const TravelGuideArticleRedirect = () => {
+  const { pathname } = useLocation();
+  const slug = pathname.replace(/^\/travel-guides\//, "").replace(/\/$/, "");
+  return <Navigate to={`/blog/${slug}`} replace />;
+};
+
 const App = () => (
+
   <QueryClientProvider client={queryClient}>
     <ThemeProvider defaultTheme="light" storageKey="tripile-theme">
       <TooltipProvider>
@@ -211,6 +218,9 @@ const App = () => (
                   <Route path="/explore" element={<Explore />} />
                   {/* Travel Guides (programmatic city & country guides) */}
                   <Route path="/travel-guides" element={<TravelGuidesHub />} />
+                  {/* Legacy/editorial guide slugs published as blog articles */}
+                  <Route path="/travel-guides/:slug" element={<TravelGuideArticleRedirect />} />
+
                   <Route path="/travel-guide/country/:slug" element={<CountryGuidePage />} />
                   <Route path="/travel-guide/:slug" element={<CityGuidePage />} />
                   <Route path="/flights-to/:slug" element={<FlightsToDestination />} />
