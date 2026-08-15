@@ -75,6 +75,7 @@ const PriceMatch = lazy(() => import("./pages/PriceMatch"));
 const TripPlanner = lazy(() => import("./pages/TripPlanner"));
 const Explore = lazy(() => import("./pages/Explore"));
 const SearchHubPage = lazy(() => import("./pages/SearchHubPage"));
+const FlightSearchLive = lazy(() => import("./pages/FlightSearchLive"));
 const TravelGuidesHub = lazy(() => import("./pages/guides/TravelGuidesHub"));
 const CityGuidePage = lazy(() => import("./pages/guides/CityGuidePage"));
 const CountryGuidePage = lazy(() => import("./pages/guides/CountryGuidePage"));
@@ -125,6 +126,7 @@ const App = () => (
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/flights" element={<SearchHubPage />} />
+                  <Route path="/flights/search" element={<FlightSearchLive />} />
                   <Route path="/hotels" element={<SearchHubPage />} />
                   <Route path="/car-rentals" element={<SearchHubPage />} />
                   <Route path="/deals" element={<Deals />} />
