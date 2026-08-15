@@ -354,6 +354,20 @@ const SearchHubPage = () => {
             <SearchWidget key={pathname} defaultTab={tabKey} />
           </div>
 
+          {tabKey === "flights" && (
+            <p className="text-center text-sm text-muted-foreground mt-4">
+              Prefer live airline availability?{" "}
+              <Link
+                to="/flights/search"
+                className="text-primary font-medium hover:underline"
+                title="Live flight search with real-time fares"
+              >
+                Try our live flight search
+              </Link>{" "}
+              for real-time fares, baggage and fare rules.
+            </p>
+          )}
+
           <HubSeoArticle tabKey={tabKey} />
 
           {tabKey === "hotels" && <HotelHubDirectory />}
