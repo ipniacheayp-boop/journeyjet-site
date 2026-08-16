@@ -309,10 +309,15 @@ export type Database = {
           contact_phone: string | null
           created_at: string
           currency: string
+          duffel_booking_reference: string | null
+          duffel_offer_id: string | null
+          duffel_order_id: string | null
           fare_validated_at: string | null
           hold_expiry: string | null
           id: string
+          live_mode: boolean | null
           payment_method: string | null
+          payment_provider: string | null
           payment_reference: string | null
           payment_status: string | null
           refund_amount: number | null
@@ -339,10 +344,15 @@ export type Database = {
           contact_phone?: string | null
           created_at?: string
           currency?: string
+          duffel_booking_reference?: string | null
+          duffel_offer_id?: string | null
+          duffel_order_id?: string | null
           fare_validated_at?: string | null
           hold_expiry?: string | null
           id?: string
+          live_mode?: boolean | null
           payment_method?: string | null
+          payment_provider?: string | null
           payment_reference?: string | null
           payment_status?: string | null
           refund_amount?: number | null
@@ -369,10 +379,15 @@ export type Database = {
           contact_phone?: string | null
           created_at?: string
           currency?: string
+          duffel_booking_reference?: string | null
+          duffel_offer_id?: string | null
+          duffel_order_id?: string | null
           fare_validated_at?: string | null
           hold_expiry?: string | null
           id?: string
+          live_mode?: boolean | null
           payment_method?: string | null
+          payment_provider?: string | null
           payment_reference?: string | null
           payment_status?: string | null
           refund_amount?: number | null

@@ -238,3 +238,12 @@ verify_jwt = false
 
 [functions.duffel-offer-get]
 verify_jwt = false
+
+[functions.duffel-client-key]
+verify_jwt = false
+
+[functions.duffel-order-create]
+verify_jwt = false
+
+[functions.duffel-webhook]
+verify_jwt = false
