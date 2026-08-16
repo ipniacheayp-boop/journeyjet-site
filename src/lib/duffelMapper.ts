@@ -185,11 +185,9 @@ function aircraftOf(segment: DuffelSegment): string | null {
 }
 
 function cabinOf(segment: DuffelSegment): string | null {
-  return (
-    clean(segment.cabin_class_marketing_name) ||
-    clean(segment.cabin) ||
-    (segment.cabin_class ? cabinLabel(segment.cabin_class) : null)
-  );
+  // Prefer the human cabin class; airline marketing names are often raw codes (e.g. "ECO").
+  const cls = segment.cabin_class ? cabinLabel(segment.cabin_class) : null;
+  return cls || clean(segment.cabin) || clean(segment.cabin_class_marketing_name);
 }
 
 function conditionText(
