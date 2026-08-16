@@ -309,7 +309,39 @@ serve(async (req) => {
     }
 
     const rawOffers: Any[] = Array.isArray(res.body?.data?.offers) ? res.body.data.offers : [];
-    const offers = rawOffers.map(mapOffer).filter((o) => o.id && o.slices.length > 0);
+    let offers = rawOffers.map(mapOffer).filter((o) => o.id && o.slices.length > 0);
+
+    // Sparse routes (some airports only publish a single fare in the requested cabin):
+    // widen the search across the remaining cabins so travellers see every offer the
+    // API can return for this itinerary, instead of a single card.
+    if (offers.length < 5) {
+      const extraCabins = ["economy", "premium_economy", "business", "first"].filter(
+        (c) => c !== validated.input.cabinClass,
+      );
+
+      const extras = await Promise.all(
+        extraCabins.map((cabin) =>
+          duffelFetch("/air/offer_requests?return_offers=true&supplier_timeout=20000", {
+            method: "POST",
+            body: JSON.stringify(buildDuffelPayload({ ...validated.input, cabinClass: cabin })),
+          }).catch(() => null),
+        ),
+      );
+
+      const seen = new Set(offers.map((o) => o.id));
+      for (const extra of extras) {
+        const list: Any[] = Array.isArray(extra?.body?.data?.offers) ? extra!.body.data.offers : [];
+        for (const mapped of list.map(mapOffer)) {
+          if (!mapped.id || mapped.slices.length === 0 || seen.has(mapped.id)) continue;
+          seen.add(mapped.id);
+          offers.push(mapped);
+        }
+      }
+
+      offers = offers.sort(
+        (a, b) => Number(a.total_amount ?? 0) - Number(b.total_amount ?? 0),
+      );
+    }
 
     return json({
       offers,
@@ -320,6 +352,7 @@ serve(async (req) => {
         count: offers.length,
       },
     });
+
   } catch (err) {
     console.error("duffel-flights-search failure:", err instanceof Error ? err.message : err);
     return json({ error: "Something went wrong while searching flights. Please try again.", offers: [] }, 200);
