@@ -241,7 +241,7 @@ const SearchResults = () => {
       "selectedOffer",
       JSON.stringify({ type: "flights", provider: "duffel", offerId: offer.id, offer, agentId }),
     );
-    window.location.href = "/booking/flights";
+    navigate("/flight/checkout");
   };
 
   const flightCount = type === "flights" && duffelOffers.length > 0
