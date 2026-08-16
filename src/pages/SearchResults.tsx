@@ -18,6 +18,20 @@ import { Shield } from "lucide-react";
 import SEOHead from "@/components/SEOHead";
 import RestrictedDestinationNotice from "@/components/compliance/RestrictedDestinationNotice";
 import { getRestrictedDestinationMatch, isRestrictedOffer } from "@/config/sanctionsCompliance";
+import DuffelFlightCard from "@/components/duffel/FlightCard";
+import FlightDetailsDialog from "@/components/duffel/FlightDetailsDialog";
+import { searchDuffelFlights } from "@/services/duffelFlights";
+import type { CabinClass, DuffelOffer } from "@/types/duffel";
+
+const CABIN_MAP: Record<string, CabinClass> = {
+  ECONOMY: "economy",
+  PREMIUM_ECONOMY: "premium_economy",
+  BUSINESS: "business",
+  FIRST: "first",
+};
+
+const duffelCabin = (travelClass?: string): CabinClass =>
+  CABIN_MAP[(travelClass || "ECONOMY").toUpperCase().replace(/\s+/g, "_")] || "economy";
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
@@ -31,11 +45,23 @@ const SearchResults = () => {
   const { searchHotels } = useHotelSearch();
   const { searchCars } = useCarSearch();
   const [showCallPopup, setShowCallPopup] = useState(false);
+  // Duffel is the live flight source for this page; legacy providers only act as a fallback.
+  const [duffelOffers, setDuffelOffers] = useState<DuffelOffer[]>([]);
+  const [detailsOffer, setDetailsOffer] = useState<DuffelOffer | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const [timeFilter, setTimeFilter] = useState<TimeSlot>("all");
 
   const timeCounts = useMemo(() => {
     const counts: Record<TimeSlot, number> = { all: 0, morning: 0, afternoon: 0, evening: 0, night: 0 };
     if (type !== "flights") return counts;
+    if (duffelOffers.length) {
+      duffelOffers.forEach((o) => {
+        const slot = getTimeSlot(o.slices?.[0]?.segments?.[0]?.departing_at);
+        counts[slot]++;
+        counts.all++;
+      });
+      return counts;
+    }
     results.forEach((f) => {
       const dep = f.itineraries?.[0]?.segments?.[0]?.departure?.at;
       const slot = getTimeSlot(dep);
@@ -43,7 +69,7 @@ const SearchResults = () => {
       counts.all++;
     });
     return counts;
-  }, [results, type]);
+  }, [results, duffelOffers, type]);
 
   // ⚠️ STRIPE SANCTIONS COMPLIANCE — detect if the searched destination is restricted.
   const restrictedSearchMatch = useMemo(() => {
@@ -65,6 +91,14 @@ const SearchResults = () => {
       return getTimeSlot(dep) === timeFilter;
     });
   }, [results, timeFilter, type]);
+
+  const filteredDuffelOffers = useMemo(() => {
+    if (type !== "flights") return [];
+    if (timeFilter === "all") return duffelOffers;
+    return duffelOffers.filter(
+      (o) => getTimeSlot(o.slices?.[0]?.segments?.[0]?.departing_at) === timeFilter,
+    );
+  }, [duffelOffers, timeFilter, type]);
 
   useEffect(() => {
     performSearch();
@@ -99,6 +133,29 @@ const SearchResults = () => {
           setLoading(false);
           return;
         }
+
+        // 1) Live Duffel search — this is the data rendered in the cards.
+        const duffel = await searchDuffelFlights({
+          origin: originLocationCode,
+          destination: destinationLocationCode,
+          departureDate,
+          returnDate: returnDate || null,
+          adults,
+          children: 0,
+          infants: 0,
+          cabinClass: duffelCabin(travelClass),
+        });
+
+        if (duffel.offers.length > 0) {
+          console.log("🔍 Search provider: duffel");
+          console.log("📊 Duffel offers received:", duffel.offers.length);
+          setDuffelOffers(duffel.offers);
+          setResults([]);
+          setLoading(false);
+          return;
+        }
+
+        setDuffelOffers([]);
 
         const data = await searchFlights({
           originLocationCode,
@@ -167,6 +224,7 @@ const SearchResults = () => {
       console.error("❌ Search failed:", errorMessage);
       toast.error(errorMessage, { duration: 5000 });
       setResults([]);
+      setDuffelOffers([]);
     } finally {
       setLoading(false);
     }
@@ -177,6 +235,22 @@ const SearchResults = () => {
     sessionStorage.setItem("selectedOffer", JSON.stringify({ type, offer, agentId }));
     window.location.href = `/booking/${type}`;
   };
+
+  const handleBookDuffel = (offer: DuffelOffer) => {
+    sessionStorage.setItem(
+      "selectedOffer",
+      JSON.stringify({ type: "flights", provider: "duffel", offerId: offer.id, offer, agentId }),
+    );
+    window.location.href = "/booking/flights";
+  };
+
+  const flightCount = type === "flights" && duffelOffers.length > 0
+    ? filteredDuffelOffers.length
+    : filteredResults.length;
+  const totalFlightCount = type === "flights" && duffelOffers.length > 0
+    ? duffelOffers.length
+    : results.length;
+  const totalCount = type === "flights" ? flightCount : filteredResults.length;
 
   const origin = searchParams.get("originLocationCode") || "";
   const destination = searchParams.get("destinationLocationCode") || "";
@@ -227,8 +301,8 @@ const SearchResults = () => {
             <p className="text-muted-foreground">
               {loading ? "Finding the best available price for you..." : 
                 type === "flights" && timeFilter !== "all" 
-                  ? `Showing ${filteredResults.length} of ${results.length} result(s)` 
-                  : `Found ${filteredResults.length} result(s)`}
+                  ? `Showing ${flightCount} of ${totalFlightCount} result(s)` 
+                  : `Found ${totalCount} result(s)`}
             </p>
           </div>
 
@@ -262,7 +336,7 @@ const SearchResults = () => {
                 ))}
               </div>
             </div>
-          ) : filteredResults.length === 0 ? (
+          ) : totalCount === 0 ? (
             <Card className="bg-card border-border">
               <CardContent className="py-12 text-center">
                 <div className="max-w-lg mx-auto">
@@ -282,18 +356,34 @@ const SearchResults = () => {
             </Card>
           ) : (
             <>
-              {type === "flights" && results.length > 0 && (
+              {type === "flights" && totalFlightCount > 0 && (
                 <FlightTimeFilter selected={timeFilter} onSelect={setTimeFilter} counts={timeCounts} />
               )}
-              {filteredResults.length === 0 && type === "flights" ? (
+              {flightCount === 0 && type === "flights" ? (
                 <Card className="bg-card border-border">
                   <CardContent className="py-8 text-center">
                     <p className="text-muted-foreground">No flights for this time slot. Try a different time preference.</p>
                   </CardContent>
                 </Card>
               ) : (
+                <>
+                {type === "flights" && duffelOffers.length > 0 && (
+                  <div className="space-y-4">
+                    {filteredDuffelOffers.map((offer) => (
+                      <DuffelFlightCard
+                        key={offer.id}
+                        offer={offer}
+                        onSelect={handleBookDuffel}
+                        onViewDetails={(o) => {
+                          setDetailsOffer(o);
+                          setDetailsOpen(true);
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {type === "flights" &&
+                  {type === "flights" && duffelOffers.length === 0 &&
                     filteredResults.map((flight, i) => <FlightResultCard key={i} flight={flight} onBook={handleBook} />)}
                   {type === "hotels" &&
                     filteredResults.map((hotel, i) => (
@@ -305,11 +395,20 @@ const SearchResults = () => {
                     ))}
                   {type === "cars" && filteredResults.map((car, i) => <CarResultCard key={i} car={car} onBook={handleBook} />)}
                 </div>
+                </>
               )}
             </>
           )}
         </div>
       </main>
+      {type === "flights" && (
+        <FlightDetailsDialog
+          offer={detailsOffer}
+          open={detailsOpen}
+          onOpenChange={setDetailsOpen}
+          onContinue={handleBookDuffel}
+        />
+      )}
       <Footer />
     </div>
   );
