@@ -10,7 +10,6 @@ import DuffelPassengerForm, {
   emptyPassenger,
 } from "@/components/duffel/DuffelPassengerForm";
 import DuffelPaymentStep from "@/components/duffel/DuffelPaymentStep";
-import AirlineLogo from "@/components/duffel/AirlineLogo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -248,7 +247,18 @@ const FlightCheckout = () => {
           <div className="space-y-3">
             {slice.segments.map((seg, i) => (
               <div key={seg.id ?? i} className="flex items-start gap-3 text-sm">
-                <AirlineLogo carrier={seg.marketing_carrier} size={28} />
+                {seg.marketing_carrier?.logo_symbol_url ? (
+                  <img
+                    src={seg.marketing_carrier.logo_symbol_url}
+                    alt={`${seg.marketing_carrier.name ?? "Airline"} logo`}
+                    className="w-7 h-7 rounded-md object-contain shrink-0"
+                    loading="lazy"
+                  />
+                ) : (
+                  <span className="w-7 h-7 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
+                    <Plane className="w-3.5 h-3.5 text-primary" aria-hidden="true" />
+                  </span>
+                )}
                 <div className="flex-1">
                   <p className="font-medium">
                     {time(seg.departing_at)} {seg.origin.iata_code} → {time(seg.arriving_at)} {seg.destination.iata_code}
@@ -322,8 +332,8 @@ const FlightCheckout = () => {
       <SEOHead
         title="Secure Flight Checkout | Tripile.com"
         description="Complete your flight booking securely with Tripile.com. Enter traveller details, review your itinerary and pay with 3D Secure card protection."
-        canonical="https://tripile.com/flight/checkout"
-        noindex
+        canonicalUrl="https://tripile.com/flight/checkout"
+        noIndex
       />
       <Header />
 
