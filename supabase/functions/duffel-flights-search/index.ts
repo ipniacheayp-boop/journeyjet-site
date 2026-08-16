@@ -182,7 +182,9 @@ function mapSegment(seg: Any) {
     operating_carrier: carrier(seg?.operating_carrier),
     marketing_carrier_flight_number: seg?.marketing_carrier_flight_number ?? null,
     operating_carrier_flight_number: seg?.operating_carrier_flight_number ?? null,
-    aircraft: seg?.aircraft?.name ?? null,
+    aircraft: seg?.aircraft
+      ? { name: seg.aircraft.name ?? null, iata_code: seg.aircraft.iata_code ?? null }
+      : null,
     cabin: first?.cabin?.name ?? null,
     cabin_class: first?.cabin_class ?? null,
     cabin_class_marketing_name: first?.cabin_class_marketing_name ?? null,
@@ -192,6 +194,7 @@ function mapSegment(seg: Any) {
       wifi: first?.cabin?.amenities?.wifi?.available ?? null,
       power: first?.cabin?.amenities?.power?.available ?? null,
       seat_pitch: first?.cabin?.amenities?.seat?.pitch ?? null,
+      legroom: first?.cabin?.amenities?.seat?.legroom ?? null,
     },
     stops: (Array.isArray(seg?.stops) ? seg.stops : []).map((s: Any) => ({
       airport: place(s?.airport),
@@ -207,7 +210,18 @@ function mapOffer(offer: Any) {
     total_amount: offer?.total_amount ?? null,
     total_currency: offer?.total_currency ?? null,
     base_amount: offer?.base_amount ?? null,
+    base_currency: offer?.base_currency ?? null,
     tax_amount: offer?.tax_amount ?? null,
+    tax_currency: offer?.tax_currency ?? null,
+    total_emissions_kg: offer?.total_emissions_kg ?? null,
+    payment_requirements: offer?.payment_requirements
+      ? {
+          requires_instant_payment: offer.payment_requirements.requires_instant_payment ?? null,
+          payment_required_by: offer.payment_requirements.payment_required_by ?? null,
+          price_guarantee_expires_at:
+            offer.payment_requirements.price_guarantee_expires_at ?? null,
+        }
+      : null,
     expires_at: offer?.expires_at ?? null,
     owner: carrier(offer?.owner),
     passenger_identity_documents_required:
