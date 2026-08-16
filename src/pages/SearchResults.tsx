@@ -21,7 +21,17 @@ import { getRestrictedDestinationMatch, isRestrictedOffer } from "@/config/sanct
 import DuffelFlightCard from "@/components/duffel/FlightCard";
 import FlightDetailsDialog from "@/components/duffel/FlightDetailsDialog";
 import { searchDuffelFlights } from "@/services/duffelFlights";
-import type { DuffelOffer } from "@/types/duffel";
+import type { CabinClass, DuffelOffer } from "@/types/duffel";
+
+const CABIN_MAP: Record<string, CabinClass> = {
+  ECONOMY: "economy",
+  PREMIUM_ECONOMY: "premium_economy",
+  BUSINESS: "business",
+  FIRST: "first",
+};
+
+const duffelCabin = (travelClass?: string): CabinClass =>
+  CABIN_MAP[(travelClass || "ECONOMY").toUpperCase().replace(/\s+/g, "_")] || "economy";
 
 const SearchResults = () => {
   const [searchParams] = useSearchParams();
@@ -134,7 +144,7 @@ const SearchResults = () => {
               ]
             : [{ origin: originLocationCode, destination: destinationLocationCode, departureDate }],
           passengers: { adults, children: 0, infants: 0 },
-          cabinClass: (travelClass || "ECONOMY").toLowerCase().replace(/\s+/g, "_"),
+          cabinClass: duffelCabin(travelClass),
         });
 
         if (duffel.offers.length > 0) {
