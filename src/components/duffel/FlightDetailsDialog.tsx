@@ -11,22 +11,12 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowRight, Clock, Loader2, Plane } from "lucide-react";
+import { ArrowRight, Clock, Loader2 } from "lucide-react";
+import AirlineLogo from "@/components/duffel/AirlineLogo";
 import type { DuffelOffer } from "@/types/duffel";
 import { getDuffelOffer } from "@/services/duffelFlights";
-import {
-  cabinLabel,
-  conditionLabel,
-  formatDateShort,
-  formatDuration,
-  formatMinutes,
-  formatMoney,
-  formatTime,
-  layoverMinutes,
-  segmentCarrier,
-  segmentFlightNumber,
-  stopsLabel,
-} from "@/lib/duffelUtils";
+import { formatDateShort, formatMoney } from "@/lib/duffelUtils";
+import { mapDuffelOfferToFlight } from "@/lib/duffelMapper";
 
 interface Props {
   offer: DuffelOffer | null;
@@ -61,6 +51,7 @@ export default function FlightDetailsDialog({ offer, open, onOpenChange, onConti
   }, [offer, open]);
 
   const data = detailed || offer;
+  const flight = data ? mapDuffelOfferToFlight(data) : null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -68,7 +59,7 @@ export default function FlightDetailsDialog({ offer, open, onOpenChange, onConti
         <DialogHeader>
           <DialogTitle>Review your flight</DialogTitle>
           <DialogDescription>
-            Full itinerary, baggage and fare conditions for this fare.
+            Full itinerary, baggage, amenities and fare conditions for this fare.
           </DialogDescription>
         </DialogHeader>
 
@@ -78,7 +69,7 @@ export default function FlightDetailsDialog({ offer, open, onOpenChange, onConti
           </Alert>
         )}
 
-        {!data ? (
+        {!flight ? (
           <div className="space-y-3">
             <Skeleton className="h-24 w-full" />
             <Skeleton className="h-24 w-full" />
@@ -91,143 +82,208 @@ export default function FlightDetailsDialog({ offer, open, onOpenChange, onConti
               </p>
             )}
 
-            {(data.slices || []).map((slice, sIdx) => (
-              <section key={slice.id || sIdx} className="space-y-3">
+            <div className="flex items-center gap-3">
+              <AirlineLogo airline={flight.airline} className="w-11 h-11" />
+              <div className="min-w-0">
+                <p className="font-semibold truncate">{flight.airline.name || "Airline"}</p>
+                <p className="text-xs text-muted-foreground">
+                  {[flight.airline.code, flight.flightNumber, flight.duration]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </p>
+              </div>
+            </div>
+
+            {flight.slices.map((slice) => (
+              <section key={slice.id} className="space-y-3">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <h3 className="font-semibold flex items-center gap-2">
-                    {slice.origin?.iata_code} <ArrowRight className="w-4 h-4" /> {slice.destination?.iata_code}
+                    {slice.originIata} <ArrowRight className="w-4 h-4" /> {slice.destinationIata}
                     <span className="text-sm font-normal text-muted-foreground">
-                      {formatDateShort(slice.segments?.[0]?.departing_at)}
+                      {formatDateShort(slice.departureDateIso)}
                     </span>
                   </h3>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Clock className="w-3.5 h-3.5" /> {formatDuration(slice.duration)} · {stopsLabel(slice)}
+                    <Clock className="w-3.5 h-3.5" />{" "}
+                    {[slice.duration, slice.stopsLabel].filter(Boolean).join(" · ")}
                   </div>
                 </div>
 
-                {(slice.segments || []).map((segment, i) => {
-                  const carrier = segmentCarrier(segment);
-                  const layover = layoverMinutes(slice, i);
-                  return (
-                    <div key={segment.id || i} className="space-y-2">
-                      <div className="rounded-xl border border-border p-3 sm:p-4">
-                        <div className="flex items-center gap-3 mb-3">
-                          {carrier?.logo_symbol_url ? (
-                            <img
-                              src={carrier.logo_symbol_url}
-                              alt={carrier?.name ? `${carrier.name} logo` : "Airline logo"}
-                              className="w-7 h-7 object-contain"
-                              loading="lazy"
-                            />
-                          ) : (
-                            <Plane className="w-5 h-5 text-primary" aria-hidden="true" />
-                          )}
-                          <div className="min-w-0">
-                            <p className="text-sm font-semibold truncate">{carrier?.name || "Airline"}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {[segmentFlightNumber(segment), segment.aircraft].filter(Boolean).join(" · ")}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="grid sm:grid-cols-3 gap-3 text-sm">
-                          <div>
-                            <p className="font-semibold">{formatTime(segment.departing_at)}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {segment.origin?.iata_code} · {segment.origin?.city_name || segment.origin?.name}
-                              {segment.origin_terminal ? ` · Terminal ${segment.origin_terminal}` : ""}
-                            </p>
-                          </div>
-                          <div className="text-xs text-muted-foreground sm:text-center">
-                            {formatDuration(segment.duration)}
-                          </div>
-                          <div className="sm:text-right">
-                            <p className="font-semibold">{formatTime(segment.arriving_at)}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {segment.destination?.iata_code} ·{" "}
-                              {segment.destination?.city_name || segment.destination?.name}
-                              {segment.destination_terminal
-                                ? ` · Terminal ${segment.destination_terminal}`
-                                : ""}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="flex flex-wrap gap-1.5 mt-3">
-                          {segment.cabin_class && (
-                            <Badge variant="outline" className="text-xs">
-                              {cabinLabel(segment.cabin_class)}
-                            </Badge>
-                          )}
-                          {segment.cabin_class_marketing_name && (
-                            <Badge variant="secondary" className="text-xs">
-                              {segment.cabin_class_marketing_name}
-                            </Badge>
-                          )}
-                          {(segment.baggages || []).map((b, bi) => (
-                            <Badge key={bi} variant="outline" className="text-xs">
-                              {b.quantity} × {b.type === "carry_on" ? "carry-on" : "checked"}
-                            </Badge>
-                          ))}
-                          {segment.amenities?.wifi && (
-                            <Badge variant="outline" className="text-xs">Wi-Fi</Badge>
-                          )}
-                          {segment.amenities?.power && (
-                            <Badge variant="outline" className="text-xs">Power</Badge>
-                          )}
-                        </div>
-
-                        {(segment.stops || []).map((stop, si) => (
-                          <p key={si} className="text-xs text-muted-foreground mt-2">
-                            Technical stop at {stop.airport?.iata_code || stop.airport?.name} ·{" "}
-                            {formatDuration(stop.duration)}
+                {slice.segments.map((segment) => (
+                  <div key={segment.id} className="space-y-2">
+                    <div className="rounded-xl border border-border p-3 sm:p-4">
+                      <div className="flex items-center gap-3 mb-3">
+                        <AirlineLogo airline={segment.airline} className="w-8 h-8" />
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold truncate">
+                            {segment.airline.name || "Airline"}
+                            {segment.airline.code ? ` · ${segment.airline.code}` : ""}
                           </p>
+                          <p className="text-xs text-muted-foreground">
+                            {[segment.flightNumber, segment.aircraft].filter(Boolean).join(" · ")}
+                          </p>
+                          {segment.operatingAirline?.name && (
+                            <p className="text-[11px] text-muted-foreground">
+                              Operated by {segment.operatingAirline.name}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="grid sm:grid-cols-3 gap-3 text-sm">
+                        <div>
+                          {segment.departure.time && (
+                            <p className="font-semibold">{segment.departure.time}</p>
+                          )}
+                          <p className="text-xs text-muted-foreground">
+                            {[segment.departure.iata, segment.departure.city, segment.departure.airport]
+                              .filter(Boolean)
+                              .join(" · ")}
+                            {segment.departure.terminal ? ` · Terminal ${segment.departure.terminal}` : ""}
+                          </p>
+                        </div>
+                        <div className="text-xs text-muted-foreground sm:text-center">
+                          {segment.duration || ""}
+                        </div>
+                        <div className="sm:text-right">
+                          {segment.arrival.time && (
+                            <p className="font-semibold">{segment.arrival.time}</p>
+                          )}
+                          <p className="text-xs text-muted-foreground">
+                            {[segment.arrival.iata, segment.arrival.city, segment.arrival.airport]
+                              .filter(Boolean)
+                              .join(" · ")}
+                            {segment.arrival.terminal ? ` · Terminal ${segment.arrival.terminal}` : ""}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap gap-1.5 mt-3">
+                        {segment.cabin && (
+                          <Badge variant="outline" className="text-xs">
+                            {segment.cabin}
+                          </Badge>
+                        )}
+                        {slice.fareBrand && (
+                          <Badge variant="secondary" className="text-xs">
+                            {slice.fareBrand}
+                          </Badge>
+                        )}
+                        {segment.baggage.available ? (
+                          <>
+                            {segment.baggage.checked > 0 && (
+                              <Badge variant="outline" className="text-xs">
+                                {segment.baggage.checked} checked
+                              </Badge>
+                            )}
+                            {segment.baggage.carryOn > 0 && (
+                              <Badge variant="outline" className="text-xs">
+                                {segment.baggage.carryOn} carry-on
+                              </Badge>
+                            )}
+                          </>
+                        ) : (
+                          <Badge variant="outline" className="text-xs">
+                            Baggage information unavailable
+                          </Badge>
+                        )}
+                        {segment.amenities.map((a) => (
+                          <Badge key={a} variant="outline" className="text-xs">
+                            {a}
+                          </Badge>
                         ))}
                       </div>
 
-                      {layover > 0 && (
-                        <p className="text-xs text-muted-foreground pl-1">
-                          {formatMinutes(layover)} layover in{" "}
-                          {segment.destination?.city_name || segment.destination?.iata_code}
+                      {segment.technicalStops.map((stop, si) => (
+                        <p key={si} className="text-xs text-muted-foreground mt-2">
+                          Technical stop at {stop.label}
+                          {stop.duration ? ` · ${stop.duration}` : ""}
                         </p>
-                      )}
+                      ))}
                     </div>
-                  );
-                })}
 
-                <div className="text-xs text-muted-foreground space-y-1">
-                  <p>{conditionLabel(slice.conditions?.refund_before_departure, "Refund")}</p>
-                  <p>{conditionLabel(slice.conditions?.change_before_departure, "Change")}</p>
-                </div>
+                    {segment.layoverAfter && (
+                      <p className="text-xs text-muted-foreground pl-1">
+                        {segment.layoverAfter.label}
+                        {segment.layoverAfter.place ? ` in ${segment.layoverAfter.place}` : ""}
+                      </p>
+                    )}
+                  </div>
+                ))}
+
+                {(slice.conditions.refund || slice.conditions.change) && (
+                  <div className="text-xs text-muted-foreground space-y-1">
+                    {slice.conditions.refund && <p>{slice.conditions.refund}</p>}
+                    {slice.conditions.change && <p>{slice.conditions.change}</p>}
+                  </div>
+                )}
               </section>
             ))}
 
             <Separator />
 
             <div className="space-y-1 text-xs text-muted-foreground">
-              <p>{conditionLabel(data.conditions?.refund_before_departure, "Refund")}</p>
-              <p>{conditionLabel(data.conditions?.change_before_departure, "Change")}</p>
-              {data.expires_at && <p>Fare held until {new Date(data.expires_at).toLocaleString()}</p>}
+              {flight.conditions.refundable != null && (
+                <p>{flight.conditions.refundable ? "Refundable before departure" : "Non-refundable"}</p>
+              )}
+              {flight.conditions.changeable != null && (
+                <p>{flight.conditions.changeable ? "Changes allowed before departure" : "No changes allowed"}</p>
+              )}
+              {flight.expiresAt && <p>Fare held until {new Date(flight.expiresAt).toLocaleString()}</p>}
+              {flight.paymentRequiredBy && (
+                <p>Payment required by {new Date(flight.paymentRequiredBy).toLocaleString()}</p>
+              )}
+              {flight.priceGuaranteeExpiresAt && (
+                <p>
+                  Price guaranteed until {new Date(flight.priceGuaranteeExpiresAt).toLocaleString()}
+                </p>
+              )}
+              {flight.identityDocumentsRequired && <p>Passport details required at booking.</p>}
             </div>
 
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl bg-muted/50 p-4">
-              <div>
-                <p className="text-2xl font-bold text-primary">
-                  {formatMoney(data.total_amount, data.total_currency)}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Total for {data.passengers?.length || 1} passenger
-                  {(data.passengers?.length || 1) > 1 ? "s" : ""}
-                  {data.tax_amount ? ` · incl. taxes ${formatMoney(data.tax_amount, data.total_currency)}` : ""}
-                </p>
+            <div className="rounded-xl bg-muted/50 p-4 space-y-3">
+              <div className="space-y-1 text-sm">
+                {flight.baseAmount && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Base fare</span>
+                    <span>{formatMoney(flight.baseAmount, flight.baseCurrency)}</span>
+                  </div>
+                )}
+                {flight.taxAmount && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Taxes &amp; fees</span>
+                    <span>{formatMoney(flight.taxAmount, flight.taxCurrency)}</span>
+                  </div>
+                )}
+                {flight.priceAmount && (
+                  <div className="flex justify-between font-semibold">
+                    <span>Total</span>
+                    <span>{formatMoney(flight.priceAmount, flight.currency)}</span>
+                  </div>
+                )}
               </div>
-              <Button
-                onClick={() => data && onContinue?.(data)}
-                disabled={!onContinue || loading}
-                aria-label="Continue to passenger details"
-              >
-                Continue to passenger details
-              </Button>
+
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  {flight.priceAmount && (
+                    <p className="text-2xl font-bold text-primary">
+                      {formatMoney(flight.priceAmount, flight.currency)}
+                    </p>
+                  )}
+                  <p className="text-xs text-muted-foreground">
+                    Total for {flight.passengerCount} passenger
+                    {flight.passengerCount > 1 ? "s" : ""}
+                    {flight.currency ? ` · ${flight.currency}` : ""}
+                  </p>
+                </div>
+                <Button
+                  onClick={() => data && onContinue?.(data)}
+                  disabled={!onContinue || loading}
+                  aria-label="Continue to passenger details"
+                >
+                  Continue to passenger details
+                </Button>
+              </div>
             </div>
           </div>
         )}

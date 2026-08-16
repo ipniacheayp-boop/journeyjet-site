@@ -34,7 +34,7 @@ export interface DuffelSegment {
   operating_carrier: DuffelCarrier | null;
   marketing_carrier_flight_number: string | null;
   operating_carrier_flight_number: string | null;
-  aircraft: string | null;
+  aircraft: { name: string | null; iata_code: string | null } | null;
   cabin: string | null;
   cabin_class: string | null;
   cabin_class_marketing_name: string | null;
@@ -44,6 +44,7 @@ export interface DuffelSegment {
     wifi: boolean | null;
     power: boolean | null;
     seat_pitch: string | null;
+    legroom?: string | null;
   };
   stops: Array<{ airport: DuffelPlace; duration: string | null }>;
 }
@@ -66,7 +67,15 @@ export interface DuffelOffer {
   total_amount: string | null;
   total_currency: string | null;
   base_amount: string | null;
+  base_currency?: string | null;
   tax_amount: string | null;
+  tax_currency?: string | null;
+  total_emissions_kg?: string | null;
+  payment_requirements?: {
+    requires_instant_payment?: boolean | null;
+    payment_required_by?: string | null;
+    price_guarantee_expires_at?: string | null;
+  } | null;
   expires_at: string | null;
   owner: DuffelCarrier | null;
   passenger_identity_documents_required: boolean | null;

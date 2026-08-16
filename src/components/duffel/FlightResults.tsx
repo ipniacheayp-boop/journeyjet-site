@@ -19,6 +19,7 @@ interface Props {
   sort: SortKey;
   onSortChange: (sort: SortKey) => void;
   onSelect: (offer: DuffelOffer) => void;
+  onViewDetails?: (offer: DuffelOffer) => void;
   onModifySearch: () => void;
   cheapestId?: string | null;
   fastestId?: string | null;
@@ -67,6 +68,7 @@ export default function FlightResults({
   sort,
   onSortChange,
   onSelect,
+  onViewDetails,
   onModifySearch,
   cheapestId,
   fastestId,
@@ -136,6 +138,7 @@ export default function FlightResults({
           key={offer.id}
           offer={offer}
           onSelect={onSelect}
+          onViewDetails={onViewDetails}
           badge={
             offer.id === cheapestId
               ? "Cheapest"

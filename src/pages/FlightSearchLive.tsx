@@ -272,7 +272,8 @@ export default function FlightSearchLive() {
                 loading={loading}
                 sort={sort}
                 onSortChange={setSort}
-                onSelect={handleSelect}
+                onSelect={handleContinue}
+                onViewDetails={handleSelect}
                 onModifySearch={() =>
                   formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
                 }
