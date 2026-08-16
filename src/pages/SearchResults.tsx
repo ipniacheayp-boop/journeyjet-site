@@ -136,14 +136,13 @@ const SearchResults = () => {
 
         // 1) Live Duffel search — this is the data rendered in the cards.
         const duffel = await searchDuffelFlights({
-          tripType: returnDate ? "round_trip" : "one_way",
-          slices: returnDate
-            ? [
-                { origin: originLocationCode, destination: destinationLocationCode, departureDate },
-                { origin: destinationLocationCode, destination: originLocationCode, departureDate: returnDate },
-              ]
-            : [{ origin: originLocationCode, destination: destinationLocationCode, departureDate }],
-          passengers: { adults, children: 0, infants: 0 },
+          origin: originLocationCode,
+          destination: destinationLocationCode,
+          departureDate,
+          returnDate: returnDate || null,
+          adults,
+          children: 0,
+          infants: 0,
           cabinClass: duffelCabin(travelClass),
         });
 
