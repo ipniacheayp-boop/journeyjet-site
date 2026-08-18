@@ -7,6 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  PHONE_COUNTRIES,
+  DEFAULT_PHONE_COUNTRY,
+  findPhoneCountryByIso,
+  isValidNationalNumber,
+} from "@/data/phoneCountryCodes";
+
 import SEOHead from "@/components/SEOHead";
 import AuthLayout from "@/components/auth/AuthLayout";
 import GoogleButton from "@/components/auth/GoogleButton";
@@ -35,7 +43,9 @@ const SignUp = () => {
   const next = searchParams.get("next") || "/account";
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
-  const [countryCode, setCountryCode] = useState("+1");
+  const [phoneIso, setPhoneIso] = useState(DEFAULT_PHONE_COUNTRY.iso);
+  const [countryCode, setCountryCode] = useState(DEFAULT_PHONE_COUNTRY.dial);
+  const selectedPhoneCountry = findPhoneCountryByIso(phoneIso) ?? DEFAULT_PHONE_COUNTRY;
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -56,8 +66,11 @@ const SignUp = () => {
     if (!email) nextErrors.email = "Email is required.";
     else if (!EMAIL_REGEX.test(email)) nextErrors.email = "Please enter a valid email.";
     if (!phoneNumber.trim()) nextErrors.phone = "Mobile number is required.";
-    else if (!/^\d{6,15}$/.test(phoneNumber.replace(/\D/g, ""))) nextErrors.phone = "Enter a valid mobile number.";
-    if (!/^\+\d{1,4}$/.test(countryCode)) nextErrors.phone = "Enter a valid country code (e.g. +1).";
+    else if (!isValidNationalNumber(selectedPhoneCountry, phoneNumber))
+      nextErrors.phone = `Enter a valid ${selectedPhoneCountry.name} mobile number (${selectedPhoneCountry.min}${
+        selectedPhoneCountry.max !== selectedPhoneCountry.min ? `-${selectedPhoneCountry.max}` : ""
+      } digits).`;
+
     if (!password) nextErrors.password = "Password is required.";
     else if (!passwordRules.every((rule) => rule.test(password))) nextErrors.password = "Password does not meet requirements.";
     if (confirmPassword !== password) nextErrors.confirmPassword = "Passwords do not match.";
@@ -172,21 +185,30 @@ const SignUp = () => {
             <div className="space-y-1.5">
               <Label htmlFor="signup-phone">Mobile number</Label>
               <div className="flex gap-2">
-                <Input
-                  id="signup-country"
-                  className="w-20"
-                  autoComplete="tel-country-code"
-                  placeholder="+1"
-                  value={countryCode}
-                  onChange={(event) => setCountryCode(event.target.value)}
+                <Select
+                  value={phoneIso}
+                  onValueChange={(iso) => {
+                    setPhoneIso(iso);
+                    setCountryCode(findPhoneCountryByIso(iso)?.dial ?? "+1");
+                  }}
                   disabled={submitting}
-                  aria-label="Country code"
-                />
+                >
+                  <SelectTrigger className="w-[140px] bg-background" aria-label="Country code">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-72">
+                    {PHONE_COUNTRIES.map((c) => (
+                      <SelectItem key={c.iso} value={c.iso}>
+                        {c.dial} {c.iso}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <Input
                   id="signup-phone"
                   type="tel"
                   autoComplete="tel-national"
-                  placeholder="555 123 4567"
+                  placeholder={selectedPhoneCountry.iso === "IN" ? "98765 43210" : "555 123 4567"}
                   value={phoneNumber}
                   onChange={(event) => setPhoneNumber(event.target.value)}
                   disabled={submitting}
@@ -197,6 +219,7 @@ const SignUp = () => {
                 <p className="text-xs text-destructive">{errors.phone}</p>
               ) : null}
             </div>
+
 
             <div className="space-y-1.5">
               <Label htmlFor="signup-password">Password</Label>

@@ -1,4 +1,13 @@
+import { useState } from "react";
+import {
+  PHONE_COUNTRIES,
+  DEFAULT_PHONE_COUNTRY,
+  findPhoneCountryByIso,
+  splitPhoneNumber,
+  composePhoneNumber,
+} from "@/data/phoneCountryCodes";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -131,11 +140,17 @@ const DuffelPassengerForm = ({
   onAcceptedTermsChange,
   disabled,
 }: Props) => {
+  const parsedPhone = splitPhoneNumber(contact.phone);
+  const [phoneIso, setPhoneIso] = useState(parsedPhone.country?.iso ?? DEFAULT_PHONE_COUNTRY.iso);
+  const phoneCountry = parsedPhone.country ?? findPhoneCountryByIso(phoneIso) ?? DEFAULT_PHONE_COUNTRY;
+  const phoneNational = parsedPhone.country ? parsedPhone.national : parsedPhone.national;
+
   const update = (index: number, field: keyof CheckoutPassenger, value: string) => {
     const next = [...passengers];
     next[index] = { ...next[index], [field]: value };
     onPassengersChange(next);
   };
+
 
   return (
     <div className="space-y-6">
@@ -351,19 +366,50 @@ const DuffelPassengerForm = ({
             </div>
             <div className="space-y-2">
               <Label htmlFor="contact-phone">Phone number <span className="text-destructive">*</span></Label>
-              <Input
-                id="contact-phone"
-                type="tel"
-                className="bg-background"
-                autoComplete="tel"
-                value={contact.phone}
-                disabled={disabled}
-                onChange={(e) => onContactChange({ ...contact, phone: e.target.value.replace(/[^\d+]/g, "") })}
-                placeholder="+14155550123"
-                maxLength={16}
-              />
-              <p className="text-xs text-muted-foreground">Include the country code, e.g. +1 for the US.</p>
+              <div className="flex gap-2">
+                <Select
+                  value={phoneCountry.iso}
+                  disabled={disabled}
+                  onValueChange={(iso) => {
+                    const next = findPhoneCountryByIso(iso) ?? DEFAULT_PHONE_COUNTRY;
+                    setPhoneIso(next.iso);
+                    onContactChange({ ...contact, phone: composePhoneNumber(next.dial, phoneNational) });
+                  }}
+                >
+                  <SelectTrigger className="w-[132px] bg-background" aria-label="Phone country code">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-72">
+                    {PHONE_COUNTRIES.map((c) => (
+                      <SelectItem key={c.iso} value={c.iso}>
+                        {c.dial} {c.iso}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Input
+                  id="contact-phone"
+                  type="tel"
+                  className="bg-background"
+                  autoComplete="tel-national"
+                  value={phoneNational}
+                  disabled={disabled}
+                  onChange={(e) =>
+                    onContactChange({
+                      ...contact,
+                      phone: composePhoneNumber(phoneCountry.dial, e.target.value.replace(/\D/g, "").slice(0, 15)),
+                    })
+                  }
+                  placeholder="9876543210"
+                  inputMode="numeric"
+                  maxLength={15}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Select your country code (e.g. +91 for India) and enter your mobile number.
+              </p>
             </div>
+
           </div>
 
           <div className="flex items-start gap-3 pt-2">
