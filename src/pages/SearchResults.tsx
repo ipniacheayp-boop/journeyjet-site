@@ -238,12 +238,29 @@ const SearchResults = () => {
   };
 
   const handleBookDuffel = (offer: DuffelOffer) => {
-    sessionStorage.setItem(
-      "selectedOffer",
-      JSON.stringify({ type: "flights", provider: "duffel", offerId: offer.id, offer, agentId }),
-    );
-    navigate("/flight/checkout");
+    const payload = JSON.stringify({
+      type: "flights",
+      provider: "duffel",
+      offerId: offer.id,
+      offer,
+      agentId,
+      // Pricing snapshot kept verbatim from Duffel so it survives navigation & refresh.
+      pricing: {
+        total_amount: offer.total_amount,
+        total_currency: offer.total_currency,
+        base_amount: offer.base_amount,
+        tax_amount: offer.tax_amount,
+      },
+    });
+    sessionStorage.setItem("selectedOffer", payload);
+    try {
+      localStorage.setItem("selectedOffer", payload);
+    } catch {
+      /* storage full / disabled — session copy is enough for this tab */
+    }
+    navigate(`/flight/checkout?offer=${encodeURIComponent(offer.id)}`);
   };
+
 
   const flightCount = type === "flights" && duffelOffers.length > 0
     ? filteredDuffelOffers.length
