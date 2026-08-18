@@ -131,11 +131,17 @@ const DuffelPassengerForm = ({
   onAcceptedTermsChange,
   disabled,
 }: Props) => {
+  const parsedPhone = splitPhoneNumber(contact.phone);
+  const [phoneIso, setPhoneIso] = useState(parsedPhone.country?.iso ?? DEFAULT_PHONE_COUNTRY.iso);
+  const phoneCountry = parsedPhone.country ?? findPhoneCountryByIso(phoneIso) ?? DEFAULT_PHONE_COUNTRY;
+  const phoneNational = parsedPhone.country ? parsedPhone.national : parsedPhone.national;
+
   const update = (index: number, field: keyof CheckoutPassenger, value: string) => {
     const next = [...passengers];
     next[index] = { ...next[index], [field]: value };
     onPassengersChange(next);
   };
+
 
   return (
     <div className="space-y-6">
