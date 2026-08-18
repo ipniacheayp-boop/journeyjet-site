@@ -231,7 +231,23 @@ serve(async (req) => {
       );
     }
 
-    const requireDocs = offer.passenger_identity_documents_required === true;
+    // Domestic itineraries (every airport in one country) don't collect passport data.
+    const countries = new Set<string>();
+    let missingCountry = false;
+    for (const slice of (Array.isArray(offer.slices) ? offer.slices : []) as Any[]) {
+      const places: Any[] = [slice?.origin, slice?.destination];
+      for (const seg of (Array.isArray(slice?.segments) ? slice.segments : []) as Any[]) {
+        places.push(seg?.origin, seg?.destination);
+      }
+      for (const pl of places) {
+        const c = String(pl?.iata_country_code ?? "").toUpperCase();
+        if (/^[A-Z]{2}$/.test(c)) countries.add(c);
+        else missingCountry = true;
+      }
+    }
+    const isDomestic = !missingCountry && countries.size === 1;
+
+    const requireDocs = offer.passenger_identity_documents_required === true && !isDomestic;
     const offerPassengerIds = (Array.isArray(offer.passengers) ? offer.passengers : []).map((p: Any) => p.id);
 
     const validated = validatePassengers(body?.passengers, requireDocs);

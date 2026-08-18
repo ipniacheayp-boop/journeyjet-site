@@ -110,6 +110,8 @@ interface Props {
   passengers: CheckoutPassenger[];
   contact: CheckoutContact;
   requireDocuments: boolean;
+  /** Domestic itineraries book on the airline ticket name — no passport wording or fields. */
+  isDomestic?: boolean;
   onPassengersChange: (passengers: CheckoutPassenger[]) => void;
   onContactChange: (contact: CheckoutContact) => void;
   acceptedTerms: boolean;
@@ -122,6 +124,7 @@ const DuffelPassengerForm = ({
   passengers,
   contact,
   requireDocuments,
+  isDomestic = false,
   onPassengersChange,
   onContactChange,
   acceptedTerms,
@@ -146,7 +149,9 @@ const DuffelPassengerForm = ({
                 {typeLabel(passenger.type, offerPassenger?.age ?? null)} {index + 1}
               </CardTitle>
               <p className="text-sm text-muted-foreground">
-                Enter names exactly as they appear on the passport — airlines charge for corrections.
+                {isDomestic
+                  ? "Enter the traveller's name exactly as it should appear on the airline ticket — airlines charge for corrections."
+                  : "Enter names exactly as they appear on the passport — airlines charge for corrections."}
               </p>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -179,7 +184,7 @@ const DuffelPassengerForm = ({
                     value={passenger.givenName}
                     disabled={disabled}
                     onChange={(e) => update(index, "givenName", e.target.value)}
-                    placeholder="As on passport"
+                    placeholder={isDomestic ? "First name" : "As on passport"}
                     maxLength={50}
                   />
                 </div>
@@ -192,7 +197,7 @@ const DuffelPassengerForm = ({
                     value={passenger.familyName}
                     disabled={disabled}
                     onChange={(e) => update(index, "familyName", e.target.value)}
-                    placeholder="As on passport"
+                    placeholder={isDomestic ? "Last name" : "As on passport"}
                     maxLength={50}
                   />
                 </div>
@@ -212,7 +217,9 @@ const DuffelPassengerForm = ({
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor={`gender-${index}`}>Gender (as on passport) <span className="text-destructive">*</span></Label>
+                  <Label htmlFor={`gender-${index}`}>
+                    Gender{isDomestic ? "" : " (as on passport)"} <span className="text-destructive">*</span>
+                  </Label>
                   <Select value={passenger.gender} onValueChange={(v) => update(index, "gender", v)} disabled={disabled}>
                     <SelectTrigger id={`gender-${index}`} className="bg-background">
                       <SelectValue placeholder="Select" />
@@ -225,7 +232,29 @@ const DuffelPassengerForm = ({
                 </div>
               </div>
 
-              {requireDocuments && (
+              {isDomestic && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor={`nationality-domestic-${index}`}>Nationality</Label>
+                    <Select
+                      value={passenger.nationality}
+                      onValueChange={(v) => update(index, "nationality", v)}
+                      disabled={disabled}
+                    >
+                      <SelectTrigger id={`nationality-domestic-${index}`} className="bg-background">
+                        <SelectValue placeholder="Select nationality" />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-72">
+                        {COUNTRIES.map((c) => (
+                          <SelectItem key={c.code} value={c.code}>{c.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              )}
+
+              {requireDocuments && !isDomestic && (
                 <div className="pt-2 border-t border-border space-y-4">
                   <p className="text-sm font-medium text-muted-foreground">
                     Passport details (required by the airline for this route)
@@ -345,7 +374,9 @@ const DuffelPassengerForm = ({
               onCheckedChange={(v) => onAcceptedTermsChange(v === true)}
             />
             <Label htmlFor="accept-terms" className="text-sm font-normal leading-relaxed">
-              I confirm the traveller names match their passports and I accept the{" "}
+              {isDomestic
+                ? "I confirm the traveller names match their government-issued ID and I accept the "
+                : "I confirm the traveller names match their passports and I accept the "}
               <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-primary underline">
                 Terms &amp; Conditions
               </a>

@@ -4,10 +4,13 @@
  */
 export interface DuffelPlace {
   iata_code: string | null;
+  /** ISO 3166-1 alpha-2 country of the airport (used to detect domestic itineraries). */
+  iata_country_code?: string | null;
   name: string | null;
   city_name: string | null;
   time_zone?: string | null;
 }
+
 
 export interface DuffelCarrier {
   name: string | null;
