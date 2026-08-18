@@ -172,21 +172,30 @@ const SignUp = () => {
             <div className="space-y-1.5">
               <Label htmlFor="signup-phone">Mobile number</Label>
               <div className="flex gap-2">
-                <Input
-                  id="signup-country"
-                  className="w-20"
-                  autoComplete="tel-country-code"
-                  placeholder="+1"
-                  value={countryCode}
-                  onChange={(event) => setCountryCode(event.target.value)}
+                <Select
+                  value={phoneIso}
+                  onValueChange={(iso) => {
+                    setPhoneIso(iso);
+                    setCountryCode(findPhoneCountryByIso(iso)?.dial ?? "+1");
+                  }}
                   disabled={submitting}
-                  aria-label="Country code"
-                />
+                >
+                  <SelectTrigger className="w-[140px] bg-background" aria-label="Country code">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-72">
+                    {PHONE_COUNTRIES.map((c) => (
+                      <SelectItem key={c.iso} value={c.iso}>
+                        {c.dial} {c.iso}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <Input
                   id="signup-phone"
                   type="tel"
                   autoComplete="tel-national"
-                  placeholder="555 123 4567"
+                  placeholder={selectedPhoneCountry.iso === "IN" ? "98765 43210" : "555 123 4567"}
                   value={phoneNumber}
                   onChange={(event) => setPhoneNumber(event.target.value)}
                   disabled={submitting}
@@ -197,6 +206,7 @@ const SignUp = () => {
                 <p className="text-xs text-destructive">{errors.phone}</p>
               ) : null}
             </div>
+
 
             <div className="space-y-1.5">
               <Label htmlFor="signup-password">Password</Label>
