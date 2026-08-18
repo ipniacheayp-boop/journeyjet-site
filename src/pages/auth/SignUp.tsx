@@ -43,7 +43,9 @@ const SignUp = () => {
   const next = searchParams.get("next") || "/account";
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
-  const [countryCode, setCountryCode] = useState("+1");
+  const [phoneIso, setPhoneIso] = useState(DEFAULT_PHONE_COUNTRY.iso);
+  const [countryCode, setCountryCode] = useState(DEFAULT_PHONE_COUNTRY.dial);
+  const selectedPhoneCountry = findPhoneCountryByIso(phoneIso) ?? DEFAULT_PHONE_COUNTRY;
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -64,8 +66,11 @@ const SignUp = () => {
     if (!email) nextErrors.email = "Email is required.";
     else if (!EMAIL_REGEX.test(email)) nextErrors.email = "Please enter a valid email.";
     if (!phoneNumber.trim()) nextErrors.phone = "Mobile number is required.";
-    else if (!/^\d{6,15}$/.test(phoneNumber.replace(/\D/g, ""))) nextErrors.phone = "Enter a valid mobile number.";
-    if (!/^\+\d{1,4}$/.test(countryCode)) nextErrors.phone = "Enter a valid country code (e.g. +1).";
+    else if (!isValidNationalNumber(selectedPhoneCountry, phoneNumber))
+      nextErrors.phone = `Enter a valid ${selectedPhoneCountry.name} mobile number (${selectedPhoneCountry.min}${
+        selectedPhoneCountry.max !== selectedPhoneCountry.min ? `-${selectedPhoneCountry.max}` : ""
+      } digits).`;
+
     if (!password) nextErrors.password = "Password is required.";
     else if (!passwordRules.every((rule) => rule.test(password))) nextErrors.password = "Password does not meet requirements.";
     if (confirmPassword !== password) nextErrors.confirmPassword = "Passwords do not match.";
