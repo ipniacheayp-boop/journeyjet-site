@@ -7,6 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  PHONE_COUNTRIES,
+  DEFAULT_PHONE_COUNTRY,
+  findPhoneCountryByIso,
+  isValidNationalNumber,
+} from "@/data/phoneCountryCodes";
+
 import SEOHead from "@/components/SEOHead";
 import AuthLayout from "@/components/auth/AuthLayout";
 import GoogleButton from "@/components/auth/GoogleButton";
