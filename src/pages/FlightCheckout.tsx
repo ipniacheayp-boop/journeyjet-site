@@ -495,8 +495,15 @@ const FlightCheckout = () => {
                     submitting={submitting}
                     externalError={orderError}
                   />
-
+                ) : (
+                  <Card className="border-destructive/40">
+                    <CardContent className="p-6 text-sm text-destructive">
+                      This fare no longer has a valid price. Please search again and reselect your flight.
+                    </CardContent>
+                  </Card>
+                )
               )}
+
             </div>
 
             <aside className="space-y-4 lg:sticky lg:top-24 h-fit">
