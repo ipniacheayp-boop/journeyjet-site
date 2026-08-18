@@ -376,7 +376,7 @@ const DuffelPassengerForm = ({
             <Label htmlFor="accept-terms" className="text-sm font-normal leading-relaxed">
               {isDomestic
                 ? "I confirm the traveller names match their government-issued ID and I accept the "
-                : "I confirm the traveller names match their passports and I accept the "}}
+                : "I confirm the traveller names match their passports and I accept the "}
               <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-primary underline">
                 Terms &amp; Conditions
               </a>
