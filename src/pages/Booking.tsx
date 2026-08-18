@@ -260,6 +260,13 @@ const Booking = () => {
       return;
     }
 
+    // Never start a payment on a missing / zero fare — the price must come from the provider.
+    if (!Number.isFinite(price) || price <= 0) {
+      toast.error("We couldn't read the fare for this selection. Please search again and reselect your option.");
+      return;
+    }
+
+
     const productType = bookingType as "flight" | "hotel" | "car" | "flights" | "hotels" | "cars";
     const validationResult = await validatePrebooking(productType, validatedOffer || offer, clientRequestIdRef.current);
 
