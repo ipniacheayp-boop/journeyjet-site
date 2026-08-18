@@ -144,6 +144,13 @@ const FlightCheckout = () => {
 
   const requireDocuments = offer?.passenger_identity_documents_required === true;
 
+  // Duffel's revalidated total is the only price we are ever allowed to charge.
+  const payableAmount = (() => {
+    const n = Number(offer?.total_amount ?? 0);
+    return Number.isFinite(n) && n > 0 ? n : 0;
+  })();
+
+
   const validateTravellers = (): string | null => {
     if (!offer) return "Please reload your flight selection.";
     for (const [i, p] of passengers.entries()) {
