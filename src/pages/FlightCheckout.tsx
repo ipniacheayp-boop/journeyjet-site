@@ -73,12 +73,13 @@ const FlightCheckout = () => {
 
   const stored = useMemo(() => {
     try {
-      const raw = sessionStorage.getItem("selectedOffer");
+      const raw = sessionStorage.getItem("selectedOffer") || localStorage.getItem("selectedOffer");
       return raw ? (JSON.parse(raw) as { offerId?: string; offer?: DuffelOffer; agentId?: string | null }) : null;
     } catch {
       return null;
     }
   }, []);
+
 
   const offerId = searchParams.get("offer") || stored?.offerId || stored?.offer?.id || "";
   const agentId = stored?.agentId ?? null;
