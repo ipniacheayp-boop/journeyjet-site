@@ -239,6 +239,12 @@ const FlightCheckout = () => {
     }
 
     sessionStorage.removeItem("selectedOffer");
+    try {
+      localStorage.removeItem("selectedOffer");
+    } catch {
+      /* non-fatal */
+    }
+
     setOrder(result.order ?? null);
     setBookingRef(result.bookingReference ?? null);
     setStep(3);
