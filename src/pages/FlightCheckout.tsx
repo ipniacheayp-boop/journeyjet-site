@@ -33,6 +33,7 @@ import {
 } from "@/services/duffelBooking";
 import { useAuth } from "@/contexts/AuthContext";
 import type { DuffelOffer } from "@/types/duffel";
+import { getItineraryScope } from "@/lib/itineraryScope";
 
 const STEPS = ["Travellers", "Review", "Payment", "Confirmed"];
 
@@ -142,7 +143,9 @@ const FlightCheckout = () => {
     if (user?.email && !contact.email) setContact((c) => ({ ...c, email: user.email as string }));
   }, [user, contact.email]);
 
-  const requireDocuments = offer?.passenger_identity_documents_required === true;
+  // Domestic vs international comes from the itinerary's airport countries, never the URL.
+  const { isDomestic } = useMemo(() => getItineraryScope(offer), [offer]);
+  const requireDocuments = offer?.passenger_identity_documents_required === true && !isDomestic;
 
   // Duffel's revalidated total is the only price we are ever allowed to charge.
   const payableAmount = (() => {
@@ -156,10 +159,12 @@ const FlightCheckout = () => {
     for (const [i, p] of passengers.entries()) {
       const label = `Traveller ${i + 1}`;
       if (!p.title) return `${label}: select a title.`;
-      if (!/^[A-Za-z][A-Za-z\s'’-]{0,49}$/.test(p.givenName.trim())) return `${label}: enter the first name as on the passport.`;
-      if (!/^[A-Za-z][A-Za-z\s'’-]{0,49}$/.test(p.familyName.trim())) return `${label}: enter the last name as on the passport.`;
+      if (!/^[A-Za-z][A-Za-z\s'’-]{0,49}$/.test(p.givenName.trim()))
+        return `${label}: enter a valid first name${isDomestic ? " for the ticket." : " as on the passport."}`;
+      if (!/^[A-Za-z][A-Za-z\s'’-]{0,49}$/.test(p.familyName.trim()))
+        return `${label}: enter a valid last name${isDomestic ? " for the ticket." : " as on the passport."}`;
       if (!p.bornOn || new Date(p.bornOn) > new Date()) return `${label}: enter a valid date of birth.`;
-      if (!p.gender) return `${label}: select a gender as shown on the passport.`;
+      if (!p.gender) return `${label}: select a gender${isDomestic ? "." : " as shown on the passport."}`;
       if (requireDocuments) {
         if (!/^[A-Za-z0-9]{5,20}$/.test(p.passportNumber)) return `${label}: enter a valid passport number.`;
         if (!p.passportExpiry || new Date(p.passportExpiry) < new Date()) return `${label}: the passport must not be expired.`;
@@ -426,6 +431,7 @@ const FlightCheckout = () => {
                     passengers={passengers}
                     contact={contact}
                     requireDocuments={requireDocuments}
+                    isDomestic={isDomestic}
                     onPassengersChange={setPassengers}
                     onContactChange={setContact}
                     acceptedTerms={acceptedTerms}
