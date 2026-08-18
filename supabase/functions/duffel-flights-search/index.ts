@@ -150,6 +150,8 @@ type Any = Record<string, any>;
 
 const place = (p: Any | null | undefined) => ({
   iata_code: p?.iata_code ?? null,
+  // Country code drives the domestic vs international passenger form on the client.
+  iata_country_code: p?.iata_country_code ?? p?.city?.iata_country_code ?? null,
   name: p?.name ?? null,
   city_name: p?.city_name ?? p?.city?.name ?? null,
   time_zone: p?.time_zone ?? null,
