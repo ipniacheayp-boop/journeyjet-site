@@ -85,22 +85,46 @@ const Booking = () => {
   } = useBookingFlow();
 
   useEffect(() => {
-    const storedData = sessionStorage.getItem("selectedOffer");
+    const storedData =
+      sessionStorage.getItem("selectedOffer") || localStorage.getItem("selectedOffer");
     if (storedData) {
-      const parsed = JSON.parse(storedData);
-      setOffer(parsed.offer);
-      setAgentId(parsed.agentId);
+      try {
+        const parsed = JSON.parse(storedData);
+        const candidate = parsed.offer;
+        // A Duffel offer never belongs in the legacy Stripe flow — its price lives in
+        // total_amount / total_currency and it must be booked through Duffel's order API.
+        const isDuffelOffer =
+          !!candidate &&
+          (typeof candidate.total_amount === "string" ||
+            typeof candidate.total_amount === "number" ||
+            String(candidate.id ?? "").startsWith("off_"));
+
+        if (isDuffelOffer) {
+          // Keep the selection intact (session + local) and hand it to the Duffel checkout.
+          sessionStorage.setItem("selectedOffer", storedData);
+          localStorage.setItem("selectedOffer", storedData);
+          navigate("/flight/checkout", { replace: true });
+          return;
+        }
+
+        setOffer(candidate);
+        setAgentId(parsed.agentId);
+      } catch {
+        /* corrupt selection — the empty-state UI below handles it */
+      }
     }
     clientRequestIdRef.current = generateClientRequestId();
-  }, [generateClientRequestId]);
+  }, [generateClientRequestId, navigate]);
 
   useEffect(() => {
     if (priceChangeData) setShowPriceChangeModal(true);
   }, [priceChangeData]);
 
-  // Price calculations
+  // Price calculations — legacy providers use price.total, Duffel uses total_amount.
   const getPrice = (o: any) => {
     if (!o) return 0;
+    const duffelTotal = parseFloat(o.total_amount ?? "0");
+    if (Number.isFinite(duffelTotal) && duffelTotal > 0) return duffelTotal;
     if (bookingType === "flights") return parseFloat(o.price?.total || o.price?.grandTotal || "0");
     if (bookingType === "hotels") return parseFloat(o.offers?.[0]?.price?.total || o.price?.total || "0");
     if (bookingType === "cars") return parseFloat(o.price?.total || "0");
@@ -109,10 +133,12 @@ const Booking = () => {
 
   const getCurrency = (o: any) => {
     if (!o) return "USD";
+    if (o.total_currency) return o.total_currency;
     if (bookingType === "flights") return o.price?.currency || "USD";
     if (bookingType === "hotels") return o.offers?.[0]?.price?.currency || o.price?.currency || "USD";
     return o.price?.currency || "USD";
   };
+
 
   // API price (per person for flights; total for hotels/cars). API total already includes taxes.
   const price = validatedPrice || getPrice(offer);
@@ -120,7 +146,8 @@ const Booking = () => {
   const apiBaseRaw =
     bookingType === "hotels"
       ? parseFloat(offer?.offers?.[0]?.price?.base || offer?.price?.base || "0")
-      : parseFloat(offer?.price?.base || "0");
+      : parseFloat(offer?.base_amount || offer?.price?.base || "0");
+
   const taxes = apiBaseRaw > 0 && apiBaseRaw < price ? price - apiBaseRaw : 0;
   const basePerUnit = taxes > 0 ? apiBaseRaw : price;
   const passengerMultiplier = bookingType === "flights" ? passengers.length : 1;
@@ -232,6 +259,13 @@ const Booking = () => {
       );
       return;
     }
+
+    // Never start a payment on a missing / zero fare — the price must come from the provider.
+    if (!Number.isFinite(price) || price <= 0) {
+      toast.error("We couldn't read the fare for this selection. Please search again and reselect your option.");
+      return;
+    }
+
 
     const productType = bookingType as "flight" | "hotel" | "car" | "flights" | "hotels" | "cars";
     const validationResult = await validatePrebooking(productType, validatedOffer || offer, clientRequestIdRef.current);

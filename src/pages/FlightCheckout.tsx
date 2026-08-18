@@ -73,12 +73,13 @@ const FlightCheckout = () => {
 
   const stored = useMemo(() => {
     try {
-      const raw = sessionStorage.getItem("selectedOffer");
+      const raw = sessionStorage.getItem("selectedOffer") || localStorage.getItem("selectedOffer");
       return raw ? (JSON.parse(raw) as { offerId?: string; offer?: DuffelOffer; agentId?: string | null }) : null;
     } catch {
       return null;
     }
   }, []);
+
 
   const offerId = searchParams.get("offer") || stored?.offerId || stored?.offer?.id || "";
   const agentId = stored?.agentId ?? null;
@@ -110,12 +111,27 @@ const FlightCheckout = () => {
     }
 
     setOffer(fresh);
+    // Re-persist the revalidated offer so a refresh or back-navigation keeps the real price.
+    try {
+      const payload = JSON.stringify({
+        type: "flights",
+        provider: "duffel",
+        offerId: fresh.id,
+        offer: fresh,
+        agentId: stored?.agentId ?? null,
+      });
+      sessionStorage.setItem("selectedOffer", payload);
+      localStorage.setItem("selectedOffer", payload);
+    } catch {
+      /* non-fatal */
+    }
     setPassengers((existing) =>
       existing.length === fresh.passengers.length
         ? existing
         : fresh.passengers.map((p, i) => emptyPassenger(String(p.id ?? `pas_${i}`), p.type ?? "adult")),
     );
     setLoading(false);
+
   }, [offerId, stored]);
 
   useEffect(() => {
@@ -127,6 +143,13 @@ const FlightCheckout = () => {
   }, [user, contact.email]);
 
   const requireDocuments = offer?.passenger_identity_documents_required === true;
+
+  // Duffel's revalidated total is the only price we are ever allowed to charge.
+  const payableAmount = (() => {
+    const n = Number(offer?.total_amount ?? 0);
+    return Number.isFinite(n) && n > 0 ? n : 0;
+  })();
+
 
   const validateTravellers = (): string | null => {
     if (!offer) return "Please reload your flight selection.";
@@ -223,6 +246,12 @@ const FlightCheckout = () => {
     }
 
     sessionStorage.removeItem("selectedOffer");
+    try {
+      localStorage.removeItem("selectedOffer");
+    } catch {
+      /* non-fatal */
+    }
+
     setOrder(result.order ?? null);
     setBookingRef(result.bookingReference ?? null);
     setStep(3);
@@ -447,22 +476,41 @@ const FlightCheckout = () => {
                     <Button variant="outline" className="sm:w-auto" onClick={() => setStep(0)}>
                       Edit traveller details
                     </Button>
-                    <Button size="lg" className="flex-1" onClick={() => { setStep(2); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
+                    <Button
+                      size="lg"
+                      className="flex-1"
+                      disabled={!payableAmount}
+                      onClick={() => { setStep(2); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                    >
                       Continue to payment
                     </Button>
                   </div>
+                  {!payableAmount && (
+                    <p className="text-sm text-destructive">
+                      We couldn't confirm the fare for this flight. Please search again and reselect it.
+                    </p>
+                  )}
                 </>
               )}
 
               {step === 2 && (
-                <DuffelPaymentStep
-                  offerId={offer.id}
-                  amountLabel={money(offer.total_amount, offer.total_currency)}
-                  onAuthorised={handleAuthorised}
-                  submitting={submitting}
-                  externalError={orderError}
-                />
+                payableAmount ? (
+                  <DuffelPaymentStep
+                    offerId={offer.id}
+                    amountLabel={money(offer.total_amount, offer.total_currency)}
+                    onAuthorised={handleAuthorised}
+                    submitting={submitting}
+                    externalError={orderError}
+                  />
+                ) : (
+                  <Card className="border-destructive/40">
+                    <CardContent className="p-6 text-sm text-destructive">
+                      This fare no longer has a valid price. Please search again and reselect your flight.
+                    </CardContent>
+                  </Card>
+                )
               )}
+
             </div>
 
             <aside className="space-y-4 lg:sticky lg:top-24 h-fit">
