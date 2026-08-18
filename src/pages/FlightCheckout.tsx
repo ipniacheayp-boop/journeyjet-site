@@ -469,21 +469,33 @@ const FlightCheckout = () => {
                     <Button variant="outline" className="sm:w-auto" onClick={() => setStep(0)}>
                       Edit traveller details
                     </Button>
-                    <Button size="lg" className="flex-1" onClick={() => { setStep(2); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
+                    <Button
+                      size="lg"
+                      className="flex-1"
+                      disabled={!payableAmount}
+                      onClick={() => { setStep(2); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                    >
                       Continue to payment
                     </Button>
                   </div>
+                  {!payableAmount && (
+                    <p className="text-sm text-destructive">
+                      We couldn't confirm the fare for this flight. Please search again and reselect it.
+                    </p>
+                  )}
                 </>
               )}
 
               {step === 2 && (
-                <DuffelPaymentStep
-                  offerId={offer.id}
-                  amountLabel={money(offer.total_amount, offer.total_currency)}
-                  onAuthorised={handleAuthorised}
-                  submitting={submitting}
-                  externalError={orderError}
-                />
+                payableAmount ? (
+                  <DuffelPaymentStep
+                    offerId={offer.id}
+                    amountLabel={money(offer.total_amount, offer.total_currency)}
+                    onAuthorised={handleAuthorised}
+                    submitting={submitting}
+                    externalError={orderError}
+                  />
+
               )}
             </div>
 
