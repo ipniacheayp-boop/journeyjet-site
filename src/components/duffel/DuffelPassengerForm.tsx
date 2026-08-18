@@ -351,19 +351,50 @@ const DuffelPassengerForm = ({
             </div>
             <div className="space-y-2">
               <Label htmlFor="contact-phone">Phone number <span className="text-destructive">*</span></Label>
-              <Input
-                id="contact-phone"
-                type="tel"
-                className="bg-background"
-                autoComplete="tel"
-                value={contact.phone}
-                disabled={disabled}
-                onChange={(e) => onContactChange({ ...contact, phone: e.target.value.replace(/[^\d+]/g, "") })}
-                placeholder="+14155550123"
-                maxLength={16}
-              />
-              <p className="text-xs text-muted-foreground">Include the country code, e.g. +1 for the US.</p>
+              <div className="flex gap-2">
+                <Select
+                  value={phoneCountry.iso}
+                  disabled={disabled}
+                  onValueChange={(iso) => {
+                    const next = findPhoneCountryByIso(iso) ?? DEFAULT_PHONE_COUNTRY;
+                    setPhoneIso(next.iso);
+                    onContactChange({ ...contact, phone: composePhoneNumber(next.dial, phoneNational) });
+                  }}
+                >
+                  <SelectTrigger className="w-[132px] bg-background" aria-label="Phone country code">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-72">
+                    {PHONE_COUNTRIES.map((c) => (
+                      <SelectItem key={c.iso} value={c.iso}>
+                        {c.dial} {c.iso}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Input
+                  id="contact-phone"
+                  type="tel"
+                  className="bg-background"
+                  autoComplete="tel-national"
+                  value={phoneNational}
+                  disabled={disabled}
+                  onChange={(e) =>
+                    onContactChange({
+                      ...contact,
+                      phone: composePhoneNumber(phoneCountry.dial, e.target.value.replace(/\D/g, "").slice(0, 15)),
+                    })
+                  }
+                  placeholder="9876543210"
+                  inputMode="numeric"
+                  maxLength={15}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Select your country code (e.g. +91 for India) and enter your mobile number.
+              </p>
             </div>
+
           </div>
 
           <div className="flex items-start gap-3 pt-2">
