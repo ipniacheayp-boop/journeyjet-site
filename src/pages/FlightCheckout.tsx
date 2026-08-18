@@ -111,12 +111,27 @@ const FlightCheckout = () => {
     }
 
     setOffer(fresh);
+    // Re-persist the revalidated offer so a refresh or back-navigation keeps the real price.
+    try {
+      const payload = JSON.stringify({
+        type: "flights",
+        provider: "duffel",
+        offerId: fresh.id,
+        offer: fresh,
+        agentId: stored?.agentId ?? null,
+      });
+      sessionStorage.setItem("selectedOffer", payload);
+      localStorage.setItem("selectedOffer", payload);
+    } catch {
+      /* non-fatal */
+    }
     setPassengers((existing) =>
       existing.length === fresh.passengers.length
         ? existing
         : fresh.passengers.map((p, i) => emptyPassenger(String(p.id ?? `pas_${i}`), p.type ?? "adult")),
     );
     setLoading(false);
+
   }, [offerId, stored]);
 
   useEffect(() => {
