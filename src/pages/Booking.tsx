@@ -146,7 +146,8 @@ const Booking = () => {
   const apiBaseRaw =
     bookingType === "hotels"
       ? parseFloat(offer?.offers?.[0]?.price?.base || offer?.price?.base || "0")
-      : parseFloat(offer?.price?.base || "0");
+      : parseFloat(offer?.base_amount || offer?.price?.base || "0");
+
   const taxes = apiBaseRaw > 0 && apiBaseRaw < price ? price - apiBaseRaw : 0;
   const basePerUnit = taxes > 0 ? apiBaseRaw : price;
   const passengerMultiplier = bookingType === "flights" ? passengers.length : 1;
