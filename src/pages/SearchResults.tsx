@@ -125,12 +125,22 @@ const SearchResults = () => {
         const departureDate = searchParams.get("departureDate") || "";
         const returnDate = searchParams.get("returnDate") || "";
         const adults = parseInt(searchParams.get("adults") || "1");
+        const childrenCount = parseInt(searchParams.get("children") || "0") || 0;
+        const infantsCount = parseInt(searchParams.get("infants") || "0") || 0;
         const travelClass = searchParams.get("travelClass") || "ECONOMY";
 
         // Validate required parameters
         if (!originLocationCode || !destinationLocationCode || !departureDate) {
           toast.error("Missing required search parameters. Please start a new search.");
           setResults([]);
+          setLoading(false);
+          return;
+        }
+
+        if (originLocationCode.toUpperCase() === destinationLocationCode.toUpperCase()) {
+          toast.error("You cannot search flights between the same city or airport.");
+          setResults([]);
+          setDuffelOffers([]);
           setLoading(false);
           return;
         }
@@ -142,8 +152,9 @@ const SearchResults = () => {
           departureDate,
           returnDate: returnDate || null,
           adults,
-          children: 0,
-          infants: 0,
+          children: childrenCount,
+          infants: infantsCount,
+
           cabinClass: duffelCabin(travelClass),
         });
 
