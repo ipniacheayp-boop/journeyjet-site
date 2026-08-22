@@ -149,7 +149,10 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
         departureDate: departDate,
         ...(tripType === "round-trip" && { returnDate }),
         adults: passengers,
+        children: childrenCount,
+        infants: infantsCount,
         travelClass: cabinClass,
+
         ...(isAgentBooking && agentId && { agentId }),
       });
       navigate(`/search-results?${params.toString()}`);
