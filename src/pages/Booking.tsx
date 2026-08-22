@@ -557,25 +557,8 @@ const Booking = () => {
                   disabled={isProcessing}
                 />
               )}
-              {currentStep === 1 && bookingType !== "flights" && (
-                <>
-                  <PassengerForm
-                    passengers={passengers}
-                    contact={contact}
-                    onPassengersChange={setPassengers}
-                    onContactChange={setContact}
-                    disabled={isProcessing}
-                  />
-                  <div className="flex justify-between">
-                    <Button variant="outline" onClick={goBack} className="gap-2">
-                      <ArrowLeft className="w-4 h-4" /> Back
-                    </Button>
-                    <Button onClick={goNext} size="lg" className="gap-2">
-                      Continue to Coupons <ArrowRight className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </>
-              )}
+
+
 
               {/* Step 2: Passengers */}
               {currentStep === 2 && (
