@@ -386,14 +386,14 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
               )}
             </div>
 
-            {/* Row 2: Passengers / Class / Submit */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
+            {/* Row 2: Travellers / Class / Submit */}
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
               <div className="space-y-1.5">
                 <Label
                   htmlFor="passengers"
                   className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
                 >
-                  Passengers
+                  Adults
                 </Label>
                 <div className="relative">
                   <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -402,16 +402,61 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     value={passengers}
                     onChange={(e) => setPassengers(e.target.value)}
                     className="w-full pl-10 pr-4 h-11 rounded-lg border border-input bg-background text-foreground text-sm"
-                    aria-label="Number of passengers"
+                    aria-label="Number of adults"
                   >
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => (
                       <option key={n} value={n}>
-                        {n} {n === 1 ? "Passenger" : "Passengers"}
+                        {n} {n === 1 ? "Adult" : "Adults"}
                       </option>
                     ))}
                   </select>
                 </div>
               </div>
+
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="children"
+                  className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                >
+                  Children
+                </Label>
+                <select
+                  id="children"
+                  value={childrenCount}
+                  onChange={(e) => setChildrenCount(e.target.value)}
+                  className="w-full px-3 pr-4 h-11 rounded-lg border border-input bg-background text-foreground text-sm"
+                  aria-label="Number of children (2-11 years)"
+                >
+                  {[0, 1, 2, 3, 4, 5, 6].map((n) => (
+                    <option key={n} value={n}>
+                      {n} {n === 1 ? "Child" : "Children"}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label
+                  htmlFor="infants"
+                  className="text-xs font-semibold text-muted-foreground uppercase tracking-wide"
+                >
+                  Infants
+                </Label>
+                <select
+                  id="infants"
+                  value={infantsCount}
+                  onChange={(e) => setInfantsCount(e.target.value)}
+                  className="w-full px-3 pr-4 h-11 rounded-lg border border-input bg-background text-foreground text-sm"
+                  aria-label="Number of infants (under 2 years)"
+                >
+                  {[0, 1, 2, 3, 4].map((n) => (
+                    <option key={n} value={n}>
+                      {n} {n === 1 ? "Infant" : "Infants"}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
 
               <div className="space-y-1.5">
                 <Label
