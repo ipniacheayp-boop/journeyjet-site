@@ -191,6 +191,13 @@ const Booking = () => {
   const returnDateRaw = returnFirstSegment?.departure?.at || "";
   const returnDate = returnDateRaw ? returnDateRaw.split("T")[0] : "";
 
+  // Hotel/car bookings have no flight-upsell step, so step 1 is skipped entirely.
+  const isFlightBooking = bookingType === "flights";
+  const stepLabels = isFlightBooking
+    ? FLIGHT_STEPS
+    : [bookingType === "cars" ? "Car" : "Hotel", "Guest Details", "Coupons", "Payment"];
+  const displayStep = isFlightBooking ? currentStep : currentStep > 1 ? currentStep - 1 : currentStep;
+
   // Step validation
   const validateStep = (step: number): boolean => {
     if (step === 0) return true; // Flight summary
@@ -198,14 +205,22 @@ const Booking = () => {
     if (step === 2) {
       // Validate passengers
       for (const p of passengers) {
-        if (!p.firstName || !p.lastName || !p.dateOfBirth || !p.gender || !p.nationality ||
-            !p.passportNumber || !p.passportExpiry || !p.passportCountry) {
+        const missingCore =
+          !p.firstName || !p.lastName || !p.dateOfBirth || !p.gender || !p.nationality;
+        const missingDocs =
+          isFlightBooking && (!p.passportNumber || !p.passportExpiry || !p.passportCountry);
+        if (missingCore || missingDocs) {
           toast.error("Please fill in all required passenger fields");
           return false;
         }
       }
       if (!contact.email || !contact.phone) {
         toast.error("Please provide contact email and phone");
+        return false;
+      }
+      const phoneDigits = contact.phone.replace(/\D/g, "");
+      if (phoneDigits.length < 10 || phoneDigits.length > 15) {
+        toast.error("Please enter a valid phone number (at least 10 digits)");
         return false;
       }
       return true;
@@ -216,15 +231,38 @@ const Booking = () => {
 
   const goNext = () => {
     if (validateStep(currentStep)) {
-      setCurrentStep((s) => Math.min(s + 1, STEPS.length - 1));
+      setCurrentStep((s) => {
+        const next = Math.min(s + 1, STEPS.length - 1);
+        return !isFlightBooking && next === 1 ? 2 : next;
+      });
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   const goBack = () => {
-    setCurrentStep((s) => Math.max(s - 1, 0));
+    setCurrentStep((s) => {
+      const prev = Math.max(s - 1, 0);
+      return !isFlightBooking && prev === 1 ? 0 : prev;
+    });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  // Browser back should walk back through the checkout steps instead of
+  // dumping the traveller back on the search page (losing entered details).
+  useEffect(() => {
+    if (currentStep === 0) return;
+    window.history.pushState({ bookingStep: currentStep }, "");
+    const onPopState = () => {
+      setCurrentStep((s) => {
+        const prev = Math.max(s - 1, 0);
+        return !isFlightBooking && prev === 1 ? 0 : prev;
+      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, [currentStep, isFlightBooking]);
+
 
   const handleApplyCoupon = (code: string, disc: number) => {
     setAppliedCoupon(code);
