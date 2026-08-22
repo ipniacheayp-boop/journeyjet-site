@@ -51,7 +51,10 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
   const [departDate, setDepartDate] = useState("");
   const [returnDate, setReturnDate] = useState("");
   const [passengers, setPassengers] = useState("1");
+  const [childrenCount, setChildrenCount] = useState("0");
+  const [infantsCount, setInfantsCount] = useState("0");
   const [cabinClass, setCabinClass] = useState("ECONOMY");
+
 
   // Hotel state
   const [cityCode, setCityCode] = useState("");
