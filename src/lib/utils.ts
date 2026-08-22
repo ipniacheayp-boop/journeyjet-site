@@ -30,7 +30,12 @@ export function formatCurrency(amount: string | number, currencyCode: string): s
 
   if (isNaN(numAmount)) return `${symbol}0.00`;
 
-  return `${symbol}${numAmount.toFixed(2)}`;
+  // Always show the exact charged amount (cents included) — never round.
+  return `${symbol}${numAmount.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+
 }
 
 export function getCategoryBadgeColor(category: string): string {
