@@ -32,7 +32,9 @@ import {
   COMPLIANCE_COPY,
 } from "@/config/sanctionsCompliance";
 
-const STEPS = ["Flight", "Hotel", "Passengers", "Coupons", "Payment"];
+const FLIGHT_STEPS = ["Flight", "Hotel", "Passengers", "Coupons", "Payment"];
+const STEPS = FLIGHT_STEPS;
+
 
 const emptyPassenger: Passenger = {
   firstName: "", lastName: "", dateOfBirth: "", gender: "", nationality: "United States",
