@@ -517,7 +517,7 @@ const Booking = () => {
           <h1 className="font-display text-3xl font-bold mb-6 text-foreground mt-4">Complete Your Booking</h1>
 
           {/* Stepper */}
-          <BookingStepper currentStep={currentStep} steps={STEPS} />
+          <BookingStepper currentStep={displayStep} steps={stepLabels} />
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main content */}
