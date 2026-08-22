@@ -117,8 +117,9 @@ const PaymentSuccess = () => {
   }, [getBookingId, sessionId]);
 
   useEffect(() => {
-    // Initial toast
-    toast.success("Payment received! Confirming your booking...");
+    // Nothing is confirmed until the backend verifies the payment.
+    toast.loading("Verifying your payment...", { id: "payment-verification" });
+
     
     // Start polling
     const poll = async () => {
