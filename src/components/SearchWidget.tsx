@@ -79,6 +79,12 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
     const newErrors: Record<string, string> = {};
     if (!flightOrigin.trim()) newErrors.origin = "Origin is required";
     if (!flightDestination.trim()) newErrors.destination = "Destination is required";
+    // Origin and destination must differ
+    const originKey = (flightOriginCode || flightOrigin).trim().toUpperCase();
+    const destinationKey = (flightDestinationCode || flightDestination).trim().toUpperCase();
+    if (originKey && destinationKey && originKey === destinationKey) {
+      newErrors.destination = "You cannot enter the same city or airport for both From and To";
+    }
     if (!departDate) newErrors.departDate = "Departure date is required";
     // Prevent past dates
     if (departDate && departDate < today) newErrors.departDate = "Departure date cannot be in the past";
@@ -89,6 +95,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
 
   const validateHotelForm = () => {
     const newErrors: Record<string, string> = {};
