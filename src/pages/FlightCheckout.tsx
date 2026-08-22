@@ -40,7 +40,12 @@ const STEPS = ["Travellers", "Review", "Payment", "Confirmed"];
 const money = (amount: string | number | null | undefined, currency: string | null | undefined) => {
   const value = Number(amount ?? 0);
   if (!Number.isFinite(value)) return "—";
-  return `${currency === "USD" ? "$" : `${currency ?? ""} `}${Math.ceil(value).toLocaleString("en-US")}`;
+  // Exact amount — the traveller must see the same figure the card is charged.
+  return `${currency === "USD" ? "$" : `${currency ?? ""} `}${value.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+
 };
 
 const time = (iso: string | null) =>
