@@ -54,7 +54,7 @@ const HotelSummaryCard = ({ offer }: HotelSummaryCardProps) => {
             )}
           </div>
           <div className="text-right">
-            <p className="text-2xl font-bold text-primary">{formatCurrency(Math.ceil(price), currency)}</p>
+            <p className="text-2xl font-bold text-primary">{formatCurrency(price, currency)}</p>
             <p className="text-xs text-muted-foreground">total stay</p>
           </div>
         </div>

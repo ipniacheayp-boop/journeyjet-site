@@ -248,12 +248,22 @@ const PassengerForm = ({ passengers, contact, onPassengersChange, onContactChang
               <Input
                 type="tel"
                 required
+                inputMode="tel"
+                minLength={10}
                 disabled={disabled}
                 value={contact.phone}
                 onChange={(e) => onContactChange({ ...contact, phone: e.target.value })}
                 placeholder="+1 234 567 8900"
+                aria-invalid={contact.phone.replace(/\D/g, "").length > 0 && contact.phone.replace(/\D/g, "").length < 10}
               />
+              {contact.phone.replace(/\D/g, "").length > 0 &&
+                contact.phone.replace(/\D/g, "").length < 10 && (
+                  <p className="text-xs text-destructive">
+                    Enter a valid phone number with at least 10 digits (include country code).
+                  </p>
+                )}
             </div>
+
           </div>
         </CardContent>
       </Card>

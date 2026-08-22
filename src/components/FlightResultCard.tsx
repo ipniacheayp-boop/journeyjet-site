@@ -84,7 +84,7 @@ export function FlightResultCard({ flight, onBook }: FlightResultCardProps) {
               </div>
             )}
             <div className="text-2xl font-bold text-primary">
-              {formatCurrency(Math.ceil(price), currency)}
+              {formatCurrency(price, currency)}
             </div>
             <p className="text-xs text-muted-foreground">per person</p>
             {kayak?.fareFamilyName && (

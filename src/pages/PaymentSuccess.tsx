@@ -93,6 +93,7 @@ const PaymentSuccess = () => {
         if (result.bookingStatus === 'confirmed' || result.providerBooked) {
           setStage('confirmed');
           sessionStorage.removeItem('pendingBooking');
+          toast.dismiss("payment-verification");
           toast.success("Booking confirmed successfully!");
           return true; // Stop polling
         }
@@ -100,6 +101,7 @@ const PaymentSuccess = () => {
         // Check for failed/cancelled status  
         if (result.bookingStatus === 'cancelled' || result.bookingStatus === 'refunded') {
           setStage('failed');
+          toast.dismiss("payment-verification");
           toast.error("Booking was cancelled or refunded");
           return true; // Stop polling
         }
@@ -117,8 +119,9 @@ const PaymentSuccess = () => {
   }, [getBookingId, sessionId]);
 
   useEffect(() => {
-    // Initial toast
-    toast.success("Payment received! Confirming your booking...");
+    // Nothing is confirmed until the backend verifies the payment.
+    toast.loading("Verifying your payment...", { id: "payment-verification" });
+
     
     // Start polling
     const poll = async () => {
@@ -126,6 +129,7 @@ const PaymentSuccess = () => {
       if (shouldStop || pollCount >= maxPolls) {
         if (pollCount >= maxPolls && stage !== 'confirmed') {
           setStage('processing_provider');
+          toast.dismiss("payment-verification");
           toast.info("We're still confirming your booking. You'll receive an email shortly.");
         }
         return;
@@ -200,7 +204,7 @@ const PaymentSuccess = () => {
             <div className="mx-auto w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4">
               <Loader2 className="w-10 h-10 text-amber-600 animate-spin" />
             </div>
-            <h1 className="text-2xl font-semibold tracking-tight">Processing Payment...</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">Verifying Payment...</h1>
           </>
         );
     }
@@ -224,7 +228,7 @@ const PaymentSuccess = () => {
             )}
             {bookingDetails?.amount && (
               <p className="text-lg font-semibold">
-                Total Paid: ${bookingDetails.amount.toLocaleString()} {bookingDetails.currency || 'USD'}
+                Total Paid: ${bookingDetails.amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {bookingDetails.currency || 'USD'}
               </p>
             )}
             <p className="text-sm text-muted-foreground">
