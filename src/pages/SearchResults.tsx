@@ -147,8 +147,10 @@ const SearchResults = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const performSearch = async () => {
+  const performSearch = async (controller?: AbortController) => {
+    const aborted = () => controller?.signal.aborted === true;
     setLoading(true);
+    setLoadingMore(false);
     try {
       if (type === "flights") {
         const originLocationCode = searchParams.get("originLocationCode") || "";
@@ -176,30 +178,44 @@ const SearchResults = () => {
           return;
         }
 
-        // 1) Live Duffel search — this is the data rendered in the cards.
-        const duffel = await searchDuffelFlights({
-          origin: originLocationCode,
-          destination: destinationLocationCode,
-          departureDate,
-          returnDate: returnDate || null,
-          adults,
-          children: childrenCount,
-          infants: infantsCount,
+        // 1) Live Duffel search — this is the data rendered in the cards. Fired
+        // immediately: nothing else is fetched before it.
+        const duffel = await searchDuffelFlights(
+          {
+            origin: originLocationCode,
+            destination: destinationLocationCode,
+            departureDate,
+            returnDate: returnDate || null,
+            adults,
+            children: childrenCount,
+            infants: infantsCount,
+            cabinClass: duffelCabin(travelClass),
+          },
+          { signal: controller?.signal },
+        );
 
-          cabinClass: duffelCabin(travelClass),
-        });
+        if (aborted()) return;
 
         if (duffel.offers.length > 0) {
-          console.log("🔍 Search provider: duffel");
-          console.log("📊 Duffel offers received:", duffel.offers.length);
+          markFlightSearch("results_processed");
           setDuffelOffers(duffel.offers);
           setResults([]);
           setLoading(false);
           return;
         }
 
+        if (duffel.error) {
+          setDuffelOffers([]);
+          setResults([]);
+          setLoading(false);
+          toast.error(duffel.error, { duration: 5000 });
+          return;
+        }
+
         setDuffelOffers([]);
 
+        // 2) No live offers — query the legacy fallback provider.
+        setLoadingMore(true);
         const data = await searchFlights({
           originLocationCode,
           destinationLocationCode,
@@ -210,8 +226,8 @@ const SearchResults = () => {
           currencyCode: "USD",
         });
 
-        console.log("🔍 Search provider:", data?.meta?.provider || "unknown");
-        console.log("📊 Results received:", data?.data?.length || 0);
+        if (aborted()) return;
+        markFlightSearch("results_processed");
 
         setResults(data?.data || []);
       } else if (type === "hotels") {
