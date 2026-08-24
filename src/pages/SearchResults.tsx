@@ -59,6 +59,12 @@ const SearchResults = () => {
   const [detailsOffer, setDetailsOffer] = useState<DuffelOffer | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [timeFilter, setTimeFilter] = useState<TimeSlot>("all");
+  // True while the legacy fallback provider is still being queried after live offers rendered.
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(FLIGHT_PAGE_SIZE);
+  // Exactly one active search at a time — a new search aborts the previous request.
+  const activeSearch = useRef<AbortController | null>(null);
+  const lastSearchKey = useRef<string | null>(null);
 
   const timeCounts = useMemo(() => {
     const counts: Record<TimeSlot, number> = { all: 0, morning: 0, afternoon: 0, evening: 0, night: 0 };
