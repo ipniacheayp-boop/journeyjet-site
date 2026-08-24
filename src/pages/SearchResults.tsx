@@ -292,35 +292,74 @@ const SearchResults = () => {
     }
   };
 
-  const handleBook = (offer: any) => {
-    // Store the offer and agentId in sessionStorage and navigate to booking
-    sessionStorage.setItem("selectedOffer", JSON.stringify({ type, offer, agentId }));
-    window.location.href = `/booking/${type}`;
-  };
+  const handleBook = useCallback(
+    (offer: any) => {
+      // Store the offer and agentId in sessionStorage and navigate to booking
+      sessionStorage.setItem("selectedOffer", JSON.stringify({ type, offer, agentId }));
+      window.location.href = `/booking/${type}`;
+    },
+    [type, agentId],
+  );
 
-  const handleBookDuffel = (offer: DuffelOffer) => {
-    const payload = JSON.stringify({
-      type: "flights",
-      provider: "duffel",
-      offerId: offer.id,
-      offer,
-      agentId,
-      // Pricing snapshot kept verbatim from Duffel so it survives navigation & refresh.
-      pricing: {
-        total_amount: offer.total_amount,
-        total_currency: offer.total_currency,
-        base_amount: offer.base_amount,
-        tax_amount: offer.tax_amount,
-      },
-    });
-    sessionStorage.setItem("selectedOffer", payload);
-    try {
-      localStorage.setItem("selectedOffer", payload);
-    } catch {
-      /* storage full / disabled — session copy is enough for this tab */
+  const handleBookDuffel = useCallback(
+    (offer: DuffelOffer) => {
+      const payload = JSON.stringify({
+        type: "flights",
+        provider: "duffel",
+        offerId: offer.id,
+        offer,
+        agentId,
+        // Pricing snapshot kept verbatim from Duffel so it survives navigation & refresh.
+        pricing: {
+          total_amount: offer.total_amount,
+          total_currency: offer.total_currency,
+          base_amount: offer.base_amount,
+          tax_amount: offer.tax_amount,
+        },
+      });
+      sessionStorage.setItem("selectedOffer", payload);
+      try {
+        localStorage.setItem("selectedOffer", payload);
+      } catch {
+        /* storage full / disabled — session copy is enough for this tab */
+      }
+      navigate(`/flight/checkout?offer=${encodeURIComponent(offer.id)}`);
+    },
+    [agentId, navigate],
+  );
+
+  const handleViewDetails = useCallback((offer: DuffelOffer) => {
+    setDetailsOffer(offer);
+    setDetailsOpen(true);
+  }, []);
+
+  // Chunked reveal: paint the first page instantly, then fill the rest on idle time
+  // so a large result set never blocks the first render.
+  const visibleDuffelOffers = useMemo(
+    () => filteredDuffelOffers.slice(0, visibleCount),
+    [filteredDuffelOffers, visibleCount],
+  );
+
+  useEffect(() => {
+    if (loading) return;
+    if (visibleCount >= filteredDuffelOffers.length) return;
+    const id = window.setTimeout(() => setVisibleCount((c) => c + FLIGHT_PAGE_SIZE), 120);
+    return () => window.clearTimeout(id);
+  }, [loading, visibleCount, filteredDuffelOffers.length]);
+
+  // Measurement: first paint of results and completion of the full list.
+  useEffect(() => {
+    if (loading || type !== "flights") return;
+    if (visibleDuffelOffers.length === 0 && filteredResults.length === 0) return;
+    markFlightSearch("first_results_rendered");
+    if (visibleCount >= filteredDuffelOffers.length) {
+      markFlightSearch("all_results_rendered");
+      reportFlightSearchTimings({ offers: filteredDuffelOffers.length || filteredResults.length });
     }
-    navigate(`/flight/checkout?offer=${encodeURIComponent(offer.id)}`);
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, visibleDuffelOffers.length, filteredResults.length]);
+
+
 
 
   const flightCount = type === "flights" && duffelOffers.length > 0
