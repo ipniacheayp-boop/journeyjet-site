@@ -417,9 +417,14 @@ const SearchResults = () => {
               </Badge>
             </div>
             <p className="text-muted-foreground">
-              {loading ? "Finding the best available price for you..." : 
-                type === "flights" && timeFilter !== "all" 
-                  ? `Showing ${flightCount} of ${totalFlightCount} result(s)` 
+              {loading
+                ? loadingMore
+                  ? "Loading additional results..."
+                  : type === "flights"
+                    ? "Searching flights..."
+                    : "Finding the best available price for you..."
+                : type === "flights" && timeFilter !== "all"
+                  ? `Showing ${flightCount} of ${totalFlightCount} result(s)`
                   : `Found ${totalCount} result(s)`}
             </p>
           </div>
