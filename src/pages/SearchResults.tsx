@@ -21,7 +21,15 @@ import { getRestrictedDestinationMatch, isRestrictedOffer } from "@/config/sanct
 import DuffelFlightCard from "@/components/duffel/FlightCard";
 import FlightDetailsDialog from "@/components/duffel/FlightDetailsDialog";
 import { searchDuffelFlights } from "@/services/duffelFlights";
+import {
+  markFlightSearch,
+  reportFlightSearchTimings,
+  startFlightSearchTimer,
+} from "@/lib/flightSearchPerf";
 import type { CabinClass, DuffelOffer } from "@/types/duffel";
+
+/** Flight cards are heavy; reveal them in chunks so the first paint is immediate. */
+const FLIGHT_PAGE_SIZE = 20;
 
 const CABIN_MAP: Record<string, CabinClass> = {
   ECONOMY: "economy",
