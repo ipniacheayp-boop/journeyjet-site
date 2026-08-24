@@ -73,6 +73,8 @@ export async function invokeSupabaseFunction<T = unknown>(
   functionName: string,
   /** Plain JSON body (flight/hotel search params, etc.). Use `object` so typed interfaces stay assignable. */
   body: object,
+  /** Optional cancellation + hard timeout so the UI never hangs on a stalled request. */
+  options: { signal?: AbortSignal; timeoutMs?: number } = {},
 ): Promise<{ data: T | null; error: string | null }> {
   const baseUrl = (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.replace(/\/$/, "");
   const headers = getEdgeFunctionHeaders();
