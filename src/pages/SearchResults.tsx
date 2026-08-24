@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -21,7 +21,15 @@ import { getRestrictedDestinationMatch, isRestrictedOffer } from "@/config/sanct
 import DuffelFlightCard from "@/components/duffel/FlightCard";
 import FlightDetailsDialog from "@/components/duffel/FlightDetailsDialog";
 import { searchDuffelFlights } from "@/services/duffelFlights";
+import {
+  markFlightSearch,
+  reportFlightSearchTimings,
+  startFlightSearchTimer,
+} from "@/lib/flightSearchPerf";
 import type { CabinClass, DuffelOffer } from "@/types/duffel";
+
+/** Flight cards are heavy; reveal them in chunks so the first paint is immediate. */
+const FLIGHT_PAGE_SIZE = 20;
 
 const CABIN_MAP: Record<string, CabinClass> = {
   ECONOMY: "economy",
@@ -51,6 +59,12 @@ const SearchResults = () => {
   const [detailsOffer, setDetailsOffer] = useState<DuffelOffer | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [timeFilter, setTimeFilter] = useState<TimeSlot>("all");
+  // True while the legacy fallback provider is still being queried after live offers rendered.
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(FLIGHT_PAGE_SIZE);
+  // Exactly one active search at a time — a new search aborts the previous request.
+  const activeSearch = useRef<AbortController | null>(null);
+  const lastSearchKey = useRef<string | null>(null);
 
   const timeCounts = useMemo(() => {
     const counts: Record<TimeSlot, number> = { all: 0, morning: 0, afternoon: 0, evening: 0, night: 0 };
@@ -101,9 +115,26 @@ const SearchResults = () => {
     );
   }, [duffelOffers, timeFilter, type]);
 
+  // A stable string key: re-renders or a new (but identical) searchParams object
+  // can never trigger a second identical search.
+  const searchKey = searchParams.toString();
+
   useEffect(() => {
-    performSearch();
-  }, [searchParams]);
+    if (lastSearchKey.current === searchKey) return;
+    lastSearchKey.current = searchKey;
+
+    // Cancel a search that is being replaced — its response is no longer wanted.
+    activeSearch.current?.abort();
+    const controller = new AbortController();
+    activeSearch.current = controller;
+
+    setVisibleCount(FLIGHT_PAGE_SIZE);
+    startFlightSearchTimer(searchKey);
+    void performSearch(controller);
+
+    return () => controller.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchKey]);
 
   useEffect(() => {
     if (sessionStorage.getItem("callPopupShown")) return;
@@ -116,8 +147,10 @@ const SearchResults = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const performSearch = async () => {
+  const performSearch = async (controller?: AbortController) => {
+    const aborted = () => controller?.signal.aborted === true;
     setLoading(true);
+    setLoadingMore(false);
     try {
       if (type === "flights") {
         const originLocationCode = searchParams.get("originLocationCode") || "";
@@ -145,30 +178,44 @@ const SearchResults = () => {
           return;
         }
 
-        // 1) Live Duffel search — this is the data rendered in the cards.
-        const duffel = await searchDuffelFlights({
-          origin: originLocationCode,
-          destination: destinationLocationCode,
-          departureDate,
-          returnDate: returnDate || null,
-          adults,
-          children: childrenCount,
-          infants: infantsCount,
+        // 1) Live Duffel search — this is the data rendered in the cards. Fired
+        // immediately: nothing else is fetched before it.
+        const duffel = await searchDuffelFlights(
+          {
+            origin: originLocationCode,
+            destination: destinationLocationCode,
+            departureDate,
+            returnDate: returnDate || null,
+            adults,
+            children: childrenCount,
+            infants: infantsCount,
+            cabinClass: duffelCabin(travelClass),
+          },
+          { signal: controller?.signal },
+        );
 
-          cabinClass: duffelCabin(travelClass),
-        });
+        if (aborted()) return;
 
         if (duffel.offers.length > 0) {
-          console.log("🔍 Search provider: duffel");
-          console.log("📊 Duffel offers received:", duffel.offers.length);
+          markFlightSearch("results_processed");
           setDuffelOffers(duffel.offers);
           setResults([]);
           setLoading(false);
           return;
         }
 
+        if (duffel.error) {
+          setDuffelOffers([]);
+          setResults([]);
+          setLoading(false);
+          toast.error(duffel.error, { duration: 5000 });
+          return;
+        }
+
         setDuffelOffers([]);
 
+        // 2) No live offers — query the legacy fallback provider.
+        setLoadingMore(true);
         const data = await searchFlights({
           originLocationCode,
           destinationLocationCode,
@@ -179,8 +226,8 @@ const SearchResults = () => {
           currencyCode: "USD",
         });
 
-        console.log("🔍 Search provider:", data?.meta?.provider || "unknown");
-        console.log("📊 Results received:", data?.data?.length || 0);
+        if (aborted()) return;
+        markFlightSearch("results_processed");
 
         setResults(data?.data || []);
       } else if (type === "hotels") {
@@ -232,45 +279,87 @@ const SearchResults = () => {
         setResults(data?.data || []);
       }
     } catch (error: any) {
-      const errorMessage = error.message || `Failed to search ${type}`;
+      if (aborted()) return;
+      const errorMessage = error?.message || `Failed to search ${type}`;
       console.error("❌ Search failed:", errorMessage);
       toast.error(errorMessage, { duration: 5000 });
       setResults([]);
       setDuffelOffers([]);
     } finally {
+      // Loading is always reset — success, error and cancellation alike.
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
-  const handleBook = (offer: any) => {
-    // Store the offer and agentId in sessionStorage and navigate to booking
-    sessionStorage.setItem("selectedOffer", JSON.stringify({ type, offer, agentId }));
-    window.location.href = `/booking/${type}`;
-  };
+  const handleBook = useCallback(
+    (offer: any) => {
+      // Store the offer and agentId in sessionStorage and navigate to booking
+      sessionStorage.setItem("selectedOffer", JSON.stringify({ type, offer, agentId }));
+      window.location.href = `/booking/${type}`;
+    },
+    [type, agentId],
+  );
 
-  const handleBookDuffel = (offer: DuffelOffer) => {
-    const payload = JSON.stringify({
-      type: "flights",
-      provider: "duffel",
-      offerId: offer.id,
-      offer,
-      agentId,
-      // Pricing snapshot kept verbatim from Duffel so it survives navigation & refresh.
-      pricing: {
-        total_amount: offer.total_amount,
-        total_currency: offer.total_currency,
-        base_amount: offer.base_amount,
-        tax_amount: offer.tax_amount,
-      },
-    });
-    sessionStorage.setItem("selectedOffer", payload);
-    try {
-      localStorage.setItem("selectedOffer", payload);
-    } catch {
-      /* storage full / disabled — session copy is enough for this tab */
+  const handleBookDuffel = useCallback(
+    (offer: DuffelOffer) => {
+      const payload = JSON.stringify({
+        type: "flights",
+        provider: "duffel",
+        offerId: offer.id,
+        offer,
+        agentId,
+        // Pricing snapshot kept verbatim from Duffel so it survives navigation & refresh.
+        pricing: {
+          total_amount: offer.total_amount,
+          total_currency: offer.total_currency,
+          base_amount: offer.base_amount,
+          tax_amount: offer.tax_amount,
+        },
+      });
+      sessionStorage.setItem("selectedOffer", payload);
+      try {
+        localStorage.setItem("selectedOffer", payload);
+      } catch {
+        /* storage full / disabled — session copy is enough for this tab */
+      }
+      navigate(`/flight/checkout?offer=${encodeURIComponent(offer.id)}`);
+    },
+    [agentId, navigate],
+  );
+
+  const handleViewDetails = useCallback((offer: DuffelOffer) => {
+    setDetailsOffer(offer);
+    setDetailsOpen(true);
+  }, []);
+
+  // Chunked reveal: paint the first page instantly, then fill the rest on idle time
+  // so a large result set never blocks the first render.
+  const visibleDuffelOffers = useMemo(
+    () => filteredDuffelOffers.slice(0, visibleCount),
+    [filteredDuffelOffers, visibleCount],
+  );
+
+  useEffect(() => {
+    if (loading) return;
+    if (visibleCount >= filteredDuffelOffers.length) return;
+    const id = window.setTimeout(() => setVisibleCount((c) => c + FLIGHT_PAGE_SIZE), 120);
+    return () => window.clearTimeout(id);
+  }, [loading, visibleCount, filteredDuffelOffers.length]);
+
+  // Measurement: first paint of results and completion of the full list.
+  useEffect(() => {
+    if (loading || type !== "flights") return;
+    if (visibleDuffelOffers.length === 0 && filteredResults.length === 0) return;
+    markFlightSearch("first_results_rendered");
+    if (visibleCount >= filteredDuffelOffers.length) {
+      markFlightSearch("all_results_rendered");
+      reportFlightSearchTimings({ offers: filteredDuffelOffers.length || filteredResults.length });
     }
-    navigate(`/flight/checkout?offer=${encodeURIComponent(offer.id)}`);
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, visibleDuffelOffers.length, filteredResults.length]);
+
+
 
 
   const flightCount = type === "flights" && duffelOffers.length > 0
@@ -328,9 +417,14 @@ const SearchResults = () => {
               </Badge>
             </div>
             <p className="text-muted-foreground">
-              {loading ? "Finding the best available price for you..." : 
-                type === "flights" && timeFilter !== "all" 
-                  ? `Showing ${flightCount} of ${totalFlightCount} result(s)` 
+              {loading
+                ? loadingMore
+                  ? "Loading additional results..."
+                  : type === "flights"
+                    ? "Searching flights..."
+                    : "Finding the best available price for you..."
+                : type === "flights" && timeFilter !== "all"
+                  ? `Showing ${flightCount} of ${totalFlightCount} result(s)`
                   : `Found ${totalCount} result(s)`}
             </p>
           </div>
@@ -398,17 +492,19 @@ const SearchResults = () => {
                 <>
                 {type === "flights" && duffelOffers.length > 0 && (
                   <div className="space-y-4">
-                    {filteredDuffelOffers.map((offer) => (
+                    {visibleDuffelOffers.map((offer) => (
                       <DuffelFlightCard
                         key={offer.id}
                         offer={offer}
                         onSelect={handleBookDuffel}
-                        onViewDetails={(o) => {
-                          setDetailsOffer(o);
-                          setDetailsOpen(true);
-                        }}
+                        onViewDetails={handleViewDetails}
                       />
                     ))}
+                    {visibleCount < filteredDuffelOffers.length && (
+                      <p className="text-sm text-muted-foreground text-center py-2">
+                        Loading additional results…
+                      </p>
+                    )}
                   </div>
                 )}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

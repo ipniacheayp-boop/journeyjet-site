@@ -73,6 +73,8 @@ export async function invokeSupabaseFunction<T = unknown>(
   functionName: string,
   /** Plain JSON body (flight/hotel search params, etc.). Use `object` so typed interfaces stay assignable. */
   body: object,
+  /** Optional cancellation + hard timeout so the UI never hangs on a stalled request. */
+  options: { signal?: AbortSignal; timeoutMs?: number } = {},
 ): Promise<{ data: T | null; error: string | null }> {
   const baseUrl = (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.replace(/\/$/, "");
   const headers = getEdgeFunctionHeaders();
@@ -132,6 +134,28 @@ export async function invokeSupabaseFunction<T = unknown>(
     return { data: parsed as T, error: null };
   };
 
+  // Caller cancellation (a newer search replaced this one) plus a hard timeout so a
+  // stalled upstream can never leave the UI in an infinite loading state.
+  const controller = new AbortController();
+  const abortFromCaller = () => controller.abort("aborted");
+  if (options.signal) {
+    if (options.signal.aborted) return { data: null, error: "aborted" };
+    options.signal.addEventListener("abort", abortFromCaller, { once: true });
+  }
+  let timedOut = false;
+  const timeoutId =
+    options.timeoutMs && options.timeoutMs > 0
+      ? setTimeout(() => {
+          timedOut = true;
+          controller.abort("timeout");
+        }, options.timeoutMs)
+      : null;
+
+  const cleanup = () => {
+    if (timeoutId) clearTimeout(timeoutId);
+    options.signal?.removeEventListener("abort", abortFromCaller);
+  };
+
   const init: RequestInit = {
     method: "POST",
     mode: "cors",
@@ -143,35 +167,44 @@ export async function invokeSupabaseFunction<T = unknown>(
       Accept: "application/json",
     },
     body: JSON.stringify(body),
+    signal: controller.signal,
   };
 
   let usedInvokeFallback = false;
 
-  for (const url of urlCandidates) {
-    try {
-      const res = await fetch(url, init);
-      return await parseHttpResponse(res);
-    } catch {
-      continue;
+  try {
+    for (const url of urlCandidates) {
+      try {
+        const res = await fetch(url, init);
+        return await parseHttpResponse(res);
+      } catch {
+        if (options.signal?.aborted) return { data: null, error: "aborted" };
+        if (timedOut) {
+          return { data: null, error: `Request to "${functionName}" timed out.` };
+        }
+        continue;
+      }
     }
+
+    usedInvokeFallback = true;
+
+    const { data, error: invokeErr } = await supabase.functions.invoke(functionName, {
+      body,
+      headers: getEdgeFunctionHeaders(),
+    });
+    return finalize(normalizeInvokePayload<T>(data, invokeErr, functionName));
+  } finally {
+    cleanup();
   }
 
-  usedInvokeFallback = true;
-
-  const { data, error: invokeErr } = await supabase.functions.invoke(functionName, {
-    body,
-    headers: getEdgeFunctionHeaders(),
-  });
-
-  const result = normalizeInvokePayload<T>(data, invokeErr, functionName);
-
-  if (result.error && usedInvokeFallback && import.meta.env.DEV) {
-    // eslint-disable-next-line no-console
-    console.warn(
-      "[invokeSupabaseFunction] All fetch URLs failed; used supabase.functions.invoke fallback.",
-      urlCandidates,
-    );
+  function finalize(result: { data: T | null; error: string | null }) {
+    if (result.error && usedInvokeFallback && import.meta.env.DEV) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        "[invokeSupabaseFunction] All fetch URLs failed; used supabase.functions.invoke fallback.",
+        urlCandidates,
+      );
+    }
+    return result;
   }
-
-  return result;
 }

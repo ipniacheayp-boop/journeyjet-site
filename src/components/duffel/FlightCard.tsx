@@ -1,3 +1,4 @@
+import { memo, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -132,8 +133,9 @@ function SliceBlock({ slice, showLabel }: { slice: NormalizedSlice; showLabel: b
   );
 }
 
-export default function FlightCard({ offer, onSelect, onViewDetails, badge }: Props) {
-  const flight = mapDuffelOfferToFlight(offer);
+function FlightCard({ offer, onSelect, onViewDetails, badge }: Props) {
+  // Normalisation is the most expensive per-card work — keep it out of every re-render.
+  const flight = useMemo(() => mapDuffelOfferToFlight(offer), [offer]);
   const { baggage } = flight;
 
   return (
@@ -241,3 +243,6 @@ export default function FlightCard({ offer, onSelect, onViewDetails, badge }: Pr
     </Card>
   );
 }
+
+// Result lists can hold hundreds of cards; skip re-render unless this offer changes.
+export default memo(FlightCard);
