@@ -198,16 +198,13 @@ export async function invokeSupabaseFunction<T = unknown>(
   }
 
   function finalize(result: { data: T | null; error: string | null }) {
-
-  const result = normalizeInvokePayload<T>(data, invokeErr, functionName);
-
-  if (result.error && usedInvokeFallback && import.meta.env.DEV) {
-    // eslint-disable-next-line no-console
-    console.warn(
-      "[invokeSupabaseFunction] All fetch URLs failed; used supabase.functions.invoke fallback.",
-      urlCandidates,
-    );
+    if (result.error && usedInvokeFallback && import.meta.env.DEV) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        "[invokeSupabaseFunction] All fetch URLs failed; used supabase.functions.invoke fallback.",
+        urlCandidates,
+      );
+    }
+    return result;
   }
-
-  return result;
 }
