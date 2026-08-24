@@ -279,13 +279,16 @@ const SearchResults = () => {
         setResults(data?.data || []);
       }
     } catch (error: any) {
-      const errorMessage = error.message || `Failed to search ${type}`;
+      if (aborted()) return;
+      const errorMessage = error?.message || `Failed to search ${type}`;
       console.error("❌ Search failed:", errorMessage);
       toast.error(errorMessage, { duration: 5000 });
       setResults([]);
       setDuffelOffers([]);
     } finally {
+      // Loading is always reset — success, error and cancellation alike.
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
