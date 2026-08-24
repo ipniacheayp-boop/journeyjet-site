@@ -252,7 +252,13 @@ function mapOffer(offer: Any) {
   };
 }
 
-async function duffelFetch(path: string, init: RequestInit & { body?: string } = {}) {
+const OFFER_REQUEST_PATH =
+  "/air/offer_requests?return_offers=true&supplier_timeout=20000";
+
+async function duffelFetch(
+  path: string,
+  init: RequestInit & { body?: string } = {},
+) {
   const key = Deno.env.get("DUFFEL_API_KEY");
   if (!key) return { status: 0, ok: false, body: null, missingKey: true };
 
@@ -286,19 +292,44 @@ serve(async (req) => {
 
     const payload = buildDuffelPayload(validated.input);
 
-    const res = await duffelFetch("/air/offer_requests?return_offers=true&supplier_timeout=20000", {
-      method: "POST",
-      body: JSON.stringify(payload),
-    });
+    // Sparse routes (some airports only publish a single fare in the requested cabin)
+    // need a wider search across the other cabins. Those requests do not depend on the
+    // primary response, so they are fired IN PARALLEL instead of after it — this removes
+    // a second full Duffel round-trip (the single largest source of latency). They are
+    // aborted the moment the primary response already carries enough offers.
+    const extraCabins = ["economy", "premium_economy", "business", "first"].filter(
+      (c) => c !== validated.input.cabinClass,
+    );
+    const widenController = new AbortController();
+    const widenRequests = extraCabins.map((cabin) =>
+      duffelFetch(OFFER_REQUEST_PATH, {
+        method: "POST",
+        body: JSON.stringify(buildDuffelPayload({ ...validated.input, cabinClass: cabin })),
+        signal: widenController.signal,
+      }).catch(() => null),
+    );
+
+    let res;
+    try {
+      res = await duffelFetch(OFFER_REQUEST_PATH, {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+    } catch (e) {
+      widenController.abort();
+      throw e;
+    }
 
     if (res.missingKey) {
+      widenController.abort();
       console.error("DUFFEL_API_KEY is not configured");
       return json({ error: "Flight search is temporarily unavailable.", offers: [] }, 200);
     }
 
     if (!res.ok) {
+      widenController.abort();
       const first = res.body?.errors?.[0];
-      console.error("Duffel error", res.status, JSON.stringify(res.body?.errors ?? res.body ?? {}).slice(0, 800));
+      console.error("Duffel error", res.status, String(first?.title ?? "unknown"));
       const friendly =
         res.status === 422
           ? first?.title === "Invalid IATA code" || /iata/i.test(String(first?.message ?? ""))
@@ -313,36 +344,25 @@ serve(async (req) => {
     const rawOffers: Any[] = Array.isArray(res.body?.data?.offers) ? res.body.data.offers : [];
     let offers = rawOffers.map(mapOffer).filter((o) => o.id && o.slices.length > 0);
 
-    // Sparse routes (some airports only publish a single fare in the requested cabin):
-    // widen the search across the remaining cabins so travellers see every offer the
-    // API can return for this itinerary, instead of a single card.
-    if (offers.length < 5) {
-      const extraCabins = ["economy", "premium_economy", "business", "first"].filter(
-        (c) => c !== validated.input.cabinClass,
-      );
-
-      const extras = await Promise.all(
-        extraCabins.map((cabin) =>
-          duffelFetch("/air/offer_requests?return_offers=true&supplier_timeout=20000", {
-            method: "POST",
-            body: JSON.stringify(buildDuffelPayload({ ...validated.input, cabinClass: cabin })),
-          }).catch(() => null),
-        ),
-      );
-
+    if (offers.length >= 5) {
+      // Enough fares in the requested cabin — drop the speculative widening work.
+      widenController.abort();
+    } else {
+      const extras = await Promise.all(widenRequests);
       const seen = new Set(offers.map((o) => o.id));
       for (const extra of extras) {
         const list: Any[] = Array.isArray(extra?.body?.data?.offers) ? extra!.body.data.offers : [];
-        for (const mapped of list.map(mapOffer)) {
-          if (!mapped.id || mapped.slices.length === 0 || seen.has(mapped.id)) continue;
-          seen.add(mapped.id);
+        for (const raw of list) {
+          const id = raw?.id;
+          if (!id || seen.has(id)) continue;
+          const mapped = mapOffer(raw);
+          if (!mapped.id || mapped.slices.length === 0) continue;
+          seen.add(id);
           offers.push(mapped);
         }
       }
 
-      offers = offers.sort(
-        (a, b) => Number(a.total_amount ?? 0) - Number(b.total_amount ?? 0),
-      );
+      offers = offers.sort((a, b) => Number(a.total_amount ?? 0) - Number(b.total_amount ?? 0));
     }
 
     return json({
