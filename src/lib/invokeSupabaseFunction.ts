@@ -134,6 +134,28 @@ export async function invokeSupabaseFunction<T = unknown>(
     return { data: parsed as T, error: null };
   };
 
+  // Caller cancellation (a newer search replaced this one) plus a hard timeout so a
+  // stalled upstream can never leave the UI in an infinite loading state.
+  const controller = new AbortController();
+  const abortFromCaller = () => controller.abort("aborted");
+  if (options.signal) {
+    if (options.signal.aborted) return { data: null, error: "aborted" };
+    options.signal.addEventListener("abort", abortFromCaller, { once: true });
+  }
+  let timedOut = false;
+  const timeoutId =
+    options.timeoutMs && options.timeoutMs > 0
+      ? setTimeout(() => {
+          timedOut = true;
+          controller.abort("timeout");
+        }, options.timeoutMs)
+      : null;
+
+  const cleanup = () => {
+    if (timeoutId) clearTimeout(timeoutId);
+    options.signal?.removeEventListener("abort", abortFromCaller);
+  };
+
   const init: RequestInit = {
     method: "POST",
     mode: "cors",
@@ -145,25 +167,37 @@ export async function invokeSupabaseFunction<T = unknown>(
       Accept: "application/json",
     },
     body: JSON.stringify(body),
+    signal: controller.signal,
   };
 
   let usedInvokeFallback = false;
 
-  for (const url of urlCandidates) {
-    try {
-      const res = await fetch(url, init);
-      return await parseHttpResponse(res);
-    } catch {
-      continue;
+  try {
+    for (const url of urlCandidates) {
+      try {
+        const res = await fetch(url, init);
+        return await parseHttpResponse(res);
+      } catch {
+        if (options.signal?.aborted) return { data: null, error: "aborted" };
+        if (timedOut) {
+          return { data: null, error: `Request to "${functionName}" timed out.` };
+        }
+        continue;
+      }
     }
+
+    usedInvokeFallback = true;
+
+    const { data, error: invokeErr } = await supabase.functions.invoke(functionName, {
+      body,
+      headers: getEdgeFunctionHeaders(),
+    });
+    return finalize(normalizeInvokePayload<T>(data, invokeErr, functionName));
+  } finally {
+    cleanup();
   }
 
-  usedInvokeFallback = true;
-
-  const { data, error: invokeErr } = await supabase.functions.invoke(functionName, {
-    body,
-    headers: getEdgeFunctionHeaders(),
-  });
+  function finalize(result: { data: T | null; error: string | null }) {
 
   const result = normalizeInvokePayload<T>(data, invokeErr, functionName);
 
