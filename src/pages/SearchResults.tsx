@@ -487,17 +487,19 @@ const SearchResults = () => {
                 <>
                 {type === "flights" && duffelOffers.length > 0 && (
                   <div className="space-y-4">
-                    {filteredDuffelOffers.map((offer) => (
+                    {visibleDuffelOffers.map((offer) => (
                       <DuffelFlightCard
                         key={offer.id}
                         offer={offer}
                         onSelect={handleBookDuffel}
-                        onViewDetails={(o) => {
-                          setDetailsOffer(o);
-                          setDetailsOpen(true);
-                        }}
+                        onViewDetails={handleViewDetails}
                       />
                     ))}
+                    {visibleCount < filteredDuffelOffers.length && (
+                      <p className="text-sm text-muted-foreground text-center py-2">
+                        Loading additional results…
+                      </p>
+                    )}
                   </div>
                 )}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
