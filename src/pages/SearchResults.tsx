@@ -115,9 +115,26 @@ const SearchResults = () => {
     );
   }, [duffelOffers, timeFilter, type]);
 
+  // A stable string key: re-renders or a new (but identical) searchParams object
+  // can never trigger a second identical search.
+  const searchKey = searchParams.toString();
+
   useEffect(() => {
-    performSearch();
-  }, [searchParams]);
+    if (lastSearchKey.current === searchKey) return;
+    lastSearchKey.current = searchKey;
+
+    // Cancel a search that is being replaced — its response is no longer wanted.
+    activeSearch.current?.abort();
+    const controller = new AbortController();
+    activeSearch.current = controller;
+
+    setVisibleCount(FLIGHT_PAGE_SIZE);
+    startFlightSearchTimer(searchKey);
+    void performSearch(controller);
+
+    return () => controller.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchKey]);
 
   useEffect(() => {
     if (sessionStorage.getItem("callPopupShown")) return;
