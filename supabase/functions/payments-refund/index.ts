@@ -52,11 +52,17 @@ serve(async (req) => {
 
     const { data: booking } = await supabaseClient
       .from("bookings")
-      .select("id, status, amount, currency, payment_status, refund_status, stripe_payment_intent_id, booking_details")
+      .select("id, booking_type, status, amount, currency, payment_status, payment_provider, refund_status, stripe_payment_intent_id, duffel_order_id, booking_details")
       .eq("id", bookingId)
       .maybeSingle();
 
     if (!booking) throw new Error("Booking not found");
+
+    if (booking.booking_type === "flight" && String(booking.payment_provider ?? "").startsWith("duffel_")) {
+      return new Response(JSON.stringify({
+        error: "Duffel flight cancellations and refunds must be verified through the airline order flow.",
+      }), { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
 
     if (booking.refund_status === "processed" || booking.refund_status === "completed") {
       return new Response(JSON.stringify({ error: "This booking has already been refunded." }), {

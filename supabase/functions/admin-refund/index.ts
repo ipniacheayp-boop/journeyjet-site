@@ -63,6 +63,13 @@ serve(async (req) => {
       });
     }
 
+    if (booking.booking_type === "flight" || String(booking.payment_provider ?? "").startsWith("duffel_")) {
+      return new Response(JSON.stringify({
+        error: "Duffel flight refunds must use the airline cancellation workflow.",
+        code: "DUFFEL_CANCELLATION_REQUIRED",
+      }), { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
     if (!booking.stripe_payment_intent_id) {
       return new Response(JSON.stringify({ error: "No payment found for this booking" }), {
         status: 400,

@@ -41,35 +41,48 @@ export interface DuffelResult<T> {
 
 export async function duffelFetch<T = Record<string, unknown>>(
   path: string,
-  init: RequestInit & { body?: unknown } = {},
+  init: RequestInit & { body?: unknown; timeoutMs?: number } = {},
 ): Promise<DuffelResult<T>> {
-  const { body, headers, ...rest } = init;
-
-  const res = await fetch(`${DUFFEL_BASE_URL}${path}`, {
-    ...rest,
-    headers: {
-      Authorization: `Bearer ${getDuffelKey()}`,
-      "Duffel-Version": DUFFEL_VERSION,
-      Accept: "application/json",
-      ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
-      ...(headers as Record<string, string> | undefined),
-    },
-    ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
-  });
-
-  let payload: Record<string, any> | null = null;
-  try {
-    payload = await res.json();
-  } catch {
-    payload = null;
+  const { body, headers, timeoutMs = 30_000, signal: callerSignal, ...rest } = init;
+  const controller = new AbortController();
+  const abortFromCaller = () => controller.abort(callerSignal?.reason);
+  if (callerSignal) {
+    if (callerSignal.aborted) controller.abort(callerSignal.reason);
+    else callerSignal.addEventListener("abort", abortFromCaller, { once: true });
   }
+  const timeout = setTimeout(() => controller.abort("duffel_timeout"), timeoutMs);
 
-  return {
-    ok: res.ok,
-    status: res.status,
-    data: (payload?.data ?? null) as T | null,
-    errors: Array.isArray(payload?.errors) ? payload!.errors : [],
-  };
+  try {
+    const res = await fetch(`${DUFFEL_BASE_URL}${path}`, {
+      ...rest,
+      signal: controller.signal,
+      headers: {
+        Authorization: `Bearer ${getDuffelKey()}`,
+        "Duffel-Version": DUFFEL_VERSION,
+        Accept: "application/json",
+        ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
+        ...(headers as Record<string, string> | undefined),
+      },
+      ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+    });
+
+    let payload: Record<string, any> | null = null;
+    try {
+      payload = await res.json();
+    } catch {
+      payload = null;
+    }
+
+    return {
+      ok: res.ok,
+      status: res.status,
+      data: (payload?.data ?? null) as T | null,
+      errors: Array.isArray(payload?.errors) ? payload.errors : [],
+    };
+  } finally {
+    clearTimeout(timeout);
+    callerSignal?.removeEventListener("abort", abortFromCaller);
+  }
 }
 
 /**
