@@ -109,12 +109,31 @@ serve(async (req) => {
     // Verify booking exists
     const { data: booking, error: bookingError } = await supabaseClient
       .from("bookings")
-      .select("id, amount, currency, contact_email, booking_details")
+      .select("id, amount, currency, status, payment_status, contact_email, booking_details")
       .eq("id", bookingId)
       .single();
 
     if (bookingError || !booking) {
       throw new Error("Booking not found");
+    }
+
+    // Only bookings still awaiting payment may get a PaymentIntent — this
+    // prevents paying twice for an already-confirmed booking.
+    if (booking.status !== "pending_payment" || booking.payment_status === "succeeded") {
+      return new Response(
+        JSON.stringify({ error: "This booking is no longer awaiting payment.", code: "NOT_PAYABLE" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 409 }
+      );
+    }
+
+    // Amount is taken from the server-side booking record — NEVER from the
+    // client request — so the charged amount cannot be manipulated.
+    const numericAmount = Number(booking.amount);
+    if (!Number.isFinite(numericAmount) || numericAmount <= 0 || numericAmount > 1000000) {
+      return new Response(
+        JSON.stringify({ error: "Invalid booking amount.", code: "INVALID_AMOUNT" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
+      );
     }
 
     // ⚠️ STRIPE SANCTIONS COMPLIANCE — re-validate the destination against the
