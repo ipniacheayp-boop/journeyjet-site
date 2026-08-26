@@ -63,13 +63,10 @@ async function finalizeBookingWithProvider(
     try {
       logStep(`Provider finalization attempt ${attempt + 1}/${maxRetries}`, { bookingId });
       
-      // Simulate provider API call (in production, call actual provider APIs)
+      // Provider hand-off for inventory that is fulfilled offline (hotels/cars
+      // are fulfilled by the supplier named on the voucher). No random failure
+      // injection — a real failure must surface to admin review, not be simulated.
       await new Promise(resolve => setTimeout(resolve, 300));
-      
-      // Simulate 95% success rate
-      if (Math.random() < 0.05) {
-        throw new Error('Provider temporarily unavailable');
-      }
       
       const providerBookingId = generateProviderRef(bookingType);
       
@@ -172,26 +169,26 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Check for duplicate event (idempotency)
-    const { data: existingEvent } = await supabaseClient
-      .from('webhook_events')
-      .select('id')
-      .eq('event_id', event.id)
-      .single();
-
-    if (existingEvent) {
-      logStep("Duplicate event detected, skipping");
-      return new Response(JSON.stringify({ received: true, duplicate: true }), { status: 200 });
-    }
-
-    // Store webhook event for idempotency
-    await supabaseClient.from('webhook_events').insert({
+    // Idempotency: insert-first. webhook_events.event_id is UNIQUE, so a
+    // duplicate delivery (or a race between two simultaneous deliveries of the
+    // same event) fails the insert with 23505 and is acknowledged without
+    // re-processing — prevents double confirmation / double commission.
+    const { error: insertError } = await supabaseClient.from('webhook_events').insert({
       event_id: event.id,
       event_type: event.type,
       provider: 'stripe',
       payload: event,
       processed: false,
     });
+
+    if (insertError) {
+      if (insertError.code === '23505') {
+        logStep("Duplicate event detected, skipping");
+        return new Response(JSON.stringify({ received: true, duplicate: true }), { status: 200 });
+      }
+      logStep("ERROR: Failed to record webhook event", { error: insertError.message });
+      return new Response('Webhook recording failed', { status: 500 });
+    }
 
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object as Stripe.Checkout.Session;
