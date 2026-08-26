@@ -276,6 +276,19 @@ serve(async (req) => {
       userId = data?.user?.id ?? null;
     }
 
+    // Never trust a client-supplied agent id. An agent may attribute their own
+    // assisted booking; customer referrals require a future signed referral.
+    let verifiedAgentId: string | null = null;
+    if (userId && typeof body?.agentId === "string") {
+      const { data: agent } = await supabase
+        .from("agent_profiles")
+        .select("id")
+        .eq("id", body.agentId)
+        .eq("user_id", userId)
+        .maybeSingle();
+      verifiedAgentId = agent?.id ?? null;
+    }
+
     // ── 3. Provisional booking row (idempotent per checkout attempt) ──
     // The attempt id survives refreshes and is also sent to Duffel. This is the
     // primary protection against double clicks, retries and two-tab submissions.
@@ -304,7 +317,7 @@ serve(async (req) => {
       .from("bookings")
       .insert({
         user_id: userId,
-        agent_id: typeof body?.agentId === "string" ? body.agentId : null,
+        agent_id: verifiedAgentId,
         booking_type: "flight",
         status: "pending_payment",
         payment_status: "processing",
