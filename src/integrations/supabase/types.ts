@@ -309,6 +309,7 @@ export type Database = {
           contact_phone: string | null
           created_at: string
           currency: string
+          duffel_attempt_id: string | null
           duffel_booking_reference: string | null
           duffel_offer_id: string | null
           duffel_order_id: string | null
@@ -344,6 +345,7 @@ export type Database = {
           contact_phone?: string | null
           created_at?: string
           currency?: string
+          duffel_attempt_id?: string | null
           duffel_booking_reference?: string | null
           duffel_offer_id?: string | null
           duffel_order_id?: string | null
@@ -379,6 +381,7 @@ export type Database = {
           contact_phone?: string | null
           created_at?: string
           currency?: string
+          duffel_attempt_id?: string | null
           duffel_booking_reference?: string | null
           duffel_offer_id?: string | null
           duffel_order_id?: string | null

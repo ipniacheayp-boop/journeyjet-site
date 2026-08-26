@@ -28,6 +28,7 @@ import { toast } from "sonner";
 import { getDuffelOffer } from "@/services/duffelFlights";
 import {
   createDuffelOrder,
+  reconcileDuffelBooking,
   type DuffelOrderSummary,
   type DuffelPassengerPayload,
 } from "@/services/duffelBooking";
@@ -76,11 +77,13 @@ const FlightCheckout = () => {
   const [orderError, setOrderError] = useState<string | null>(null);
   const [order, setOrder] = useState<DuffelOrderSummary | null>(null);
   const [bookingRef, setBookingRef] = useState<string | null>(null);
+  const [pendingBookingId, setPendingBookingId] = useState<string | null>(null);
+  const [verifying, setVerifying] = useState(false);
 
   const stored = useMemo(() => {
     try {
       const raw = sessionStorage.getItem("selectedOffer") || localStorage.getItem("selectedOffer");
-      return raw ? (JSON.parse(raw) as { offerId?: string; offer?: DuffelOffer; agentId?: string | null }) : null;
+      return raw ? (JSON.parse(raw) as { offerId?: string; offer?: DuffelOffer; agentId?: string | null; attemptId?: string }) : null;
     } catch {
       return null;
     }
@@ -89,6 +92,10 @@ const FlightCheckout = () => {
 
   const offerId = searchParams.get("offer") || stored?.offerId || stored?.offer?.id || "";
   const agentId = stored?.agentId ?? null;
+  const attemptId = useMemo(
+    () => stored?.attemptId && /^[0-9a-f-]{36}$/i.test(stored.attemptId) ? stored.attemptId : crypto.randomUUID(),
+    [stored],
+  );
 
   // ── Revalidate the offer against the live Duffel API before showing any price ──
   const loadOffer = useCallback(async () => {
@@ -125,6 +132,7 @@ const FlightCheckout = () => {
         offerId: fresh.id,
         offer: fresh,
         agentId: stored?.agentId ?? null,
+        attemptId,
       });
       sessionStorage.setItem("selectedOffer", payload);
       localStorage.setItem("selectedOffer", payload);
@@ -138,7 +146,7 @@ const FlightCheckout = () => {
     );
     setLoading(false);
 
-  }, [offerId, stored]);
+  }, [attemptId, offerId, stored]);
 
   useEffect(() => {
     loadOffer();
@@ -233,11 +241,19 @@ const FlightCheckout = () => {
       expectedAmount: offer.total_amount ?? undefined,
       acceptedTerms: true,
       agentId,
+      attemptId,
     });
 
     setSubmitting(false);
 
     if (!result.ok) {
+      if (result.pending && result.bookingId) {
+        setPendingBookingId(result.bookingId);
+        setOrderError(null);
+        setVerifying(false);
+        toast.info("Your payment is being verified with the airline. Please don't submit it again.");
+        return;
+      }
       if (result.code === "PRICE_CHANGED" && result.newPrice) {
         setPriceChange({ from: result.originalPrice ?? Number(offer.total_amount ?? 0), to: result.newPrice });
         setStep(1);
@@ -268,6 +284,33 @@ const FlightCheckout = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
     toast.success(`Booking confirmed — PNR ${result.bookingReference ?? ""}`.trim());
   };
+
+  const verifyPendingBooking = useCallback(async () => {
+    if (!pendingBookingId || verifying) return;
+    setVerifying(true);
+    const result = await reconcileDuffelBooking({ bookingId: pendingBookingId, attemptId });
+    if (result.confirmed) {
+      sessionStorage.removeItem("selectedOffer");
+      try { localStorage.removeItem("selectedOffer"); } catch { /* non-fatal */ }
+      setOrder(result.order ?? null);
+      setBookingRef(result.bookingReference ?? null);
+      setPendingBookingId(null);
+      setStep(3);
+      toast.success(`Booking confirmed — PNR ${result.bookingReference ?? ""}`.trim());
+    } else if (result.state === "failed" || result.state === "cancelled") {
+      setPendingBookingId(null);
+      setOrderError(result.message ?? "The airline did not complete this payment.");
+    } else {
+      toast.info(result.message ?? "The airline is still processing your booking.");
+    }
+    setVerifying(false);
+  }, [attemptId, pendingBookingId, verifying]);
+
+  useEffect(() => {
+    if (!pendingBookingId) return;
+    const timer = window.setTimeout(() => void verifyPendingBooking(), 4_000);
+    return () => window.clearTimeout(timer);
+  }, [pendingBookingId, verifyPendingBooking]);
 
   const itinerary = offer && (
     <div className="space-y-4">
@@ -505,7 +548,22 @@ const FlightCheckout = () => {
               )}
 
               {step === 2 && (
-                payableAmount ? (
+                pendingBookingId ? (
+                  <Card className="border-primary/30">
+                    <CardContent className="p-6 space-y-4 text-center">
+                      <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" aria-hidden="true" />
+                      <div>
+                        <h2 className="font-semibold text-lg">Verifying with the airline</h2>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Duffel may take longer to return the final order status. Do not submit payment again.
+                        </p>
+                      </div>
+                      <Button type="button" variant="outline" disabled={verifying} onClick={() => void verifyPendingBooking()}>
+                        {verifying ? "Checking…" : "Check booking status"}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ) : payableAmount ? (
                   <DuffelPaymentStep
                     offerId={offer.id}
                     amountLabel={money(offer.total_amount, offer.total_currency)}

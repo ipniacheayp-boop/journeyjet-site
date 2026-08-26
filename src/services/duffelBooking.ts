@@ -48,6 +48,7 @@ export interface DuffelOrderSummary {
 
 export interface CreateOrderResult {
   ok: boolean;
+  pending?: boolean;
   code?: string;
   message?: string;
   bookingId?: string;
@@ -59,6 +60,18 @@ export interface CreateOrderResult {
   originalPrice?: number;
   newPrice?: number;
   currency?: string;
+}
+
+export interface ReconcileBookingResult {
+  ok: boolean;
+  bookingId?: string;
+  state?: string;
+  pending?: boolean;
+  confirmed?: boolean;
+  message?: string;
+  error?: string;
+  bookingReference?: string | null;
+  order?: DuffelOrderSummary | null;
 }
 
 export async function getDuffelClientKey(
@@ -85,8 +98,11 @@ export async function createDuffelOrder(payload: {
   expectedAmount?: string | number;
   acceptedTerms: boolean;
   agentId?: string | null;
+  attemptId: string;
 }): Promise<CreateOrderResult> {
-  const { data, error } = await invokeSupabaseFunction<CreateOrderResult>("duffel-order-create", payload);
+  const { data, error } = await invokeSupabaseFunction<CreateOrderResult>("duffel-order-create", payload, {
+    timeoutMs: 125_000,
+  });
 
   if (error) {
     return {
@@ -98,4 +114,15 @@ export async function createDuffelOrder(payload: {
   }
 
   return data ?? { ok: false, code: "BOOKING_ERROR", message: "We couldn't complete your booking. Please try again." };
+}
+
+export async function reconcileDuffelBooking(payload: {
+  bookingId: string;
+  attemptId: string;
+}): Promise<ReconcileBookingResult> {
+  const { data, error } = await invokeSupabaseFunction<ReconcileBookingResult>("duffel-booking-reconcile", payload, {
+    timeoutMs: 55_000,
+  });
+  if (data) return data;
+  return { ok: false, pending: true, state: "unknown", message: error ?? "We are still verifying the airline booking." };
 }

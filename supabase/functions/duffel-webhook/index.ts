@@ -5,6 +5,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 // @ts-expect-error TS2307 — Deno remote import.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { getDuffelBookingState } from "../_shared/duffelBookingState.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -59,14 +60,14 @@ serve(async (req) => {
   const rawBody = await req.text();
   const secret = Deno.env.get("DUFFEL_WEBHOOK_SECRET");
 
-  if (secret) {
-    const valid = await signatureValid(req.headers.get("x-duffel-signature"), rawBody, secret);
-    if (!valid) {
-      console.error("duffel-webhook rejected: invalid signature");
-      return json({ error: "Invalid signature" }, 401);
-    }
-  } else {
-    console.warn("duffel-webhook: DUFFEL_WEBHOOK_SECRET not set — signature not verified");
+  if (!secret) {
+    console.error("duffel-webhook rejected: signing secret unavailable");
+    return json({ error: "Webhook unavailable" }, 503);
+  }
+  const valid = await signatureValid(req.headers.get("x-duffel-signature"), rawBody, secret);
+  if (!valid) {
+    console.error("duffel-webhook rejected: invalid signature");
+    return json({ error: "Invalid signature" }, 401);
   }
 
   let event: Any = {};
@@ -98,13 +99,15 @@ serve(async (req) => {
     if (seen?.processed) return json({ received: true, duplicate: true });
 
     if (!seen) {
-      await supabase.from("webhook_events").insert({
+      const { error: insertError } = await supabase.from("webhook_events").insert({
         event_id: eventId,
         event_type: eventType,
         provider: "duffel",
         payload: event,
         processed: false,
       });
+      if (insertError?.code === "23505") return json({ received: true, duplicate: true });
+      if (insertError) throw insertError;
     }
 
     const orderId = String(order?.id ?? "");
@@ -112,27 +115,30 @@ serve(async (req) => {
     if (orderId.startsWith("ord_")) {
       const patch: Any = {};
 
-      if (eventType === "order.created" || eventType === "order.updated") {
-        patch.status = "confirmed";
-        patch.payment_status = "paid";
+      if (eventType === "order.created" || eventType === "order.updated" || eventType.startsWith("order.airline_initiated_change")) {
+        const state = getDuffelBookingState(order);
+        patch.status = state.bookingStatus;
+        patch.payment_status = state.paymentStatus;
         patch.duffel_booking_reference = order.booking_reference ?? null;
         patch.amadeus_pnr = order.booking_reference ?? null;
-        if (order.cancelled_at) {
-          patch.status = "cancelled";
-          patch.refund_status = "pending";
-        }
+        if (state.confirmed) patch.confirmed_at = new Date().toISOString();
+        if (state.bookingStatus === "cancelled") patch.refund_status = "requested";
       } else if (eventType === "order.cancelled") {
         patch.status = "cancelled";
-        patch.refund_status = "pending";
+        patch.payment_status = "cancelled";
+        patch.refund_status = "requested";
         patch.refund_reason = "Cancelled by airline or traveller";
-      } else if (eventType.startsWith("order.airline_initiated_change")) {
-        patch.status = "confirmed";
-        patch.refund_reason = null;
       }
 
       if (Object.keys(patch).length > 0) {
-        const { error } = await supabase.from("bookings").update(patch).eq("duffel_order_id", orderId);
-        if (error) console.error("[Internal Error] webhook booking update failed", error.message);
+        const { data: booking } = await supabase.from("bookings").select("id,status").eq("duffel_order_id", orderId).maybeSingle();
+        if (!booking && order?.metadata?.booking_id) {
+          await supabase.from("bookings").update({ ...patch, duffel_order_id: orderId, transaction_id: orderId })
+            .eq("id", String(order.metadata.booking_id)).eq("booking_type", "flight");
+        } else if (booking && !(["cancelled", "refunded"].includes(booking.status) && patch.status === "confirmed")) {
+          const { error } = await supabase.from("bookings").update(patch).eq("id", booking.id);
+          if (error) console.error("[Internal Error] webhook booking update failed", error.message);
+        }
       }
     }
 

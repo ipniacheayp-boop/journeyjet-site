@@ -24,6 +24,8 @@ interface Booking {
   contact_phone: string;
   created_at: string;
   booking_details: any;
+  payment_status?: string | null;
+  duffel_booking_reference?: string | null;
 }
 
 const MyBookings = () => {
@@ -183,6 +185,24 @@ const MyBookings = () => {
     }
     
     if (booking.booking_type === 'flight') {
+      const duffelOrder = details.duffel_order;
+      if (duffelOrder) {
+        const firstSlice = duffelOrder.slices?.[0];
+        const lastSlice = duffelOrder.slices?.[duffelOrder.slices.length - 1];
+        return (
+          <div className="mt-3 pt-3 border-t text-sm space-y-1">
+            {firstSlice && lastSlice && (
+              <p><span className="font-medium">{firstSlice.origin}</span><span className="mx-2">→</span><span className="font-medium">{lastSlice.destination}</span></p>
+            )}
+            {booking.duffel_booking_reference && (
+              <p className="text-muted-foreground">Airline reference: <span className="font-mono">{booking.duffel_booking_reference}</span></p>
+            )}
+            {booking.status === 'pending_payment' && booking.payment_status && (
+              <p className="text-muted-foreground">Payment: {booking.payment_status.replace('_', ' ')}</p>
+            )}
+          </div>
+        );
+      }
       const itinerary = details.itineraries?.[0];
       const segments = itinerary?.segments || [];
       const firstSegment = segments[0];

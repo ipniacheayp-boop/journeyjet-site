@@ -9,6 +9,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 // @ts-expect-error TS2307 — Deno remote import.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { corsHeaders, duffelFetch, isLiveMode, json, travellerFacingError } from "../_shared/duffel.ts";
+import { amountsMatch, getDuffelBookingState } from "../_shared/duffelBookingState.ts";
 
 type Any = Record<string, any>;
 
@@ -16,6 +17,7 @@ const OFFER_ID = /^off_[A-Za-z0-9_-]{5,80}$/;
 const PASSENGER_ID = /^pas_[A-Za-z0-9_-]{5,80}$/;
 const CARD_ID = /^tcd_[A-Za-z0-9_-]{5,80}$/;
 const TDS_ID = /^3ds_[A-Za-z0-9_-]{5,80}$/;
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE = /^\+[1-9]\d{6,14}$/;
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -164,9 +166,13 @@ serve(async (req) => {
   try {
     const body = (await req.json().catch(() => ({}))) as Any;
     const offerId = String(body?.offerId ?? "").trim();
+    const attemptId = String(body?.attemptId ?? "").trim();
 
     if (!OFFER_ID.test(offerId)) {
       return json({ ok: false, code: "INVALID_OFFER", message: "That flight selection is no longer valid. Please search again." }, 200);
+    }
+    if (!UUID.test(attemptId)) {
+      return json({ ok: false, code: "INVALID_ATTEMPT", message: "Please reload checkout and try again." }, 400);
     }
     if (body?.acceptedTerms !== true) {
       return json({ ok: false, code: "TERMS_REQUIRED", message: "Please accept the Terms & Conditions and fare rules to continue." }, 200);
@@ -270,34 +276,53 @@ serve(async (req) => {
       userId = data?.user?.id ?? null;
     }
 
-    // ── 3. Provisional booking row (idempotent per offer) ──
+    // Never trust a client-supplied agent id. An agent may attribute their own
+    // assisted booking; customer referrals require a future signed referral.
+    let verifiedAgentId: string | null = null;
+    if (userId && typeof body?.agentId === "string") {
+      const { data: agent } = await supabase
+        .from("agent_profiles")
+        .select("id")
+        .eq("id", body.agentId)
+        .eq("user_id", userId)
+        .maybeSingle();
+      verifiedAgentId = agent?.id ?? null;
+    }
+
+    // ── 3. Provisional booking row (idempotent per checkout attempt) ──
+    // The attempt id survives refreshes and is also sent to Duffel. This is the
+    // primary protection against double clicks, retries and two-tab submissions.
     const { data: existing } = await supabase
       .from("bookings")
-      .select("id, status, duffel_order_id, duffel_booking_reference, booking_details")
-      .eq("duffel_offer_id", offerId)
-      .eq("status", "confirmed")
+      .select("id, status, payment_status, duffel_order_id, duffel_booking_reference, booking_details")
+      .eq("duffel_attempt_id", attemptId)
       .maybeSingle();
 
-    if (existing?.duffel_order_id) {
+    if (existing) {
+      const confirmed = existing.status === "confirmed" && existing.payment_status === "paid";
       return json({
-        ok: true,
+        ok: confirmed,
         alreadyBooked: true,
+        pending: !confirmed,
+        code: confirmed ? undefined : "PAYMENT_PENDING",
+        message: confirmed ? undefined : "Your booking is being verified with the airline. Please don't submit payment again.",
         bookingId: existing.id,
         orderId: existing.duffel_order_id,
         bookingReference: existing.duffel_booking_reference,
         order: (existing.booking_details as Any)?.duffel_order ?? null,
-      });
+      }, confirmed ? 200 : 202);
     }
 
     const { data: booking, error: bookingError } = await supabase
       .from("bookings")
       .insert({
         user_id: userId,
-        agent_id: typeof body?.agentId === "string" ? body.agentId : null,
+        agent_id: verifiedAgentId,
         booking_type: "flight",
         status: "pending_payment",
         payment_status: "processing",
         payment_provider: paymentType === "balance" ? "duffel_balance" : "duffel_card",
+        duffel_attempt_id: attemptId,
         duffel_offer_id: offerId,
         live_mode: isLiveMode(),
         booking_details: { provider: "duffel", offer, passengers: passengers.map((p) => ({ ...p, identity_document: undefined })) },
@@ -311,6 +336,23 @@ serve(async (req) => {
       .single();
 
     if (bookingError || !booking) {
+      // A concurrent request may have won the unique-attempt insert race.
+      if (bookingError?.code === "23505") {
+        const { data: raced } = await supabase.from("bookings")
+          .select("id,status,payment_status,duffel_order_id,duffel_booking_reference,booking_details")
+          .eq("duffel_attempt_id", attemptId).maybeSingle();
+        if (raced) {
+          const confirmed = raced.status === "confirmed" && raced.payment_status === "paid";
+          return json({
+            ok: confirmed, pending: !confirmed, alreadyBooked: true,
+            code: confirmed ? undefined : "PAYMENT_PENDING",
+            message: confirmed ? undefined : "Your booking is being verified with the airline. Please don't submit payment again.",
+            bookingId: raced.id, orderId: raced.duffel_order_id,
+            bookingReference: raced.duffel_booking_reference,
+            order: (raced.booking_details as Any)?.duffel_order ?? null,
+          }, confirmed ? 200 : 202);
+        }
+      }
       console.error("[Internal Error] provisional booking insert failed", bookingError?.message);
       return json({ ok: false, code: "BOOKING_ERROR", message: "We couldn't start your booking. Please try again." }, 200);
     }
@@ -326,6 +368,8 @@ serve(async (req) => {
 
     const orderRes = await duffelFetch<Any>("/air/orders", {
       method: "POST",
+      timeoutMs: 110_000,
+      headers: { "Idempotency-Key": attemptId },
       body: {
         data: {
           type: "instant",
@@ -337,28 +381,57 @@ serve(async (req) => {
       },
     });
 
+    if (orderRes.status === 202 || (orderRes.ok && !orderRes.data)) {
+      await supabase.from("bookings").update({ payment_status: "payment_pending" }).eq("id", bookingId);
+      return json({
+        ok: false,
+        pending: true,
+        code: "PAYMENT_PENDING",
+        bookingId,
+        message: "The airline is still processing your booking. Please don't submit payment again while we verify it.",
+      }, 202);
+    }
+
     if (!orderRes.ok || !orderRes.data) {
       const { message, code } = travellerFacingError(orderRes.errors);
       console.error("duffel order create failed", orderRes.status, code, JSON.stringify(orderRes.errors).slice(0, 400));
 
-      await supabase
-        .from("bookings")
-        .update({ status: "cancelled", payment_status: "failed" })
-        .eq("id", bookingId);
+      const indeterminate = orderRes.status === 0 || orderRes.status === 408 || orderRes.status === 429 || orderRes.status >= 500;
+      await supabase.from("bookings").update({
+        payment_status: indeterminate ? "unknown" : "failed",
+      }).eq("id", bookingId);
 
-      return json({ ok: false, code: code.toUpperCase(), message, bookingId }, 200);
+      return json({
+        ok: false,
+        pending: indeterminate,
+        code: indeterminate ? "PAYMENT_UNKNOWN" : code.toUpperCase(),
+        message: indeterminate
+          ? "We couldn't get the airline's final response. Please don't submit payment again while we verify it."
+          : message,
+        bookingId,
+      }, indeterminate ? 202 : 200);
     }
 
     const order = orderRes.data;
     orderCreated = true; // Money has moved at Duffel — never auto-cancel below.
     const summary = summariseOrder(order);
+    if (!amountsMatch(order, amount, currency)) {
+      await supabase.from("bookings").update({
+        payment_status: "amount_mismatch",
+        duffel_order_id: order.id,
+        transaction_id: order.id,
+        booking_details: { provider: "duffel", offer, duffel_order: summary, requiresAdminReview: true, reviewReason: "duffel_amount_mismatch" },
+      }).eq("id", bookingId);
+      return json({ ok: false, pending: true, code: "AMOUNT_MISMATCH", bookingId, message: "The airline order requires manual verification. Please don't pay again." }, 202);
+    }
+    const state = getDuffelBookingState(order);
 
     // ── 5. Persist confirmation ──
     const { error: updateError } = await supabase
       .from("bookings")
       .update({
-        status: "confirmed",
-        payment_status: "paid",
+        status: state.bookingStatus,
+        payment_status: state.paymentStatus,
         payment_method: paymentType === "balance" ? "duffel_balance" : "card",
         duffel_order_id: order.id,
         duffel_booking_reference: order.booking_reference,
@@ -366,8 +439,8 @@ serve(async (req) => {
         transaction_id: order.id,
         amount: Number(order.total_amount ?? amount),
         currency: String(order.total_currency ?? currency),
-        confirmed_at: new Date().toISOString(),
-        ticket_issued_at: new Date().toISOString(),
+        confirmed_at: state.confirmed ? new Date().toISOString() : null,
+        ticket_issued_at: state.confirmed && summary.documents.length > 0 ? new Date().toISOString() : null,
         booking_details: { provider: "duffel", offer, duffel_order: summary },
       })
       .eq("id", bookingId);
@@ -377,42 +450,42 @@ serve(async (req) => {
       console.error("[Internal Error] booking confirm update failed", updateError.message, "order", order.id);
     }
 
-    // ── 6. Confirmation email (best effort) ──
-    try {
-      await supabase.functions.invoke("send-booking-confirmation", {
-        body: {
-          bookingId,
-          email: contactEmail,
-          bookingReference: order.booking_reference,
-          orderId: order.id,
-        },
-      });
-    } catch (mailErr) {
-      console.error("confirmation email failed", mailErr instanceof Error ? mailErr.message : mailErr);
+    // ── 6. Confirmation email (best effort, confirmed orders only) ──
+    if (state.confirmed) {
+      try {
+        await supabase.functions.invoke("send-booking-confirmation", {
+          body: { bookingId, email: contactEmail, bookingReference: order.booking_reference, orderId: order.id },
+        });
+      } catch (mailErr) {
+        console.error("confirmation email failed", mailErr instanceof Error ? mailErr.message : mailErr);
+      }
     }
 
     return json({
-      ok: true,
+      ok: state.confirmed,
+      pending: !state.terminal,
+      code: state.confirmed ? undefined : state.paymentStatus === "failed" ? "PAYMENT_FAILED" : "PAYMENT_PENDING",
+      message: state.confirmed ? undefined : "The airline is still processing your booking. Please don't submit payment again while we verify it.",
       bookingId,
       orderId: order.id,
       bookingReference: order.booking_reference,
       liveMode: order.live_mode ?? isLiveMode(),
       order: summary,
-    });
+    }, state.confirmed ? 200 : state.terminal ? 200 : 202);
   } catch (err) {
     const msg = err instanceof Error ? err.message : "unknown";
     console.error("duffel-order-create failure:", msg);
 
-    // Only cancel the provisional row if the Duffel order was NEVER created.
-    // If an order exists (money moved), flag for admin review instead of cancelling.
+    // An exception after the request starts is indeterminate: Duffel may have
+    // received it. Never cancel or mark failed solely because Tripile timed out.
     if (bookingId && !orderCreated) {
-      await supabase.from("bookings").update({ status: "cancelled", payment_status: "failed" }).eq("id", bookingId).eq("status", "pending_payment").then(
+      await supabase.from("bookings").update({ payment_status: "unknown" }).eq("id", bookingId).eq("status", "pending_payment").then(
         () => undefined,
         () => undefined,
       );
     } else if (bookingId && orderCreated) {
       await supabase.from("bookings").update({
-        payment_status: "paid",
+        payment_status: "unknown",
         booking_details: { requiresAdminReview: true, reviewReason: "post_order_exception" },
         updated_at: new Date().toISOString(),
       }).eq("id", bookingId).then(() => undefined, () => undefined);
@@ -423,8 +496,10 @@ serve(async (req) => {
     }
 
     return json(
-      { ok: false, code: "BOOKING_ERROR", message: "We couldn't complete your booking. No payment was taken — please try again." },
-      200,
+      { ok: false, pending: Boolean(bookingId), code: bookingId ? "PAYMENT_UNKNOWN" : "BOOKING_ERROR", bookingId, message: bookingId
+        ? "We couldn't get the airline's final response. Please don't submit payment again while we verify it."
+        : "We couldn't start your booking. Please try again." },
+      bookingId ? 202 : 200,
     );
   }
 });

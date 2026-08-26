@@ -76,6 +76,13 @@ serve(async (req) => {
       expiresAt,
     } = await req.json();
 
+    if (productType === 'flight' || productType === 'flights') {
+      return new Response(
+        JSON.stringify({ ok: false, code: 'DUFFEL_REQUIRED', message: 'Flight bookings must use the airline checkout.' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Validate required fields
     if (!productType || !offer || !price || !clientRequestId) {
       return new Response(
