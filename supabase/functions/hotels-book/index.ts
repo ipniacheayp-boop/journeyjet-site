@@ -120,8 +120,46 @@ serve(async (req) => {
       userId = user?.id || null;
     }
 
-    const price = parseFloat(hotelOffer.offers[0].price.total);
-    const currency = hotelOffer.offers[0].price.currency;
+    const submittedPrice = parseFloat(hotelOffer.offers[0].price.total);
+    const submittedCurrency = hotelOffer.offers[0].price.currency;
+
+    // Re-price server-side via Amadeus so a tampered client payload cannot
+    // lower the amount charged. If revalidation succeeds, its price is the
+    // source of truth. If it fails (offer expired / API down), reject offers
+    // whose submitted price looks implausible instead of trusting it blindly.
+    const offerId = hotelOffer.offers[0].id;
+    const repriced = await repriceHotelOffer(offerId);
+
+    let price = submittedPrice;
+    let currency = submittedCurrency;
+
+    if (repriced) {
+      if (Math.abs(repriced.price - submittedPrice) > Math.max(1, repriced.price * 0.05)) {
+        // Fare moved more than 5% — send the user back to re-confirm the new price.
+        return new Response(
+          JSON.stringify({
+            error: 'The price for this hotel has changed. Please review the updated price and try again.',
+            code: 'PRICE_CHANGED',
+            newPrice: repriced.price,
+            newCurrency: repriced.currency,
+          }),
+          { status: 409, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      price = repriced.price;
+      currency = repriced.currency;
+    } else if (!Number.isFinite(submittedPrice) || submittedPrice <= 0 || submittedPrice > 500000) {
+      return new Response(
+        JSON.stringify({ error: 'This hotel offer is no longer available. Please search again.', code: 'OFFER_EXPIRED' }),
+        { status: 410, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (currency !== 'USD') {
+      // Hotels/cars are billed in USD only (Stripe US billing scope).
+      console.warn('hotels-book: non-USD currency submitted, coercing to USD');
+      currency = 'USD';
+    }
 
     const { data: booking, error: bookingError } = await supabaseClient
       .from('bookings')
