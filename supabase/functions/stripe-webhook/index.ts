@@ -407,22 +407,40 @@ serve(async (req) => {
       logStep('Processing payment_intent.succeeded', { id: pi.id, metadata: pi.metadata });
 
       const bookingId = (pi.metadata as any)?.bookingId;
-      let targetBookingId = bookingId;
 
       if (bookingId) {
+        // Verify the amount actually paid matches the booking before confirming.
+        const { data: existing } = await supabaseClient
+          .from('bookings')
+          .select('*')
+          .eq('id', bookingId)
+          .maybeSingle();
+
+        if (!existing) {
+          logStep('ERROR: PI succeeded for unknown booking', { bookingId, pi: pi.id });
+        } else if (Math.abs((pi.amount_received ?? pi.amount ?? 0) / 100 - Number(existing.amount)) > 0.01
+                   && (pi.currency ?? '').toUpperCase() === String(existing.currency || 'USD').toUpperCase()) {
+          logStep('ERROR: PI amount mismatch', { bookingId, received: pi.amount_received, expected: existing.amount });
+          await supabaseClient.from('bookings').update({
+            payment_status: 'amount_mismatch',
+            booking_details: { ...existing.booking_details, requiresAdminReview: true },
+            updated_at: new Date().toISOString(),
+          }).eq('id', bookingId);
+        } else {
         const { data: booking } = await supabaseClient
           .from('bookings')
           .update({
             status: 'confirmed',
             payment_status: 'succeeded',
-            payment_method: 'stripe',
+            payment_method: 'card',
             stripe_payment_intent_id: pi.id,
             confirmed_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           })
           .eq('id', bookingId)
+          .eq('status', 'pending_payment')
           .select()
-          .single();
+          .maybeSingle();
 
         logStep('Booking updated from PI metadata', { bookingId });
         
