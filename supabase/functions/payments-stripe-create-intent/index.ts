@@ -181,7 +181,7 @@ serve(async (req) => {
       .from("bookings")
       .update({
         stripe_payment_intent_id: paymentIntent.id,
-        payment_method: 'stripe',
+        payment_method: 'card',
         updated_at: new Date().toISOString(),
       })
       .eq("id", bookingId);
