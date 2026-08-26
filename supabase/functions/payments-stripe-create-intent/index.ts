@@ -59,21 +59,12 @@ serve(async (req) => {
   }
 
   try {
-    const { bookingId, amount, billingCountry, destination } = await req.json();
+    const { bookingId, billingCountry, destination } = await req.json();
     // ALWAYS use USD for Stripe payments
     const currency = 'USD';
 
-    if (!bookingId || !amount) {
+    if (!bookingId) {
       throw new Error("Missing required fields");
-    }
-
-    // Validate amount: must be a positive, finite number within a sane range.
-    const numericAmount = Number(amount);
-    if (!Number.isFinite(numericAmount) || numericAmount <= 0 || numericAmount > 1000000) {
-      return new Response(
-        JSON.stringify({ error: "Invalid payment amount.", code: "INVALID_AMOUNT" }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
-      );
     }
 
     // Validate bookingId format (UUID).
