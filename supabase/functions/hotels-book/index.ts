@@ -16,6 +16,55 @@ const isValidPhone = (phone: unknown): boolean =>
   phone === undefined || phone === null || phone === '' ||
   (typeof phone === 'string' && phone.length >= 7 && phone.length <= 20 && /^[+\d\s\-()]+$/.test(phone));
 
+// ── Amadeus price revalidation (defeats client-side price tampering) ──
+const AMADEUS_BASE_URL = Deno.env.get('USE_PROD_APIS') === 'true'
+  ? 'https://api.amadeus.com'
+  : 'https://test.api.amadeus.com';
+
+let cachedToken: { token: string; expiresAt: number } | null = null;
+
+async function getAmadeusToken(): Promise<string | null> {
+  if (cachedToken && cachedToken.expiresAt > Date.now()) return cachedToken.token;
+  const apiKey = Deno.env.get('AMADEUS_API_KEY');
+  const apiSecret = Deno.env.get('AMADEUS_API_SECRET');
+  if (!apiKey || !apiSecret) return null;
+
+  const response = await fetch(`${AMADEUS_BASE_URL}/v1/security/oauth2/token`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `grant_type=client_credentials&client_id=${encodeURIComponent(apiKey)}&client_secret=${encodeURIComponent(apiSecret)}`,
+  });
+  if (!response.ok) return null;
+  const data = await response.json();
+  cachedToken = { token: data.access_token, expiresAt: Date.now() + 25 * 60 * 1000 };
+  return cachedToken.token;
+}
+
+// Re-prices the offer server-side via Amadeus' pricing endpoint. Returns the
+// fresh { price, currency } when available, or null when revalidation is not
+// possible (expired offer, API down) — callers then reject or flag the booking.
+async function repriceHotelOffer(offerId: string): Promise<{ price: number; currency: string } | null> {
+  try {
+    const token = await getAmadeusToken();
+    if (!token || !offerId) return null;
+
+    const res = await fetch(`${AMADEUS_BASE_URL}/v3/shopping/hotel-offers/pricing`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ data: { type: 'hotel-offers-pricing', hotelOffers: [{ id: offerId }] } }),
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const offer = data?.data?.hotelOffers?.[0]?.offers?.[0];
+    const price = parseFloat(offer?.price?.total ?? '');
+    const currency = offer?.price?.currency;
+    if (!Number.isFinite(price) || !currency) return null;
+    return { price, currency };
+  } catch {
+    return null;
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
