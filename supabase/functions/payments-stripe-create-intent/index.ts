@@ -161,9 +161,9 @@ serve(async (req) => {
       apiVersion: "2025-08-27.basil",
     });
 
-    // Create payment intent
+    // Create payment intent — amount from the DB booking record (source of truth)
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(parseFloat(amount) * 100), // Convert to smallest currency unit
+      amount: Math.round(numericAmount * 100), // Convert to smallest currency unit
       currency: currency.toLowerCase(),
       automatic_payment_methods: { enabled: true },
       receipt_email: booking.contact_email || undefined,
