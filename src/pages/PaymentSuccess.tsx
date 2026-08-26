@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, BookOpen, Loader2, AlertCircle, Download, Ticket } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 
 type BookingStage = 'pending_payment' | 'processing_provider' | 'confirmed' | 'failed' | 'unknown';
 
