@@ -159,6 +159,7 @@ serve(async (req) => {
   );
 
   let bookingId: string | null = null;
+  let orderCreated = false;
 
   try {
     const body = (await req.json().catch(() => ({}))) as Any;
@@ -349,6 +350,7 @@ serve(async (req) => {
     }
 
     const order = orderRes.data;
+    orderCreated = true; // Money has moved at Duffel — never auto-cancel below.
     const summary = summariseOrder(order);
 
     // ── 5. Persist confirmation ──
@@ -401,11 +403,19 @@ serve(async (req) => {
     const msg = err instanceof Error ? err.message : "unknown";
     console.error("duffel-order-create failure:", msg);
 
-    if (bookingId) {
-      await supabase.from("bookings").update({ status: "cancelled", payment_status: "failed" }).eq("id", bookingId).then(
+    // Only cancel the provisional row if the Duffel order was NEVER created.
+    // If an order exists (money moved), flag for admin review instead of cancelling.
+    if (bookingId && !orderCreated) {
+      await supabase.from("bookings").update({ status: "cancelled", payment_status: "failed" }).eq("id", bookingId).eq("status", "pending_payment").then(
         () => undefined,
         () => undefined,
       );
+    } else if (bookingId && orderCreated) {
+      await supabase.from("bookings").update({
+        payment_status: "paid",
+        booking_details: { requiresAdminReview: true, reviewReason: "post_order_exception" },
+        updated_at: new Date().toISOString(),
+      }).eq("id", bookingId).then(() => undefined, () => undefined);
     }
 
     if (msg === "DUFFEL_API_KEY_MISSING") {
