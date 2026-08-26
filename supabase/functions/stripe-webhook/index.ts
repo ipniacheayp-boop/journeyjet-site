@@ -254,22 +254,72 @@ serve(async (req) => {
 
       logStep('Processing completed checkout for booking', { bookingId, bookingType });
 
-      // Update booking status to confirmed
+      // Only confirm when Stripe actually collected the money.
+      if (session.payment_status !== 'paid') {
+        logStep('Checkout session completed but NOT paid — skipping confirmation', {
+          bookingId, paymentStatus: session.payment_status,
+        });
+        await supabaseClient.from('webhook_events')
+          .update({ processed: true, processed_at: new Date().toISOString() })
+          .eq('event_id', event.id);
+        return new Response(JSON.stringify({ received: true, unpaid: true }), { status: 200 });
+      }
+
+      // Amount verification — never confirm a booking that was underpaid.
+      const { data: existingBooking, error: fetchError } = await supabaseClient
+        .from('bookings')
+        .select('*')
+        .eq('id', bookingId)
+        .single();
+
+      if (fetchError || !existingBooking) {
+        logStep('ERROR: Booking not found for session', { bookingId });
+        return new Response('Booking not found', { status: 400 });
+      }
+
+      const paidAmount = (session.amount_total ?? 0) / 100;
+      const expectedAmount = Number(existingBooking.amount);
+      if (Math.abs(paidAmount - expectedAmount) > 0.01) {
+        logStep('ERROR: Amount mismatch — paid vs booking', { bookingId, paidAmount, expectedAmount });
+        await supabaseClient.from('bookings').update({
+          payment_status: 'amount_mismatch',
+          booking_details: { ...existingBooking.booking_details, requiresAdminReview: true, paidAmount, expectedAmount },
+          updated_at: new Date().toISOString(),
+        }).eq('id', bookingId);
+        await supabaseClient.from('webhook_events')
+          .update({ processed: true, processed_at: new Date().toISOString() })
+          .eq('event_id', event.id);
+        return new Response(JSON.stringify({ received: true, amountMismatch: true }), { status: 200 });
+      }
+
+      // Status-guarded update: only pending_payment → confirmed. A late or
+      // out-of-order event must never resurrect a cancelled/refunded booking.
       const { data: booking, error: updateError } = await supabaseClient
         .from('bookings')
         .update({
           status: 'confirmed',
           payment_status: 'succeeded',
+          payment_method: 'card',
           stripe_payment_intent_id: session.payment_intent as string,
           confirmed_at: new Date().toISOString(),
         })
         .eq('id', bookingId)
+        .eq('status', 'pending_payment')
         .select()
-        .single();
+        .maybeSingle();
 
       if (updateError) {
         logStep('ERROR: Failed to update booking', { bookingId, error: updateError });
         throw updateError;
+      }
+
+      if (!booking) {
+        // Already confirmed/cancelled/refunded — acknowledge idempotently.
+        logStep('Booking not in pending_payment — skipping state change', { bookingId, status: existingBooking.status });
+        await supabaseClient.from('webhook_events')
+          .update({ processed: true, processed_at: new Date().toISOString() })
+          .eq('event_id', event.id);
+        return new Response(JSON.stringify({ received: true, alreadyProcessed: true }), { status: 200 });
       }
 
       logStep('Booking confirmed successfully', { bookingId });
