@@ -449,6 +449,7 @@ serve(async (req) => {
           const providerResult = await finalizeBookingWithProvider(supabaseClient, booking, 3);
           logStep('Provider finalization result', { bookingId, success: providerResult.success });
         }
+        }
       } else {
         // Fallback: find by stored payment_intent_id
         const { data: found } = await supabaseClient
@@ -458,16 +459,25 @@ serve(async (req) => {
           .maybeSingle();
           
         if (found?.id) {
+          if (Math.abs((pi.amount_received ?? pi.amount ?? 0) / 100 - Number(found.amount)) > 0.01) {
+            logStep('ERROR: PI amount mismatch (fallback path)', { bookingId: found.id });
+            await supabaseClient.from('bookings').update({
+              payment_status: 'amount_mismatch',
+              booking_details: { ...found.booking_details, requiresAdminReview: true },
+              updated_at: new Date().toISOString(),
+            }).eq('id', found.id);
+          } else {
           await supabaseClient
             .from('bookings')
             .update({
               status: 'confirmed',
               payment_status: 'succeeded',
-              payment_method: 'stripe',
+              payment_method: 'card',
               confirmed_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
             })
-            .eq('id', found.id);
+            .eq('id', found.id)
+            .eq('status', 'pending_payment');
           logStep('Booking updated by PI id', { bookingId: found.id });
           
           // Trigger provider finalization
