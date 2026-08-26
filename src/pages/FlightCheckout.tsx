@@ -157,8 +157,11 @@ const FlightCheckout = () => {
   }, [user, contact.email]);
 
   // Domestic vs international comes from the itinerary's airport countries, never the URL.
+  // Rule: any itinerary leaving a single country (e.g. Delhi → Mumbai, all-India) is domestic
+  // and needs no passport; anything crossing a border is international and passport data is
+  // mandatory for every traveller — regardless of the offer's document hint.
   const { isDomestic } = useMemo(() => getItineraryScope(offer), [offer]);
-  const requireDocuments = offer?.passenger_identity_documents_required === true && !isDomestic;
+  const requireDocuments = !isDomestic && !!offer;
 
   // Duffel's revalidated total is the only price we are ever allowed to charge.
   const payableAmount = (() => {

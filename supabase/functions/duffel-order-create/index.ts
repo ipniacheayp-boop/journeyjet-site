@@ -102,7 +102,10 @@ function validatePassengers(raw: unknown, requireDocs: boolean): { ok: true; pas
       gender: String(p.gender).toLowerCase(),
       email: String(p.email).trim(),
       phone_number: String(p.phone_number).trim(),
-      ...(doc && doc.unique_identifier
+      // Only ever forward a passport to Duffel when this itinerary actually
+      // requires one — a domestic booking must not carry document data even if
+      // a manipulated client sends it.
+      ...(requireDocs && doc && doc.unique_identifier
         ? {
             identity_document: {
               unique_identifier: String(doc.unique_identifier).toUpperCase(),
@@ -254,7 +257,11 @@ serve(async (req) => {
     }
     const isDomestic = !missingCountry && countries.size === 1;
 
-    const requireDocs = offer.passenger_identity_documents_required === true && !isDomestic;
+    // Authoritative rule, decided here from the offer's airport countries:
+    // domestic (all airports in one country) → never require a passport;
+    // international (any segment crosses a border) → passport mandatory for
+    // every traveller, even if the offer's document hint is false.
+    const requireDocs = !isDomestic;
     const offerPassengerIds = (Array.isArray(offer.passengers) ? offer.passengers : []).map((p: Any) => p.id);
 
     const validated = validatePassengers(body?.passengers, requireDocs);

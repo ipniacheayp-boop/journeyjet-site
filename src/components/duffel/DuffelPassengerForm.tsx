@@ -272,11 +272,14 @@ const DuffelPassengerForm = ({
               {requireDocuments && !isDomestic && (
                 <div className="pt-2 border-t border-border space-y-4">
                   <p className="text-sm font-medium text-muted-foreground">
-                    Passport details (required by the airline for this route)
+                    Passport details — required for international travel
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    This itinerary crosses an international border, so a valid passport is mandatory for every traveller.
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor={`passport-${index}`}>Passport number <span className="text-destructive">*</span></Label>
+                      <Label htmlFor={`passport-${index}`}>Passport Number <span className="text-destructive">*</span></Label>
                       <Input
                         id={`passport-${index}`}
                         className="bg-background"
