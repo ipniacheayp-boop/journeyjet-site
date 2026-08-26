@@ -59,21 +59,12 @@ serve(async (req) => {
   }
 
   try {
-    const { bookingId, amount, billingCountry, destination } = await req.json();
+    const { bookingId, billingCountry, destination } = await req.json();
     // ALWAYS use USD for Stripe payments
     const currency = 'USD';
 
-    if (!bookingId || !amount) {
+    if (!bookingId) {
       throw new Error("Missing required fields");
-    }
-
-    // Validate amount: must be a positive, finite number within a sane range.
-    const numericAmount = Number(amount);
-    if (!Number.isFinite(numericAmount) || numericAmount <= 0 || numericAmount > 1000000) {
-      return new Response(
-        JSON.stringify({ error: "Invalid payment amount.", code: "INVALID_AMOUNT" }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
-      );
     }
 
     // Validate bookingId format (UUID).
@@ -118,12 +109,31 @@ serve(async (req) => {
     // Verify booking exists
     const { data: booking, error: bookingError } = await supabaseClient
       .from("bookings")
-      .select("id, amount, currency, contact_email, booking_details")
+      .select("id, amount, currency, status, payment_status, contact_email, booking_details")
       .eq("id", bookingId)
       .single();
 
     if (bookingError || !booking) {
       throw new Error("Booking not found");
+    }
+
+    // Only bookings still awaiting payment may get a PaymentIntent — this
+    // prevents paying twice for an already-confirmed booking.
+    if (booking.status !== "pending_payment" || booking.payment_status === "succeeded") {
+      return new Response(
+        JSON.stringify({ error: "This booking is no longer awaiting payment.", code: "NOT_PAYABLE" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 409 }
+      );
+    }
+
+    // Amount is taken from the server-side booking record — NEVER from the
+    // client request — so the charged amount cannot be manipulated.
+    const numericAmount = Number(booking.amount);
+    if (!Number.isFinite(numericAmount) || numericAmount <= 0 || numericAmount > 1000000) {
+      return new Response(
+        JSON.stringify({ error: "Invalid booking amount.", code: "INVALID_AMOUNT" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }
+      );
     }
 
     // ⚠️ STRIPE SANCTIONS COMPLIANCE — re-validate the destination against the
@@ -151,9 +161,9 @@ serve(async (req) => {
       apiVersion: "2025-08-27.basil",
     });
 
-    // Create payment intent
+    // Create payment intent — amount from the DB booking record (source of truth)
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(parseFloat(amount) * 100), // Convert to smallest currency unit
+      amount: Math.round(numericAmount * 100), // Convert to smallest currency unit
       currency: currency.toLowerCase(),
       automatic_payment_methods: { enabled: true },
       receipt_email: booking.contact_email || undefined,
@@ -171,7 +181,7 @@ serve(async (req) => {
       .from("bookings")
       .update({
         stripe_payment_intent_id: paymentIntent.id,
-        payment_method: 'stripe',
+        payment_method: 'card',
         updated_at: new Date().toISOString(),
       })
       .eq("id", bookingId);

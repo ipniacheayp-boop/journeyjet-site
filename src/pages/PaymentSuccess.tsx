@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, BookOpen, Loader2, AlertCircle, Download, Ticket } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 
 type BookingStage = 'pending_payment' | 'processing_provider' | 'confirmed' | 'failed' | 'unknown';
 
@@ -54,29 +53,20 @@ const PaymentSuccess = () => {
 
   const pollBookingStatus = useCallback(async () => {
     const bookingId = getBookingId();
-    
+    if (!bookingId) return false;
+
     try {
-      // Use the new session-verify endpoint
-      const queryParams = new URLSearchParams();
-      if (sessionId) queryParams.set('session_id', sessionId);
-      if (bookingId) queryParams.set('booking_id', bookingId);
-
-      const { data, error } = await supabase.functions.invoke('payments-session-verify', {
-        body: null,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      // Fallback to direct query with params
+      // Single verified call — the endpoint authorizes via the Stripe
+      // session id (proof of checkout possession) or the user's session.
       const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/payments-session-verify?${queryParams.toString()}`,
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/payments-session-verify`,
         {
-          method: 'GET',
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
           },
+          body: JSON.stringify({ bookingId, sessionId }),
         }
       );
 
@@ -85,36 +75,47 @@ const PaymentSuccess = () => {
       }
 
       const result = await response.json();
-      
+
       if (result.bookingId) {
-        setBookingDetails(result);
-        
+        setBookingDetails({
+          bookingId: result.bookingId,
+          bookingStatus: result.status,
+          paymentStatus: result.paymentStatus,
+          paymentVerified: result.stripeVerified === true || result.paymentStatus === 'succeeded',
+          providerBooked: result.status === 'confirmed',
+          amount: result.amount,
+          currency: result.currency,
+          bookingType: result.bookingType,
+          confirmedAt: null,
+          providerBookingId: null,
+        });
+
         // Check for confirmed status
-        if (result.bookingStatus === 'confirmed' || result.providerBooked) {
+        if (result.confirmed) {
           setStage('confirmed');
           sessionStorage.removeItem('pendingBooking');
           toast.dismiss("payment-verification");
           toast.success("Booking confirmed successfully!");
           return true; // Stop polling
         }
-        
-        // Check for failed/cancelled status  
-        if (result.bookingStatus === 'cancelled' || result.bookingStatus === 'refunded') {
+
+        // Check for failed/cancelled status
+        if (result.status === 'cancelled' || result.status === 'refunded' || result.paymentStatus === 'failed') {
           setStage('failed');
           toast.dismiss("payment-verification");
           toast.error("Booking was cancelled or refunded");
           return true; // Stop polling
         }
-        
+
         // Payment succeeded but booking not yet confirmed
-        if (result.paymentVerified || result.stripePaymentStatus === 'paid') {
+        if (result.stripeVerified || result.paymentStatus === 'succeeded' || result.paymentStatus === 'paid') {
           setStage('processing_provider');
         }
       }
     } catch (err) {
       console.error('Error polling booking status:', err);
     }
-    
+
     return false; // Continue polling
   }, [getBookingId, sessionId]);
 

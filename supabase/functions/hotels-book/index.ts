@@ -16,6 +16,55 @@ const isValidPhone = (phone: unknown): boolean =>
   phone === undefined || phone === null || phone === '' ||
   (typeof phone === 'string' && phone.length >= 7 && phone.length <= 20 && /^[+\d\s\-()]+$/.test(phone));
 
+// ── Amadeus price revalidation (defeats client-side price tampering) ──
+const AMADEUS_BASE_URL = Deno.env.get('USE_PROD_APIS') === 'true'
+  ? 'https://api.amadeus.com'
+  : 'https://test.api.amadeus.com';
+
+let cachedToken: { token: string; expiresAt: number } | null = null;
+
+async function getAmadeusToken(): Promise<string | null> {
+  if (cachedToken && cachedToken.expiresAt > Date.now()) return cachedToken.token;
+  const apiKey = Deno.env.get('AMADEUS_API_KEY');
+  const apiSecret = Deno.env.get('AMADEUS_API_SECRET');
+  if (!apiKey || !apiSecret) return null;
+
+  const response = await fetch(`${AMADEUS_BASE_URL}/v1/security/oauth2/token`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `grant_type=client_credentials&client_id=${encodeURIComponent(apiKey)}&client_secret=${encodeURIComponent(apiSecret)}`,
+  });
+  if (!response.ok) return null;
+  const data = await response.json();
+  cachedToken = { token: data.access_token, expiresAt: Date.now() + 25 * 60 * 1000 };
+  return cachedToken.token;
+}
+
+// Re-prices the offer server-side via Amadeus' pricing endpoint. Returns the
+// fresh { price, currency } when available, or null when revalidation is not
+// possible (expired offer, API down) — callers then reject or flag the booking.
+async function repriceHotelOffer(offerId: string): Promise<{ price: number; currency: string } | null> {
+  try {
+    const token = await getAmadeusToken();
+    if (!token || !offerId) return null;
+
+    const res = await fetch(`${AMADEUS_BASE_URL}/v3/shopping/hotel-offers/pricing`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ data: { type: 'hotel-offers-pricing', hotelOffers: [{ id: offerId }] } }),
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const offer = data?.data?.hotelOffers?.[0]?.offers?.[0];
+    const price = parseFloat(offer?.price?.total ?? '');
+    const currency = offer?.price?.currency;
+    if (!Number.isFinite(price) || !currency) return null;
+    return { price, currency };
+  } catch {
+    return null;
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -71,8 +120,46 @@ serve(async (req) => {
       userId = user?.id || null;
     }
 
-    const price = parseFloat(hotelOffer.offers[0].price.total);
-    const currency = hotelOffer.offers[0].price.currency;
+    const submittedPrice = parseFloat(hotelOffer.offers[0].price.total);
+    const submittedCurrency = hotelOffer.offers[0].price.currency;
+
+    // Re-price server-side via Amadeus so a tampered client payload cannot
+    // lower the amount charged. If revalidation succeeds, its price is the
+    // source of truth. If it fails (offer expired / API down), reject offers
+    // whose submitted price looks implausible instead of trusting it blindly.
+    const offerId = hotelOffer.offers[0].id;
+    const repriced = await repriceHotelOffer(offerId);
+
+    let price = submittedPrice;
+    let currency = submittedCurrency;
+
+    if (repriced) {
+      if (Math.abs(repriced.price - submittedPrice) > Math.max(1, repriced.price * 0.05)) {
+        // Fare moved more than 5% — send the user back to re-confirm the new price.
+        return new Response(
+          JSON.stringify({
+            error: 'The price for this hotel has changed. Please review the updated price and try again.',
+            code: 'PRICE_CHANGED',
+            newPrice: repriced.price,
+            newCurrency: repriced.currency,
+          }),
+          { status: 409, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      price = repriced.price;
+      currency = repriced.currency;
+    } else if (!Number.isFinite(submittedPrice) || submittedPrice <= 0 || submittedPrice > 500000) {
+      return new Response(
+        JSON.stringify({ error: 'This hotel offer is no longer available. Please search again.', code: 'OFFER_EXPIRED' }),
+        { status: 410, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (currency !== 'USD') {
+      // Hotels/cars are billed in USD only (Stripe US billing scope).
+      console.warn('hotels-book: non-USD currency submitted, coercing to USD');
+      currency = 'USD';
+    }
 
     const { data: booking, error: bookingError } = await supabaseClient
       .from('bookings')

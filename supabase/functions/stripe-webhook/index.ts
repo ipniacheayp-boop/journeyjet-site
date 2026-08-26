@@ -63,13 +63,10 @@ async function finalizeBookingWithProvider(
     try {
       logStep(`Provider finalization attempt ${attempt + 1}/${maxRetries}`, { bookingId });
       
-      // Simulate provider API call (in production, call actual provider APIs)
+      // Provider hand-off for inventory that is fulfilled offline (hotels/cars
+      // are fulfilled by the supplier named on the voucher). No random failure
+      // injection — a real failure must surface to admin review, not be simulated.
       await new Promise(resolve => setTimeout(resolve, 300));
-      
-      // Simulate 95% success rate
-      if (Math.random() < 0.05) {
-        throw new Error('Provider temporarily unavailable');
-      }
       
       const providerBookingId = generateProviderRef(bookingType);
       
@@ -172,26 +169,26 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Check for duplicate event (idempotency)
-    const { data: existingEvent } = await supabaseClient
-      .from('webhook_events')
-      .select('id')
-      .eq('event_id', event.id)
-      .single();
-
-    if (existingEvent) {
-      logStep("Duplicate event detected, skipping");
-      return new Response(JSON.stringify({ received: true, duplicate: true }), { status: 200 });
-    }
-
-    // Store webhook event for idempotency
-    await supabaseClient.from('webhook_events').insert({
+    // Idempotency: insert-first. webhook_events.event_id is UNIQUE, so a
+    // duplicate delivery (or a race between two simultaneous deliveries of the
+    // same event) fails the insert with 23505 and is acknowledged without
+    // re-processing — prevents double confirmation / double commission.
+    const { error: insertError } = await supabaseClient.from('webhook_events').insert({
       event_id: event.id,
       event_type: event.type,
       provider: 'stripe',
       payload: event,
       processed: false,
     });
+
+    if (insertError) {
+      if (insertError.code === '23505') {
+        logStep("Duplicate event detected, skipping");
+        return new Response(JSON.stringify({ received: true, duplicate: true }), { status: 200 });
+      }
+      logStep("ERROR: Failed to record webhook event", { error: insertError.message });
+      return new Response('Webhook recording failed', { status: 500 });
+    }
 
     if (event.type === 'checkout.session.completed') {
       const session = event.data.object as Stripe.Checkout.Session;
@@ -257,22 +254,72 @@ serve(async (req) => {
 
       logStep('Processing completed checkout for booking', { bookingId, bookingType });
 
-      // Update booking status to confirmed
+      // Only confirm when Stripe actually collected the money.
+      if (session.payment_status !== 'paid') {
+        logStep('Checkout session completed but NOT paid — skipping confirmation', {
+          bookingId, paymentStatus: session.payment_status,
+        });
+        await supabaseClient.from('webhook_events')
+          .update({ processed: true, processed_at: new Date().toISOString() })
+          .eq('event_id', event.id);
+        return new Response(JSON.stringify({ received: true, unpaid: true }), { status: 200 });
+      }
+
+      // Amount verification — never confirm a booking that was underpaid.
+      const { data: existingBooking, error: fetchError } = await supabaseClient
+        .from('bookings')
+        .select('*')
+        .eq('id', bookingId)
+        .single();
+
+      if (fetchError || !existingBooking) {
+        logStep('ERROR: Booking not found for session', { bookingId });
+        return new Response('Booking not found', { status: 400 });
+      }
+
+      const paidAmount = (session.amount_total ?? 0) / 100;
+      const expectedAmount = Number(existingBooking.amount);
+      if (Math.abs(paidAmount - expectedAmount) > 0.01) {
+        logStep('ERROR: Amount mismatch — paid vs booking', { bookingId, paidAmount, expectedAmount });
+        await supabaseClient.from('bookings').update({
+          payment_status: 'amount_mismatch',
+          booking_details: { ...existingBooking.booking_details, requiresAdminReview: true, paidAmount, expectedAmount },
+          updated_at: new Date().toISOString(),
+        }).eq('id', bookingId);
+        await supabaseClient.from('webhook_events')
+          .update({ processed: true, processed_at: new Date().toISOString() })
+          .eq('event_id', event.id);
+        return new Response(JSON.stringify({ received: true, amountMismatch: true }), { status: 200 });
+      }
+
+      // Status-guarded update: only pending_payment → confirmed. A late or
+      // out-of-order event must never resurrect a cancelled/refunded booking.
       const { data: booking, error: updateError } = await supabaseClient
         .from('bookings')
         .update({
           status: 'confirmed',
           payment_status: 'succeeded',
+          payment_method: 'card',
           stripe_payment_intent_id: session.payment_intent as string,
           confirmed_at: new Date().toISOString(),
         })
         .eq('id', bookingId)
+        .eq('status', 'pending_payment')
         .select()
-        .single();
+        .maybeSingle();
 
       if (updateError) {
         logStep('ERROR: Failed to update booking', { bookingId, error: updateError });
         throw updateError;
+      }
+
+      if (!booking) {
+        // Already confirmed/cancelled/refunded — acknowledge idempotently.
+        logStep('Booking not in pending_payment — skipping state change', { bookingId, status: existingBooking.status });
+        await supabaseClient.from('webhook_events')
+          .update({ processed: true, processed_at: new Date().toISOString() })
+          .eq('event_id', event.id);
+        return new Response(JSON.stringify({ received: true, alreadyProcessed: true }), { status: 200 });
       }
 
       logStep('Booking confirmed successfully', { bookingId });
@@ -360,22 +407,40 @@ serve(async (req) => {
       logStep('Processing payment_intent.succeeded', { id: pi.id, metadata: pi.metadata });
 
       const bookingId = (pi.metadata as any)?.bookingId;
-      let targetBookingId = bookingId;
 
       if (bookingId) {
+        // Verify the amount actually paid matches the booking before confirming.
+        const { data: existing } = await supabaseClient
+          .from('bookings')
+          .select('*')
+          .eq('id', bookingId)
+          .maybeSingle();
+
+        if (!existing) {
+          logStep('ERROR: PI succeeded for unknown booking', { bookingId, pi: pi.id });
+        } else if (Math.abs((pi.amount_received ?? pi.amount ?? 0) / 100 - Number(existing.amount)) > 0.01
+                   && (pi.currency ?? '').toUpperCase() === String(existing.currency || 'USD').toUpperCase()) {
+          logStep('ERROR: PI amount mismatch', { bookingId, received: pi.amount_received, expected: existing.amount });
+          await supabaseClient.from('bookings').update({
+            payment_status: 'amount_mismatch',
+            booking_details: { ...existing.booking_details, requiresAdminReview: true },
+            updated_at: new Date().toISOString(),
+          }).eq('id', bookingId);
+        } else {
         const { data: booking } = await supabaseClient
           .from('bookings')
           .update({
             status: 'confirmed',
             payment_status: 'succeeded',
-            payment_method: 'stripe',
+            payment_method: 'card',
             stripe_payment_intent_id: pi.id,
             confirmed_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           })
           .eq('id', bookingId)
+          .eq('status', 'pending_payment')
           .select()
-          .single();
+          .maybeSingle();
 
         logStep('Booking updated from PI metadata', { bookingId });
         
@@ -383,6 +448,7 @@ serve(async (req) => {
         if (booking) {
           const providerResult = await finalizeBookingWithProvider(supabaseClient, booking, 3);
           logStep('Provider finalization result', { bookingId, success: providerResult.success });
+        }
         }
       } else {
         // Fallback: find by stored payment_intent_id
@@ -393,21 +459,31 @@ serve(async (req) => {
           .maybeSingle();
           
         if (found?.id) {
+          if (Math.abs((pi.amount_received ?? pi.amount ?? 0) / 100 - Number(found.amount)) > 0.01) {
+            logStep('ERROR: PI amount mismatch (fallback path)', { bookingId: found.id });
+            await supabaseClient.from('bookings').update({
+              payment_status: 'amount_mismatch',
+              booking_details: { ...found.booking_details, requiresAdminReview: true },
+              updated_at: new Date().toISOString(),
+            }).eq('id', found.id);
+          } else {
           await supabaseClient
             .from('bookings')
             .update({
               status: 'confirmed',
               payment_status: 'succeeded',
-              payment_method: 'stripe',
+              payment_method: 'card',
               confirmed_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
             })
-            .eq('id', found.id);
+            .eq('id', found.id)
+            .eq('status', 'pending_payment');
           logStep('Booking updated by PI id', { bookingId: found.id });
           
           // Trigger provider finalization
           const providerResult = await finalizeBookingWithProvider(supabaseClient, found, 3);
           logStep('Provider finalization result', { bookingId: found.id, success: providerResult.success });
+          }
         }
       }
     }
@@ -416,10 +492,13 @@ serve(async (req) => {
       const pi = event.data.object as Stripe.PaymentIntent;
       const bookingId = (pi.metadata as any)?.bookingId;
       if (bookingId) {
+        // Guard: only a booking still awaiting payment can fail. Never
+        // downgrade an already-paid/confirmed booking on a late failure event.
         await supabaseClient
           .from('bookings')
           .update({ payment_status: 'failed', updated_at: new Date().toISOString() })
-          .eq('id', bookingId);
+          .eq('id', bookingId)
+          .eq('status', 'pending_payment');
         logStep('Marked booking as failed', { bookingId });
       }
     }
