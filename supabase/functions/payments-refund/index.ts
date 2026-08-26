@@ -7,16 +7,21 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Issues a REAL refund through Stripe and records it. Admin-only. The previous
+// version marked bookings refunded without touching Stripe, so no money moved.
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { bookingId, reason } = await req.json();
+    const { bookingId, amount, reason } = await req.json();
 
-    if (!bookingId) {
-      throw new Error("Booking ID is required");
+    if (!bookingId || typeof bookingId !== "string") {
+      throw new Error("Booking ID required");
+    }
+    if (reason !== undefined && (typeof reason !== "string" || reason.length > 500)) {
+      throw new Error("Invalid reason");
     }
 
     const supabaseClient = createClient(
@@ -24,99 +29,95 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    // Verify admin role
+    // Admin-only: refunds move real money and must never be user-callable.
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
-      throw new Error("Unauthorized");
-    }
-
-    const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
-    
-    if (userError || !userData.user) {
-      throw new Error("Unauthorized");
-    }
-
-    // Check if user is admin
-    const { data: roleData } = await supabaseClient
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", userData.user.id)
-      .eq("role", "admin")
-      .single();
-
-    if (!roleData) {
-      throw new Error("Unauthorized: Admin access required");
-    }
-
-    // Get booking details
-    const { data: booking, error: bookingError } = await supabaseClient
-      .from("bookings")
-      .select("*")
-      .eq("id", bookingId)
-      .single();
-
-    if (bookingError || !booking) {
-      throw new Error("Booking not found");
-    }
-
-    if (booking.refund_status === "completed") {
-      throw new Error("Refund already processed");
-    }
-
-    let refundId = null;
-
-    // Process refund based on payment method
-    if (booking.payment_method === "card" && booking.stripe_payment_intent_id) {
-      const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
-        apiVersion: "2025-08-27.basil",
+      return new Response(JSON.stringify({ error: "Authentication required" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
+    }
+    const token = authHeader.replace("Bearer ", "");
+    const { data: { user } } = await supabaseClient.auth.getUser(token);
+    if (!user) {
+      return new Response(JSON.stringify({ error: "Authentication required" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const { data: isAdmin } = await supabaseClient.rpc("has_role", { _user_id: user.id, _role: "admin" });
+    if (!isAdmin) {
+      return new Response(JSON.stringify({ error: "Admin access required" }), {
+        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
+    const { data: booking } = await supabaseClient
+      .from("bookings")
+      .select("id, status, amount, currency, payment_status, refund_status, stripe_payment_intent_id, booking_details")
+      .eq("id", bookingId)
+      .maybeSingle();
+
+    if (!booking) throw new Error("Booking not found");
+
+    if (booking.refund_status === "processed" || booking.refund_status === "completed") {
+      return new Response(JSON.stringify({ error: "This booking has already been refunded." }), {
+        status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const refundAmount = amount !== undefined ? Number(amount) : Number(booking.amount);
+    if (!Number.isFinite(refundAmount) || refundAmount <= 0 || refundAmount > Number(booking.amount)) {
+      return new Response(JSON.stringify({ error: "Invalid refund amount." }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    let refundId: string | null = null;
+
+    if (booking.stripe_payment_intent_id) {
+      const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", { apiVersion: "2025-08-27.basil" });
       const refund = await stripe.refunds.create({
         payment_intent: booking.stripe_payment_intent_id,
+        amount: Math.round(refundAmount * 100),
         reason: "requested_by_customer",
+        metadata: { bookingId, reason: (reason || "").slice(0, 200) },
       });
-
       refundId = refund.id;
+    } else {
+      throw new Error("No Stripe payment found for this booking — cannot refund");
     }
 
-    // Update booking with refund details
-    const { error: updateError } = await supabaseClient
+    const isFullRefund = refundAmount >= Number(booking.amount) - 0.01;
+
+    await supabaseClient
       .from("bookings")
       .update({
-        status: "cancelled",
-        refund_status: "completed",
-        refund_amount: booking.amount,
-        refund_reason: reason || "Admin refund",
+        status: "refunded",
+        refund_status: "processed",
+        refund_amount: refundAmount,
+        refund_reason: reason || null,
+        transaction_id: refundId,
+        booking_details: { ...booking.booking_details, refundId, refundedAt: new Date().toISOString(), partial: !isFullRefund },
         updated_at: new Date().toISOString(),
       })
       .eq("id", bookingId);
 
-    if (updateError) {
-      throw updateError;
-    }
-
-    console.log(`Refund processed for booking ${bookingId}`);
+    console.log(`Refund ${refundId} issued for booking ${bookingId}: ${refundAmount} ${booking.currency}`);
 
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         success: true,
         refundId,
-        message: "Refund processed successfully" 
+        amount: refundAmount,
+        currency: booking.currency,
+        partial: !isFullRefund,
       }),
-      { 
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200 
-      }
+      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
     );
   } catch (error: any) {
     console.error("Refund error:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
-      { 
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 500 
-      }
+      JSON.stringify({ error: "Unable to process refund. Please try again." }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
     );
   }
 });
