@@ -483,6 +483,7 @@ serve(async (req) => {
           // Trigger provider finalization
           const providerResult = await finalizeBookingWithProvider(supabaseClient, found, 3);
           logStep('Provider finalization result', { bookingId: found.id, success: providerResult.success });
+          }
         }
       }
     }
@@ -491,10 +492,13 @@ serve(async (req) => {
       const pi = event.data.object as Stripe.PaymentIntent;
       const bookingId = (pi.metadata as any)?.bookingId;
       if (bookingId) {
+        // Guard: only a booking still awaiting payment can fail. Never
+        // downgrade an already-paid/confirmed booking on a late failure event.
         await supabaseClient
           .from('bookings')
           .update({ payment_status: 'failed', updated_at: new Date().toISOString() })
-          .eq('id', bookingId);
+          .eq('id', bookingId)
+          .eq('status', 'pending_payment');
         logStep('Marked booking as failed', { bookingId });
       }
     }
