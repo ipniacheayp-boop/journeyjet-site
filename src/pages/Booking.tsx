@@ -295,7 +295,13 @@ const Booking = () => {
 
   const goBack = () => {
     const prev = Math.max(currentStep - 1, 0);
-    moveToStep(!isFlightBooking && prev === 1 ? 0 : prev);
+    const target = !isFlightBooking && prev === 1 ? 0 : prev;
+    if (typeof window.history.state?.bookingStep === "number" && currentStep > 0) {
+      window.history.back();
+    } else {
+      window.history.replaceState({ ...window.history.state, bookingStep: target }, "");
+      setCurrentStep(target);
+    }
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
