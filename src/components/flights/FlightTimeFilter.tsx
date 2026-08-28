@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Sunrise, Sun, Sunset, Moon } from "lucide-react";
+import { airportLocalHour } from "@/lib/duffelUtils";
 
 export type TimeSlot = "all" | "morning" | "afternoon" | "evening" | "night";
 
@@ -20,7 +21,8 @@ const timeSlots: { key: TimeSlot; label: string; range: string; icon: any }[] = 
 
 export function getTimeSlot(dateStr: string): TimeSlot {
   if (!dateStr) return "morning";
-  const hour = new Date(dateStr).getHours();
+  const hour = airportLocalHour(dateStr);
+  if (hour === null) return "morning";
   if (hour >= 6 && hour < 12) return "morning";
   if (hour >= 12 && hour < 18) return "afternoon";
   if (hour >= 18 && hour < 22) return "evening";

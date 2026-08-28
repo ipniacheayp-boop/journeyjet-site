@@ -16,8 +16,13 @@ const HotelSummaryCard = ({ offer }: HotelSummaryCardProps) => {
     (offer?.googlePlace as any)?.displayName?.text ||
     offer?.name ||
     "Selected Hotel";
+  const rawAddress = offer?.hotel?.address;
   const address =
-    offer?.hotel?.address ||
+    (typeof rawAddress === "string"
+      ? rawAddress
+      : [rawAddress?.lines?.join?.(", "), rawAddress?.cityName, rawAddress?.stateCode, rawAddress?.countryCode]
+          .filter(Boolean)
+          .join(", ")) ||
     (offer?.googlePlace as any)?.formattedAddress ||
     offer?.hotel?.cityCode ||
     "";
