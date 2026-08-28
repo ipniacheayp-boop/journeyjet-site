@@ -35,6 +35,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import type { DuffelOffer } from "@/types/duffel";
 import { getItineraryScope } from "@/lib/itineraryScope";
+import { formatDateShort, formatTime } from "@/lib/duffelUtils";
 
 const STEPS = ["Travellers", "Review", "Payment", "Confirmed"];
 
@@ -49,10 +50,8 @@ const money = (amount: string | number | null | undefined, currency: string | nu
 
 };
 
-const time = (iso: string | null) =>
-  iso ? new Date(iso).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true }) : "—";
-const day = (iso: string | null) =>
-  iso ? new Date(iso).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }) : "—";
+const time = formatTime;
+const day = formatDateShort;
 const duration = (iso: string | null) =>
   iso ? iso.replace("PT", "").replace("H", "h ").replace("M", "m").toLowerCase() : "—";
 
@@ -79,6 +78,7 @@ const FlightCheckout = () => {
   const [bookingRef, setBookingRef] = useState<string | null>(null);
   const [pendingBookingId, setPendingBookingId] = useState<string | null>(null);
   const [verifying, setVerifying] = useState(false);
+  const draftKey = offerId ? `duffelCheckoutDraft:${offerId}` : "";
 
   const stored = useMemo(() => {
     try {
@@ -144,9 +144,30 @@ const FlightCheckout = () => {
         ? existing
         : fresh.passengers.map((p, i) => emptyPassenger(String(p.id ?? `pas_${i}`), p.type ?? "adult")),
     );
+    if (draftKey) {
+      try {
+        const draftRaw = sessionStorage.getItem(draftKey);
+        const draft = draftRaw ? JSON.parse(draftRaw) : null;
+        if (draft?.offerId === fresh.id) {
+          if (Array.isArray(draft.passengers) && draft.passengers.length === fresh.passengers.length) setPassengers(draft.passengers);
+          if (draft.contact) setContact(draft.contact);
+          setAcceptedTerms(draft.acceptedTerms === true);
+          setStep(Number.isInteger(draft.step) ? Math.max(0, Math.min(2, draft.step)) : 0);
+          setPendingBookingId(draft.pendingBookingId ?? null);
+        }
+      } catch { sessionStorage.removeItem(draftKey); }
+    }
     setLoading(false);
 
-  }, [attemptId, offerId, stored]);
+  }, [attemptId, draftKey, offerId, stored]);
+
+  useEffect(() => {
+    if (!draftKey || !offer || step === 3) return;
+    const timer = window.setTimeout(() => {
+      sessionStorage.setItem(draftKey, JSON.stringify({ offerId: offer.id, step, passengers, contact, acceptedTerms, pendingBookingId }));
+    }, 100);
+    return () => window.clearTimeout(timer);
+  }, [acceptedTerms, contact, draftKey, offer, passengers, pendingBookingId, step]);
 
   useEffect(() => {
     loadOffer();
@@ -257,6 +278,11 @@ const FlightCheckout = () => {
         toast.info("Your payment is being verified with the airline. Please don't submit it again.");
         return;
       }
+      if (result.code === "NETWORK") {
+        setOrderError("The result is uncertain because the network connection was interrupted. Your checkout attempt is protected against duplicates; retry once with the same details or contact support if a charge appears.");
+        toast.warning("Connection interrupted. The same checkout attempt can be retried safely.");
+        return;
+      }
       if (result.code === "PRICE_CHANGED" && result.newPrice) {
         setPriceChange({ from: result.originalPrice ?? Number(offer.total_amount ?? 0), to: result.newPrice });
         setStep(1);
@@ -275,6 +301,7 @@ const FlightCheckout = () => {
     }
 
     sessionStorage.removeItem("selectedOffer");
+    if (draftKey) sessionStorage.removeItem(draftKey);
     try {
       localStorage.removeItem("selectedOffer");
     } catch {
@@ -291,28 +318,30 @@ const FlightCheckout = () => {
   const verifyPendingBooking = useCallback(async () => {
     if (!pendingBookingId || verifying) return;
     setVerifying(true);
-    const result = await reconcileDuffelBooking({ bookingId: pendingBookingId, attemptId });
-    if (result.confirmed) {
-      sessionStorage.removeItem("selectedOffer");
-      try { localStorage.removeItem("selectedOffer"); } catch { /* non-fatal */ }
-      setOrder(result.order ?? null);
-      setBookingRef(result.bookingReference ?? null);
-      setPendingBookingId(null);
-      setStep(3);
-      toast.success(`Booking confirmed — PNR ${result.bookingReference ?? ""}`.trim());
-    } else if (result.state === "failed" || result.state === "cancelled") {
-      setPendingBookingId(null);
-      setOrderError(result.message ?? "The airline did not complete this payment.");
-    } else {
-      toast.info(result.message ?? "The airline is still processing your booking.");
+    try {
+      const result = await reconcileDuffelBooking({ bookingId: pendingBookingId, attemptId });
+      if (result.confirmed) {
+        sessionStorage.removeItem("selectedOffer");
+        if (draftKey) sessionStorage.removeItem(draftKey);
+        try { localStorage.removeItem("selectedOffer"); } catch { /* non-fatal */ }
+        setOrder(result.order ?? null);
+        setBookingRef(result.bookingReference ?? null);
+        setPendingBookingId(null);
+        setStep(3);
+        toast.success(`Booking confirmed — PNR ${result.bookingReference ?? ""}`.trim());
+      } else if (result.state === "failed" || result.state === "cancelled") {
+        setPendingBookingId(null);
+        setOrderError(result.message ?? "The airline did not complete this payment.");
+      }
+    } finally {
+      setVerifying(false);
     }
-    setVerifying(false);
-  }, [attemptId, pendingBookingId, verifying]);
+  }, [attemptId, draftKey, pendingBookingId, verifying]);
 
   useEffect(() => {
     if (!pendingBookingId) return;
-    const timer = window.setTimeout(() => void verifyPendingBooking(), 4_000);
-    return () => window.clearTimeout(timer);
+    const timer = window.setInterval(() => void verifyPendingBooking(), 8_000);
+    return () => window.clearInterval(timer);
   }, [pendingBookingId, verifyPendingBooking]);
 
   const itinerary = offer && (
@@ -405,7 +434,7 @@ const FlightCheckout = () => {
         {offer.expires_at && (
           <p className="flex items-center gap-1.5 text-xs text-muted-foreground pt-1">
             <Clock className="w-3.5 h-3.5" aria-hidden="true" />
-            Fare held until {new Date(offer.expires_at).toLocaleString("en-US")}
+             Fare held until {new Date(offer.expires_at).toLocaleString("en-US")} (your local time)
           </p>
         )}
       </CardContent>
