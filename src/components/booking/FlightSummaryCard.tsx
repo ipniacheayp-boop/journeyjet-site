@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Plane, Clock, Calendar, MapPin } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
+import { formatDateShort, formatTime } from "@/lib/duffelUtils";
 
 interface FlightSummaryCardProps {
   offer: any;
@@ -19,18 +20,6 @@ const FlightSummaryCard = ({ offer }: FlightSummaryCardProps) => {
   const stops = segments.length - 1;
 
   const formatDuration = (d: string) => d.replace("PT", "").replace("H", "h ").replace("M", "m");
-
-  const formatTime = (dateStr: string) => {
-    if (!dateStr) return "";
-    const date = new Date(dateStr);
-    return date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
-  };
-
-  const formatDate = (dateStr: string) => {
-    if (!dateStr) return "";
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" });
-  };
 
   return (
     <Card className="bg-card border-border overflow-hidden">
@@ -70,7 +59,7 @@ const FlightSummaryCard = ({ offer }: FlightSummaryCardProps) => {
           <div className="flex flex-col items-end gap-1">
             <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
               <Calendar className="w-3.5 h-3.5" />
-              {formatDate(firstSegment?.departure?.at)}
+               {formatDateShort(firstSegment?.departure?.at)}
             </div>
             <p className="text-2xl font-bold text-primary">{formatCurrency(price, currency)}</p>
             <p className="text-xs text-muted-foreground">per person</p>

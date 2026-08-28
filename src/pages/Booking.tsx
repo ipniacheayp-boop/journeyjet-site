@@ -80,6 +80,9 @@ const Booking = () => {
   const [validatedCurrency, setValidatedCurrency] = useState<string>("USD");
   const [showPriceChangeModal, setShowPriceChangeModal] = useState(false);
   const [pendingPriceChangeOffer, setPendingPriceChangeOffer] = useState<any>(null);
+  const draftKey = `bookingDraft:${bookingType ?? "unknown"}`;
+  const draftRestoredRef = useRef(false);
+  const historyReadyRef = useRef(false);
 
   const {
     loading, validating, priceChangeData,
@@ -111,12 +114,65 @@ const Booking = () => {
 
         setOffer(candidate);
         setAgentId(parsed.agentId);
+        try {
+          const draftRaw = sessionStorage.getItem(draftKey);
+          if (draftRaw) {
+            const draft = JSON.parse(draftRaw);
+            if (draft.offerId === (candidate?.id ?? candidate?.offers?.[0]?.id ?? null)) {
+              setPassengers(Array.isArray(draft.passengers) && draft.passengers.length ? draft.passengers : [{ ...emptyPassenger }]);
+              setContact(draft.contact ?? { email: "", phone: "" });
+              setAppliedCoupon(draft.appliedCoupon ?? null);
+              setDiscount(Number(draft.discount) || 0);
+              setHotelUpsellData(draft.hotelUpsellData ?? null);
+              setAcceptedTerms(draft.acceptedTerms === true);
+              setBillingCountry(draft.billingCountry || ALLOWED_BILLING_COUNTRY);
+              setValidatedOffer(draft.validatedOffer ?? null);
+              setValidatedPrice(Number.isFinite(draft.validatedPrice) ? draft.validatedPrice : null);
+              setValidatedCurrency(draft.validatedCurrency || "USD");
+              setBookingId(draft.bookingId ?? null);
+              setBookingReference(draft.bookingReference ?? null);
+              setPaymentReady(draft.paymentReady === true && Boolean(draft.bookingId));
+              setCurrentStep(Number.isInteger(draft.currentStep) ? Math.max(0, Math.min(4, draft.currentStep)) : 0);
+            }
+          }
+        } catch {
+          sessionStorage.removeItem(draftKey);
+        }
       } catch {
         /* corrupt selection — the empty-state UI below handles it */
       }
     }
     clientRequestIdRef.current = generateClientRequestId();
-  }, [generateClientRequestId, navigate]);
+    draftRestoredRef.current = true;
+  }, [draftKey, generateClientRequestId, navigate]);
+
+  useEffect(() => {
+    if (!draftRestoredRef.current || !offer) return;
+    const timer = window.setTimeout(() => {
+      try {
+        sessionStorage.setItem(draftKey, JSON.stringify({
+          offerId: offer?.id ?? offer?.offers?.[0]?.id ?? null,
+          currentStep,
+          passengers,
+          contact,
+          appliedCoupon,
+          discount,
+          hotelUpsellData,
+          acceptedTerms,
+          billingCountry,
+          validatedOffer,
+          validatedPrice,
+          validatedCurrency,
+          bookingId,
+          bookingReference,
+          paymentReady,
+        }));
+      } catch {
+        // Checkout still works when storage is unavailable.
+      }
+    }, 100);
+    return () => window.clearTimeout(timer);
+  }, [acceptedTerms, appliedCoupon, billingCountry, bookingId, bookingReference, contact, currentStep, discount, draftKey, hotelUpsellData, offer, passengers, paymentReady, validatedCurrency, validatedOffer, validatedPrice]);
 
   useEffect(() => {
     if (priceChangeData) setShowPriceChangeModal(true);
@@ -231,37 +287,42 @@ const Booking = () => {
 
   const goNext = () => {
     if (validateStep(currentStep)) {
-      setCurrentStep((s) => {
-        const next = Math.min(s + 1, STEPS.length - 1);
-        return !isFlightBooking && next === 1 ? 2 : next;
-      });
+      const next = Math.min(currentStep + 1, STEPS.length - 1);
+      moveToStep(!isFlightBooking && next === 1 ? 2 : next);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   const goBack = () => {
-    setCurrentStep((s) => {
-      const prev = Math.max(s - 1, 0);
-      return !isFlightBooking && prev === 1 ? 0 : prev;
-    });
+    const prev = Math.max(currentStep - 1, 0);
+    const target = !isFlightBooking && prev === 1 ? 0 : prev;
+    if (typeof window.history.state?.bookingStep === "number" && currentStep > 0) {
+      window.history.back();
+    } else {
+      window.history.replaceState({ ...window.history.state, bookingStep: target }, "");
+      setCurrentStep(target);
+    }
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Browser back should walk back through the checkout steps instead of
-  // dumping the traveller back on the search page (losing entered details).
   useEffect(() => {
-    if (currentStep === 0) return;
-    window.history.pushState({ bookingStep: currentStep }, "");
-    const onPopState = () => {
-      setCurrentStep((s) => {
-        const prev = Math.max(s - 1, 0);
-        return !isFlightBooking && prev === 1 ? 0 : prev;
-      });
+    if (!historyReadyRef.current) {
+      window.history.replaceState({ ...window.history.state, bookingStep: currentStep }, "");
+      historyReadyRef.current = true;
+    }
+    const onPopState = (event: PopStateEvent) => {
+      const target = event.state?.bookingStep;
+      if (typeof target === "number") setCurrentStep(target);
       window.scrollTo({ top: 0, behavior: "smooth" });
     };
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
-  }, [currentStep, isFlightBooking]);
+  }, []);
+
+  const moveToStep = (next: number) => {
+    window.history.pushState({ ...window.history.state, bookingStep: next }, "");
+    setCurrentStep(next);
+  };
 
 
   const handleApplyCoupon = (code: string, disc: number) => {
@@ -445,7 +506,10 @@ const Booking = () => {
       parsed.paymentStatus = "paid";
       sessionStorage.setItem("pendingBooking", JSON.stringify(parsed));
     }
-    navigate(`/booking-confirmation?booking_id=${bookingId}`);
+    sessionStorage.removeItem(draftKey);
+    sessionStorage.removeItem("selectedOffer");
+    try { localStorage.removeItem("selectedOffer"); } catch { /* non-fatal */ }
+    navigate(`/payment-success?booking_id=${bookingId}&payment_intent=${encodeURIComponent(paymentIntentId)}`);
   };
 
   const handlePaymentError = (error: string) => {

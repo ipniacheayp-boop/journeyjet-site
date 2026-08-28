@@ -4,7 +4,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, BookOpen, Home, Mail, Ticket, Plane, Hotel, Car } from "lucide-react";
+import { AlertCircle, BookOpen, CheckCircle2, Home, Mail, Ticket, Plane, Hotel, Car } from "lucide-react";
+import { formatAirportDateTime } from "@/lib/duffelUtils";
 
 interface ConfirmationDetails {
   bookingId: string;
@@ -29,37 +30,22 @@ const BookingConfirmation = () => {
   const [confirmationDetails, setConfirmationDetails] = useState<ConfirmationDetails | null>(null);
 
   useEffect(() => {
-    // Try to get booking details from session storage or URL
+    // Browser storage is only a recovery aid; it must never assert confirmation.
     const pendingBooking = sessionStorage.getItem('pendingBooking');
     
     if (pendingBooking) {
       try {
         const parsed = JSON.parse(pendingBooking);
-        setConfirmationDetails({
-          bookingId: parsed.bookingId,
-          bookingReference: parsed.bookingReference || parsed.bookingId?.slice(0, 8).toUpperCase(),
-          bookingType: parsed.bookingType,
-          amount: parsed.amount,
-          currency: parsed.currency || 'USD',
-          travelerInfo: parsed.travelerInfo,
-          itinerary: parsed.itinerary,
-          passengers: parsed.passengers,
-          hotelUpsell: parsed.hotelUpsell,
-        });
-        // Clear session storage after confirmation
-        sessionStorage.removeItem('pendingBooking');
-        sessionStorage.removeItem('selectedOffer');
+        if (parsed.paymentStatus === "confirmed") {
+          setConfirmationDetails(parsed);
+        } else if (parsed.bookingId) {
+          navigate(`/payment-success?booking_id=${encodeURIComponent(parsed.bookingId)}`, { replace: true });
+        }
       } catch (e) {
         console.error('[BookingConfirmation] Error parsing stored booking:', e);
       }
     } else if (bookingIdFromUrl) {
-      setConfirmationDetails({
-        bookingId: bookingIdFromUrl,
-        bookingReference: bookingIdFromUrl.slice(0, 8).toUpperCase(),
-        bookingType: 'flight',
-        amount: '0',
-        currency: 'USD',
-      });
+      navigate(`/payment-success?booking_id=${encodeURIComponent(bookingIdFromUrl)}`, { replace: true });
     }
   }, [bookingIdFromUrl]);
 
@@ -86,8 +72,9 @@ const BookingConfirmation = () => {
         <main className="flex-1 pt-24 pb-16 flex items-center justify-center">
           <Card className="max-w-md w-full mx-4">
             <CardContent className="py-12 text-center">
-              <h1 className="text-2xl font-semibold text-foreground mb-3">Booking confirmation unavailable</h1>
-              <p className="text-muted-foreground mb-4">No booking details found.</p>
+               <AlertCircle className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+               <h1 className="text-2xl font-semibold text-foreground mb-3">Confirmation not verified</h1>
+               <p className="text-muted-foreground mb-4">Open My Bookings to check the authoritative booking status.</p>
               <Button onClick={() => navigate('/')}>
                 <Home className="mr-2 h-4 w-4" />
                 Return Home
@@ -134,7 +121,7 @@ const BookingConfirmation = () => {
               {/* Itinerary details */}
               {confirmationDetails.itinerary?.flight && (() => {
                 const f = confirmationDetails.itinerary.flight;
-                const fmtDT = (d?: string) => d ? new Date(d).toLocaleString("en-US", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—";
+                 const fmtDT = formatAirportDateTime;
                 return (
                   <div className="border rounded-lg p-4 space-y-2">
                     <div className="flex items-center justify-between">

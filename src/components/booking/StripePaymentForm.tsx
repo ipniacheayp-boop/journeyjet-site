@@ -67,8 +67,9 @@ const PaymentSuccess = ({ amount, currency }: { amount: number; currency: string
 );
 
 const CheckoutForm = ({
-  onSuccess, onError, amount, currency, disabled, termsAccepted, billingDetails,
+  bookingId, onSuccess, onError, amount, currency, disabled, termsAccepted, billingDetails,
 }: {
+  bookingId: string;
   onSuccess: (id: string) => void;
   onError: (err: string) => void;
   amount: number;
@@ -102,7 +103,7 @@ const CheckoutForm = ({
       const { error, paymentIntent } = await stripe.confirmPayment({
         elements,
         confirmParams: {
-          return_url: `${window.location.origin}/booking-confirmation`,
+          return_url: `${window.location.origin}/payment-success?booking_id=${encodeURIComponent(bookingId)}`,
           payment_method_data: {
             billing_details: {
               name: billingDetails.name,
@@ -402,6 +403,7 @@ const StripePaymentForm = ({
                 }}
               >
                 <CheckoutForm
+                  bookingId={bookingId}
                   onSuccess={onSuccess}
                   onError={onError}
                   amount={amount}

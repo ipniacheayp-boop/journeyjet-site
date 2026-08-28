@@ -294,11 +294,21 @@ const SearchResults = () => {
 
   const handleBook = useCallback(
     (offer: any) => {
-      // Store the offer and agentId in sessionStorage and navigate to booking
-      sessionStorage.setItem("selectedOffer", JSON.stringify({ type, offer, agentId }));
-      window.location.href = `/booking/${type}`;
+      const price = Number(
+        type === "hotels"
+          ? offer?.offers?.[0]?.price?.total ?? offer?.price?.total
+          : offer?.price?.total ?? offer?.price?.grandTotal,
+      );
+      if (!Number.isFinite(price) || price <= 0) {
+        toast.error("This option does not have a live bookable price. Please choose another result.");
+        return;
+      }
+      const payload = JSON.stringify({ type, offer, agentId });
+      sessionStorage.setItem("selectedOffer", payload);
+      sessionStorage.removeItem(`bookingDraft:${type}`);
+      navigate(`/booking/${type}`);
     },
-    [type, agentId],
+    [type, agentId, navigate],
   );
 
   const handleBookDuffel = useCallback(

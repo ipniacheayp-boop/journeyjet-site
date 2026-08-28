@@ -22,7 +22,7 @@ serve(async (req) => {
   }
 
   try {
-    const { sessionId, bookingId } = await req.json();
+    const { sessionId, bookingId, paymentIntentId } = await req.json();
 
     if (!bookingId || typeof bookingId !== "string" || bookingId.length > 64) {
       return json({ error: "Booking ID required" }, 400);
@@ -35,7 +35,7 @@ serve(async (req) => {
 
     const { data: booking } = await supabaseClient
       .from("bookings")
-      .select("id, status, payment_status, amount, currency, booking_type, created_at, stripe_session_id, user_id")
+      .select("id, status, payment_status, amount, currency, booking_type, created_at, confirmed_at, stripe_session_id, stripe_payment_intent_id, user_id, duffel_booking_reference, amadeus_pnr")
       .eq("id", bookingId)
       .maybeSingle();
 
@@ -52,7 +52,10 @@ serve(async (req) => {
 
     if (!authorized) {
       const validSessionId = typeof sessionId === "string" && /^cs_(test|live)_[A-Za-z0-9]+$/.test(sessionId);
-      if (!validSessionId || !booking.stripe_session_id || sessionId !== booking.stripe_session_id) {
+      const validPaymentIntent = typeof paymentIntentId === "string" && /^pi_[A-Za-z0-9]+$/.test(paymentIntentId);
+      const ownsSession = validSessionId && booking.stripe_session_id && sessionId === booking.stripe_session_id;
+      const ownsIntent = validPaymentIntent && booking.stripe_payment_intent_id && paymentIntentId === booking.stripe_payment_intent_id;
+      if (!ownsSession && !ownsIntent) {
         return json({ error: "Not authorized to view this booking" }, 403);
       }
     }
@@ -69,7 +72,7 @@ serve(async (req) => {
       }
     }
 
-    const confirmed = booking.status === "confirmed" && booking.payment_status === "succeeded";
+    const confirmed = booking.status === "confirmed" && ["succeeded", "paid"].includes(String(booking.payment_status));
 
     return json({
       bookingId: booking.id,
@@ -79,6 +82,8 @@ serve(async (req) => {
       amount: booking.amount,
       currency: booking.currency,
       confirmed,
+      confirmedAt: booking.confirmed_at,
+      providerBookingId: booking.duffel_booking_reference || booking.amadeus_pnr || null,
       stripeVerified,
       createdAt: booking.created_at,
     });

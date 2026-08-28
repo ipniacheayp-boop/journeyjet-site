@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plane, Calendar, Clock, ExternalLink, Luggage, Wifi, Tv, Zap } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
+import { formatDateShort, formatTime } from "@/lib/duffelUtils";
 
 interface FlightResultCardProps {
   flight: any;
@@ -31,17 +32,6 @@ export function FlightResultCard({ flight, onBook }: FlightResultCardProps) {
   const formatDuration = (d: string) => {
     if (!d) return "";
     return d.replace("PT", "").replace("H", "h ").replace("M", "m");
-  };
-
-  const formatTime = (dateStr: string) => {
-    if (!dateStr) return "";
-    const d = new Date(dateStr);
-    return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  };
-
-  const formatDate = (dateStr: string) => {
-    if (!dateStr) return "";
-    return new Date(dateStr).toLocaleDateString([], { month: "short", day: "numeric" });
   };
 
   const stopCount = (flight.itineraries?.[0]?.segments?.length || 1) - 1;
@@ -100,7 +90,7 @@ export function FlightResultCard({ flight, onBook }: FlightResultCardProps) {
             <div className="text-center">
               <p className="text-lg font-semibold">{formatTime(firstSegment?.departure?.at)}</p>
               <p className="text-xs text-muted-foreground">{firstSegment?.departure?.iataCode}</p>
-              <p className="text-xs text-muted-foreground">{formatDate(firstSegment?.departure?.at)}</p>
+               <p className="text-xs text-muted-foreground">{formatDateShort(firstSegment?.departure?.at)}</p>
             </div>
             <div className="flex-1 mx-4 text-center">
               <p className="text-xs text-muted-foreground">{formatDuration(duration)}</p>
@@ -114,7 +104,7 @@ export function FlightResultCard({ flight, onBook }: FlightResultCardProps) {
             <div className="text-center">
               <p className="text-lg font-semibold">{formatTime(lastSegment?.arrival?.at)}</p>
               <p className="text-xs text-muted-foreground">{lastSegment?.arrival?.iataCode}</p>
-              <p className="text-xs text-muted-foreground">{formatDate(lastSegment?.arrival?.at)}</p>
+               <p className="text-xs text-muted-foreground">{formatDateShort(lastSegment?.arrival?.at)}</p>
             </div>
           </div>
 
@@ -124,7 +114,7 @@ export function FlightResultCard({ flight, onBook }: FlightResultCardProps) {
               <div className="text-center">
                 <p className="text-lg font-semibold">{formatTime(returnFirstSeg?.departure?.at)}</p>
                 <p className="text-xs text-muted-foreground">{returnFirstSeg?.departure?.iataCode}</p>
-                <p className="text-xs text-muted-foreground">{formatDate(returnFirstSeg?.departure?.at)}</p>
+                 <p className="text-xs text-muted-foreground">{formatDateShort(returnFirstSeg?.departure?.at)}</p>
               </div>
               <div className="flex-1 mx-4 text-center">
                 <p className="text-xs text-muted-foreground">{formatDuration(returnDuration)}</p>
@@ -140,7 +130,7 @@ export function FlightResultCard({ flight, onBook }: FlightResultCardProps) {
               <div className="text-center">
                 <p className="text-lg font-semibold">{formatTime(returnLastSeg?.arrival?.at)}</p>
                 <p className="text-xs text-muted-foreground">{returnLastSeg?.arrival?.iataCode}</p>
-                <p className="text-xs text-muted-foreground">{formatDate(returnLastSeg?.arrival?.at)}</p>
+                 <p className="text-xs text-muted-foreground">{formatDateShort(returnLastSeg?.arrival?.at)}</p>
               </div>
             </div>
           )}

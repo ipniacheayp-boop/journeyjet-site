@@ -27,6 +27,7 @@ const PaymentSuccess = () => {
   const navigate = useNavigate();
   const sessionId = searchParams.get("session_id");
   const bookingIdFromUrl = searchParams.get("booking_id");
+  const paymentIntentId = searchParams.get("payment_intent");
   
   const [stage, setStage] = useState<BookingStage>('pending_payment');
   const [pollCount, setPollCount] = useState(0);
@@ -66,7 +67,7 @@ const PaymentSuccess = () => {
             'Content-Type': 'application/json',
             'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
           },
-          body: JSON.stringify({ bookingId, sessionId }),
+          body: JSON.stringify({ bookingId, sessionId, paymentIntentId }),
         }
       );
 
@@ -86,8 +87,8 @@ const PaymentSuccess = () => {
           amount: result.amount,
           currency: result.currency,
           bookingType: result.bookingType,
-          confirmedAt: null,
-          providerBookingId: null,
+          confirmedAt: result.confirmedAt ?? null,
+          providerBookingId: result.providerBookingId ?? null,
         });
 
         // Check for confirmed status
@@ -117,45 +118,34 @@ const PaymentSuccess = () => {
     }
 
     return false; // Continue polling
-  }, [getBookingId, sessionId]);
+  }, [getBookingId, paymentIntentId, sessionId]);
 
   useEffect(() => {
     // Nothing is confirmed until the backend verifies the payment.
     toast.loading("Verifying your payment...", { id: "payment-verification" });
 
     
-    // Start polling
-    const poll = async () => {
+    let cancelled = false;
+    let timer: number | undefined;
+    const run = async (attempt: number) => {
       const shouldStop = await pollBookingStatus();
-      if (shouldStop || pollCount >= maxPolls) {
-        if (pollCount >= maxPolls && stage !== 'confirmed') {
-          setStage('processing_provider');
-          toast.dismiss("payment-verification");
-          toast.info("We're still confirming your booking. You'll receive an email shortly.");
-        }
+      if (cancelled || shouldStop) return;
+      const next = attempt + 1;
+      setPollCount(next);
+      if (next >= maxPolls) {
+        setStage('unknown');
+        toast.dismiss("payment-verification");
+        toast.info("Verification is taking longer than expected. Your booking status remains available in My Bookings.");
         return;
       }
-      
-      setPollCount(prev => prev + 1);
+      timer = window.setTimeout(() => void run(next), pollInterval);
     };
-
-    poll();
-    
-    const intervalId = setInterval(async () => {
-      if (pollCount < maxPolls && stage !== 'confirmed' && stage !== 'failed') {
-        const shouldStop = await pollBookingStatus();
-        if (shouldStop) {
-          clearInterval(intervalId);
-        } else {
-          setPollCount(prev => prev + 1);
-        }
-      } else {
-        clearInterval(intervalId);
-      }
-    }, pollInterval);
-
-    return () => clearInterval(intervalId);
-  }, [pollBookingStatus, pollCount, stage, maxPolls]);
+    void run(0);
+    return () => {
+      cancelled = true;
+      if (timer) window.clearTimeout(timer);
+    };
+  }, [pollBookingStatus]);
 
   // Auto-redirect after confirmation
   useEffect(() => {
@@ -242,7 +232,7 @@ const PaymentSuccess = () => {
         return (
           <div className="space-y-2">
             <p className="text-muted-foreground">
-              Payment received! We're now confirming your booking with the travel provider.
+               The payment provider has authorized the payment. We&apos;re waiting for final booking confirmation.
             </p>
             <p className="text-sm text-muted-foreground">
               This may take a few moments. You'll receive an email confirmation shortly.
@@ -266,6 +256,13 @@ const PaymentSuccess = () => {
           </div>
         );
       
+      case 'unknown':
+        return (
+          <div className="space-y-2">
+            <p className="text-muted-foreground">We could not finish verification because the status check timed out.</p>
+            <p className="text-sm text-muted-foreground">Do not make another payment. Check My Bookings or contact support with your booking ID.</p>
+          </div>
+        );
       default:
         return (
           <p className="text-muted-foreground">

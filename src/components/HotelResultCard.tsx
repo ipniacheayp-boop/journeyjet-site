@@ -76,8 +76,14 @@ export function HotelResultCard({ hotel, onBook }: HotelResultCardProps) {
   const displayHotelName =
     hotel.hotel?.name?.trim() || (googlePlace?.displayName as { text?: string } | undefined)?.text?.trim() || "";
 
+  const rawAddress = hotel.hotel?.address;
+  const hotelAddress = typeof rawAddress === "string"
+    ? rawAddress.trim()
+    : [rawAddress?.lines?.join?.(", "), rawAddress?.cityName, rawAddress?.stateCode, rawAddress?.countryCode]
+        .filter(Boolean)
+        .join(", ");
   const locationLabel =
-    hotel.hotel?.address?.trim() ||
+    hotelAddress ||
     gpFormatted ||
     hotel.hotel?.cityCode?.trim() ||
     (hotel.searchMeta as { cityQuery?: string } | undefined)?.cityQuery?.trim() ||
@@ -376,9 +382,13 @@ export function HotelResultCard({ hotel, onBook }: HotelResultCardProps) {
                   {COMPLIANCE_COPY.paymentDisabledLabel}
                 </Button>
               </div>
-            ) : (
+            ) : price > 0 ? (
               <Button onClick={() => onBook(hotel)} className="w-full">
                 Book Now
+              </Button>
+            ) : (
+              <Button disabled className="w-full" variant="secondary">
+                Price unavailable
               </Button>
             )}
           </div>

@@ -147,8 +147,7 @@ function timeOf(iso?: string | null): string | null {
   if (!iso) return null;
   const m = /T(\d{2}):(\d{2})/.exec(iso);
   if (m) return `${m[1]}:${m[2]}`;
-  const d = new Date(iso);
-  return Number.isNaN(d.getTime()) ? null : d.toTimeString().slice(0, 5);
+  return null;
 }
 
 function baggageOf(segments: DuffelSegment[]): NormalizedBaggage {

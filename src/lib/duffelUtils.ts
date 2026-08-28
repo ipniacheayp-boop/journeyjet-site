@@ -24,15 +24,34 @@ export function formatTime(value?: string | null): string {
   if (!value) return "—";
   const m = /T(\d{2}):(\d{2})/.exec(value);
   if (m) return `${m[1]}:${m[2]}`;
-  const d = new Date(value);
-  return Number.isNaN(d.getTime()) ? "—" : d.toTimeString().slice(0, 5);
+  return "—";
 }
 
 export function formatDateShort(value?: string | null): string {
   if (!value) return "";
-  const d = new Date(value.length <= 10 ? `${value}T00:00:00` : value);
-  if (Number.isNaN(d.getTime())) return "";
-  return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
+  if (!match) return "";
+  const d = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])));
+  return d.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+/** Formats an airport-local ISO timestamp without applying the browser timezone. */
+export function formatAirportDateTime(value?: string | null): string {
+  const date = formatDateShort(value);
+  const localTime = formatTime(value);
+  return date && localTime !== "—" ? `${date}, ${localTime}` : date || localTime;
+}
+
+/** Extracts the airport-local hour for search filters without timezone conversion. */
+export function airportLocalHour(value?: string | null): number | null {
+  if (!value) return null;
+  const match = /T(\d{2}):\d{2}/.exec(value);
+  return match ? Number(match[1]) : null;
 }
 
 export function formatMoney(amount?: string | null, currency?: string | null): string {

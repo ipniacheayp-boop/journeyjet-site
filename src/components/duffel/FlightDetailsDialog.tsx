@@ -229,13 +229,13 @@ export default function FlightDetailsDialog({ offer, open, onOpenChange, onConti
               {flight.conditions.changeable != null && (
                 <p>{flight.conditions.changeable ? "Changes allowed before departure" : "No changes allowed"}</p>
               )}
-              {flight.expiresAt && <p>Fare held until {new Date(flight.expiresAt).toLocaleString()}</p>}
+              {flight.expiresAt && <p>Fare held until {new Date(flight.expiresAt).toLocaleString()} (your local time)</p>}
               {flight.paymentRequiredBy && (
-                <p>Payment required by {new Date(flight.paymentRequiredBy).toLocaleString()}</p>
+                <p>Payment required by {new Date(flight.paymentRequiredBy).toLocaleString()} (your local time)</p>
               )}
               {flight.priceGuaranteeExpiresAt && (
                 <p>
-                  Price guaranteed until {new Date(flight.priceGuaranteeExpiresAt).toLocaleString()}
+                   Price guaranteed until {new Date(flight.priceGuaranteeExpiresAt).toLocaleString()} (your local time)
                 </p>
               )}
               {flight.identityDocumentsRequired && <p>Passport details required at booking.</p>}
