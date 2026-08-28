@@ -78,7 +78,6 @@ const FlightCheckout = () => {
   const [bookingRef, setBookingRef] = useState<string | null>(null);
   const [pendingBookingId, setPendingBookingId] = useState<string | null>(null);
   const [verifying, setVerifying] = useState(false);
-  const draftKey = offerId ? `duffelCheckoutDraft:${offerId}` : "";
 
   const stored = useMemo(() => {
     try {
@@ -91,6 +90,7 @@ const FlightCheckout = () => {
 
 
   const offerId = searchParams.get("offer") || stored?.offerId || stored?.offer?.id || "";
+  const draftKey = offerId ? `duffelCheckoutDraft:${offerId}` : "";
   const agentId = stored?.agentId ?? null;
   const attemptId = useMemo(
     () => stored?.attemptId && /^[0-9a-f-]{36}$/i.test(stored.attemptId) ? stored.attemptId : crypto.randomUUID(),
