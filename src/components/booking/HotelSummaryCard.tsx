@@ -31,8 +31,16 @@ const HotelSummaryCard = ({ offer }: HotelSummaryCardProps) => {
   const rating = offer?.rating;
   const room = hotelOffer?.room?.description?.text || hotelOffer?.room?.typeEstimated?.category;
 
-  const fmt = (d?: string) =>
-    d ? new Date(d).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" }) : "";
+  const fmt = (value?: string) => {
+    const match = value?.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (!match) return "";
+    return new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]))).toLocaleDateString("en-US", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      timeZone: "UTC",
+    });
+  };
 
   return (
     <Card className="bg-card border-border overflow-hidden">

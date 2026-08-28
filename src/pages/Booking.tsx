@@ -317,7 +317,7 @@ const Booking = () => {
     };
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
-  }, [currentStep]);
+  }, []);
 
   const moveToStep = (next: number) => {
     window.history.pushState({ ...window.history.state, bookingStep: next }, "");
