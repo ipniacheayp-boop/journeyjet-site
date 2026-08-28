@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, BookOpen, Home, Ticket, Plane, Hotel, Car } from "lucide-react";
+import { AlertCircle, BookOpen, CheckCircle2, Home, Mail, Ticket, Plane, Hotel, Car } from "lucide-react";
 import { formatAirportDateTime } from "@/lib/duffelUtils";
 
 interface ConfirmationDetails {
