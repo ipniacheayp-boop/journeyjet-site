@@ -26,7 +26,7 @@ interface SavingsRevealDialogProps {
 export function SavingsRevealDialog({ open, onOpenChange, ctaHref = "/deals" }: SavingsRevealDialogProps) {
   const navigate = useNavigate();
   const [stepIndex, setStepIndex] = useState(0);
-  const [stage, setStage] = useState<"loading" | "savings">("loading");
+  const [stage, setStage] = useState<"loading" | "savings" | "howItWorks">("loading");
 
   useEffect(() => {
     if (!open) return;
