@@ -247,3 +247,7 @@ verify_jwt = false
 
 [functions.duffel-webhook]
 verify_jwt = false
+
+[functions.duffel-deals]
+verify_jwt = false
+
