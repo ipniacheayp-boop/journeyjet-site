@@ -361,10 +361,12 @@ serve(async (req) => {
         return json({ deals: valid, total: valid.length, fromCache: true, fetchedAt: cache.fetchedAt });
       }
       if (age < STALE_MS && enoughLeft) {
-        // Stale-while-revalidate: answer instantly, warm the cache in background.
-        refresh().catch(() => undefined);
+        // Serve the cached payload as-is. Detached background refreshes are
+        // killed once the response returns ("Fetch is aborted"), so the next
+        // request past STALE_MS refreshes synchronously instead.
         return json({ deals: valid, total: valid.length, fromCache: true, fetchedAt: cache.fetchedAt });
       }
+
     }
 
     const entry = await refresh();
