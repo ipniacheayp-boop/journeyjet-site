@@ -128,7 +128,7 @@ export function SavingsRevealDialog({ open, onOpenChange, ctaHref = "/deals" }: 
                 </ul>
               </div>
             </motion.div>
-          ) : (
+          ) : stage === "savings" ? (
             <motion.div
               key="savings"
               initial={{ opacity: 0, scale: 0.97 }}
