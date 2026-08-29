@@ -59,14 +59,12 @@ export function usableDeal(deal: DuffelDeal): boolean {
 export async function fetchDuffelDeals(
   options: { refresh?: boolean; signal?: AbortSignal } = {},
 ): Promise<DuffelDealsResult> {
-  const path = options.refresh ? "duffel-deals?refresh=true" : "duffel-deals";
-
   const { data, error } = await invokeSupabaseFunction<{
     deals?: DuffelDeal[];
     fromCache?: boolean;
     fetchedAt?: number;
     error?: string;
-  }>(path, {}, { signal: options.signal, timeoutMs: DEALS_TIMEOUT_MS });
+  }>("duffel-deals", { refresh: options.refresh === true }, { signal: options.signal, timeoutMs: DEALS_TIMEOUT_MS });
 
   if (error) {
     if (error === "aborted") return { deals: [], fromCache: false };

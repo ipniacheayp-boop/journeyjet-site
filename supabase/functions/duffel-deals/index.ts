@@ -312,7 +312,18 @@ serve(async (req) => {
 
   try {
     const url = new URL(req.url);
-    const force = url.searchParams.get("refresh") === "true";
+    // `refresh` may arrive as a query param or in the JSON body (the client's
+    // Edge Function helper always POSTs a body, never a query string).
+    let bodyRefresh = false;
+    if (req.method === "POST") {
+      try {
+        const body = await req.json();
+        bodyRefresh = body?.refresh === true;
+      } catch {
+        bodyRefresh = false;
+      }
+    }
+    const force = url.searchParams.get("refresh") === "true" || bodyRefresh;
     const age = cache ? Date.now() - cache.fetchedAt : Infinity;
 
     if (!force && cache) {
