@@ -207,7 +207,7 @@ export function SavingsRevealDialog({ open, onOpenChange, ctaHref = "/deals" }: 
                 <motion.h2
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="font-display text-4xl font-extrabold leading-[1.08] drop-shadow-md sm:text-5xl md:text-6xl"
+                  className="font-display text-4xl font-extrabold leading-[1.08] text-white drop-shadow-md sm:text-5xl md:text-6xl"
                 >
                   Here's How You'll Save
                   <span className="mt-1 block">
