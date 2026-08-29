@@ -190,6 +190,73 @@ export function SavingsRevealDialog({ open, onOpenChange, ctaHref = "/deals" }: 
                 </p>
               </div>
             </motion.div>
+          ) : (
+            <motion.div
+              key="howItWorks"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              className="relative flex h-full w-full flex-col items-center justify-center overflow-y-auto px-6 py-16 text-center"
+              style={{
+                backgroundImage: `linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.55)), url(${santoriniBg})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            >
+              <div className="relative z-10 w-full max-w-3xl text-white">
+                <motion.h2
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="font-display text-4xl font-extrabold leading-[1.08] drop-shadow-md sm:text-5xl md:text-6xl"
+                >
+                  Here's How You'll Save
+                  <span className="mt-1 block">
+                    <span className="text-amber-400">$487+</span> Per Flight
+                  </span>
+                </motion.h2>
+
+                <motion.p
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.15 }}
+                  className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-white/90 sm:text-lg"
+                >
+                  We monitor prices from your home airport to destinations worldwide.{" "}
+                  <strong className="text-white">The moment a great deal appears</strong>, we'll send it
+                  directly to your inbox.
+                </motion.p>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  <Button
+                    size="lg"
+                    className="mt-10 w-full max-w-md rounded-2xl bg-amber-400 py-6 text-base font-bold uppercase tracking-wide text-slate-900 hover:bg-amber-300"
+                    onClick={() => {
+                      onOpenChange(false);
+                      navigate(ctaHref);
+                    }}
+                  >
+                    Show Me Recent Deals
+                    <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
+                  </Button>
+                </motion.div>
+
+                <button
+                  type="button"
+                  className="mt-5 text-sm font-medium text-white/80 underline-offset-4 transition hover:text-white hover:underline"
+                  onClick={() => {
+                    onOpenChange(false);
+                    navigate(ctaHref);
+                  }}
+                >
+                  I'm convinced — skip to deals
+                  <ArrowRight className="ml-1 inline h-4 w-4" aria-hidden="true" />
+                </button>
+              </div>
+            </motion.div>
           )}
         </AnimatePresence>
       </DialogContent>
