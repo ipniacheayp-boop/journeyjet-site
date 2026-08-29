@@ -278,25 +278,31 @@ function dealsForRoute(route: Route, offers: Record<string, any>[]): Deal[] {
   return picked;
 }
 
+const CONCURRENCY = 3;
+
 async function loadDeals(): Promise<CacheEntry> {
   const departureDate = isoDate(DEPART_IN_DAYS);
   const returnDate = isoDate(DEPART_IN_DAYS + TRIP_LENGTH_DAYS);
 
-  // All routes are shopped concurrently — a single wave, never sequentially.
-  const results = await Promise.all(
-    ROUTES.map(async (route) => ({
-      route,
-      offers: await duffelOfferRequest(route, departureDate, returnDate),
-    })),
-  );
-
   const deals: Deal[] = [];
   let routesWithOffers = 0;
-  for (const { route, offers } of results) {
-    const routeDeals = dealsForRoute(route, offers);
-    if (routeDeals.length > 0) routesWithOffers++;
-    deals.push(...routeDeals);
-  }
+  let cursor = 0;
+
+  // Bounded concurrency: Duffel rate-limits (429) bursts, and holding a dozen
+  // offer payloads at once exceeded the isolate's memory limit. Offers for each
+  // route are reduced to deals immediately and then released.
+  const worker = async () => {
+    while (cursor < ROUTES.length) {
+      const route = ROUTES[cursor++];
+      const offers = await duffelOfferRequest(route, departureDate, returnDate);
+      const routeDeals = dealsForRoute(route, offers);
+      if (routeDeals.length > 0) routesWithOffers++;
+      deals.push(...routeDeals);
+    }
+  };
+
+  await Promise.all(Array.from({ length: Math.min(CONCURRENCY, ROUTES.length) }, worker));
+
 
   deals.sort((a, b) => a.price - b.price);
 
