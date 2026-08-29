@@ -85,7 +85,7 @@ const DuffelDealCard = ({ deal, index = 0, onSelect }: DuffelDealCardProps) => {
             {deal.airlineLogo && !logoFailed ? (
               <img
                 src={deal.airlineLogo}
-                alt={`${deal.airline} logo`}
+                alt={deal.airline ? `${deal.airline} logo` : "Airline logo"}
                 loading="lazy"
                 width={24}
                 height={24}
@@ -97,9 +97,12 @@ const DuffelDealCard = ({ deal, index = 0, onSelect }: DuffelDealCardProps) => {
                 <Plane className="h-3.5 w-3.5" />
               </span>
             )}
-            <span className="rounded-full bg-background/90 px-2.5 py-1 text-xs font-semibold">
-              {deal.airline}
-            </span>
+            {deal.airline && (
+              <span className="rounded-full bg-background/90 px-2.5 py-1 text-xs font-semibold">
+                {deal.airline}
+              </span>
+            )}
+
           </div>
 
           {deal.cabinClass && (
