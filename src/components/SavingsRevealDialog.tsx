@@ -175,11 +175,8 @@ export function SavingsRevealDialog({ open, onOpenChange, ctaHref = "/deals" }: 
 
                 <Button
                   size="lg"
-                  className="mt-8 w-full max-w-md rounded-2xl py-6 text-base font-bold"
-                  onClick={() => {
-                    onOpenChange(false);
-                    navigate(ctaHref);
-                  }}
+                  className="mt-8 w-full max-w-md rounded-2xl bg-amber-400 py-6 text-base font-bold text-slate-900 hover:bg-amber-300"
+                  onClick={() => setStage("howItWorks")}
                 >
                   See How It Works
                   <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
