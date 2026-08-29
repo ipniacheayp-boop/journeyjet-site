@@ -108,45 +108,67 @@ const isoDate = (offsetDays: number): string => {
   return d.toISOString().slice(0, 10);
 };
 
-async function duffelOfferRequest(route: Route, departureDate: string, returnDate: string) {
+async function duffelFetch(path: string, init: RequestInit & { body?: string } = {}) {
   const key = Deno.env.get("DUFFEL_API_KEY");
   if (!key) throw new Error("missing_key");
 
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 22_000);
-
+  const timer = setTimeout(() => controller.abort(), 20_000);
   try {
-    const res = await fetch(
-      "https://api.duffel.com/air/offer_requests?return_offers=true&supplier_timeout=15000",
-      {
-        method: "POST",
-        signal: controller.signal,
-        headers: {
-          Authorization: `Bearer ${key}`,
-          "Duffel-Version": "v2",
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          data: {
-            slices: [
-              { origin: route.origin, destination: route.destination, departure_date: departureDate },
-              { origin: route.destination, destination: route.origin, departure_date: returnDate },
-            ],
-            passengers: [{ type: "adult" }],
-            cabin_class: "economy",
-          },
-        }),
+    return await fetch(`https://api.duffel.com${path}`, {
+      ...init,
+      signal: controller.signal,
+      headers: {
+        Authorization: `Bearer ${key}`,
+        "Duffel-Version": "v2",
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        ...(init.headers as Record<string, string> | undefined),
       },
-    );
+    });
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
-    if (!res.ok) {
-      console.log(`duffel-deals: ${route.origin}-${route.destination} → HTTP ${res.status}`);
+/**
+ * Two-step shop: create the offer request WITHOUT inlined offers, then pull a
+ * small page of the cheapest offers. Keeps each response tiny so the isolate
+ * never hits its memory limit.
+ */
+async function duffelOfferRequest(route: Route, departureDate: string, returnDate: string) {
+  try {
+    const created = await duffelFetch("/air/offer_requests?return_offers=false&supplier_timeout=15000", {
+      method: "POST",
+      body: JSON.stringify({
+        data: {
+          slices: [
+            { origin: route.origin, destination: route.destination, departure_date: departureDate },
+            { origin: route.destination, destination: route.origin, departure_date: returnDate },
+          ],
+          passengers: [{ type: "adult" }],
+          cabin_class: "economy",
+        },
+      }),
+    });
+
+    if (!created.ok) {
+      console.log(`duffel-deals: ${route.origin}-${route.destination} → HTTP ${created.status}`);
       return [] as Record<string, any>[];
     }
 
-    const body = await res.json();
-    const offers = body?.data?.offers;
+    const requestId = (await created.json())?.data?.id;
+    if (typeof requestId !== "string") return [] as Record<string, any>[];
+
+    const listed = await duffelFetch(
+      `/air/offers?offer_request_id=${encodeURIComponent(requestId)}&sort=total_amount&limit=10`,
+    );
+    if (!listed.ok) {
+      console.log(`duffel-deals: ${route.origin}-${route.destination} offers → HTTP ${listed.status}`);
+      return [] as Record<string, any>[];
+    }
+
+    const offers = (await listed.json())?.data;
     return Array.isArray(offers) ? offers : [];
   } catch (err) {
     console.log(
@@ -154,10 +176,9 @@ async function duffelOfferRequest(route: Route, departureDate: string, returnDat
       err instanceof Error ? err.message : "unknown",
     );
     return [] as Record<string, any>[];
-  } finally {
-    clearTimeout(timer);
   }
 }
+
 
 function toDeal(
   route: Route,
