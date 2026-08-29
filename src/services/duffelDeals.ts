@@ -19,7 +19,7 @@ export interface DuffelDeal {
   arrivingAt: string | null;
   price: number;
   currency: string;
-  airline: string;
+  airline: string | null;
   airlineCode: string | null;
   airlineLogo: string | null;
   flightNumber: string | null;

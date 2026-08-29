@@ -75,7 +75,7 @@ type Deal = {
   arrivingAt: string | null;
   price: number;
   currency: string;
-  airline: string;
+  airline: string | null;
   airlineCode: string | null;
   airlineLogo: string | null;
   flightNumber: string | null;
@@ -203,7 +203,7 @@ function toDeal(
     arrivingAt: lastSegment?.arriving_at ?? null,
     price: Math.round(price * 100) / 100,
     currency,
-    airline: carrier?.name ?? carrier?.iata_code ?? "Airline",
+    airline: carrier?.name ?? carrier?.iata_code ?? null,
     airlineCode: carrier?.iata_code ?? null,
     airlineLogo: carrier?.logo_symbol_url ?? null,
     flightNumber:
