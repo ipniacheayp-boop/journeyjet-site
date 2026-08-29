@@ -108,45 +108,67 @@ const isoDate = (offsetDays: number): string => {
   return d.toISOString().slice(0, 10);
 };
 
-async function duffelOfferRequest(route: Route, departureDate: string, returnDate: string) {
+async function duffelFetch(path: string, init: RequestInit & { body?: string } = {}) {
   const key = Deno.env.get("DUFFEL_API_KEY");
   if (!key) throw new Error("missing_key");
 
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 22_000);
-
+  const timer = setTimeout(() => controller.abort(), 20_000);
   try {
-    const res = await fetch(
-      "https://api.duffel.com/air/offer_requests?return_offers=true&supplier_timeout=15000",
-      {
-        method: "POST",
-        signal: controller.signal,
-        headers: {
-          Authorization: `Bearer ${key}`,
-          "Duffel-Version": "v2",
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          data: {
-            slices: [
-              { origin: route.origin, destination: route.destination, departure_date: departureDate },
-              { origin: route.destination, destination: route.origin, departure_date: returnDate },
-            ],
-            passengers: [{ type: "adult" }],
-            cabin_class: "economy",
-          },
-        }),
+    return await fetch(`https://api.duffel.com${path}`, {
+      ...init,
+      signal: controller.signal,
+      headers: {
+        Authorization: `Bearer ${key}`,
+        "Duffel-Version": "v2",
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        ...(init.headers as Record<string, string> | undefined),
       },
-    );
+    });
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
-    if (!res.ok) {
-      console.log(`duffel-deals: ${route.origin}-${route.destination} → HTTP ${res.status}`);
+/**
+ * Two-step shop: create the offer request WITHOUT inlined offers, then pull a
+ * small page of the cheapest offers. Keeps each response tiny so the isolate
+ * never hits its memory limit.
+ */
+async function duffelOfferRequest(route: Route, departureDate: string, returnDate: string) {
+  try {
+    const created = await duffelFetch("/air/offer_requests?return_offers=false&supplier_timeout=15000", {
+      method: "POST",
+      body: JSON.stringify({
+        data: {
+          slices: [
+            { origin: route.origin, destination: route.destination, departure_date: departureDate },
+            { origin: route.destination, destination: route.origin, departure_date: returnDate },
+          ],
+          passengers: [{ type: "adult" }],
+          cabin_class: "economy",
+        },
+      }),
+    });
+
+    if (!created.ok) {
+      console.log(`duffel-deals: ${route.origin}-${route.destination} → HTTP ${created.status}`);
       return [] as Record<string, any>[];
     }
 
-    const body = await res.json();
-    const offers = body?.data?.offers;
+    const requestId = (await created.json())?.data?.id;
+    if (typeof requestId !== "string") return [] as Record<string, any>[];
+
+    const listed = await duffelFetch(
+      `/air/offers?offer_request_id=${encodeURIComponent(requestId)}&sort=total_amount&limit=10`,
+    );
+    if (!listed.ok) {
+      console.log(`duffel-deals: ${route.origin}-${route.destination} offers → HTTP ${listed.status}`);
+      return [] as Record<string, any>[];
+    }
+
+    const offers = (await listed.json())?.data;
     return Array.isArray(offers) ? offers : [];
   } catch (err) {
     console.log(
@@ -154,10 +176,9 @@ async function duffelOfferRequest(route: Route, departureDate: string, returnDat
       err instanceof Error ? err.message : "unknown",
     );
     return [] as Record<string, any>[];
-  } finally {
-    clearTimeout(timer);
   }
 }
+
 
 function toDeal(
   route: Route,
@@ -257,25 +278,31 @@ function dealsForRoute(route: Route, offers: Record<string, any>[]): Deal[] {
   return picked;
 }
 
+const CONCURRENCY = 3;
+
 async function loadDeals(): Promise<CacheEntry> {
   const departureDate = isoDate(DEPART_IN_DAYS);
   const returnDate = isoDate(DEPART_IN_DAYS + TRIP_LENGTH_DAYS);
 
-  // All routes are shopped concurrently — a single wave, never sequentially.
-  const results = await Promise.all(
-    ROUTES.map(async (route) => ({
-      route,
-      offers: await duffelOfferRequest(route, departureDate, returnDate),
-    })),
-  );
-
   const deals: Deal[] = [];
   let routesWithOffers = 0;
-  for (const { route, offers } of results) {
-    const routeDeals = dealsForRoute(route, offers);
-    if (routeDeals.length > 0) routesWithOffers++;
-    deals.push(...routeDeals);
-  }
+  let cursor = 0;
+
+  // Bounded concurrency: Duffel rate-limits (429) bursts, and holding a dozen
+  // offer payloads at once exceeded the isolate's memory limit. Offers for each
+  // route are reduced to deals immediately and then released.
+  const worker = async () => {
+    while (cursor < ROUTES.length) {
+      const route = ROUTES[cursor++];
+      const offers = await duffelOfferRequest(route, departureDate, returnDate);
+      const routeDeals = dealsForRoute(route, offers);
+      if (routeDeals.length > 0) routesWithOffers++;
+      deals.push(...routeDeals);
+    }
+  };
+
+  await Promise.all(Array.from({ length: Math.min(CONCURRENCY, ROUTES.length) }, worker));
+
 
   deals.sort((a, b) => a.price - b.price);
 
@@ -334,10 +361,12 @@ serve(async (req) => {
         return json({ deals: valid, total: valid.length, fromCache: true, fetchedAt: cache.fetchedAt });
       }
       if (age < STALE_MS && enoughLeft) {
-        // Stale-while-revalidate: answer instantly, warm the cache in background.
-        refresh().catch(() => undefined);
+        // Serve the cached payload as-is. Detached background refreshes are
+        // killed once the response returns ("Fetch is aborted"), so the next
+        // request past STALE_MS refreshes synchronously instead.
         return json({ deals: valid, total: valid.length, fromCache: true, fetchedAt: cache.fetchedAt });
       }
+
     }
 
     const entry = await refresh();
