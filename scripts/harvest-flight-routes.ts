@@ -38,7 +38,7 @@ if (!SUPABASE_URL || !ANON_KEY) {
 }
 
 const MAX_ROUTES = Number(env.HARVEST_MAX_ROUTES ?? 70);
-const CONCURRENCY = 3;
+const CONCURRENCY = Number(env.HARVEST_CONCURRENCY ?? 2);
 const TIMEOUT_MS = 45_000;
 
 function slugify(v: string): string {
@@ -120,19 +120,37 @@ async function searchOffers(c: Candidate, returnDate: string | null) {
       }),
       signal: controller.signal,
     });
-    if (!res.ok) return null;
+    if (!res.ok) {
+      console.log(`    ! ${c.originCode}→${c.destinationCode} HTTP ${res.status}`);
+      return null;
+    }
     const json = (await res.json()) as { offers?: unknown[]; error?: string };
-    if (json.error || !Array.isArray(json.offers)) return null;
+    if (json.error || !Array.isArray(json.offers)) {
+      console.log(`    ! ${c.originCode}→${c.destinationCode} ${json.error ?? "no offers array"}`);
+      return null;
+    }
     return json.offers as Array<Record<string, any>>;
-  } catch {
+  } catch (err) {
+    console.log(`    ! ${c.originCode}→${c.destinationCode} ${(err as Error).message}`);
     return null;
   } finally {
     clearTimeout(timer);
   }
 }
 
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+async function searchWithRetry(c: Candidate, returnDate: string | null) {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const offers = await searchOffers(c, returnDate);
+    if (offers && offers.length > 0) return offers;
+    await sleep(1500 * (attempt + 1));
+  }
+  return null;
+}
+
 async function harvest(c: Candidate): Promise<HarvestResult | null> {
-  const oneWay = await searchOffers(c, null);
+  const oneWay = await searchWithRetry(c, null);
   if (!oneWay || oneWay.length === 0) {
     console.log(`  ✗ ${c.originCode}→${c.destinationCode} — no Duffel offers`);
     return null;
@@ -147,7 +165,8 @@ async function harvest(c: Candidate): Promise<HarvestResult | null> {
     if (dur && (minDuration === undefined || dur < minDuration)) minDuration = dur;
   }
 
-  const roundTrip = await searchOffers(c, futureDate(52));
+  await sleep(400);
+  const roundTrip = await searchWithRetry(c, futureDate(52));
 
   console.log(
     `  ✓ ${c.originCode}→${c.destinationCode} — ${oneWay.length} offers, ${airlines.size} carriers`,
