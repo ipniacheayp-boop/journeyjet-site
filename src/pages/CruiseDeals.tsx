@@ -308,7 +308,7 @@ const CruiseDeals = () => {
                   className="bg-card rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-border"
                 >
                   <div className="relative h-48 overflow-hidden">
-                    <img src={deal.image} alt={deal.title} className="w-full h-full object-cover" />
+                    <img src={deal.image} alt={deal.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                     <div className="absolute top-4 left-4 bg-card/90 dark:bg-slate-900/90 backdrop-blur-sm rounded-lg px-3 py-1">
                       <span className="font-bold text-foreground">{deal.cruiseLine}</span>
                     </div>

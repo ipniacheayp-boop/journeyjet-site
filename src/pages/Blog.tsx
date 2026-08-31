@@ -209,8 +209,8 @@ const Blog = () => {
                         <img
                           src={featuredPost.featuredImage}
                           alt={featuredPost.title}
-                          className="absolute inset-0 h-full w-full object-cover object-center"
-                        />
+                          className="absolute inset-0 h-full w-full object-cover object-center" loading="lazy" decoding="async"
+          />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent lg:bg-gradient-to-r lg:from-black/80 lg:via-black/20 lg:to-transparent" />
                         <div className="absolute left-6 top-6">
                           <Badge className="border-none bg-background/90 text-foreground hover:bg-background shadow-sm">

@@ -272,7 +272,7 @@ const FlyBot = () => {
             src={flyBotLogo}
             alt="FlyBot travel assistant"
             title="FlyBot — Tripile travel assistant for flights and bookings"
-            className="h-full w-full object-contain"
+            className="h-full w-full object-contain" loading="lazy" decoding="async"
           />
         </button>
       ) : (

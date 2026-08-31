@@ -78,7 +78,7 @@ const Careers = () => {
           <img
             src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop"
             alt="Tripile Team Culture"
-            className="w-full h-full object-cover object-[center_10%]"
+            className="w-full h-full object-cover object-[center_10%]" loading="lazy" decoding="async"
           />
           <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]" />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />

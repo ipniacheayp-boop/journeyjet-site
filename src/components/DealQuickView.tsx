@@ -48,8 +48,8 @@ const DealQuickView = ({ deal, open, onClose, onBook }: DealQuickViewProps) => {
                 <img
                   src={deal.image}
                   alt={deal.title}
-                  className="w-full h-full object-cover"
-                />
+                  className="w-full h-full object-cover" loading="lazy" decoding="async"
+          />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 
                 {/* Discount Badge */}

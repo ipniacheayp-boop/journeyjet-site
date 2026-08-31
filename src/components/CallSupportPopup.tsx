@@ -35,8 +35,8 @@ const CallSupportPopup = ({ onClose }: Props) => {
         <img
           src={agentImage}
           alt="Travel support"
-          className="max-w-[1000px] w-full h-auto object-contain"
-        />
+          className="max-w-[1000px] w-full h-auto object-contain" loading="lazy" decoding="async"
+          />
       </motion.div>
     </motion.div>
   );
