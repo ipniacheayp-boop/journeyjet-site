@@ -38,7 +38,9 @@ if (!SUPABASE_URL || !ANON_KEY) {
 }
 
 const MAX_ROUTES = Number(env.HARVEST_MAX_ROUTES ?? 70);
-const CONCURRENCY = Number(env.HARVEST_CONCURRENCY ?? 2);
+const CONCURRENCY = Number(env.HARVEST_CONCURRENCY ?? 1);
+// Duffel rate-limits aggressively; pace requests instead of hammering it.
+const PACING_MS = Number(env.HARVEST_PACING_MS ?? 4000);
 const TIMEOUT_MS = 45_000;
 
 function slugify(v: string): string {
@@ -142,9 +144,10 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 async function searchWithRetry(c: Candidate, returnDate: string | null) {
   for (let attempt = 0; attempt < 3; attempt++) {
+    await sleep(PACING_MS);
     const offers = await searchOffers(c, returnDate);
     if (offers && offers.length > 0) return offers;
-    await sleep(1500 * (attempt + 1));
+    await sleep(PACING_MS * 3 * (attempt + 1));
   }
   return null;
 }
