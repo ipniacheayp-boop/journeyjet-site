@@ -5,6 +5,7 @@ import { Link, useLocation } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
+import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import BlogCard from "@/components/BlogCard";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -45,6 +46,12 @@ const Blog = () => {
         description="Read travel tips, destination guides, booking advice, and money-saving travel articles from Tripile."
         keywords="travel blog, travel tips, destination guides, flight deals, travel inspiration, budget travel, Tripile blog"
         canonicalUrl="https://tripile.com/blog"
+      />
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", url: "https://tripile.com/" },
+          { name: "Blog", url: "https://tripile.com/blog" },
+        ]}
       />
       <Helmet>
         <script type="application/ld+json">

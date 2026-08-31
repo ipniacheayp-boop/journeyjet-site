@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
+import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -73,6 +74,12 @@ export default function Explore() {
       <SEOHead
         title="Explore Travel Destinations | Tripile"
         description="Discover popular destinations, attractions, travel guides, and vacation ideas around the world."
+      />
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", url: "https://tripile.com/" },
+          { name: "Explore Destinations", url: "https://tripile.com/explore" },
+        ]}
       />
       <Header />
 

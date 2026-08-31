@@ -9,6 +9,7 @@ import { jobRoles, departments } from "@/data/careerRoles";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
+import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 
 const Careers = () => {
   const [search, setSearch] = useState("");
@@ -69,6 +70,12 @@ const Careers = () => {
       <SEOHead
         title="Careers at Tripile | Join Our Team"
         description="Explore career opportunities at Tripile and help build innovative travel technology solutions."
+      />
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", url: "https://tripile.com/" },
+          { name: "Careers", url: "https://tripile.com/careers" },
+        ]}
       />
       <Header />
       {/* Hero Section with Unsplash Background */}

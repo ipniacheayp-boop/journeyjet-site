@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import SEOHead from "@/components/SEOHead";
+import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import { useState } from "react";
 import { useEffect } from "react";
 import Header from "@/components/Header";
@@ -238,6 +239,12 @@ const CruiseDeals = () => {
           description="Find affordable cruise deals, luxury cruises, family cruises, and vacation packages."
           canonicalUrl="https://tripile.com/cruise-deals"
           keywords="cruise deals, cheap cruises, Royal Caribbean, Carnival, Norwegian, Princess, Alaska cruise, Caribbean cruise, Mediterranean cruise"
+        />
+        <BreadcrumbSchema
+          items={[
+            { name: "Home", url: "https://tripile.com/" },
+            { name: "Cruise Deals", url: "https://tripile.com/cruise-deals" },
+          ]}
         />
 
         {/* Hero Section */}
