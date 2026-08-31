@@ -82,7 +82,7 @@ export default function Explore() {
         <div className="absolute inset-0 z-0">
           <img
             src="https://images.unsplash.com/photo-1521336575822-6da63fb45455?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            alt="Explore Background"
+            alt="Travelers exploring a scenic global destination"
             className="w-full h-full object-cover object-center" loading="eager" decoding="async"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-background" />
