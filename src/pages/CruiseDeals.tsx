@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import SEOHead from "@/components/SEOHead";
+import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import { useState } from "react";
 import { useEffect } from "react";
 import Header from "@/components/Header";
@@ -239,6 +240,12 @@ const CruiseDeals = () => {
           canonicalUrl="https://tripile.com/cruise-deals"
           keywords="cruise deals, cheap cruises, Royal Caribbean, Carnival, Norwegian, Princess, Alaska cruise, Caribbean cruise, Mediterranean cruise"
         />
+        <BreadcrumbSchema
+          items={[
+            { name: "Home", url: "https://tripile.com/" },
+            { name: "Cruise Deals", url: "https://tripile.com/cruise-deals" },
+          ]}
+        />
 
         {/* Hero Section */}
         <section
@@ -308,7 +315,7 @@ const CruiseDeals = () => {
                   className="bg-card rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-border"
                 >
                   <div className="relative h-48 overflow-hidden">
-                    <img src={deal.image} alt={deal.title} className="w-full h-full object-cover" />
+                    <img src={deal.image} alt={deal.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                     <div className="absolute top-4 left-4 bg-card/90 dark:bg-slate-900/90 backdrop-blur-sm rounded-lg px-3 py-1">
                       <span className="font-bold text-foreground">{deal.cruiseLine}</span>
                     </div>

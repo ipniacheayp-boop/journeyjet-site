@@ -46,7 +46,7 @@ export function FlightResultCard({ flight, onBook }: FlightResultCardProps) {
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             {kayak?.providerLogo ? (
-              <img src={kayak.providerLogo} alt={kayak.providerName} className="w-12 h-12 object-contain rounded" />
+              <img src={kayak.providerLogo} alt={kayak.providerName} className="w-12 h-12 object-contain rounded" loading="lazy" decoding="async" />
             ) : (
               <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
                 <Plane className="w-6 h-6 text-primary" />

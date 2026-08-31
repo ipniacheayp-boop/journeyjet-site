@@ -80,8 +80,8 @@ const DealModal = ({ deal, open, onOpenChange }: DealModalProps) => {
             <img
               src={deal.image}
               alt={deal.title}
-              className="w-full h-full object-cover"
-            />
+              className="w-full h-full object-cover" loading="lazy" decoding="async"
+          />
             <Badge className="absolute top-4 right-4 bg-[#FFD166] text-foreground font-bold text-lg px-4 py-2">
               Save {discountPercent}%
             </Badge>

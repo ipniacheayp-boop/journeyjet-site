@@ -58,8 +58,8 @@ export function CarResultCard({ car, onBook }: CarResultCardProps) {
               <img
                 src={vehicle.imageUrl}
                 alt={vehicleName}
-                className="w-16 h-12 object-contain rounded-lg bg-muted"
-              />
+                className="w-16 h-12 object-contain rounded-lg bg-muted" loading="lazy" decoding="async"
+          />
             ) : (
               <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
                 <Car className="w-6 h-6 text-primary" />

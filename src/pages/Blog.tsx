@@ -5,6 +5,7 @@ import { Link, useLocation } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
+import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import BlogCard from "@/components/BlogCard";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -45,6 +46,12 @@ const Blog = () => {
         description="Read travel tips, destination guides, booking advice, and money-saving travel articles from Tripile."
         keywords="travel blog, travel tips, destination guides, flight deals, travel inspiration, budget travel, Tripile blog"
         canonicalUrl="https://tripile.com/blog"
+      />
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", url: "https://tripile.com/" },
+          { name: "Blog", url: "https://tripile.com/blog" },
+        ]}
       />
       <Helmet>
         <script type="application/ld+json">
@@ -209,8 +216,8 @@ const Blog = () => {
                         <img
                           src={featuredPost.featuredImage}
                           alt={featuredPost.title}
-                          className="absolute inset-0 h-full w-full object-cover object-center"
-                        />
+                          className="absolute inset-0 h-full w-full object-cover object-center" loading="lazy" decoding="async"
+          />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent lg:bg-gradient-to-r lg:from-black/80 lg:via-black/20 lg:to-transparent" />
                         <div className="absolute left-6 top-6">
                           <Badge className="border-none bg-background/90 text-foreground hover:bg-background shadow-sm">

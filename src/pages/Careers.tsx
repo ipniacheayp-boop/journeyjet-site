@@ -9,6 +9,7 @@ import { jobRoles, departments } from "@/data/careerRoles";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
+import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 
 const Careers = () => {
   const [search, setSearch] = useState("");
@@ -70,6 +71,12 @@ const Careers = () => {
         title="Careers at Tripile | Join Our Team"
         description="Explore career opportunities at Tripile and help build innovative travel technology solutions."
       />
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", url: "https://tripile.com/" },
+          { name: "Careers", url: "https://tripile.com/careers" },
+        ]}
+      />
       <Header />
       {/* Hero Section with Unsplash Background */}
       <section className="relative flex items-center justify-center min-h-screen mt-16 pt-20 pb-28 overflow-hidden">
@@ -78,7 +85,7 @@ const Careers = () => {
           <img
             src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop"
             alt="Tripile Team Culture"
-            className="w-full h-full object-cover object-[center_10%]"
+            className="w-full h-full object-cover object-[center_10%]" loading="lazy" decoding="async"
           />
           <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]" />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />

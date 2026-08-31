@@ -146,8 +146,8 @@ const Header = () => {
                   src={tripileLogo}
                   alt="Tripile Logo"
                   title="Tripile — cheap flights, hotels and car rentals USA"
-                  className="h-full w-auto object-contain"
-                />
+                  className="h-full w-auto object-contain" loading="eager" decoding="async"
+          />
               </div>
             </Link>
 

@@ -88,8 +88,8 @@ const TripPlanner = () => {
             <img 
               src="https://images.unsplash.com/photo-1663427929868-3941f957bb36?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
               alt="Travel background" 
-              className="w-full h-full object-cover object-center animate-slow-zoom"
-            />
+              className="w-full h-full object-cover object-center animate-slow-zoom" loading="lazy" decoding="async"
+          />
             <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/50 to-background" />
           </div>
 
@@ -208,8 +208,8 @@ const TripPlanner = () => {
                     <img 
                       src={countryData.flags.svg} 
                       alt="" 
-                      className="w-full h-full object-cover opacity-10 dark:opacity-5 mix-blend-luminosity group-hover:scale-105 transition-transform duration-1000" 
-                    />
+                      className="w-full h-full object-cover opacity-10 dark:opacity-5 mix-blend-luminosity group-hover:scale-105 transition-transform duration-1000" loading="lazy" decoding="async"
+          />
                     <div className="absolute inset-0 bg-gradient-to-t from-background via-background/90 to-background/40" />
                   </div>
                   
@@ -220,8 +220,8 @@ const TripPlanner = () => {
                         <img 
                           src={countryData.flags.svg} 
                           alt={`Flag`} 
-                          className="w-32 md:w-48 aspect-video object-cover rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-white/10 relative z-10 transform -rotate-2" 
-                        />
+                          className="w-32 md:w-48 aspect-video object-cover rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-white/10 relative z-10 transform -rotate-2" loading="lazy" decoding="async"
+          />
                       </div>
                       
                       <div className="flex-1">
