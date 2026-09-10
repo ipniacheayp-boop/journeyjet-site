@@ -30,6 +30,7 @@ const Footer = () => {
         { label: "Hotel Destinations", href: "/hotel-destinations" },
         { label: "Car Rentals", href: "/car-rentals" },
         { label: "Featured Deals", href: "/deals" },
+        { label: "Travel Coupons", href: "/coupons" },
         { label: "Flight Status", href: "/flight-status" },
         { label: "Group Travel", href: "/support?topic=group" },
       ],

@@ -227,6 +227,31 @@ const corePages: Page[] = [
     ],
   },
   {
+    path: "/coupons",
+    title: "Flight Coupons & Promo Codes | Tripile",
+    description:
+      "View current Tripile flight coupons and promo codes, copy an eligible offer, and search live fares for your next trip.",
+    h1: "Flight Coupons & Promo Codes",
+    blocks: [
+      {
+        paragraphs: [
+          "Browse current Tripile travel coupons, reveal an eligible promo code, and search live flight fares for your next trip. Coupon terms and minimum booking requirements are shown with each offer.",
+        ],
+      },
+      {
+        heading: "How to Use a Tripile Coupon",
+        paragraphs: [
+          "Reveal and copy a coupon code, search for your trip, choose an available fare, and enter the code during the Coupons step at checkout. Confirm that the discount appears in your price summary before payment.",
+        ],
+      },
+    ],
+    links: [
+      { href: "/flights", label: "Search live flight fares" },
+      { href: "/deals", label: "Browse live flight deals" },
+      { href: "/terms", label: "Read booking terms and conditions" },
+    ],
+  },
+  {
     path: "/cruise-deals",
     title: "Cheap Cruise Deals 2026 | Tripile.com",
     description:

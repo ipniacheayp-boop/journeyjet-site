@@ -55,6 +55,7 @@ const serviceLinks = [
     linkTitle: "Compare car rentals — Tripile",
   },
   { label: "Deals", href: "/deals", icon: Tag, linkTitle: "Today’s travel deals on Tripile" },
+  { label: "Coupons", href: "/coupons", icon: BadgeDollarSign, linkTitle: "Tripile travel coupons and promo codes" },
   { label: "Flight Status", href: "/flight-status", icon: PlaneTakeoff, linkTitle: "Check flight status — Tripile" },
 ];
 
@@ -95,6 +96,7 @@ const Header = () => {
     if (pathOnly === "/hotels") return location.pathname === "/hotels";
     if (pathOnly === "/car-rentals") return location.pathname === "/car-rentals";
     if (pathOnly === "/deals") return location.pathname === "/deals" || location.pathname.startsWith("/deals/");
+    if (pathOnly === "/coupons") return location.pathname === "/coupons";
     if (pathOnly === "/flight-status") return location.pathname === "/flight-status";
     if (pathOnly === "/flight-tracker") return location.pathname === "/flight-tracker";
     if (pathOnly === "/") return location.pathname === "/";

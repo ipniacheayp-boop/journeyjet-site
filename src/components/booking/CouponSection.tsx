@@ -5,20 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tag, Check, X, Percent } from "lucide-react";
 import { toast } from "sonner";
-
-interface Coupon {
-  code: string;
-  label: string;
-  type: "fixed" | "percent";
-  value: number;
-  minOrder: number;
-}
-
-const availableCoupons: Coupon[] = [
-  { code: "TRIP50", label: "$50 OFF on orders above $500", type: "fixed", value: 50, minOrder: 500 },
-  { code: "NEWUSER", label: "10% OFF for new users", type: "percent", value: 10, minOrder: 0 },
-  { code: "SAVE20", label: "$20 OFF on any booking", type: "fixed", value: 20, minOrder: 0 },
-];
+import { availableCoupons, calculateCouponDiscount } from "@/data/coupons";
 
 interface CouponSectionProps {
   totalPrice: number;
@@ -42,7 +29,7 @@ const CouponSection = ({ totalPrice, appliedCoupon, discount, onApplyCoupon, onR
       toast.error(`Minimum order of $${coupon.minOrder} required for ${coupon.code}`);
       return;
     }
-    const disc = coupon.type === "fixed" ? coupon.value : (totalPrice * coupon.value) / 100;
+    const disc = calculateCouponDiscount(coupon, totalPrice);
     onApplyCoupon(coupon.code, disc);
     setCouponInput("");
     toast.success(`Coupon ${coupon.code} applied! You save $${disc.toFixed(2)}`);
@@ -52,8 +39,8 @@ const CouponSection = ({ totalPrice, appliedCoupon, discount, onApplyCoupon, onR
   const bestCoupon = availableCoupons
     .filter((c) => totalPrice >= c.minOrder && c.code !== appliedCoupon)
     .sort((a, b) => {
-      const discA = a.type === "fixed" ? a.value : (totalPrice * a.value) / 100;
-      const discB = b.type === "fixed" ? b.value : (totalPrice * b.value) / 100;
+      const discA = calculateCouponDiscount(a, totalPrice);
+      const discB = calculateCouponDiscount(b, totalPrice);
       return discB - discA;
     })[0];
 
@@ -145,6 +132,7 @@ const CouponSection = ({ totalPrice, appliedCoupon, discount, onApplyCoupon, onR
               size="sm"
               onClick={() => { onRemoveCoupon(); toast.info("Coupon removed"); }}
               disabled={disabled}
+              aria-label={`Remove coupon ${appliedCoupon}`}
             >
               <X className="w-4 h-4" />
             </Button>
@@ -155,7 +143,7 @@ const CouponSection = ({ totalPrice, appliedCoupon, discount, onApplyCoupon, onR
         {!appliedCoupon && bestCoupon && (
           <p className="text-xs text-primary">
             💡 Best deal: Apply <span className="font-mono font-semibold">{bestCoupon.code}</span> to save up to $
-            {(bestCoupon.type === "fixed" ? bestCoupon.value : (totalPrice * bestCoupon.value) / 100).toFixed(2)}
+            {calculateCouponDiscount(bestCoupon, totalPrice).toFixed(2)}
           </p>
         )}
       </CardContent>
