@@ -30,6 +30,7 @@ const core: Entry[] = [
   { path: "/hotels", changefreq: "daily", priority: "0.95" },
   { path: "/car-rentals", changefreq: "daily", priority: "0.9" },
   { path: "/deals", changefreq: "daily", priority: "0.9" },
+  { path: "/coupons", changefreq: "weekly", priority: "0.8" },
   { path: "/cruise-deals", changefreq: "weekly", priority: "0.75" },
   { path: "/explore", changefreq: "weekly", priority: "0.85" },
   { path: "/trip-planner", changefreq: "weekly", priority: "0.75" },

@@ -20,6 +20,7 @@ const VerifyEmail = lazy(() => import("./pages/auth/VerifyEmail"));
 const AuthCallback = lazy(() => import("./pages/auth/AuthCallback"));
 const Index = lazy(() => import("./pages/Index"));
 const Deals = lazy(() => import("./pages/Deals"));
+const Coupons = lazy(() => import("./pages/Coupons"));
 const DealDetail = lazy(() => import("./pages/DealDetail"));
 const SearchResults = lazy(() => import("./pages/SearchResults"));
 const Booking = lazy(() => import("./pages/Booking"));
@@ -131,6 +132,7 @@ const App = () => (
                   <Route path="/hotels" element={<SearchHubPage />} />
                   <Route path="/car-rentals" element={<SearchHubPage />} />
                   <Route path="/deals" element={<Deals />} />
+                  <Route path="/coupons" element={<Coupons />} />
                   {/* Clean-URL aliases → consolidate on /deals canonical */}
                   <Route path="/flight-deals" element={<Navigate to="/deals" replace />} />
                   <Route path="/hotel-deals" element={<Navigate to="/deals" replace />} />
