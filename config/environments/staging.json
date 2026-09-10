@@ -1,0 +1,41 @@
+{
+  "name": "staging",
+  "description": "Staging environment configuration for pre-production testing",
+  "azure": {
+    "resourceGroup": "chyeapflights-staging-rg",
+    "location": "eastus",
+    "staticWebApp": {
+      "name": "chyeapflights-staging",
+      "sku": "Free"
+    }
+  },
+  "build": {
+    "outputDir": "dist",
+    "nodeVersion": "18"
+  },
+  "features": {
+    "debugMode": true,
+    "analyticsEnabled": false,
+    "maintenanceMode": false
+  },
+  "api": {
+    "baseUrl": "https://qgmhqhejoilexhgwdujl.supabase.co/functions/v1",
+    "timeout": 30000,
+    "retryAttempts": 3
+  },
+  "cache": {
+    "staticAssets": "1 day",
+    "apiResponses": "5 minutes"
+  },
+  "security": {
+    "csp": {
+      "defaultSrc": ["'self'"],
+      "scriptSrc": ["'self'", "'unsafe-inline'", "https://js.stripe.com"],
+      "styleSrc": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      "imgSrc": ["'self'", "data:", "https:", "blob:"],
+      "fontSrc": ["'self'", "https://fonts.gstatic.com"],
+      "connectSrc": ["'self'", "https://*.supabase.co", "https://api.stripe.com"],
+      "frameSrc": ["https://js.stripe.com", "https://hooks.stripe.com"]
+    }
+  }
+}

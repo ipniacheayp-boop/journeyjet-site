@@ -1,0 +1,325 @@
+import { useEffect, useState, useCallback } from "react";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { CheckCircle2, BookOpen, Loader2, AlertCircle, Download, Ticket } from "lucide-react";
+import { toast } from "sonner";
+
+type BookingStage = 'pending_payment' | 'processing_provider' | 'confirmed' | 'failed' | 'unknown';
+
+interface BookingDetails {
+  bookingId: string;
+  bookingStatus: string;
+  paymentStatus: string;
+  paymentVerified: boolean;
+  providerBooked: boolean;
+  amount: number;
+  currency: string;
+  bookingType: string;
+  confirmedAt: string | null;
+  providerBookingId: string | null;
+}
+
+const PaymentSuccess = () => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const sessionId = searchParams.get("session_id");
+  const bookingIdFromUrl = searchParams.get("booking_id");
+  const paymentIntentId = searchParams.get("payment_intent");
+  
+  const [stage, setStage] = useState<BookingStage>('pending_payment');
+  const [pollCount, setPollCount] = useState(0);
+  const [bookingDetails, setBookingDetails] = useState<BookingDetails | null>(null);
+  
+  const maxPolls = 45; // Poll for up to 6 minutes (45 * 8s)
+  const pollInterval = 8000; // 8 seconds
+
+  // Get booking ID from URL or sessionStorage
+  const getBookingId = useCallback(() => {
+    if (bookingIdFromUrl) return bookingIdFromUrl;
+    
+    const pendingBooking = sessionStorage.getItem('pendingBooking');
+    if (pendingBooking) {
+      try {
+        const parsed = JSON.parse(pendingBooking);
+        return parsed.bookingId;
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  }, [bookingIdFromUrl]);
+
+  const pollBookingStatus = useCallback(async () => {
+    const bookingId = getBookingId();
+    if (!bookingId) return false;
+
+    try {
+      // Single verified call — the endpoint authorizes via the Stripe
+      // session id (proof of checkout possession) or the user's session.
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/payments-session-verify`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+          body: JSON.stringify({ bookingId, sessionId, paymentIntentId }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to verify session');
+      }
+
+      const result = await response.json();
+
+      if (result.bookingId) {
+        setBookingDetails({
+          bookingId: result.bookingId,
+          bookingStatus: result.status,
+          paymentStatus: result.paymentStatus,
+          paymentVerified: result.stripeVerified === true || result.paymentStatus === 'succeeded',
+          providerBooked: result.status === 'confirmed',
+          amount: result.amount,
+          currency: result.currency,
+          bookingType: result.bookingType,
+          confirmedAt: result.confirmedAt ?? null,
+          providerBookingId: result.providerBookingId ?? null,
+        });
+
+        // Check for confirmed status
+        if (result.confirmed) {
+          setStage('confirmed');
+          sessionStorage.removeItem('pendingBooking');
+          toast.dismiss("payment-verification");
+          toast.success("Booking confirmed successfully!");
+          return true; // Stop polling
+        }
+
+        // Check for failed/cancelled status
+        if (result.status === 'cancelled' || result.status === 'refunded' || result.paymentStatus === 'failed') {
+          setStage('failed');
+          toast.dismiss("payment-verification");
+          toast.error("Booking was cancelled or refunded");
+          return true; // Stop polling
+        }
+
+        // Payment succeeded but booking not yet confirmed
+        if (result.stripeVerified || result.paymentStatus === 'succeeded' || result.paymentStatus === 'paid') {
+          setStage('processing_provider');
+        }
+      }
+    } catch (err) {
+      console.error('Error polling booking status:', err);
+    }
+
+    return false; // Continue polling
+  }, [getBookingId, paymentIntentId, sessionId]);
+
+  useEffect(() => {
+    // Nothing is confirmed until the backend verifies the payment.
+    toast.loading("Verifying your payment...", { id: "payment-verification" });
+
+    
+    let cancelled = false;
+    let timer: number | undefined;
+    const run = async (attempt: number) => {
+      const shouldStop = await pollBookingStatus();
+      if (cancelled || shouldStop) return;
+      const next = attempt + 1;
+      setPollCount(next);
+      if (next >= maxPolls) {
+        setStage('unknown');
+        toast.dismiss("payment-verification");
+        toast.info("Verification is taking longer than expected. Your booking status remains available in My Bookings.");
+        return;
+      }
+      timer = window.setTimeout(() => void run(next), pollInterval);
+    };
+    void run(0);
+    return () => {
+      cancelled = true;
+      if (timer) window.clearTimeout(timer);
+    };
+  }, [pollBookingStatus]);
+
+  // Auto-redirect after confirmation
+  useEffect(() => {
+    if (stage === 'confirmed') {
+      const timer = setTimeout(() => {
+        navigate('/my-bookings');
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [stage, navigate]);
+
+  const renderStatusContent = () => {
+    switch (stage) {
+      case 'confirmed':
+        return (
+          <>
+            <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+              <CheckCircle2 className="w-10 h-10 text-green-600" />
+            </div>
+            <h1 className="text-2xl font-semibold text-green-700 tracking-tight">Booking Confirmed!</h1>
+          </>
+        );
+      
+      case 'processing_provider':
+        return (
+          <>
+            <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+              <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
+            </div>
+            <h1 className="text-2xl font-semibold text-blue-700 tracking-tight">Confirming with Provider...</h1>
+          </>
+        );
+      
+      case 'failed':
+        return (
+          <>
+            <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
+              <AlertCircle className="w-10 h-10 text-red-600" />
+            </div>
+            <h1 className="text-2xl font-semibold text-red-700 tracking-tight">Booking Issue</h1>
+          </>
+        );
+      
+      default:
+        return (
+          <>
+            <div className="mx-auto w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4">
+              <Loader2 className="w-10 h-10 text-amber-600 animate-spin" />
+            </div>
+            <h1 className="text-2xl font-semibold tracking-tight">Verifying Payment...</h1>
+          </>
+        );
+    }
+  };
+
+  const renderStatusMessage = () => {
+    switch (stage) {
+      case 'confirmed':
+        return (
+          <div className="space-y-3">
+            <p className="text-muted-foreground">
+              Your booking has been confirmed! A confirmation email has been sent to your email address.
+            </p>
+            {bookingDetails?.providerBookingId && (
+              <div className="bg-muted/50 rounded-lg p-3">
+                <p className="text-sm font-medium flex items-center gap-2">
+                  <Ticket className="w-4 h-4" />
+                  Confirmation: {bookingDetails.providerBookingId}
+                </p>
+              </div>
+            )}
+            {bookingDetails?.amount && (
+              <p className="text-lg font-semibold">
+                Total Paid: ${bookingDetails.amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} {bookingDetails.currency || 'USD'}
+              </p>
+            )}
+            <p className="text-sm text-muted-foreground">
+              Redirecting to your bookings...
+            </p>
+          </div>
+        );
+      
+      case 'processing_provider':
+        return (
+          <div className="space-y-2">
+            <p className="text-muted-foreground">
+               The payment provider has authorized the payment. We&apos;re waiting for final booking confirmation.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              This may take a few moments. You'll receive an email confirmation shortly.
+            </p>
+            <div className="flex items-center justify-center gap-2 text-sm text-blue-600 mt-4">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>Checking status... ({pollCount}/{maxPolls})</span>
+            </div>
+          </div>
+        );
+      
+      case 'failed':
+        return (
+          <div className="space-y-2">
+            <p className="text-muted-foreground">
+              There was an issue with your booking. If payment was taken, a refund will be processed automatically.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Please contact support if you need assistance.
+            </p>
+          </div>
+        );
+      
+      case 'unknown':
+        return (
+          <div className="space-y-2">
+            <p className="text-muted-foreground">We could not finish verification because the status check timed out.</p>
+            <p className="text-sm text-muted-foreground">Do not make another payment. Check My Bookings or contact support with your booking ID.</p>
+          </div>
+        );
+      default:
+        return (
+          <p className="text-muted-foreground">
+            Please wait while we process your payment...
+          </p>
+        );
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      
+      <main className="flex-1 pt-24 pb-16 flex items-center justify-center">
+        <Card className="w-full max-w-md mx-4">
+          <CardHeader className="text-center">
+            {renderStatusContent()}
+          </CardHeader>
+          <CardContent className="text-center space-y-4">
+            {renderStatusMessage()}
+            
+            {sessionId && (
+              <p className="text-xs text-muted-foreground font-mono">
+                Session: {sessionId.substring(0, 20)}...
+              </p>
+            )}
+            
+            <div className="flex flex-col gap-3 justify-center pt-4">
+              <Link to="/my-bookings" className="w-full">
+                <Button className="w-full" variant={stage === 'confirmed' ? 'default' : 'outline'}>
+                  <BookOpen className="mr-2 h-4 w-4" />
+                  View My Bookings
+                </Button>
+              </Link>
+              <Link to="/" className="w-full">
+                <Button variant="ghost" className="w-full">Back to Home</Button>
+              </Link>
+              
+              {stage === 'processing_provider' && (
+                <p className="text-xs text-muted-foreground mt-2">
+                  Our agent will connect with you shortly...
+                </p>
+              )}
+              
+              {stage === 'failed' && (
+                <Link to="/support" className="w-full">
+                  <Button variant="destructive" className="w-full">Contact Support</Button>
+                </Link>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </main>
+
+      <Footer />
+    </div>
+  );
+};
+
+export default PaymentSuccess;

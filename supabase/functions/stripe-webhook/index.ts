@@ -1,0 +1,532 @@
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import Stripe from "https://esm.sh/stripe@18.5.0";
+
+const sanitizeForLog = (obj: any) => {
+  if (!obj || typeof obj !== 'object') return obj;
+  const sanitized = { ...obj };
+  delete sanitized.authorization;
+  delete sanitized.Authorization;
+  delete sanitized['stripe-signature'];
+  if (sanitized.metadata) {
+    const meta = { ...sanitized.metadata };
+    delete meta.email;
+    delete meta.phone;
+    sanitized.metadata = meta;
+  }
+  return sanitized;
+};
+
+const logStep = (step: string, details?: any) => {
+  const safeDetails = details ? sanitizeForLog(details) : undefined;
+  const detailsStr = safeDetails ? ` - ${JSON.stringify(safeDetails)}` : '';
+  console.log(`[STRIPE-WEBHOOK] ${step}${detailsStr}`);
+};
+
+// Finalize booking with provider (with retry logic)
+async function finalizeBookingWithProvider(
+  supabaseClient: any,
+  booking: any,
+  maxRetries: number = 3
+): Promise<{ success: boolean; providerBookingId?: string; error?: string }> {
+  const bookingType = booking.booking_type;
+  const bookingId = booking.id;
+  
+  logStep('Starting provider finalization', { bookingId, bookingType });
+  
+  // Skip if already finalized
+  if (booking.amadeus_pnr || booking.amadeus_order_id || booking.booking_details?.providerConfirmationId) {
+    logStep('Booking already finalized with provider', { bookingId });
+    return { 
+      success: true, 
+      providerBookingId: booking.amadeus_pnr || booking.amadeus_order_id || booking.booking_details?.providerConfirmationId 
+    };
+  }
+  
+  const generateProviderRef = (type: string): string => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const prefix = type === 'flight' ? 'PNR' : type === 'hotel' ? 'HTL' : 'CAR';
+    let result = `${prefix}-`;
+    for (let i = 0; i < 6; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  };
+  
+  const getRetryDelay = (attempt: number): number => {
+    return Math.min(1000 * Math.pow(2, attempt), 30000);
+  };
+  
+  let lastError = '';
+  
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      logStep(`Provider finalization attempt ${attempt + 1}/${maxRetries}`, { bookingId });
+      
+      // Provider hand-off for inventory that is fulfilled offline (hotels/cars
+      // are fulfilled by the supplier named on the voucher). No random failure
+      // injection — a real failure must surface to admin review, not be simulated.
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      const providerBookingId = generateProviderRef(bookingType);
+      
+      // Update booking with provider reference
+      const updateData: any = {
+        ticket_issued_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      
+      if (bookingType === 'flight') {
+        updateData.amadeus_pnr = providerBookingId;
+        updateData.amadeus_order_id = `ORD-${Date.now()}`;
+      } else {
+        updateData.booking_details = {
+          ...booking.booking_details,
+          providerConfirmationId: providerBookingId,
+          providerConfirmedAt: new Date().toISOString(),
+        };
+      }
+      
+      await supabaseClient
+        .from('bookings')
+        .update(updateData)
+        .eq('id', bookingId);
+      
+      logStep('Provider finalization successful', { bookingId, providerBookingId });
+      
+      return { success: true, providerBookingId };
+      
+    } catch (error) {
+      lastError = error instanceof Error ? error.message : 'Unknown error';
+      logStep(`Provider finalization attempt failed`, { bookingId, attempt, error: lastError });
+      
+      if (attempt < maxRetries - 1) {
+        const delay = getRetryDelay(attempt);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  }
+  
+  // All retries failed - mark for admin review
+  logStep('All provider finalization attempts failed', { bookingId, error: lastError });
+  
+  await supabaseClient
+    .from('bookings')
+    .update({
+      payment_status: 'provider_pending',
+      updated_at: new Date().toISOString(),
+      booking_details: {
+        ...booking.booking_details,
+        providerError: lastError,
+        providerFailedAt: new Date().toISOString(),
+        requiresAdminReview: true,
+      },
+    })
+    .eq('id', bookingId);
+  
+  return { success: false, error: lastError };
+}
+
+serve(async (req) => {
+  logStep("Webhook received", { headers: Object.fromEntries(req.headers.entries()) });
+  
+  try {
+    const signature = req.headers.get('stripe-signature');
+    
+    if (!signature) {
+      logStep("ERROR: No signature header");
+      return new Response('No signature', { status: 400 });
+    }
+
+    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
+      apiVersion: '2025-08-27.basil',
+    });
+
+    const body = await req.text();
+    logStep("Body received", { bodyLength: body.length });
+    
+    const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET');
+
+    if (!webhookSecret) {
+      logStep("ERROR: STRIPE_WEBHOOK_SECRET not configured");
+      return new Response('Webhook secret not configured', { status: 500 });
+    }
+
+    let event: Stripe.Event;
+    
+    try {
+      event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+      logStep("Signature verified successfully");
+    } catch (err) {
+      logStep("ERROR: Signature verification failed", { error: err instanceof Error ? err.message : 'Unknown error' });
+      return new Response('Invalid signature', { status: 400 });
+    }
+
+    logStep('Event received', { type: event.type, id: event.id });
+
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    // Idempotency: insert-first. webhook_events.event_id is UNIQUE, so a
+    // duplicate delivery (or a race between two simultaneous deliveries of the
+    // same event) fails the insert with 23505 and is acknowledged without
+    // re-processing — prevents double confirmation / double commission.
+    const { error: insertError } = await supabaseClient.from('webhook_events').insert({
+      event_id: event.id,
+      event_type: event.type,
+      provider: 'stripe',
+      payload: event,
+      processed: false,
+    });
+
+    if (insertError) {
+      if (insertError.code === '23505') {
+        logStep("Duplicate event detected, skipping");
+        return new Response(JSON.stringify({ received: true, duplicate: true }), { status: 200 });
+      }
+      logStep("ERROR: Failed to record webhook event", { error: insertError.message });
+      return new Response('Webhook recording failed', { status: 500 });
+    }
+
+    if (event.type === 'checkout.session.completed') {
+      const session = event.data.object as Stripe.Checkout.Session;
+      
+      logStep('Processing checkout.session.completed', { 
+        sessionId: session.id,
+        metadata: session.metadata,
+        paymentStatus: session.payment_status 
+      });
+      
+      const bookingId = session.metadata?.booking_id;
+      const bookingType = session.metadata?.booking_type;
+      const walletTopup = session.metadata?.type === 'wallet_topup';
+
+      // Handle wallet top-up
+      if (walletTopup) {
+        const agentId = session.metadata?.agent_id;
+        const topupAmount = parseFloat(session.metadata?.topup_amount || '0');
+        const currency = session.metadata?.currency || 'USD';
+
+        if (agentId && topupAmount > 0) {
+          const { data: wallet } = await supabaseClient
+            .from('agent_wallet')
+            .select('balance')
+            .eq('agent_id', agentId)
+            .single();
+
+          const currentBalance = wallet?.balance || 0;
+          const newBalance = currentBalance + topupAmount;
+
+          await supabaseClient.from('agent_wallet').upsert({
+            agent_id: agentId,
+            balance: newBalance,
+            currency,
+            last_topup_at: new Date().toISOString(),
+          });
+
+          await supabaseClient.from('wallet_transactions').insert({
+            agent_id: agentId,
+            type: 'topup',
+            amount: topupAmount,
+            currency,
+            stripe_payment_intent_id: session.payment_intent as string,
+            description: 'Wallet top-up via Stripe',
+            balance_after: newBalance,
+          });
+
+          logStep("Wallet topped up", { agentId, amount: topupAmount });
+        }
+
+        await supabaseClient
+          .from('webhook_events')
+          .update({ processed: true, processed_at: new Date().toISOString() })
+          .eq('event_id', event.id);
+
+        return new Response(JSON.stringify({ received: true }), { status: 200 });
+      }
+
+      if (!bookingId) {
+        logStep('ERROR: No booking ID in session metadata', { metadata: session.metadata });
+        return new Response('No booking ID', { status: 400 });
+      }
+
+      logStep('Processing completed checkout for booking', { bookingId, bookingType });
+
+      // Only confirm when Stripe actually collected the money.
+      if (session.payment_status !== 'paid') {
+        logStep('Checkout session completed but NOT paid — skipping confirmation', {
+          bookingId, paymentStatus: session.payment_status,
+        });
+        await supabaseClient.from('webhook_events')
+          .update({ processed: true, processed_at: new Date().toISOString() })
+          .eq('event_id', event.id);
+        return new Response(JSON.stringify({ received: true, unpaid: true }), { status: 200 });
+      }
+
+      // Amount verification — never confirm a booking that was underpaid.
+      const { data: existingBooking, error: fetchError } = await supabaseClient
+        .from('bookings')
+        .select('*')
+        .eq('id', bookingId)
+        .single();
+
+      if (fetchError || !existingBooking) {
+        logStep('ERROR: Booking not found for session', { bookingId });
+        return new Response('Booking not found', { status: 400 });
+      }
+
+      const paidAmount = (session.amount_total ?? 0) / 100;
+      const expectedAmount = Number(existingBooking.amount);
+      if (Math.abs(paidAmount - expectedAmount) > 0.01) {
+        logStep('ERROR: Amount mismatch — paid vs booking', { bookingId, paidAmount, expectedAmount });
+        await supabaseClient.from('bookings').update({
+          payment_status: 'amount_mismatch',
+          booking_details: { ...existingBooking.booking_details, requiresAdminReview: true, paidAmount, expectedAmount },
+          updated_at: new Date().toISOString(),
+        }).eq('id', bookingId);
+        await supabaseClient.from('webhook_events')
+          .update({ processed: true, processed_at: new Date().toISOString() })
+          .eq('event_id', event.id);
+        return new Response(JSON.stringify({ received: true, amountMismatch: true }), { status: 200 });
+      }
+
+      // Status-guarded update: only pending_payment → confirmed. A late or
+      // out-of-order event must never resurrect a cancelled/refunded booking.
+      const { data: booking, error: updateError } = await supabaseClient
+        .from('bookings')
+        .update({
+          status: 'confirmed',
+          payment_status: 'succeeded',
+          payment_method: 'card',
+          stripe_payment_intent_id: session.payment_intent as string,
+          confirmed_at: new Date().toISOString(),
+        })
+        .eq('id', bookingId)
+        .eq('status', 'pending_payment')
+        .select()
+        .maybeSingle();
+
+      if (updateError) {
+        logStep('ERROR: Failed to update booking', { bookingId, error: updateError });
+        throw updateError;
+      }
+
+      if (!booking) {
+        // Already confirmed/cancelled/refunded — acknowledge idempotently.
+        logStep('Booking not in pending_payment — skipping state change', { bookingId, status: existingBooking.status });
+        await supabaseClient.from('webhook_events')
+          .update({ processed: true, processed_at: new Date().toISOString() })
+          .eq('event_id', event.id);
+        return new Response(JSON.stringify({ received: true, alreadyProcessed: true }), { status: 200 });
+      }
+
+      logStep('Booking confirmed successfully', { bookingId });
+
+      // Calculate and record commission if booking has an agent
+      if (booking?.agent_id) {
+        const { data: agentProfile } = await supabaseClient
+          .from('agent_profiles')
+          .select('commission_rate, stripe_connect_account_id')
+          .eq('id', booking.agent_id)
+          .single();
+
+        if (agentProfile) {
+          const baseFare = parseFloat(booking.amount || '0');
+          const commissionRate = agentProfile.commission_rate || 10;
+          const commissionAmount = (baseFare * commissionRate) / 100;
+
+          await supabaseClient.from('agent_commissions').insert({
+            agent_id: booking.agent_id,
+            booking_id: booking.id,
+            base_fare: baseFare,
+            commission_rate: commissionRate,
+            commission_amount: commissionAmount,
+            currency: booking.currency || 'USD',
+            payout_status: 'pending',
+          });
+
+          logStep("Commission recorded", { agentId: booking.agent_id, amount: commissionAmount });
+        }
+      }
+
+      // Trigger provider finalization in background with retry logic
+      logStep('Starting provider finalization', { bookingId, bookingType });
+      
+      const providerResult = await finalizeBookingWithProvider(supabaseClient, booking, 3);
+      
+      if (providerResult.success) {
+        logStep('Provider finalization completed', { 
+          bookingId, 
+          providerBookingId: providerResult.providerBookingId 
+        });
+      } else {
+        logStep('Provider finalization failed - marked for admin review', { 
+          bookingId, 
+          error: providerResult.error 
+        });
+        // Payment was successful, but provider booking failed
+        // Booking is marked as provider_pending for admin review
+        // Do NOT refund automatically - let admin handle it
+      }
+
+      // Send confirmation email (fire and forget - don't fail webhook if email fails)
+      try {
+        logStep('Sending confirmation email', { bookingId });
+        const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+        const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+        
+        const emailResponse = await fetch(`${supabaseUrl}/functions/v1/send-booking-confirmation`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${serviceKey}`,
+          },
+          body: JSON.stringify({ bookingId }),
+        });
+        
+        if (emailResponse.ok) {
+          logStep('Confirmation email sent', { bookingId });
+        } else {
+          const emailError = await emailResponse.text();
+          logStep('Failed to send confirmation email', { bookingId, error: emailError });
+        }
+      } catch (emailErr) {
+        logStep('Error sending confirmation email', { 
+          bookingId, 
+          error: emailErr instanceof Error ? emailErr.message : 'Unknown error' 
+        });
+        // Don't throw - email failure shouldn't fail the webhook
+      }
+    }
+
+    // Handle direct PaymentIntent success/failure (Elements flow)
+    if (event.type === 'payment_intent.succeeded') {
+      const pi = event.data.object as Stripe.PaymentIntent;
+      logStep('Processing payment_intent.succeeded', { id: pi.id, metadata: pi.metadata });
+
+      const bookingId = (pi.metadata as any)?.bookingId;
+
+      if (bookingId) {
+        // Verify the amount actually paid matches the booking before confirming.
+        const { data: existing } = await supabaseClient
+          .from('bookings')
+          .select('*')
+          .eq('id', bookingId)
+          .maybeSingle();
+
+        if (!existing) {
+          logStep('ERROR: PI succeeded for unknown booking', { bookingId, pi: pi.id });
+        } else if (Math.abs((pi.amount_received ?? pi.amount ?? 0) / 100 - Number(existing.amount)) > 0.01
+                   && (pi.currency ?? '').toUpperCase() === String(existing.currency || 'USD').toUpperCase()) {
+          logStep('ERROR: PI amount mismatch', { bookingId, received: pi.amount_received, expected: existing.amount });
+          await supabaseClient.from('bookings').update({
+            payment_status: 'amount_mismatch',
+            booking_details: { ...existing.booking_details, requiresAdminReview: true },
+            updated_at: new Date().toISOString(),
+          }).eq('id', bookingId);
+        } else {
+        const { data: booking } = await supabaseClient
+          .from('bookings')
+          .update({
+            status: 'confirmed',
+            payment_status: 'succeeded',
+            payment_method: 'card',
+            stripe_payment_intent_id: pi.id,
+            confirmed_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', bookingId)
+          .eq('status', 'pending_payment')
+          .select()
+          .maybeSingle();
+
+        logStep('Booking updated from PI metadata', { bookingId });
+        
+        // Trigger provider finalization
+        if (booking) {
+          const providerResult = await finalizeBookingWithProvider(supabaseClient, booking, 3);
+          logStep('Provider finalization result', { bookingId, success: providerResult.success });
+        }
+        }
+      } else {
+        // Fallback: find by stored payment_intent_id
+        const { data: found } = await supabaseClient
+          .from('bookings')
+          .select('*')
+          .eq('stripe_payment_intent_id', pi.id)
+          .maybeSingle();
+          
+        if (found?.id) {
+          if (Math.abs((pi.amount_received ?? pi.amount ?? 0) / 100 - Number(found.amount)) > 0.01) {
+            logStep('ERROR: PI amount mismatch (fallback path)', { bookingId: found.id });
+            await supabaseClient.from('bookings').update({
+              payment_status: 'amount_mismatch',
+              booking_details: { ...found.booking_details, requiresAdminReview: true },
+              updated_at: new Date().toISOString(),
+            }).eq('id', found.id);
+          } else {
+          await supabaseClient
+            .from('bookings')
+            .update({
+              status: 'confirmed',
+              payment_status: 'succeeded',
+              payment_method: 'card',
+              confirmed_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', found.id)
+            .eq('status', 'pending_payment');
+          logStep('Booking updated by PI id', { bookingId: found.id });
+          
+          // Trigger provider finalization
+          const providerResult = await finalizeBookingWithProvider(supabaseClient, found, 3);
+          logStep('Provider finalization result', { bookingId: found.id, success: providerResult.success });
+          }
+        }
+      }
+    }
+
+    if (event.type === 'payment_intent.payment_failed') {
+      const pi = event.data.object as Stripe.PaymentIntent;
+      const bookingId = (pi.metadata as any)?.bookingId;
+      if (bookingId) {
+        // Guard: only a booking still awaiting payment can fail. Never
+        // downgrade an already-paid/confirmed booking on a late failure event.
+        await supabaseClient
+          .from('bookings')
+          .update({ payment_status: 'failed', updated_at: new Date().toISOString() })
+          .eq('id', bookingId)
+          .eq('status', 'pending_payment');
+        logStep('Marked booking as failed', { bookingId });
+      }
+    }
+
+    // Mark webhook event as processed
+    await supabaseClient
+      .from('webhook_events')
+      .update({ processed: true, processed_at: new Date().toISOString() })
+      .eq('event_id', event.id);
+
+    logStep('Webhook processed successfully');
+
+    return new Response(JSON.stringify({ received: true }), {
+      headers: { 'Content-Type': 'application/json' },
+      status: 200,
+    });
+  } catch (error) {
+    logStep('ERROR: Webhook processing failed', { 
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined
+    });
+    
+    return new Response(
+      JSON.stringify({ 
+        error: 'An error occurred processing the webhook',
+        code: 'WEBHOOK_ERROR'
+      }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+});

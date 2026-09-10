@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cheap Flights, Hotels &amp; Car Rentals USA | Tripile.com</title>
+    <!-- Per-route <meta name="description"> is set via react-helmet so each page gets a unique description -->
+    <meta
+      name="description"
+      content="Book cheap flights, hotels &amp; car rentals across the USA. Compare 500+ airlines, Price Match Guarantee, no hidden fees &amp; 24/7 US support. Trusted by 2M+ travelers."
+    />
+
+    <meta
+      name="keywords"
+      content="cheap flights USA, flight deals, cheap hotels USA, car rentals USA, travel booking USA"
+    />
+    <meta name="author" content="Tripile.com" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow" />
+    <meta name="bingbot" content="index, follow" />
+
+    <link rel="preload" as="image" href="/images/hero-flights-hotels.jpg" fetchpriority="high" />
+
+    <!-- Preconnect to external origins for faster loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Preload critical font files for faster LCP -->
+    <link
+      rel="preload"
+      href="https://fonts.gstatic.com/s/inter/v18/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <!-- Fonts with display=swap for faster text rendering -->
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript
+      ><link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+    /></noscript>
+
+    <!-- Open Graph (Facebook, LinkedIn, etc.) — og:title/description/url are set per-route via react-helmet so each page gets its own preview -->
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://tripile.com/og-image.png" />
+    <meta property="og:image:secure_url" content="https://tripile.com/og-image.png" />
+    <meta property="og:site_name" content="Tripile.com" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter / X Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@tripile" />
+    <meta name="twitter:creator" content="@tripile" />
+    <!-- twitter:title and twitter:description are set per-route via react-helmet -->
+
+    <meta name="twitter:image" content="https://tripile.com/og-image.png" />
+
+    <!-- Legacy link preview hint (some crawlers) -->
+    <link rel="image_src" href="https://tripile.com/og-image.png" />
+
+    <!-- Canonical is set per-route via react-helmet -->
+
+    <!-- Machine-readable site summary for AI assistants (llms.txt) -->
+    <link rel="alternate" type="text/plain" title="Tripile for AI systems" href="/llms.txt" />
+
+    <!-- Additional SEO Meta -->
+    <meta name="geo.region" content="US" />
+    <meta name="geo.placename" content="United States" />
+    <meta name="language" content="English" />
+    <meta name="revisit-after" content="1 days" />
+    <meta name="rating" content="general" />
+    <meta name="distribution" content="global" />
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#0B66FF" />
+    <meta name="msapplication-TileColor" content="#0B66FF" />
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-tripile.png?v=4" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-tripile.png?v=4" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-tripile.png?v=4" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- Structured Data: TravelAgency (LocalBusiness subtype — include address + logo object for validator tools) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "TravelAgency",
+        "name": "Tripile",
+        "url": "https://tripile.com/",
+        "description": "Compare cheap flights, hotels \u0026 car rentals across the USA. Price Match Guarantee. Trusted by 2M+ travelers.",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://tripile.com/favicon-tripile.png"
+        },
+        "image": ["https://tripile.com/og-image.png"],
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "5900 Balcones Drive STE 100",
+          "addressLocality": "Austin",
+          "addressRegion": "TX",
+          "postalCode": "78731",
+          "addressCountry": "US"
+        },
+        "areaServed": {
+          "@type": "Country",
+          "name": "United States"
+        },
+        "sameAs": [
+          "https://facebook.com/tripile",
+          "https://twitter.com/tripile",
+          "https://instagram.com/tripile"
+        ],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+1-800-963-4330",
+          "contactType": "customer service",
+          "areaServed": {
+            "@type": "Country",
+            "name": "United States"
+          },
+          "availableLanguage": ["English", "Spanish"]
+        }
+      }
+    </script>
+
+    <!-- Structured Data: WebSite + SearchAction (Google sitelinks search box) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Tripile",
+        "alternateName": "Tripile.com",
+        "url": "https://tripile.com/",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://tripile.com/flights?originLocationCode={origin}&destinationLocationCode={destination}"
+          },
+          "query-input": ["required name=origin", "required name=destination"]
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <article
+      id="seo-static-content"
+      style="max-width: 900px; display:none; margin: 0 auto; padding: 20px; font-family: Inter, Arial, sans-serif; line-height: 1.6;"
+    >
+      <h1>Cheap Flights, Hotels &amp; Car Rentals USA | Tripile</h1>
+      <p>
+        Tripile helps US travelers compare <strong>cheap flights</strong>, <strong>hotels</strong>, and
+        <strong>car rentals</strong> in one place. Search 500+ airlines, book hotels in every major city, and compare
+        rental cars from Enterprise, Hertz, Avis, and Budget — starting from $26/day in cities like Phoenix and Orlando.
+      </p>
+      <h2>Why Choose Tripile</h2>
+      <p>
+        Our platform focuses on price clarity, practical filters, and real support. You can find strong
+        <strong> flight deals</strong> across many airlines, then sort by timing, layovers, baggage, and fare rules to
+        match your needs. We also help travelers compare <strong>cheap hotels USA</strong> listings near airports,
+        business districts, and popular tourist neighborhoods. If you need transport after landing, our
+        <strong>car rentals USA</strong>
+        search lets you compare pickup locations, cancellation terms, and vehicle types before checkout.
+      </p>
+      <h2>Travel Deals and Booking Benefits</h2>
+      <p>
+        Tripile is built for value-focused travelers who want quality and control. You can start with flights, add
+        hotels, and then include car rental options to build a complete itinerary in minutes. We also provide a deals
+        hub with seasonal offers and limited-time promotions. Transparent totals, no hidden fees, and 24/7 assistance
+        help reduce booking surprises and improve your travel planning experience from search to confirmation.
+      </p>
+      <h2>Popular Internal Links</h2>
+      <ul>
+        <li><a href="/flights">Search cheap flights across the USA</a></li>
+        <li><a href="/hotels">Compare cheap hotels in the USA</a></li>
+        <li><a href="/car-rentals">Find car rentals across the USA</a></li>
+        <li><a href="/cheap-car-rentals-in-los-angeles">Cheap car rentals in Los Angeles</a></li>
+        <li><a href="/cheap-car-rentals-in-miami">Cheap car rentals in Miami</a></li>
+        <li><a href="/cheap-car-rentals-in-las-vegas">Cheap car rentals in Las Vegas</a></li>
+        <li><a href="/deals">Browse current travel deals</a></li>
+      </ul>
+      <h2>Frequently Asked Questions</h2>
+      <p>
+        Want quick answers on booking, fare changes, and support options? Visit the FAQ section on the homepage or
+        contact our support team any time for help with your reservation.
+      </p>
+    </article>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,64 @@
+{
+  "name": "production",
+  "description": "Production environment configuration for live deployment",
+  "azure": {
+    "resourceGroup": "chyeapflights-prod-rg",
+    "location": "eastus",
+    "staticWebApp": {
+      "name": "chyeapflights-prod",
+      "sku": "Standard"
+    },
+    "cdn": {
+      "enabled": true,
+      "profile": "chyeapflights-cdn"
+    }
+  },
+  "domain": {
+    "primary": "chyeap.com",
+    "www": "www.chyeap.com",
+    "enforceHttps": true,
+    "forceWwwRedirect": false
+  },
+  "build": {
+    "outputDir": "dist",
+    "nodeVersion": "18",
+    "minify": true,
+    "sourceMaps": false
+  },
+  "features": {
+    "debugMode": false,
+    "analyticsEnabled": true,
+    "maintenanceMode": false
+  },
+  "api": {
+    "baseUrl": "https://qgmhqhejoilexhgwdujl.supabase.co/functions/v1",
+    "timeout": 30000,
+    "retryAttempts": 3
+  },
+  "cache": {
+    "staticAssets": "1 year",
+    "apiResponses": "10 minutes"
+  },
+  "security": {
+    "csp": {
+      "defaultSrc": ["'self'"],
+      "scriptSrc": ["'self'", "https://js.stripe.com"],
+      "styleSrc": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      "imgSrc": ["'self'", "data:", "https:", "blob:"],
+      "fontSrc": ["'self'", "https://fonts.gstatic.com"],
+      "connectSrc": ["'self'", "https://*.supabase.co", "https://api.stripe.com"],
+      "frameSrc": ["https://js.stripe.com", "https://hooks.stripe.com"]
+    },
+    "headers": {
+      "X-Content-Type-Options": "nosniff",
+      "X-Frame-Options": "DENY",
+      "X-XSS-Protection": "1; mode=block",
+      "Referrer-Policy": "strict-origin-when-cross-origin"
+    }
+  },
+  "monitoring": {
+    "errorTracking": true,
+    "performanceTracking": true,
+    "uptimeMonitoring": true
+  }
+}

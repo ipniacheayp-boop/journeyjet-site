@@ -1,0 +1,253 @@
+project_id = "qgmhqhejoilexhgwdujl"
+
+[functions.otp-send]
+verify_jwt = false
+
+[functions.otp-verify]
+verify_jwt = false
+
+
+[functions.payments-create-checkout-session]
+verify_jwt = false
+
+[functions.payments-checkout-status]
+verify_jwt = false
+
+[functions.payments-session-verify]
+verify_jwt = false
+
+[functions.admin-bookings]
+verify_jwt = true
+
+[functions.admin-users]
+verify_jwt = true
+
+[functions.admin-payments]
+verify_jwt = true
+
+[functions.admin-refund]
+verify_jwt = true
+
+[functions.admin-stats]
+verify_jwt = true
+
+[functions.agent-wallet-balance]
+verify_jwt = true
+
+[functions.agent-wallet-topup]
+verify_jwt = true
+
+[functions.agent-register]
+verify_jwt = false
+
+[functions.cars-book]
+verify_jwt = true
+
+[functions.cars-search]
+verify_jwt = true
+
+[functions.flights-book]
+verify_jwt = true
+
+[functions.flights-price]
+verify_jwt = true
+
+[functions.flights-price-validate]
+verify_jwt = true
+
+[functions.flights-search]
+verify_jwt = true
+
+[functions.health]
+verify_jwt = false
+
+[functions.payments-upi-confirm]
+verify_jwt = false
+
+[functions.payments-qr-generate]
+verify_jwt = false
+
+[functions.payments-qr-status]
+verify_jwt = false
+
+[functions.payments-status]
+verify_jwt = false
+
+[functions.payments-convert]
+verify_jwt = false
+
+[functions.payments-stripe-create-intent]
+verify_jwt = false
+
+[functions.payments-confirm]
+verify_jwt = false
+
+[functions.payments-refund]
+verify_jwt = true
+
+[functions.hotels-book]
+verify_jwt = true
+
+[functions.hotels-search]
+verify_jwt = false
+
+# Public read-only: city/country suggestions for hotel search (uses server Places API key).
+[functions.places-autocomplete]
+verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.flybot-chat]
+verify_jwt = false
+
+[functions.payments-upi-initiate]
+verify_jwt = false
+
+[functions.payments-razorpay-create-order]
+verify_jwt = false
+
+[functions.payments-razorpay-verify]
+verify_jwt = false
+
+[functions.payments-stripe-publishable-key]
+verify_jwt = false
+
+[functions.payments-check-status]
+verify_jwt = false
+
+[functions.chat-start]
+verify_jwt = true
+
+[functions.site-reviews-get]
+verify_jwt = false
+
+[functions.site-reviews-create]
+verify_jwt = true
+
+[functions.site-reviews-update]
+verify_jwt = true
+
+[functions.site-reviews-helpful]
+verify_jwt = true
+
+[functions.seed-reviews]
+verify_jwt = false
+
+[functions.deals-get]
+verify_jwt = false
+
+[functions.deals-get-by-id]
+verify_jwt = false
+
+[functions.deals-create]
+verify_jwt = true
+
+[functions.deals-update]
+verify_jwt = true
+
+[functions.deals-delete]
+verify_jwt = true
+
+[functions.deals-seed]
+verify_jwt = false
+
+[functions.deals-min-price]
+verify_jwt = false
+
+[functions.seed-real-reviews]
+verify_jwt = false
+
+[functions.admin-settings-get]
+verify_jwt = true
+
+[functions.admin-settings-update]
+verify_jwt = true
+
+[functions.admin-reviews-purge-demo]
+verify_jwt = true
+
+[functions.site-reviews-analytics]
+verify_jwt = true
+
+[functions.stripe-health-check]
+verify_jwt = false
+
+[functions.agent-bookings]
+verify_jwt = true
+
+[functions.agent-stats]
+verify_jwt = true
+
+[functions.agent-profile-update]
+verify_jwt = true
+
+[functions.agent-leads]
+verify_jwt = true
+
+[functions.agent-send-update]
+verify_jwt = true
+
+[functions.agent-start-booking]
+verify_jwt = true
+
+[functions.agent-send-confirmation]
+verify_jwt = true
+
+[functions.fx-rates]
+verify_jwt = false
+
+[functions.fx-smart-save]
+verify_jwt = false
+
+[functions.fx-hedge-suggestion]
+verify_jwt = false
+
+[functions.fx-smart-save-log]
+verify_jwt = false
+
+[functions.fx-admin-stats]
+verify_jwt = true
+
+[functions.prebooking-validate]
+verify_jwt = false
+
+[functions.bookings-provisional]
+verify_jwt = false
+
+[functions.bookings-status]
+verify_jwt = false
+
+[functions.provider-finalize-booking]
+verify_jwt = false
+
+[functions.send-booking-confirmation]
+verify_jwt = false
+
+[functions.bookings-agent-assisted]
+verify_jwt = false
+
+[functions.trip-planner]
+verify_jwt = false
+
+[functions.process-email-queue]
+verify_jwt = true
+
+[functions.duffel-flights-search]
+verify_jwt = false
+
+[functions.duffel-offer-get]
+verify_jwt = false
+
+[functions.duffel-client-key]
+verify_jwt = false
+
+[functions.duffel-order-create]
+verify_jwt = false
+
+[functions.duffel-webhook]
+verify_jwt = false
+
+[functions.duffel-deals]
+verify_jwt = false
+

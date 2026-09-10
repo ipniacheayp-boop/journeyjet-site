@@ -1,0 +1,552 @@
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { useFlightSearch } from "@/hooks/useFlightSearch";
+import { useHotelSearch } from "@/hooks/useHotelSearch";
+import { useCarSearch } from "@/hooks/useCarSearch";
+import FlightResultCard from "@/components/FlightResultCard";
+import HotelResultCard from "@/components/HotelResultCard";
+import CarResultCard from "@/components/CarResultCard";
+import { FlightTimeFilter, getTimeSlot, type TimeSlot } from "@/components/flights/FlightTimeFilter";
+import { toast } from "sonner";
+import { Shield } from "lucide-react";
+import SEOHead from "@/components/SEOHead";
+import RestrictedDestinationNotice from "@/components/compliance/RestrictedDestinationNotice";
+import { getRestrictedDestinationMatch, isRestrictedOffer } from "@/config/sanctionsCompliance";
+import DuffelFlightCard from "@/components/duffel/FlightCard";
+import FlightDetailsDialog from "@/components/duffel/FlightDetailsDialog";
+import { searchDuffelFlights } from "@/services/duffelFlights";
+import {
+  markFlightSearch,
+  reportFlightSearchTimings,
+  startFlightSearchTimer,
+} from "@/lib/flightSearchPerf";
+import type { CabinClass, DuffelOffer } from "@/types/duffel";
+
+/** Flight cards are heavy; reveal them in chunks so the first paint is immediate. */
+const FLIGHT_PAGE_SIZE = 20;
+
+const CABIN_MAP: Record<string, CabinClass> = {
+  ECONOMY: "economy",
+  PREMIUM_ECONOMY: "premium_economy",
+  BUSINESS: "business",
+  FIRST: "first",
+};
+
+const duffelCabin = (travelClass?: string): CabinClass =>
+  CABIN_MAP[(travelClass || "ECONOMY").toUpperCase().replace(/\s+/g, "_")] || "economy";
+
+const SearchResults = () => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const type = searchParams.get("type") || "flights";
+  const agentId = searchParams.get("agentId") || undefined;
+
+  const [results, setResults] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const { searchFlights, retryState } = useFlightSearch();
+  const { searchHotels } = useHotelSearch();
+  const { searchCars } = useCarSearch();
+  const [showCallPopup, setShowCallPopup] = useState(false);
+  // Duffel is the live flight source for this page; legacy providers only act as a fallback.
+  const [duffelOffers, setDuffelOffers] = useState<DuffelOffer[]>([]);
+  const [detailsOffer, setDetailsOffer] = useState<DuffelOffer | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [timeFilter, setTimeFilter] = useState<TimeSlot>("all");
+  // True while the legacy fallback provider is still being queried after live offers rendered.
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(FLIGHT_PAGE_SIZE);
+  // Exactly one active search at a time — a new search aborts the previous request.
+  const activeSearch = useRef<AbortController | null>(null);
+  const lastSearchKey = useRef<string | null>(null);
+
+  const timeCounts = useMemo(() => {
+    const counts: Record<TimeSlot, number> = { all: 0, morning: 0, afternoon: 0, evening: 0, night: 0 };
+    if (type !== "flights") return counts;
+    if (duffelOffers.length) {
+      duffelOffers.forEach((o) => {
+        const slot = getTimeSlot(o.slices?.[0]?.segments?.[0]?.departing_at);
+        counts[slot]++;
+        counts.all++;
+      });
+      return counts;
+    }
+    results.forEach((f) => {
+      const dep = f.itineraries?.[0]?.segments?.[0]?.departure?.at;
+      const slot = getTimeSlot(dep);
+      counts[slot]++;
+      counts.all++;
+    });
+    return counts;
+  }, [results, duffelOffers, type]);
+
+  // ⚠️ STRIPE SANCTIONS COMPLIANCE — detect if the searched destination is restricted.
+  const restrictedSearchMatch = useMemo(() => {
+    const candidates = [
+      searchParams.get("cityCode"),
+      searchParams.get("city"),
+      searchParams.get("destinationLocationCode"),
+      searchParams.get("pickUpLocationCode"),
+    ];
+    return getRestrictedDestinationMatch(...candidates);
+  }, [searchParams]);
+
+  const filteredResults = useMemo(() => {
+    // Remove any results located in a restricted (sanctioned) destination.
+    const compliant = results.filter((r) => !isRestrictedOffer(r));
+    if (type !== "flights" || timeFilter === "all") return compliant;
+    return compliant.filter((f) => {
+      const dep = f.itineraries?.[0]?.segments?.[0]?.departure?.at;
+      return getTimeSlot(dep) === timeFilter;
+    });
+  }, [results, timeFilter, type]);
+
+  const filteredDuffelOffers = useMemo(() => {
+    if (type !== "flights") return [];
+    if (timeFilter === "all") return duffelOffers;
+    return duffelOffers.filter(
+      (o) => getTimeSlot(o.slices?.[0]?.segments?.[0]?.departing_at) === timeFilter,
+    );
+  }, [duffelOffers, timeFilter, type]);
+
+  // A stable string key: re-renders or a new (but identical) searchParams object
+  // can never trigger a second identical search.
+  const searchKey = searchParams.toString();
+
+  useEffect(() => {
+    if (lastSearchKey.current === searchKey) return;
+    lastSearchKey.current = searchKey;
+
+    // Cancel a search that is being replaced — its response is no longer wanted.
+    activeSearch.current?.abort();
+    const controller = new AbortController();
+    activeSearch.current = controller;
+
+    setVisibleCount(FLIGHT_PAGE_SIZE);
+    startFlightSearchTimer(searchKey);
+    void performSearch(controller);
+
+    return () => controller.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchKey]);
+
+  useEffect(() => {
+    if (sessionStorage.getItem("callPopupShown")) return;
+
+    const timer = setTimeout(() => {
+      sessionStorage.setItem("callPopupShown", "true");
+      setShowCallPopup(true);
+    }, 6000); // 6 seconds after results page loads
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const performSearch = async (controller?: AbortController) => {
+    const aborted = () => controller?.signal.aborted === true;
+    setLoading(true);
+    setLoadingMore(false);
+    try {
+      if (type === "flights") {
+        const originLocationCode = searchParams.get("originLocationCode") || "";
+        const destinationLocationCode = searchParams.get("destinationLocationCode") || "";
+        const departureDate = searchParams.get("departureDate") || "";
+        const returnDate = searchParams.get("returnDate") || "";
+        const adults = parseInt(searchParams.get("adults") || "1");
+        const childrenCount = parseInt(searchParams.get("children") || "0") || 0;
+        const infantsCount = parseInt(searchParams.get("infants") || "0") || 0;
+        const travelClass = searchParams.get("travelClass") || "ECONOMY";
+
+        // Validate required parameters
+        if (!originLocationCode || !destinationLocationCode || !departureDate) {
+          toast.error("Missing required search parameters. Please start a new search.");
+          setResults([]);
+          setLoading(false);
+          return;
+        }
+
+        if (originLocationCode.toUpperCase() === destinationLocationCode.toUpperCase()) {
+          toast.error("You cannot search flights between the same city or airport.");
+          setResults([]);
+          setDuffelOffers([]);
+          setLoading(false);
+          return;
+        }
+
+        // 1) Live Duffel search — this is the data rendered in the cards. Fired
+        // immediately: nothing else is fetched before it.
+        const duffel = await searchDuffelFlights(
+          {
+            origin: originLocationCode,
+            destination: destinationLocationCode,
+            departureDate,
+            returnDate: returnDate || null,
+            adults,
+            children: childrenCount,
+            infants: infantsCount,
+            cabinClass: duffelCabin(travelClass),
+          },
+          { signal: controller?.signal },
+        );
+
+        if (aborted()) return;
+
+        if (duffel.offers.length > 0) {
+          markFlightSearch("results_processed");
+          setDuffelOffers(duffel.offers);
+          setResults([]);
+          setLoading(false);
+          return;
+        }
+
+        if (duffel.error) {
+          setDuffelOffers([]);
+          setResults([]);
+          setLoading(false);
+          toast.error(duffel.error, { duration: 5000 });
+          return;
+        }
+
+        setDuffelOffers([]);
+
+        // 2) No live offers — query the legacy fallback provider.
+        setLoadingMore(true);
+        const data = await searchFlights({
+          originLocationCode,
+          destinationLocationCode,
+          departureDate,
+          returnDate: returnDate || undefined,
+          adults,
+          travelClass,
+          currencyCode: "USD",
+        });
+
+        if (aborted()) return;
+        markFlightSearch("results_processed");
+
+        setResults(data?.data || []);
+      } else if (type === "hotels") {
+        const cityCode = searchParams.get("cityCode") || "";
+        const checkInDate = searchParams.get("checkInDate") || "";
+        const checkOutDate = searchParams.get("checkOutDate") || "";
+        const adults = parseInt(searchParams.get("adults") || "2");
+        const roomQuantity = parseInt(searchParams.get("roomQuantity") || "1");
+
+        // Validate required parameters
+        if (!cityCode || !checkInDate || !checkOutDate) {
+          toast.error("Missing required search parameters. Please start a new search.");
+          setResults([]);
+          setLoading(false);
+          return;
+        }
+
+        const data = await searchHotels({
+          cityCode,
+          checkInDate,
+          checkOutDate,
+          adults,
+          roomQuantity,
+          currency: "USD",
+        });
+
+        setResults(data?.data || []);
+      } else if (type === "cars") {
+        const pickUpLocationCode = searchParams.get("pickUpLocationCode") || "";
+        const pickUpDate = searchParams.get("pickUpDate") || "";
+        const dropOffDate = searchParams.get("dropOffDate") || "";
+        const driverAge = parseInt(searchParams.get("driverAge") || "30");
+
+        // Validate required parameters
+        if (!pickUpLocationCode || !pickUpDate || !dropOffDate) {
+          toast.error("Missing required search parameters. Please start a new search.");
+          setResults([]);
+          setLoading(false);
+          return;
+        }
+
+        const data = await searchCars({
+          pickUpLocationCode,
+          pickUpDate,
+          dropOffDate,
+          driverAge,
+        });
+
+        setResults(data?.data || []);
+      }
+    } catch (error: any) {
+      if (aborted()) return;
+      const errorMessage = error?.message || `Failed to search ${type}`;
+      console.error("❌ Search failed:", errorMessage);
+      toast.error(errorMessage, { duration: 5000 });
+      setResults([]);
+      setDuffelOffers([]);
+    } finally {
+      // Loading is always reset — success, error and cancellation alike.
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  };
+
+  const handleBook = useCallback(
+    (offer: any) => {
+      const price = Number(
+        type === "hotels"
+          ? offer?.offers?.[0]?.price?.total ?? offer?.price?.total
+          : offer?.price?.total ?? offer?.price?.grandTotal,
+      );
+      if (!Number.isFinite(price) || price <= 0) {
+        toast.error("This option does not have a live bookable price. Please choose another result.");
+        return;
+      }
+      const payload = JSON.stringify({ type, offer, agentId });
+      sessionStorage.setItem("selectedOffer", payload);
+      sessionStorage.removeItem(`bookingDraft:${type}`);
+      navigate(`/booking/${type}`);
+    },
+    [type, agentId, navigate],
+  );
+
+  const handleBookDuffel = useCallback(
+    (offer: DuffelOffer) => {
+      const payload = JSON.stringify({
+        type: "flights",
+        provider: "duffel",
+        offerId: offer.id,
+        offer,
+        agentId,
+        // Pricing snapshot kept verbatim from Duffel so it survives navigation & refresh.
+        pricing: {
+          total_amount: offer.total_amount,
+          total_currency: offer.total_currency,
+          base_amount: offer.base_amount,
+          tax_amount: offer.tax_amount,
+        },
+      });
+      sessionStorage.setItem("selectedOffer", payload);
+      try {
+        localStorage.setItem("selectedOffer", payload);
+      } catch {
+        /* storage full / disabled — session copy is enough for this tab */
+      }
+      navigate(`/flight/checkout?offer=${encodeURIComponent(offer.id)}`);
+    },
+    [agentId, navigate],
+  );
+
+  const handleViewDetails = useCallback((offer: DuffelOffer) => {
+    setDetailsOffer(offer);
+    setDetailsOpen(true);
+  }, []);
+
+  // Chunked reveal: paint the first page instantly, then fill the rest on idle time
+  // so a large result set never blocks the first render.
+  const visibleDuffelOffers = useMemo(
+    () => filteredDuffelOffers.slice(0, visibleCount),
+    [filteredDuffelOffers, visibleCount],
+  );
+
+  useEffect(() => {
+    if (loading) return;
+    if (visibleCount >= filteredDuffelOffers.length) return;
+    const id = window.setTimeout(() => setVisibleCount((c) => c + FLIGHT_PAGE_SIZE), 120);
+    return () => window.clearTimeout(id);
+  }, [loading, visibleCount, filteredDuffelOffers.length]);
+
+  // Measurement: first paint of results and completion of the full list.
+  useEffect(() => {
+    if (loading || type !== "flights") return;
+    if (visibleDuffelOffers.length === 0 && filteredResults.length === 0) return;
+    markFlightSearch("first_results_rendered");
+    if (visibleCount >= filteredDuffelOffers.length) {
+      markFlightSearch("all_results_rendered");
+      reportFlightSearchTimings({ offers: filteredDuffelOffers.length || filteredResults.length });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, visibleDuffelOffers.length, filteredResults.length]);
+
+
+
+
+  const flightCount = type === "flights" && duffelOffers.length > 0
+    ? filteredDuffelOffers.length
+    : filteredResults.length;
+  const totalFlightCount = type === "flights" && duffelOffers.length > 0
+    ? duffelOffers.length
+    : results.length;
+  const totalCount = type === "flights" ? flightCount : filteredResults.length;
+
+  const origin = searchParams.get("originLocationCode") || "";
+  const destination = searchParams.get("destinationLocationCode") || "";
+  const canonicalBase = "https://tripile.com/search-results";
+  const dynamicTitle = type === "flights" && origin && destination
+    ? `${origin} to ${destination} Flight Results | Tripile.com`
+    : `${type.charAt(0).toUpperCase() + type.slice(1)} Search Results | Tripile.com`;
+  const dynamicDesc = type === "flights" && origin && destination
+    ? `Compare cheap flights from ${origin} to ${destination}. Find the best deals across 500+ airlines on Tripile.com.`
+    : `Compare and book the best ${type} deals on Tripile.com. Find cheap ${type} across the USA.`;
+
+  // ⚠️ STRIPE SANCTIONS COMPLIANCE — restricted destination searched directly:
+  // show a dedicated compliance page instead of any hotel/flight/car results.
+  if (restrictedSearchMatch) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <SEOHead title="Destination Unavailable | Tripile.com" description="This destination is unavailable due to international compliance requirements." canonicalUrl={canonicalBase} noIndex />
+        <Header />
+        <main className="flex-1 pt-24 pb-16 bg-background">
+          <div className="container mx-auto px-4 max-w-2xl">
+            <RestrictedDestinationNotice destination={restrictedSearchMatch} />
+            <div className="mt-6 text-center">
+              <Button onClick={() => (window.location.href = "/")} size="lg">
+                Start a New Search
+              </Button>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <SEOHead title={dynamicTitle} description={dynamicDesc} canonicalUrl={canonicalBase} noIndex />
+      <Header />
+      <main className="flex-1 pt-24 pb-16 bg-background">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <div className="mb-8">
+            <div className="flex flex-wrap items-center gap-3 mb-2">
+              <h1 className="font-display text-4xl font-bold capitalize text-foreground">{type} Search Results</h1>
+              <Badge variant="outline" className="flex items-center gap-1.5 border-emerald-500/40 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 text-xs font-semibold px-3 py-1">
+                <Shield className="w-3.5 h-3.5" />
+                Price Match Guarantee
+              </Badge>
+            </div>
+            <p className="text-muted-foreground">
+              {loading
+                ? loadingMore
+                  ? "Loading additional results..."
+                  : type === "flights"
+                    ? "Searching flights..."
+                    : "Finding the best available price for you..."
+                : type === "flights" && timeFilter !== "all"
+                  ? `Showing ${flightCount} of ${totalFlightCount} result(s)`
+                  : `Found ${totalCount} result(s)`}
+            </p>
+          </div>
+
+          {loading ? (
+            <div className="space-y-6">
+              {/* Retry indicator */}
+              {type === "flights" && retryState.isRetrying && (
+                <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-700 rounded-lg p-4 flex items-center gap-3">
+                  <div className="animate-spin h-5 w-5 border-2 border-amber-500 border-t-transparent rounded-full" />
+                  <div>
+                    <p className="font-medium text-amber-900 dark:text-amber-100">
+                      Retrying... attempt {retryState.currentAttempt} of {retryState.maxAttempts}
+                    </p>
+                    <p className="text-sm text-amber-700 dark:text-amber-300">
+                      High demand detected. Please wait while we try again.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <Card key={i} className="bg-card border-border">
+                    <CardHeader>
+                      <Skeleton className="h-20 w-full" />
+                    </CardHeader>
+                    <CardContent>
+                      <Skeleton className="h-32 w-full" />
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          ) : totalCount === 0 ? (
+            <Card className="bg-card border-border">
+              <CardContent className="py-12 text-center">
+                <div className="max-w-lg mx-auto">
+                  <p className="text-lg font-semibold mb-2">No results found</p>
+                  <p className="text-muted-foreground mb-4">
+                    {type === "flights"
+                      ? "No flights available for this route and dates. Try different dates or check nearby airports."
+                      : type === "hotels"
+                        ? "No hotels found for the selected city and dates. Try different dates or locations."
+                        : "No vehicles found for the selected location and dates. Try different dates or locations."}
+                   </p>
+                  <Button onClick={() => (window.location.href = "/")} size="lg">
+                    Start a New Search
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <>
+              {type === "flights" && totalFlightCount > 0 && (
+                <FlightTimeFilter selected={timeFilter} onSelect={setTimeFilter} counts={timeCounts} />
+              )}
+              {flightCount === 0 && type === "flights" ? (
+                <Card className="bg-card border-border">
+                  <CardContent className="py-8 text-center">
+                    <p className="text-muted-foreground">No flights for this time slot. Try a different time preference.</p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <>
+                {type === "flights" && duffelOffers.length > 0 && (
+                  <div className="space-y-4">
+                    {visibleDuffelOffers.map((offer) => (
+                      <DuffelFlightCard
+                        key={offer.id}
+                        offer={offer}
+                        onSelect={handleBookDuffel}
+                        onViewDetails={handleViewDetails}
+                      />
+                    ))}
+                    {visibleCount < filteredDuffelOffers.length && (
+                      <p className="text-sm text-muted-foreground text-center py-2">
+                        Loading additional results…
+                      </p>
+                    )}
+                  </div>
+                )}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {type === "flights" && duffelOffers.length === 0 &&
+                    filteredResults.map((flight, i) => <FlightResultCard key={i} flight={flight} onBook={handleBook} />)}
+                  {type === "hotels" &&
+                    filteredResults.map((hotel, i) => (
+                      <HotelResultCard
+                        key={hotel.placeId || hotel.hotel?.hotelId || String(i)}
+                        hotel={hotel}
+                        onBook={handleBook}
+                      />
+                    ))}
+                  {type === "cars" && filteredResults.map((car, i) => <CarResultCard key={i} car={car} onBook={handleBook} />)}
+                </div>
+                </>
+              )}
+            </>
+          )}
+        </div>
+      </main>
+      {type === "flights" && (
+        <FlightDetailsDialog
+          offer={detailsOffer}
+          open={detailsOpen}
+          onOpenChange={setDetailsOpen}
+          onContinue={handleBookDuffel}
+        />
+      )}
+      <Footer />
+    </div>
+  );
+};
+
+export default SearchResults;

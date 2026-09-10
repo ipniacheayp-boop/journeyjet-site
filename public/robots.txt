@@ -1,0 +1,53 @@
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: *
+Allow: /
+
+# LLM / AI site context (optional)
+# llms.txt: https://tripile.com/llms.txt
+
+# Sitemap (index is the discovery entry point; child files are listed for crawlers that do not follow indexes)
+Sitemap: https://tripile.com/sitemap-index.xml
+Sitemap: https://tripile.com/sitemap.xml
+Sitemap: https://tripile.com/sitemap-hotels.xml
+Sitemap: https://tripile.com/sitemap-destinations.xml
+Sitemap: https://tripile.com/sitemap-flights.xml
+Sitemap: https://tripile.com/sitemap-cruises.xml
+Sitemap: https://tripile.com/sitemap-hotel-places.xml
+
+# Disallow admin, agent, and private areas
+Disallow: /admin/
+Disallow: /admin
+Disallow: /agent/
+Disallow: /agent
+Disallow: /payment/
+Disallow: /payment
+Disallow: /payment-options
+Disallow: /payment-success
+Disallow: /payment-cancel
+Disallow: /payment/processing
+Disallow: /payment/card
+Disallow: /api/
+Disallow: /login
+Disallow: /user/login
+Disallow: /admin/login
+Disallow: /agent/login
+Disallow: /auth/
+Disallow: /account
+Disallow: /my-bookings
+Disallow: /search-results
+Disallow: /booking/
+Disallow: /booking-confirmation
+Disallow: /agent-connect
+Disallow: /agent-will-connect
+Disallow: /error
