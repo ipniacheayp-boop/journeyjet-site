@@ -51,6 +51,9 @@ export default defineConfig(({ mode }) => {
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  test: {
+    include: ["src/**/*.test.ts"],
+  },
   build: {
     minify: "esbuild",
     target: "es2019",

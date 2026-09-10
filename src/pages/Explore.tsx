@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Flame, Sun, Snowflake, TrendingUp, DollarSign, Gem, Compass, X, Heart } from "lucide-react";
 import { destinations, Destination } from "@/data/destinations";
 import { DestinationCard } from "@/components/explore/DestinationCard";
+import TrendingDestinations from "@/components/trends/TrendingDestinations";
 
 const RECENT_SEARCHES_KEY = "tripile_recent_searches";
 
@@ -348,6 +349,8 @@ export default function Explore() {
             ) : (
               /* EXPLORE MODE (Carousel rows) */
               <div className="space-y-16 animate-in fade-in duration-700">
+                <TrendingDestinations />
+
                 {/* Section: Trending Now */}
                 <section>
                   <div className="flex items-center justify-between mb-6">

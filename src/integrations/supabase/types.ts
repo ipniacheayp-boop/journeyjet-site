@@ -738,6 +738,42 @@ export type Database = {
           },
         ]
       }
+      google_trends_cache: {
+        Row: {
+          cache_key: string
+          created_at: string
+          data_type: string
+          date_range: string | null
+          expires_at: string
+          geo: string | null
+          id: string
+          query: string
+          response_json: Json
+        }
+        Insert: {
+          cache_key: string
+          created_at?: string
+          data_type: string
+          date_range?: string | null
+          expires_at: string
+          geo?: string | null
+          id?: string
+          query: string
+          response_json: Json
+        }
+        Update: {
+          cache_key?: string
+          created_at?: string
+          data_type?: string
+          date_range?: string | null
+          expires_at?: string
+          geo?: string | null
+          id?: string
+          query?: string
+          response_json?: Json
+        }
+        Relationships: []
+      }
       otp_codes: {
         Row: {
           attempts: number

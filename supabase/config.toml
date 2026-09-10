@@ -251,3 +251,7 @@ verify_jwt = false
 [functions.duffel-deals]
 verify_jwt = false
 
+# Public read-only: Google Trends via server-side SERPAPI_KEY (never exposed to the browser).
+[functions.google-trends]
+verify_jwt = false
+

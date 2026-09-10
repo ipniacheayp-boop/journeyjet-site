@@ -12,6 +12,7 @@ import { getDestinationBySlug, popularDestinations, airlinesData } from "@/data/
 import { getDestinationContent } from "@/data/destinationContent";
 import { useDestinationFlights } from "@/hooks/useDestinationFlights";
 import { Skeleton } from "@/components/ui/skeleton";
+import DestinationTravelInterest from "@/components/trends/DestinationTravelInterest";
 import {
   Plane, AlertCircle, ChevronRight, MapPin, Building2,
   Calendar, Lightbulb, Route, Star, HelpCircle,
@@ -250,7 +251,8 @@ export default function FlightsToDestination() {
                 {content.whyVisit}
               </p>
             </div>
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-2 space-y-4">
+              <DestinationTravelInterest slug={slug} />
               <div className="rounded-2xl overflow-hidden shadow-lg h-full min-h-[250px] group cursor-pointer relative">
                 <img
                   src={cityImage}
