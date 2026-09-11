@@ -9,8 +9,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Search, Flame, Sun, Snowflake, TrendingUp, DollarSign, Gem, Compass, X, Heart } from "lucide-react";
 import { destinations, Destination } from "@/data/destinations";
+import { findCatalogItemByTrendName } from "@/data/googleTrendsDestinations";
 import { DestinationCard } from "@/components/explore/DestinationCard";
 import TrendingDestinations from "@/components/trends/TrendingDestinations";
+import { useTrendingDestinations } from "@/hooks/useTrendingDestinations";
+import type { TrendingDestinationScore } from "@/lib/googleTrendsLogic";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const RECENT_SEARCHES_KEY = "tripile_recent_searches";
 
@@ -19,6 +23,7 @@ export default function Explore() {
   const [activeFilter, setActiveFilter] = useState<string>("all");
   const [seasonToggle, setSeasonToggle] = useState<"all" | "summer" | "winter">("all");
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const { destinations: trendScores, loading: trendsLoading } = useTrendingDestinations();
 
   useEffect(() => {
     // Delay scroll to ensure React Router finishes mounting the DOM and restoring history
@@ -70,19 +75,22 @@ export default function Explore() {
     return raw;
   }, [searchTerm, activeFilter, seasonToggle]);
 
-  // "Trending Worldwide" is driven only by live Google Trends (SerpApi) scores.
+  // Trending chips and "Trending Worldwide" come only from live Google Trends (SerpApi) scores.
   const trendingRow = useMemo(() => {
     if (!trendScores.length) return [];
     return trendScores
       .map((score) => {
-        const match = filteredData.find(
-          (d) => d.name.toLowerCase() === score.destination.toLowerCase(),
-        );
+        const match = findCatalogItemByTrendName(destinations, score.destination);
         return match ? { dest: match, score } : null;
       })
       .filter((entry): entry is { dest: Destination; score: TrendingDestinationScore } => entry !== null)
       .slice(0, 8);
-  }, [trendScores, filteredData]);
+  }, [trendScores]);
+
+  const trendingChips = useMemo(
+    () => trendingRow.slice(0, 5).map(({ dest, score }) => ({ name: dest.name, slug: score.slug })),
+    [trendingRow],
+  );
 
 
   return (
@@ -163,18 +171,25 @@ export default function Explore() {
             transition={{ duration: 0.7, delay: 0.4 }}
             className="mt-8 flex flex-wrap justify-center gap-3 max-w-3xl mx-auto"
           >
-            <span className="text-sm font-bold text-white/80 mr-2 flex items-center drop-shadow-md">
-              <Flame className="w-4 h-4 mr-1 text-orange-400" /> Trending:
-            </span>
-            {["Bali", "Japan", "Italy", "Maldives", "Switzerland"].map((tag) => (
-              <Badge
-                key={tag}
-                className="cursor-pointer bg-white/15 hover:bg-primary text-white border border-white/20 backdrop-blur-md transition-all py-1.5 px-4 text-sm rounded-full shadow-sm"
-                onClick={() => handleSearch(tag)}
-              >
-                {tag}
-              </Badge>
-            ))}
+            {(trendsLoading || trendingChips.length > 0) && (
+              <span className="text-sm font-bold text-white/80 mr-2 flex items-center drop-shadow-md">
+                <Flame className="w-4 h-4 mr-1 text-orange-400" /> Trending:
+              </span>
+            )}
+            {trendsLoading &&
+              Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="h-8 w-20 rounded-full bg-white/20" />
+              ))}
+            {!trendsLoading &&
+              trendingChips.map((item) => (
+                <Badge
+                  key={item.slug}
+                  className="cursor-pointer bg-white/15 hover:bg-primary text-white border border-white/20 backdrop-blur-md transition-all py-1.5 px-4 text-sm rounded-full shadow-sm"
+                  onClick={() => handleSearch(item.name)}
+                >
+                  {item.name}
+                </Badge>
+              ))}
           </motion.div>
 
           {/* Recent Searches */}
@@ -366,25 +381,32 @@ export default function Explore() {
               <div className="space-y-16 animate-in fade-in duration-700">
                 <TrendingDestinations />
 
-                {/* Section: Trending Now */}
-                <section>
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-bold flex items-center gap-2">
-                      <TrendingUp className="w-6 h-6 text-primary" />
-                      Trending Worldwide
-                    </h2>
-                  </div>
-                  <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-8 -mx-4 px-4 no-scrollbar [scrollbar-width:none]">
-                    {filteredData
-                      .filter((d) => d.category.includes("trending"))
-                      .slice(0, 8)
-                      .map((dest) => (
-                        <div className="snap-center shrink-0" key={dest.id}>
-                          <DestinationCard destination={dest} />
-                        </div>
-                      ))}
-                  </div>
-                </section>
+                {/* Section: Trending Now — live Google Trends scores only, no static category fallback */}
+                {(trendsLoading || trendingRow.length > 0) && (
+                  <section>
+                    <div className="flex items-center justify-between mb-6">
+                      <h2 className="text-2xl font-bold flex items-center gap-2">
+                        <TrendingUp className="w-6 h-6 text-primary" />
+                        Trending Worldwide
+                      </h2>
+                    </div>
+                    {trendsLoading ? (
+                      <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-8 -mx-4 px-4 no-scrollbar [scrollbar-width:none]">
+                        {Array.from({ length: 4 }).map((_, i) => (
+                          <Skeleton key={i} className="h-[380px] w-[280px] rounded-[2rem] shrink-0" />
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-8 -mx-4 px-4 no-scrollbar [scrollbar-width:none]">
+                        {trendingRow.map(({ dest, score }) => (
+                          <div className="snap-center shrink-0" key={dest.id}>
+                            <DestinationCard destination={dest} trendScore={score.trendScore} />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </section>
+                )}
 
                 {/* Section: Best Value */}
                 <section>

@@ -7,9 +7,10 @@ import type { Destination } from "@/data/destinations";
 
 interface DestinationCardProps {
   destination: Destination;
+  trendScore?: number;
 }
 
-export const DestinationCard = ({ destination }: DestinationCardProps) => {
+export const DestinationCard = ({ destination, trendScore }: DestinationCardProps) => {
   const navigate = useNavigate();
   const [isLiked, setIsLiked] = useState(false);
 
@@ -34,9 +35,18 @@ export const DestinationCard = ({ destination }: DestinationCardProps) => {
         
         {/* Top Badges */}
         <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
-          <Badge className="bg-white/95 text-slate-900 hover:bg-white border-none shadow-lg backdrop-blur-md rounded-xl py-1 px-3 text-xs font-bold leading-tight transform -translate-y-1 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-            {destination.why_visit}
-          </Badge>
+          {typeof trendScore === "number" ? (
+            <Badge
+              className="bg-primary text-white border-none shadow-lg rounded-xl py-1 px-3 text-xs font-bold leading-tight"
+              title="Google Trends relative interest, not search volume"
+            >
+              Interest {trendScore}
+            </Badge>
+          ) : (
+            <Badge className="bg-white/95 text-slate-900 hover:bg-white border-none shadow-lg backdrop-blur-md rounded-xl py-1 px-3 text-xs font-bold leading-tight transform -translate-y-1 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+              {destination.why_visit}
+            </Badge>
+          )}
           <button 
             type="button" 
             className={`w-8 h-8 rounded-full backdrop-blur-md flex items-center justify-center transition-all hover:scale-110 shadow-sm ${isLiked ? ' text-rose-500' : ' text-white'}`}

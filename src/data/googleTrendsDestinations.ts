@@ -38,6 +38,26 @@ export function getTrendDestination(slug?: string): TrendDestination | undefined
   return trendingDestinations.find((d) => d.slug === slug);
 }
 
+/**
+ * Match a Google Trends city name to an Explore catalog row.
+ * "New York" matches "New York City"; names are never invented.
+ */
+export function findCatalogItemByTrendName<T extends { name: string }>(
+  catalog: ReadonlyArray<T>,
+  trendDestination: string,
+): T | undefined {
+  const query = trendDestination.trim().toLowerCase();
+  if (!query) return undefined;
+
+  return (
+    catalog.find((item) => item.name.trim().toLowerCase() === query) ??
+    catalog.find((item) => {
+      const name = item.name.trim().toLowerCase();
+      return name.startsWith(`${query} `) || name.startsWith(`${query},`) || query.startsWith(`${name} `);
+    })
+  );
+}
+
 /** SerpApi TIMESERIES/GEO_MAP accept at most 5 queries per request. */
 export function trendQueryBatches(items = trendingDestinations, size = 5): TrendDestination[][] {
   const batches: TrendDestination[][] = [];
