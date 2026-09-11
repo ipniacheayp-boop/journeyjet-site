@@ -89,7 +89,11 @@ async function searchTrends(req: GoogleTrendsRequest): Promise<{
     const { data, error } = await invokeTrends<TrendsFunctionResponse>({ action: "search", ...req });
     if (error) return { data: null, error, cached: false };
     if (!data || data.ok === false) {
-      return { data: null, error: data?.error ?? "Trends data could not be loaded.", cached: false };
+      return {
+        data: null,
+        error: (data as { error?: string } | null)?.error ?? "Trends data could not be loaded.",
+        cached: false,
+      };
     }
     if (data.empty || !data.payload) {
       return { data: null, error: null, cached: data.cached };

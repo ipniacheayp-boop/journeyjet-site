@@ -234,7 +234,7 @@ export async function resolveTrendingDestinations(
     };
     const result = await resolveGoogleTrendsSearch(req, deps);
     if (!result.ok) {
-      lastError = result.error;
+      lastError = (result as { error?: string }).error;
       continue;
     }
     sawSuccess = true;
