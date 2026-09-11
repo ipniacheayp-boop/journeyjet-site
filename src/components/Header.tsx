@@ -99,6 +99,7 @@ const Header = () => {
     if (pathOnly === "/car-rentals") return location.pathname === "/car-rentals";
     if (pathOnly === "/deals") return location.pathname === "/deals" || location.pathname.startsWith("/deals/");
     if (pathOnly === "/coupons") return location.pathname === "/coupons";
+    if (pathOnly === "/explore") return location.pathname === "/explore";
     if (pathOnly === "/flight-status") return location.pathname === "/flight-status";
     if (pathOnly === "/flight-tracker") return location.pathname === "/flight-tracker";
     if (pathOnly === "/") return location.pathname === "/";
