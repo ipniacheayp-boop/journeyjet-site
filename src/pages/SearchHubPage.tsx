@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SearchWidget from "@/components/SearchWidget";
 import { Plane, Hotel, Car, MapPin } from "lucide-react";
+import { searchHubCanonical, searchHubPath } from "@/lib/searchHubSeo";
 import {
   hotelCountryHubs,
   hotelDestinationPath,
@@ -12,28 +13,25 @@ import {
 
 const HUB_CONFIG: Record<
   string,
-  { defaultTab: "flights" | "hotels" | "cars"; title: string; description: string; canonical: string }
+  { defaultTab: "flights" | "hotels" | "cars"; title: string; description: string }
 > = {
   "/flights": {
     defaultTab: "flights",
     title: "Search Cheap Flights & Airline Deals | Tripile",
     description:
       "Find and compare cheap flights, airline tickets, and travel offers from multiple providers using Tripile.",
-    canonical: "https://tripile.com/flights",
   },
   "/hotels": {
     defaultTab: "hotels",
     title: "Find Cheap Hotels Worldwide | Tripile",
     description:
       "Discover affordable hotels, stays, and accommodation deals worldwide with Tripile hotel search.",
-    canonical: "https://tripile.com/hotels",
   },
   "/car-rentals": {
     defaultTab: "cars",
     title: "Cheap Car Rentals & Vehicle Deals | Tripile",
     description:
       "Compare rental car prices, vehicle options, and travel transportation deals easily with Tripile.",
-    canonical: "https://tripile.com/car-rentals",
   },
 };
 
@@ -275,7 +273,9 @@ function HotelHubDirectory() {
  */
 const SearchHubPage = () => {
   const { pathname, search } = useLocation();
-  const config = HUB_CONFIG[pathname] ?? HUB_CONFIG["/flights"];
+  const hubPath = searchHubPath(pathname);
+  const config = HUB_CONFIG[hubPath];
+  const canonical = searchHubCanonical(pathname);
   const tabKey = config.defaultTab;
   // Search/filter variants (?originLocationCode=…, ?dates=…, ?sort=…) must not be
   // indexed as separate pages — they all consolidate on the clean canonical.
@@ -290,7 +290,7 @@ const SearchHubPage = () => {
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: "https://tripile.com/" },
-      { "@type": "ListItem", position: 2, name: labelMap[tabKey], item: config.canonical },
+      { "@type": "ListItem", position: 2, name: labelMap[tabKey], item: canonical },
     ],
   };
 
@@ -299,9 +299,9 @@ const SearchHubPage = () => {
       <Helmet>
         <title>{config.title}</title>
         <meta name="description" content={config.description} />
-        <link rel="canonical" href={config.canonical} />
+        <link rel="canonical" href={canonical} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content={config.canonical} />
+        <meta property="og:url" content={canonical} />
         <meta property="og:title" content={config.title} />
         <meta property="og:description" content={config.description} />
         <meta property="og:image" content="https://tripile.com/og-image.png" />
