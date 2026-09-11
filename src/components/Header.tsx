@@ -15,6 +15,7 @@ import {
   Car,
   PlaneTakeoff,
   Tag,
+  TrendingUp,
   ChevronDown,
   ShieldCheck,
   Clock,
@@ -54,7 +55,8 @@ const serviceLinks = [
     icon: Car,
     linkTitle: "Compare car rentals — Tripile",
   },
-  { label: "Deals", href: "/deals", icon: Tag, linkTitle: "Today’s travel deals on Tripile" },
+  { label: "Deals", href: "/deals", icon: Tag, linkTitle: "Today's travel deals on Tripile" },
+  { label: "Trending", href: "/explore", icon: TrendingUp, linkTitle: "Trending destinations — live Google Trends on Tripile" },
   { label: "Coupons", href: "/coupons", icon: BadgeDollarSign, linkTitle: "Tripile travel coupons and promo codes" },
   { label: "Flight Status", href: "/flight-status", icon: PlaneTakeoff, linkTitle: "Check flight status — Tripile" },
 ];
