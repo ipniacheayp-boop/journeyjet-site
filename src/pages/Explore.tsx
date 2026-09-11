@@ -70,6 +70,21 @@ export default function Explore() {
     return raw;
   }, [searchTerm, activeFilter, seasonToggle]);
 
+  // "Trending Worldwide" is driven only by live Google Trends (SerpApi) scores.
+  const trendingRow = useMemo(() => {
+    if (!trendScores.length) return [];
+    return trendScores
+      .map((score) => {
+        const match = filteredData.find(
+          (d) => d.name.toLowerCase() === score.destination.toLowerCase(),
+        );
+        return match ? { dest: match, score } : null;
+      })
+      .filter((entry): entry is { dest: Destination; score: TrendingDestinationScore } => entry !== null)
+      .slice(0, 8);
+  }, [trendScores, filteredData]);
+
+
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
