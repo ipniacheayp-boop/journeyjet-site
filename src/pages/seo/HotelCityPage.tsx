@@ -349,6 +349,46 @@ const HotelCityPage = () => {
                 </div>
               </div>
 
+              {intent.sections.map((section) => (
+                <div key={section.heading} className="mt-10">
+                  <h2 className="text-2xl font-bold text-foreground mb-3">{section.heading}</h2>
+                  {section.paragraphs.map((p) => (
+                    <p key={p} className="text-muted-foreground leading-relaxed mb-3">
+                      {p}
+                    </p>
+                  ))}
+                  {section.bullets && section.bullets.length > 0 && (
+                    <ul className="mt-2 space-y-2">
+                      {section.bullets.map((b) => (
+                        <li key={b} className="flex items-start gap-2 text-sm text-muted-foreground">
+                          <MapPin className="h-4 w-4 text-primary mt-0.5 shrink-0" aria-hidden="true" />
+                          <span>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
+
+              <div className="mt-10 rounded-2xl border bg-secondary/20 p-6">
+                <h2 className="text-2xl font-bold text-foreground mb-2">
+                  Compare live hotel prices in {destination.name}
+                </h2>
+                <p className="text-muted-foreground mb-4">
+                  Pick your dates and Tripile shows the hotels available in {regionLabel} with the
+                  lowest current prices first.
+                </p>
+                <Button
+                  size="lg"
+                  className="gap-2"
+                  onClick={runSearch}
+                  aria-label={`Search live hotel prices in ${regionLabel}`}
+                >
+                  <Search className="h-4 w-4" aria-hidden="true" /> Search hotels in{" "}
+                  {destination.name}
+                </Button>
+              </div>
+
               {placeLinks.length > 0 && (
                 <div className="mt-10">
                   <h2 className="text-2xl font-bold text-foreground mb-4">
