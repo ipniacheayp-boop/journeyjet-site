@@ -84,12 +84,12 @@ export default function FlightsToDestination() {
     : null;
 
   const metaTitle = cheapestPrice
-    ? `Cheap Flights to ${cityName} from $${cheapestPrice.toFixed(0)} | Tripile.com`
-    : `Cheap Flights to ${cityName} | Tripile.com`;
+    ? `Flights to ${cityName} from $${cheapestPrice.toFixed(0)} — Prices & How to Save | Tripile`
+    : `Flights to ${cityName} — Ticket Prices & How to Save | Tripile`;
 
   const metaDescription = cheapestPrice
-    ? `Find cheap flights to ${cityName} starting from $${cheapestPrice.toFixed(0)}. Compare prices across top airlines and book today.`
-    : `Compare and book cheap flights to ${cityName}. Best deals across 30+ airlines.`;
+    ? `How much is a ticket to ${cityName}? Live fares start from $${cheapestPrice.toFixed(0)} on Tripile. Compare one-way and round-trip prices and see what makes ${cityName} flights cheaper.`
+    : `How much does it cost to fly to ${cityName}? Compare live one-way and round-trip fares on Tripile and see what affects ${cityName} flight prices.`;
 
   const content = getDestinationContent(
     destination?.city || cityName,
@@ -103,25 +103,99 @@ export default function FlightsToDestination() {
 
   const popularAirlines = airlinesData.filter((a) => a.popular).slice(0, 6);
   const cityImage = getDestinationImage(destination?.country || "", slug || "");
+  const canonicalUrl = `https://tripile.com/flights-to/${slug}`;
+
+  /** Live-fare wording: only mention a figure when the search actually returned one. */
+  const liveFrom = cheapestPrice ? `$${cheapestPrice.toFixed(0)}` : null;
+
+  const costSections = [
+    {
+      heading: `How much does a flight to ${cityName} cost?`,
+      paragraphs: [
+        liveFrom
+          ? `Right now the lowest live fare Tripile is returning for ${cityName} is ${liveFrom} one way, based on the search shown above. Airfare moves constantly, so that figure is a live starting point rather than a fixed price — run the search with your own dates and departure city to see what a ticket to ${cityName} costs for your trip.`
+          : `Ticket prices to ${cityName} depend on your departure city, dates, cabin and how far ahead you book, so Tripile shows live fares instead of a fixed price. Enter your route and dates in the search box above to see what a flight to ${cityName} costs today.`,
+        `Because Tripile pulls fares live at search time, the price you compare here is the price available to book, with taxes and carrier charges already included in the total shown.`,
+      ],
+    },
+    {
+      heading: `One-way vs round-trip flights to ${cityName}`,
+      paragraphs: [
+        `A round-trip ticket to ${cityName} is usually cheaper than two separate one-way tickets on long-haul routes, because airlines price the return journey as a single fare. On shorter routes and with low-cost carriers, two one-ways can work out the same or less.`,
+        `The quickest way to check is to price both: search a round trip for your dates, then search the same outbound as a one-way and compare the totals.`,
+      ],
+    },
+    {
+      heading: `What affects ${cityName} flight prices?`,
+      paragraphs: [`Several things move the fare on any given day:`],
+      bullets: [
+        `Season and demand — peak travel months to ${cityName} cost the most.`,
+        `How far ahead you book, and how close to departure you leave it.`,
+        `Day of week and departure time, with early and late flights often cheaper.`,
+        `Direct versus connecting routings.`,
+        `Cabin class, baggage allowance and fare flexibility.`,
+        `Your departure airport, including nearby alternatives.`,
+      ],
+    },
+    {
+      heading: `Are flexible dates cheaper for ${cityName} flights?`,
+      paragraphs: [
+        `Flexible dates are the single biggest lever. Compare the days either side of your preferred departure, check nearby departure airports, and look at connecting routings before settling on a direct flight. Tripile searches live availability, so testing a different date takes seconds.`,
+      ],
+      bullets: [
+        `Shift departure and return by a day or two and compare the totals.`,
+        `Check a nearby departure airport as well as your usual one.`,
+        `Compare a one-way pair against the round-trip fare.`,
+        `Include the baggage you actually need when comparing fares.`,
+      ],
+    },
+  ];
+
+  const costFaqs = [
+    {
+      question: `How much does a flight to ${cityName} cost?`,
+      answer: liveFrom
+        ? `The lowest live fare currently returned for ${cityName} on Tripile is ${liveFrom} one way. Fares change throughout the day, so search your own dates and departure city for the price you can book.`
+        : `It depends on your departure city, dates and cabin. Tripile shows live fares rather than a fixed price — search your route and dates on this page for the current cost of a flight to ${cityName}.`,
+    },
+    {
+      question: `How much is a round-trip ticket to ${cityName}?`,
+      answer: `Round-trip fares to ${cityName} are priced as one ticket and are usually lower than two separate one-ways on long-haul routes. Search a return trip for your dates on this page to see the live round-trip total.`,
+    },
+    {
+      question: `How can I find cheaper flights to ${cityName}?`,
+      answer: `Compare flexible dates, check nearby departure airports, look at connecting routings, and price a one-way pair against the round trip. Tripile searches live fares so each of those comparisons takes only a few seconds.`,
+    },
+  ];
+
+  const allFaqs = [...costFaqs, ...content.faq];
+
 
   return (
     <>
       <Helmet>
         <title>{metaTitle}</title>
         <meta name="description" content={metaDescription} />
-        <link rel="canonical" href={`https://tripile.com/flights-to/${slug}`} />
+        <link rel="canonical" href={canonicalUrl} />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={metaTitle} />
+        <meta property="og:description" content={metaDescription} />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={metaTitle} />
+        <meta name="twitter:description" content={metaDescription} />
       </Helmet>
 
       <BreadcrumbSchema
         items={[
           { name: "Home", url: "https://tripile.com/" },
-          { name: "Sitemap", url: "https://tripile.com/sitemap" },
-          { name: `Flights to ${cityName}`, url: `https://tripile.com/flights-to/${slug}` },
+          { name: "Flights", url: "https://tripile.com/flights" },
+          { name: `Flights to ${cityName}`, url: canonicalUrl },
         ]}
       />
 
       <FAQSchema
-        faqs={content.faq.map((f) => ({
+        faqs={allFaqs.map((f) => ({
           question: f.question,
           answer: f.answer,
         }))}
@@ -139,7 +213,7 @@ export default function FlightsToDestination() {
           <nav className="flex items-center gap-1 text-sm text-white/60 mb-6">
             <Link to="/" className="hover:text-white transition-colors">Tripile</Link>
             <ChevronRight className="w-3.5 h-3.5" />
-            <Link to="/sitemap" className="hover:text-white transition-colors">Flights</Link>
+            <Link to="/flights" className="hover:text-white transition-colors">Flights</Link>
             <ChevronRight className="w-3.5 h-3.5" />
             <span className="text-white/90">Flights to {cityName}</span>
           </nav>
@@ -280,6 +354,28 @@ export default function FlightsToDestination() {
           cheapestMonth={content.cheapestMonth}
           expensiveMonth={content.expensiveMonth}
         />
+
+        {/* Ticket cost & fare intent (live data only, no fixed prices) */}
+        {costSections.map((section) => (
+          <section key={section.heading} className="py-8 border-t border-border">
+            <h2 className="text-2xl font-bold text-foreground mb-3">{section.heading}</h2>
+            {section.paragraphs.map((p) => (
+              <p key={p} className="text-muted-foreground leading-relaxed mb-3 max-w-3xl">
+                {p}
+              </p>
+            ))}
+            {section.bullets && (
+              <ul className="space-y-2 max-w-3xl mt-2">
+                {section.bullets.map((b) => (
+                  <li key={b} className="flex items-start gap-2 text-sm text-muted-foreground">
+                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" aria-hidden="true" />
+                    <span>{b}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        ))}
 
         {/* How to Find Cheap Flights */}
         <section className={`py-8 border-t border-border rounded-xl`}>
@@ -437,7 +533,7 @@ export default function FlightsToDestination() {
             Frequently Asked Questions
           </h2>
           <Accordion type="single" collapsible className="max-w-2xl">
-            {content.faq.map((item, i) => (
+            {allFaqs.map((item, i) => (
               <AccordionItem key={i} value={`q${i}`} className="border-border hover:bg-muted/30 rounded-lg transition-colors px-2">
                 <AccordionTrigger className="text-sm text-left hover:text-primary transition-colors">
                   {item.question}

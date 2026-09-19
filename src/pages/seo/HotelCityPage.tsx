@@ -24,6 +24,7 @@ import {
   SITE_ORIGIN,
 } from "@/data/hotelDestinations";
 import { relatedLinksForDestination, hotelPlaceLinksForCity } from "@/data/seoLinkGraph";
+import { getHotelIntentContent, hotelDestinationAlias } from "@/data/hotelIntentContent";
 
 function isoDate(daysFromNow: number): string {
   const d = new Date();
@@ -90,8 +91,17 @@ const HotelCityPage = () => {
   const searchQuery = destinationSearchQuery(destination);
   const canonicalUrl = hotelDestinationCanonical(destination.slug);
 
-  const pageTitle = `Cheap Hotels in ${shortLabel} | Compare Hotel Deals | Tripile`;
-  const pageDescription = `Search and compare hotels in ${regionLabel}. Explore accommodation options and find hotels for your ${destination.name} trip with Tripile.`;
+  const alias = hotelDestinationAlias(destination.name);
+  const intent = getHotelIntentContent({
+    name: destination.name,
+    regionLabel,
+    country: destination.country,
+    topAreas: legacy?.topAreas,
+    alias,
+  });
+
+  const pageTitle = `Cheap Hotels in ${shortLabel} — Prices, Best Areas & How to Save | Tripile`;
+  const pageDescription = `How much do hotels in ${destination.name} cost? Compare live hotel prices in ${regionLabel}, see the best areas to stay${alias ? ` in ${alias}` : ""}, and find cheaper rooms for your dates with Tripile.`;
 
   const runSearch = () => {
     const params = new URLSearchParams({
@@ -116,16 +126,7 @@ const HotelCityPage = () => {
       question: `How do I find hotels in ${destination.name}?`,
       answer: `Enter your check-in and check-out dates above and select Search Hotels. Tripile searches live availability for ${regionLabel} and shows the accommodation options returned for your dates.`,
     },
-    {
-      question: `What areas can I stay in when visiting ${destination.name}?`,
-      answer: legacy
-        ? `Popular areas to stay in ${destination.name} include ${legacy.topAreas.join(", ")}. Each neighbourhood offers different attractions and price points.`
-        : `${destination.name} has a range of central and outlying neighbourhoods. Run a search above to see the areas where properties are currently available for your dates.`,
-    },
-    {
-      question: `Are hotel prices in ${destination.name} shown live?`,
-      answer: `Yes. Tripile does not publish fixed nightly rates on this page — all rates and availability come from live search results for the dates you select.`,
-    },
+    ...intent.faqs,
   ];
 
   const breadcrumbs = [
@@ -346,6 +347,46 @@ const HotelCityPage = () => {
                     <span className="text-sm text-foreground">24/7 Security</span>
                   </div>
                 </div>
+              </div>
+
+              {intent.sections.map((section) => (
+                <div key={section.heading} className="mt-10">
+                  <h2 className="text-2xl font-bold text-foreground mb-3">{section.heading}</h2>
+                  {section.paragraphs.map((p) => (
+                    <p key={p} className="text-muted-foreground leading-relaxed mb-3">
+                      {p}
+                    </p>
+                  ))}
+                  {section.bullets && section.bullets.length > 0 && (
+                    <ul className="mt-2 space-y-2">
+                      {section.bullets.map((b) => (
+                        <li key={b} className="flex items-start gap-2 text-sm text-muted-foreground">
+                          <MapPin className="h-4 w-4 text-primary mt-0.5 shrink-0" aria-hidden="true" />
+                          <span>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
+
+              <div className="mt-10 rounded-2xl border bg-secondary/20 p-6">
+                <h2 className="text-2xl font-bold text-foreground mb-2">
+                  Compare live hotel prices in {destination.name}
+                </h2>
+                <p className="text-muted-foreground mb-4">
+                  Pick your dates and Tripile shows the hotels available in {regionLabel} with the
+                  lowest current prices first.
+                </p>
+                <Button
+                  size="lg"
+                  className="gap-2"
+                  onClick={runSearch}
+                  aria-label={`Search live hotel prices in ${regionLabel}`}
+                >
+                  <Search className="h-4 w-4" aria-hidden="true" /> Search hotels in{" "}
+                  {destination.name}
+                </Button>
               </div>
 
               {placeLinks.length > 0 && (
