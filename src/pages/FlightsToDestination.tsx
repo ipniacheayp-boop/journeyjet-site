@@ -213,7 +213,7 @@ export default function FlightsToDestination() {
           <nav className="flex items-center gap-1 text-sm text-white/60 mb-6">
             <Link to="/" className="hover:text-white transition-colors">Tripile</Link>
             <ChevronRight className="w-3.5 h-3.5" />
-            <Link to="/sitemap" className="hover:text-white transition-colors">Flights</Link>
+            <Link to="/flights" className="hover:text-white transition-colors">Flights</Link>
             <ChevronRight className="w-3.5 h-3.5" />
             <span className="text-white/90">Flights to {cityName}</span>
           </nav>
