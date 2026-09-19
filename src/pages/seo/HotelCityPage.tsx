@@ -126,16 +126,7 @@ const HotelCityPage = () => {
       question: `How do I find hotels in ${destination.name}?`,
       answer: `Enter your check-in and check-out dates above and select Search Hotels. Tripile searches live availability for ${regionLabel} and shows the accommodation options returned for your dates.`,
     },
-    {
-      question: `What areas can I stay in when visiting ${destination.name}?`,
-      answer: legacy
-        ? `Popular areas to stay in ${destination.name} include ${legacy.topAreas.join(", ")}. Each neighbourhood offers different attractions and price points.`
-        : `${destination.name} has a range of central and outlying neighbourhoods. Run a search above to see the areas where properties are currently available for your dates.`,
-    },
-    {
-      question: `Are hotel prices in ${destination.name} shown live?`,
-      answer: `Yes. Tripile does not publish fixed nightly rates on this page — all rates and availability come from live search results for the dates you select.`,
-    },
+    ...intent.faqs,
   ];
 
   const breadcrumbs = [
