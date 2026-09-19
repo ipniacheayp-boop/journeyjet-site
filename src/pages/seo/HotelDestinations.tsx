@@ -157,6 +157,70 @@ const HotelDestinations = () => {
                 </div>
               </section>
             )}
+
+            <section aria-labelledby="cheap-hotels-guide" className="pt-4">
+              <h2
+                id="cheap-hotels-guide"
+                className="text-xl font-semibold text-foreground mb-4 pb-2 border-b"
+              >
+                How to find cheap hotels in any city
+              </h2>
+              <p className="text-muted-foreground leading-relaxed mb-3 max-w-3xl">
+                Hotel rates are set by demand, so the cheapest stay is rarely the same from one week
+                to the next. Tripile does not publish fixed nightly rates — every price you see comes
+                from a live search for the dates you enter, which is why comparing a few date and
+                area combinations is the fastest way to bring a total down.
+              </p>
+              <ul className="space-y-2 max-w-3xl mb-4">
+                {[
+                  "Compare flexible dates: shifting check-in by a day or two often changes the total more than switching hotels.",
+                  "Travel in shoulder season and avoid local holidays, festivals and big conferences.",
+                  "Look one district out from the centre and check the transport time back in.",
+                  "Compare the total for the whole stay with taxes and fees included, not just the nightly rate.",
+                  "Choose the refundable rate when the premium is small, so you can rebook if prices fall.",
+                  "Include aparthotels and guesthouses, which appear alongside hotels in the results.",
+                ].map((tip) => (
+                  <li key={tip} className="flex items-start gap-2 text-sm text-muted-foreground">
+                    <span
+                      className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0"
+                      aria-hidden="true"
+                    />
+                    <span>{tip}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="text-muted-foreground text-sm max-w-3xl">
+                Pick a city above to see live prices, the best areas to stay and destination-specific
+                advice on what hotels there actually cost.
+              </p>
+            </section>
+
+            <FaqSection
+              className="pt-6"
+              title="Cheap hotel questions, answered"
+              faqs={[
+                {
+                  question: "How do I find the cheapest hotel in a city?",
+                  answer:
+                    "Search your dates on the city page and the lowest available price appears first. Because availability changes constantly, the cheapest hotel is whatever is on offer for your dates rather than a fixed property.",
+                },
+                {
+                  question: "How much do hotels cost per night?",
+                  answer:
+                    "Nightly rates vary by city, season, location and room type, so Tripile shows live prices instead of published averages. Open the city page you are travelling to, enter your dates, and the search returns the current nightly prices.",
+                },
+                {
+                  question: "When is the cheapest time to book a hotel?",
+                  answer:
+                    "Outside peak season, away from public holidays and major events, and with at least a few midweek nights in the stay. Comparing two or three date ranges usually reveals the cheapest option quickly.",
+                },
+                {
+                  question: "Does Tripile show live hotel prices?",
+                  answer:
+                    "Yes. Every rate and availability figure on Tripile hotel pages comes from a live search for the dates you select, so the price you compare is the price you can book.",
+                },
+              ]}
+            />
           </div>
         </div>
       </main>
