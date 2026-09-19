@@ -91,8 +91,17 @@ const HotelCityPage = () => {
   const searchQuery = destinationSearchQuery(destination);
   const canonicalUrl = hotelDestinationCanonical(destination.slug);
 
-  const pageTitle = `Cheap Hotels in ${shortLabel} | Compare Hotel Deals | Tripile`;
-  const pageDescription = `Search and compare hotels in ${regionLabel}. Explore accommodation options and find hotels for your ${destination.name} trip with Tripile.`;
+  const alias = hotelDestinationAlias(destination.name);
+  const intent = getHotelIntentContent({
+    name: destination.name,
+    regionLabel,
+    country: destination.country,
+    topAreas: legacy?.topAreas,
+    alias,
+  });
+
+  const pageTitle = `Cheap Hotels in ${shortLabel} — Prices, Best Areas & How to Save | Tripile`;
+  const pageDescription = `How much do hotels in ${destination.name} cost? Compare live hotel prices in ${regionLabel}, see the best areas to stay${alias ? ` in ${alias}` : ""}, and find cheaper rooms for your dates with Tripile.`;
 
   const runSearch = () => {
     const params = new URLSearchParams({
