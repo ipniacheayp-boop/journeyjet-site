@@ -511,7 +511,7 @@ export default function FlightsToDestination() {
             Frequently Asked Questions
           </h2>
           <Accordion type="single" collapsible className="max-w-2xl">
-            {content.faq.map((item, i) => (
+            {allFaqs.map((item, i) => (
               <AccordionItem key={i} value={`q${i}`} className="border-border hover:bg-muted/30 rounded-lg transition-colors px-2">
                 <AccordionTrigger className="text-sm text-left hover:text-primary transition-colors">
                   {item.question}
