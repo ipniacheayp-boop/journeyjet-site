@@ -355,6 +355,28 @@ export default function FlightsToDestination() {
           expensiveMonth={content.expensiveMonth}
         />
 
+        {/* Ticket cost & fare intent (live data only, no fixed prices) */}
+        {costSections.map((section) => (
+          <section key={section.heading} className="py-8 border-t border-border">
+            <h2 className="text-2xl font-bold text-foreground mb-3">{section.heading}</h2>
+            {section.paragraphs.map((p) => (
+              <p key={p} className="text-muted-foreground leading-relaxed mb-3 max-w-3xl">
+                {p}
+              </p>
+            ))}
+            {section.bullets && (
+              <ul className="space-y-2 max-w-3xl mt-2">
+                {section.bullets.map((b) => (
+                  <li key={b} className="flex items-start gap-2 text-sm text-muted-foreground">
+                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" aria-hidden="true" />
+                    <span>{b}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        ))}
+
         {/* How to Find Cheap Flights */}
         <section className={`py-8 border-t border-border rounded-xl`}>
           <h2 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
