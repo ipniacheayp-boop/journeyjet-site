@@ -24,6 +24,7 @@ import {
   SITE_ORIGIN,
 } from "@/data/hotelDestinations";
 import { relatedLinksForDestination, hotelPlaceLinksForCity } from "@/data/seoLinkGraph";
+import { getHotelIntentContent, hotelDestinationAlias } from "@/data/hotelIntentContent";
 
 function isoDate(daysFromNow: number): string {
   const d = new Date();
