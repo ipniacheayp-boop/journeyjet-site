@@ -84,12 +84,12 @@ export default function FlightsToDestination() {
     : null;
 
   const metaTitle = cheapestPrice
-    ? `Cheap Flights to ${cityName} from $${cheapestPrice.toFixed(0)} | Tripile.com`
-    : `Cheap Flights to ${cityName} | Tripile.com`;
+    ? `Flights to ${cityName} from $${cheapestPrice.toFixed(0)} — Prices & How to Save | Tripile`
+    : `Flights to ${cityName} — Ticket Prices & How to Save | Tripile`;
 
   const metaDescription = cheapestPrice
-    ? `Find cheap flights to ${cityName} starting from $${cheapestPrice.toFixed(0)}. Compare prices across top airlines and book today.`
-    : `Compare and book cheap flights to ${cityName}. Best deals across 30+ airlines.`;
+    ? `How much is a ticket to ${cityName}? Live fares start from $${cheapestPrice.toFixed(0)} on Tripile. Compare one-way and round-trip prices and see what makes ${cityName} flights cheaper.`
+    : `How much does it cost to fly to ${cityName}? Compare live one-way and round-trip fares on Tripile and see what affects ${cityName} flight prices.`;
 
   const content = getDestinationContent(
     destination?.city || cityName,
