@@ -138,7 +138,7 @@ export default function FlightsToDestination() {
       ],
     },
     {
-      heading: `How to find cheaper flights to ${cityName}`,
+      heading: `Are flexible dates cheaper for ${cityName} flights?`,
       paragraphs: [
         `Flexible dates are the single biggest lever. Compare the days either side of your preferred departure, check nearby departure airports, and look at connecting routings before settling on a direct flight. Tripile searches live availability, so testing a different date takes seconds.`,
       ],
