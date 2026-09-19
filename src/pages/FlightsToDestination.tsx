@@ -176,19 +176,26 @@ export default function FlightsToDestination() {
       <Helmet>
         <title>{metaTitle}</title>
         <meta name="description" content={metaDescription} />
-        <link rel="canonical" href={`https://tripile.com/flights-to/${slug}`} />
+        <link rel="canonical" href={canonicalUrl} />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={metaTitle} />
+        <meta property="og:description" content={metaDescription} />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={metaTitle} />
+        <meta name="twitter:description" content={metaDescription} />
       </Helmet>
 
       <BreadcrumbSchema
         items={[
           { name: "Home", url: "https://tripile.com/" },
-          { name: "Sitemap", url: "https://tripile.com/sitemap" },
-          { name: `Flights to ${cityName}`, url: `https://tripile.com/flights-to/${slug}` },
+          { name: "Flights", url: "https://tripile.com/flights" },
+          { name: `Flights to ${cityName}`, url: canonicalUrl },
         ]}
       />
 
       <FAQSchema
-        faqs={content.faq.map((f) => ({
+        faqs={allFaqs.map((f) => ({
           question: f.question,
           answer: f.answer,
         }))}
