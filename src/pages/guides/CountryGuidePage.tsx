@@ -84,6 +84,21 @@ const CountryGuidePage = () => {
             </CardContent></Card>
           </div>
 
+          {/* Best time to visit — links to the dedicated seasonal guide */}
+          <section className="mb-10">
+            <h2 className="text-2xl font-bold text-foreground mb-3 flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-primary" aria-hidden="true" /> When is the best time to visit {meta.name}?
+            </h2>
+            <p className="text-muted-foreground leading-relaxed mb-3">
+              The best overall window is {meta.bestTime}, when weather and prices tend to align. For a month-by-month
+              breakdown of peak, shoulder and low season, festivals to plan around and what to pack, read our{" "}
+              <Link to={`/travel-guide/country/${meta.slug}/best-time-to-visit`} className="text-primary hover:underline">
+                best time to visit {meta.name} guide
+              </Link>
+              .
+            </p>
+          </section>
+
           {/* Cities to visit */}
           <section className="mb-10">
             <h2 className="text-2xl font-bold text-foreground mb-4 flex items-center gap-2">
