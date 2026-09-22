@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Search, Globe2, MapPin, Compass } from "lucide-react";
+import { Search, Globe2, MapPin, Compass, Layers } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import { cityGuides, getCountryGuides } from "@/data/travelGuides";
+import { travelCollections } from "@/data/travelCollections";
 
 const TravelGuidesHub = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -75,6 +76,31 @@ const TravelGuidesHub = () => {
         </section>
 
         <div className="container mx-auto px-4 py-8 md:py-12">
+          {/* Themed collections */}
+          <section className="mb-12">
+            <h2 className="text-2xl font-bold text-foreground mb-1.5 flex items-center gap-2">
+              <Layers className="h-5 w-5 text-primary" aria-hidden="true" /> Browse by trip style
+            </h2>
+            <p className="text-sm text-muted-foreground mb-4">
+              Beach, honeymoon, adventure, budget, family and more — see{" "}
+              <Link to="/travel-collections" className="text-primary hover:underline">all travel collections</Link>.
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
+              {travelCollections.map((c) => (
+                <Card key={c.slug}>
+                  <Link
+                    to={`/travel-collections/${c.slug}`}
+                    title={`${c.name} destinations`}
+                    className="block p-3 hover:bg-accent/60 rounded-lg transition-colors group"
+                  >
+                    <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{c.name}</p>
+                    <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{c.tagline}</p>
+                  </Link>
+                </Card>
+              ))}
+            </div>
+          </section>
+
           {/* Country guides */}
           {filteredCountries.length > 0 && (
             <section className="mb-12">

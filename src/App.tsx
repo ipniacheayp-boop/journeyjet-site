@@ -82,6 +82,9 @@ const FlightSearchLive = lazy(() => import("./pages/FlightSearchLive"));
 const TravelGuidesHub = lazy(() => import("./pages/guides/TravelGuidesHub"));
 const CityGuidePage = lazy(() => import("./pages/guides/CityGuidePage"));
 const CountryGuidePage = lazy(() => import("./pages/guides/CountryGuidePage"));
+const CountryBestTimePage = lazy(() => import("./pages/guides/CountryBestTimePage"));
+const TravelCollectionsHub = lazy(() => import("./pages/guides/TravelCollectionsHub"));
+const TravelCollectionPage = lazy(() => import("./pages/guides/TravelCollectionPage"));
 
 const FlybotWrapper = () => {
   const location = useLocation();
@@ -229,8 +232,12 @@ const App = () => (
                   {/* Legacy/editorial guide slugs published as blog articles */}
                   <Route path="/travel-guides/:slug" element={<TravelGuideArticleRedirect />} />
 
+                  <Route path="/travel-guide/country/:slug/best-time-to-visit" element={<CountryBestTimePage />} />
                   <Route path="/travel-guide/country/:slug" element={<CountryGuidePage />} />
                   <Route path="/travel-guide/:slug" element={<CityGuidePage />} />
+                  {/* Themed travel collections */}
+                  <Route path="/travel-collections" element={<TravelCollectionsHub />} />
+                  <Route path="/travel-collections/:slug" element={<TravelCollectionPage />} />
                   <Route path="/flights-to/:slug" element={<FlightsToDestination />} />
                   <Route path="/flights/:from-to-:to" element={<CityFlightPage />} />
                   <Route path="/airlines/:slug" element={<AirlinePage />} />

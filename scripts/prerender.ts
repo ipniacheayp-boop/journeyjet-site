@@ -43,6 +43,8 @@ import {
   buildCityGuide,
   buildCountryGuide,
 } from "../src/data/travelGuides";
+import { travelCollections, buildTravelCollection } from "../src/data/travelCollections";
+import { getCountrySeasons } from "../src/data/countrySeasons";
 import { dealSlugs } from "../src/data/dealSlugs";
 
 const SITE_ORIGIN = "https://tripile.com";
@@ -698,6 +700,99 @@ getCountryGuides().forEach((meta) => {
     links: g.related.map((r) => ({ href: r.href, label: r.label })),
   });
 });
+
+// Country "best time to visit" guides
+getCountryGuides().forEach((meta) => {
+  const s = getCountrySeasons(meta.key, meta.bestTime, meta.name);
+  const cities = cityGuides.filter((c) => c.country === meta.key);
+  programmaticPages.push({
+    path: `/travel-guide/country/${meta.slug}/best-time-to-visit`,
+    title: `Best Time to Visit ${meta.name} — Season by Season Guide | Tripile`.slice(0, 70),
+    description:
+      `When is the best time to visit ${meta.name}? Peak, shoulder and low season, weather, festivals and what to pack.`.slice(
+        0,
+        160,
+      ),
+    h1: `Best Time to Visit ${meta.name}`,
+    blocks: [
+      {
+        paragraphs: [
+          `The best time to visit ${meta.name} is generally ${meta.bestTime}. This season-by-season guide covers peak, shoulder and low season, the weather you can expect, the festivals that fill hotels and what to pack.`,
+        ],
+      },
+      { heading: `Weather in ${meta.name}`, paragraphs: [s.weather] },
+      {
+        heading: "Peak, shoulder and low season",
+        paragraphs: [
+          `Peak season runs ${s.peak}, with the highest flight and hotel demand. Shoulder season (${s.shoulder}) offers similar conditions with thinner crowds. Low season (${s.low}) is the cheapest, with less predictable weather or reduced opening hours at some attractions.`,
+        ],
+      },
+      { heading: "Festivals and holidays", paragraphs: [s.events] },
+      { heading: `What to pack for ${meta.name}`, paragraphs: [s.packing] },
+    ],
+    links: [
+      { href: `/travel-guide/country/${meta.slug}`, label: `${meta.name} travel guide` },
+      ...cities.slice(0, 4).map((c) => ({ href: `/travel-guide/${c.slug}`, label: `${c.city} travel guide` })),
+      { href: "/travel-collections", label: "Travel collections by trip style" },
+    ],
+  });
+});
+
+// Travel collections hub
+programmaticPages.push({
+  path: "/travel-collections",
+  title: "Travel Collections — Beach, Honeymoon, Adventure & Budget Trip Ideas | Tripile",
+  description:
+    "Browse curated Tripile travel collections by trip style: beach, islands, honeymoon, adventure, ski, luxury, budget, family, city breaks, food and heritage trips.",
+  h1: "Travel Collections by Trip Style",
+  blocks: [
+    {
+      paragraphs: [
+        "Not sure where to go? Start from the kind of trip you want. Each Tripile collection explains who it suits, what to expect, how to plan it and which destinations are worth comparing, with live flight and hotel prices for your own dates.",
+      ],
+    },
+    {
+      heading: "Build your own travel package",
+      paragraphs: [
+        "Tripile does not sell fixed bundles. Search flights for your dates, add a hotel in the same destination and a rental car if your itinerary needs one. You see each element's live price and cancellation terms before checkout, so you keep control of the whole trip.",
+      ],
+    },
+  ],
+  links: travelCollections.map((c) => ({ href: `/travel-collections/${c.slug}`, label: c.name })),
+});
+
+// Travel collection pages
+travelCollections.forEach((c) => {
+  const view = buildTravelCollection(c);
+  programmaticPages.push({
+    path: `/travel-collections/${c.slug}`,
+    title: `${c.h1} — Where to Go & How to Plan It | Tripile`.slice(0, 70),
+    description: `${c.h1}: destinations worth comparing, what to expect, when to go and how to plan the trip.`.slice(
+      0,
+      160,
+    ),
+    h1: c.h1,
+    blocks: [
+      { paragraphs: [c.intro] },
+      {
+        heading: "Who this collection suits",
+        paragraphs: [`Best for ${c.bestFor}. ${c.whatToExpect}`],
+      },
+      {
+        heading: `${c.name}: destinations to compare`,
+        paragraphs: view.destinations.map((d) => `${d.dest.city}: ${d.note}`),
+      },
+      { heading: "How to plan and price this trip", paragraphs: c.planningTips },
+      {
+        heading: "Frequently Asked Questions",
+        paragraphs: view.faqs.map((f) => `${f.question} ${f.answer}`),
+      },
+    ],
+    links: view.related.map((r) => ({ href: r.href, label: r.label })),
+  });
+});
+
+
 
 // Blog posts
 blogPosts.forEach((p) => {

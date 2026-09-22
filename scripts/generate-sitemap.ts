@@ -15,6 +15,7 @@ import { airportLandingPages } from "../src/data/airportLandingData";
 import { blogPosts } from "../src/data/blogPosts";
 import { cruiseDestinations } from "../src/data/cruiseDestinations";
 import { cityGuides, getCountryGuides } from "../src/data/travelGuides";
+import { travelCollections } from "../src/data/travelCollections";
 import { dealSlugs } from "../src/data/dealSlugs";
 import { hotelPlaces, hotelPlacePath } from "../src/data/hotelPlaceCatalog";
 import { flightRouteCatalog } from "../src/data/flightRouteCatalog";
@@ -148,7 +149,20 @@ const cityGuideEntries: Entry[] = cityGuides.map((c) => ({
 
 const travelGuideHub: Entry[] = [
   { path: "/travel-guides", changefreq: "weekly", priority: "0.85" },
+  { path: "/travel-collections", changefreq: "weekly", priority: "0.8" },
 ];
+
+const bestTimeEntries: Entry[] = getCountryGuides().map((c) => ({
+  path: `/travel-guide/country/${c.slug}/best-time-to-visit`,
+  changefreq: "monthly",
+  priority: "0.75",
+}));
+
+const collectionEntries: Entry[] = travelCollections.map((c) => ({
+  path: `/travel-collections/${c.slug}`,
+  changefreq: "weekly",
+  priority: "0.75",
+}));
 
 // Note: /search-results, /account, /my-bookings, /booking/:id, /auth/*,
 // /flights/search, /reviews/analytics, /reviews/site and /admin/* are
@@ -175,6 +189,8 @@ const sitemaps: { file: string; entries: Entry[] }[] = [
       ...flightsToEntries,
       ...travelGuideHub,
       ...countryGuideEntries,
+      ...bestTimeEntries,
+      ...collectionEntries,
       ...cityGuideEntries,
       ...carRentalEntries,
     ],
