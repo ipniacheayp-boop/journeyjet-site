@@ -189,6 +189,8 @@ const sitemaps: { file: string; entries: Entry[] }[] = [
       ...flightsToEntries,
       ...travelGuideHub,
       ...countryGuideEntries,
+      ...bestTimeEntries,
+      ...collectionEntries,
       ...cityGuideEntries,
       ...carRentalEntries,
     ],
