@@ -15,6 +15,7 @@ import { airportLandingPages } from "../src/data/airportLandingData";
 import { blogPosts } from "../src/data/blogPosts";
 import { cruiseDestinations } from "../src/data/cruiseDestinations";
 import { cityGuides, getCountryGuides } from "../src/data/travelGuides";
+import { travelCollections } from "../src/data/travelCollections";
 import { dealSlugs } from "../src/data/dealSlugs";
 import { hotelPlaces, hotelPlacePath } from "../src/data/hotelPlaceCatalog";
 import { flightRouteCatalog } from "../src/data/flightRouteCatalog";
