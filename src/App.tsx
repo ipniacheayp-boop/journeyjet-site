@@ -82,6 +82,9 @@ const FlightSearchLive = lazy(() => import("./pages/FlightSearchLive"));
 const TravelGuidesHub = lazy(() => import("./pages/guides/TravelGuidesHub"));
 const CityGuidePage = lazy(() => import("./pages/guides/CityGuidePage"));
 const CountryGuidePage = lazy(() => import("./pages/guides/CountryGuidePage"));
+const CountryBestTimePage = lazy(() => import("./pages/guides/CountryBestTimePage"));
+const TravelCollectionsHub = lazy(() => import("./pages/guides/TravelCollectionsHub"));
+const TravelCollectionPage = lazy(() => import("./pages/guides/TravelCollectionPage"));
 
 const FlybotWrapper = () => {
   const location = useLocation();
