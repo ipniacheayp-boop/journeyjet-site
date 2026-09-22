@@ -148,7 +148,20 @@ const cityGuideEntries: Entry[] = cityGuides.map((c) => ({
 
 const travelGuideHub: Entry[] = [
   { path: "/travel-guides", changefreq: "weekly", priority: "0.85" },
+  { path: "/travel-collections", changefreq: "weekly", priority: "0.8" },
 ];
+
+const bestTimeEntries: Entry[] = getCountryGuides().map((c) => ({
+  path: `/travel-guide/country/${c.slug}/best-time-to-visit`,
+  changefreq: "monthly",
+  priority: "0.75",
+}));
+
+const collectionEntries: Entry[] = travelCollections.map((c) => ({
+  path: `/travel-collections/${c.slug}`,
+  changefreq: "weekly",
+  priority: "0.75",
+}));
 
 // Note: /search-results, /account, /my-bookings, /booking/:id, /auth/*,
 // /flights/search, /reviews/analytics, /reviews/site and /admin/* are
