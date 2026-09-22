@@ -43,6 +43,8 @@ import {
   buildCityGuide,
   buildCountryGuide,
 } from "../src/data/travelGuides";
+import { travelCollections, buildTravelCollection } from "../src/data/travelCollections";
+import { getCountrySeasons } from "../src/data/countrySeasons";
 import { dealSlugs } from "../src/data/dealSlugs";
 
 const SITE_ORIGIN = "https://tripile.com";
