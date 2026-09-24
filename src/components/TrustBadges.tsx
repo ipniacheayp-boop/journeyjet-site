@@ -46,12 +46,6 @@ const TrustBadges = () => {
 
   const platforms = [
     {
-      name: "Trustpilot",
-      rating: "4.4",
-      reviews: "127 reviews",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/7/78/Trustpilot_Logo_%282022%29.svg",
-    },
-    {
       name: "Google",
       rating: "4.1",
       reviews: "143 reviews",
