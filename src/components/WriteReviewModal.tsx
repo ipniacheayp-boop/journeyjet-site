@@ -202,7 +202,6 @@ const WriteReviewModal = ({ open, onOpenChange, onReviewAdded }: WriteReviewModa
               </SelectTrigger>
               <SelectContent className="bg-slate-900 border-white/10">
                 <SelectItem value="Direct">Direct</SelectItem>
-                <SelectItem value="Trustpilot">Trustpilot</SelectItem>
                 <SelectItem value="Google">Google</SelectItem>
               </SelectContent>
             </Select>

@@ -9,7 +9,7 @@ The Demo Reviews system allows for adding test reviews to the application for UI
 ⚠️ **CRITICAL**: Demo reviews are for internal development and testing ONLY.
 - Adding fake public reviews is fraudulent and violates platform policies
 - Do NOT enable demo reviews on the live public site
-- Do NOT post fake reviews on third-party platforms (Google, Yelp, Trustpilot, etc.)
+- Do NOT post fake reviews on third-party platforms (Google, Yelp, etc.)
 - Only use these for internal QA and UI testing
 
 ## Features

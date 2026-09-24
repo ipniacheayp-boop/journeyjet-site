@@ -82,7 +82,7 @@ const reviews = [
   },
 ];
 
-export default function TrustpilotSlider() {
+export default function ReviewSlider() {
   const [index, setIndex] = useState(0);
 
   return (
