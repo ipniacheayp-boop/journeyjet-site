@@ -43,13 +43,6 @@ const FlightOfferSchema = ({
         "@type": "Organization",
         "name": "Tripile.com"
       }
-    },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.6",
-      "reviewCount": "2847",
-      "bestRating": "5",
-      "worstRating": "1"
     }
   };
 

@@ -19,7 +19,7 @@ import { airportLandingPages } from "../src/data/airportLandingData";
 import { blogPosts } from "../src/data/blogPosts";
 import { cruiseDestinations } from "../src/data/cruiseDestinations";
 import { cityGuides, getCountryGuides } from "../src/data/travelGuides";
-import { dealSlugs } from "../src/data/dealSlugs";
+import { activeDealSlugs } from "../src/data/dealSlugs";
 import { hotelPlaces, hotelPlacePath } from "../src/data/hotelPlaceCatalog";
 import { flightRouteCatalog } from "../src/data/flightRouteCatalog";
 
@@ -128,7 +128,7 @@ for (const path of pathSeen) {
 
 // 7. Missing routes — every catalog-backed page must be present
 const required = new Map<string, string>([
-  ...dealSlugs.map((s) => [`/deals/${s}`, `deal ${s}`] as const),
+  ...activeDealSlugs().map((s) => [`/deals/${s}`, `deal ${s}`] as const),
   ...blogPosts.map((p) => [`/blog/${p.slug}`, `blog ${p.slug}`] as const),
   ...cruiseDestinations.map((d) => [`/cruises/${d.slug}`, `cruise ${d.slug}`] as const),
   ...popularDestinations.map((d) => [`/flights-to/${d.slug}`, `flights-to ${d.slug}`] as const),

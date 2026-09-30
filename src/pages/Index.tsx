@@ -45,7 +45,6 @@ import {
   Clock,
   Headphones,
   CreditCard,
-  Star,
   Users,
   Plane,
   ChevronRight,
@@ -341,12 +340,11 @@ const Index = () => {
       {/* Trust stats bar */}
       <section aria-label="Tripile trust metrics" className="bg-white dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800">
         <div className="container mx-auto px-4 py-5">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8 max-w-4xl mx-auto">
             {[
               { icon: Users, value: "2,500+", label: "US Travelers", color: "text-primary", href: "/reviews" },
               { icon: Plane, value: "500+", label: "Airlines Compared", color: "text-indigo-600", href: "/flights" },
               { icon: Hotel, value: "$79", label: "Hotels From", color: "text-indigo-600", href: "/hotels" },
-              { icon: Star, value: "4.5★", label: "Average Rating", color: "text-amber-500", href: "/reviews" },
             ].map(({ icon: Icon, value, label, color, href }) => (
               <Link
                 key={label}
@@ -475,21 +473,9 @@ const Index = () => {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-muted-foreground"
           >
-            <div className="flex items-center gap-1.5">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
-              ))}
-              <span className="font-semibold text-foreground ml-1">4.5</span>
-              <span>/ 5 average rating</span>
-            </div>
-            <span className="hidden sm:block w-px h-4 bg-border" />
-            <span>
-              Based on <strong className="text-foreground">56,000+</strong> verified reviews
-            </span>
-            <span className="hidden sm:block w-px h-4 bg-border" />
             <Link
               to="/reviews"
-              title="Read verified Tripile customer reviews"
+              title="Read Tripile customer reviews"
               className="text-primary font-semibold hover:underline flex items-center gap-1"
             >
               Read reviews <ArrowRight className="w-3.5 h-3.5" />

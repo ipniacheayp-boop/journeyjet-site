@@ -1,4 +1,4 @@
-/** JSON-LD for homepage — WebPage + AggregateRating for rich results */
+/** JSON-LD for homepage — WebPage, WebSite and Organization */
 const HomePageSchema = () => {
   const schema = {
     "@context": "https://schema.org",
@@ -16,23 +16,6 @@ const HomePageSchema = () => {
         primaryImageOfPage: {
           "@type": "ImageObject",
           url: "https://tripile.com/og-image.png",
-        },
-      },
-      {
-        "@type": "WebSite",
-        "@id": "https://tripile.com/#website",
-        url: "https://tripile.com/",
-        name: "Tripile",
-        alternateName: "Tripile.com",
-        publisher: { "@id": "https://tripile.com/#organization" },
-        inLanguage: "en-US",
-        potentialAction: {
-          "@type": "SearchAction",
-          target: {
-            "@type": "EntryPoint",
-            urlTemplate: "https://tripile.com/flights?originLocationCode={origin}&destinationLocationCode={destination}",
-          },
-          "query-input": ["required name=origin", "required name=destination"],
         },
       },
       {
@@ -58,27 +41,13 @@ const HomePageSchema = () => {
           areaServed: "US",
           availableLanguage: ["English", "Spanish"],
         },
-        aggregateRating: {
-          "@type": "AggregateRating",
-          ratingValue: "4.5",
-          reviewCount: "56000",
-          bestRating: "5",
-        },
         sameAs: [
           "https://facebook.com/tripile",
           "https://twitter.com/tripile",
           "https://instagram.com/tripile",
           "https://linkedin.com/company/tripile",
         ],
-      },
-      {
-        "@type": "LodgingBusiness",
-        name: "Tripile Hotel Search",
-        url: "https://tripile.com/hotels",
-        description: "Compare cheap hotels across the USA — from budget stays to luxury resorts in every major city.",
-        areaServed: { "@type": "Country", name: "United States" },
-        provider: { "@id": "https://tripile.com/#organization" },
-      },
+      }
     ],
   };
 

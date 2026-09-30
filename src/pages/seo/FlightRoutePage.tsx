@@ -8,7 +8,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import FlightOfferSchema from '@/components/seo/FlightOfferSchema';
 import BreadcrumbSchema from '@/components/seo/BreadcrumbSchema';
 import FAQSchema from '@/components/seo/FAQSchema';
-import ReviewSchema from '@/components/seo/ReviewSchema';
 import { seoFlightRoutes } from '@/data/seoRoutes';
 
 const FlightRoutePage = () => {
@@ -100,7 +99,6 @@ const FlightRoutePage = () => {
       />
       <BreadcrumbSchema items={breadcrumbs} />
       <FAQSchema faqs={faqs} />
-      <ReviewSchema ratingValue={4.6} reviewCount={2847} />
 
       <main className="min-h-screen bg-background pt-20">
         {/* Breadcrumb Navigation */}
