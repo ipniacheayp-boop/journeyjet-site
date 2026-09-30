@@ -99,7 +99,7 @@ const corePages: Page[] = [
     path: "/",
     title: "Tripile.com – Buy Cheap Flights, Hotels & Car Rentals | Best US Travel Deals",
     description:
-      "Buy cheap flights, hotels & car rentals across the USA on Tripile.com. Compare 500+ airlines, get Price Match Guarantee, and save up to 46%. Trusted by 2M+ travelers.",
+      "Buy cheap flights, hotels & car rentals across the USA on Tripile.com. Compare 500+ airlines, get Price Match Guarantee, and save up to 46%. Trusted by 2,500+ travelers.",
     h1: "Cheap Flights, Hotels & Car Rentals USA | Tripile",
     blocks: [
       {
@@ -424,7 +424,7 @@ const corePages: Page[] = [
     path: "/about",
     title: "About Tripile | Trusted US Travel Booking Platform",
     description:
-      "Learn about Tripile, a US travel booking platform helping 2M+ travelers compare cheap flights, hotels, and car rentals with transparent pricing and 24/7 support.",
+      "Learn about Tripile, a US travel booking platform helping 2,500+ travelers compare cheap flights, hotels, and car rentals with transparent pricing and 24/7 support.",
     h1: "About Tripile",
     blocks: [
       {

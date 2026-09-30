@@ -16,7 +16,7 @@ import { blogPosts } from "../src/data/blogPosts";
 import { cruiseDestinations } from "../src/data/cruiseDestinations";
 import { cityGuides, getCountryGuides } from "../src/data/travelGuides";
 import { travelCollections } from "../src/data/travelCollections";
-import { dealSlugs } from "../src/data/dealSlugs";
+import { activeDealSlugs } from "../src/data/dealSlugs";
 import { hotelPlaces, hotelPlacePath } from "../src/data/hotelPlaceCatalog";
 import { flightRouteCatalog } from "../src/data/flightRouteCatalog";
 
@@ -87,7 +87,7 @@ const core: Entry[] = [
   { path: "/privacy", changefreq: "monthly", priority: "0.4" },
 ];
 
-const dealEntries: Entry[] = dealSlugs.map((slug) => ({
+const dealEntries: Entry[] = activeDealSlugs().map((slug) => ({
   path: `/deals/${slug}`,
   changefreq: "weekly",
   priority: "0.75",

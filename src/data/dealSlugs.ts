@@ -149,3 +149,18 @@ export const dealSlugs = [
   "seattle-rome-2026-05-17",
   "san-francisco-dubai-2026-06-08",
 ];
+
+/**
+ * Dated sample deal slugs end in YYYY-MM-DD. Once that trip date has passed the
+ * page describes an expired offer, so it is kept reachable but left out of the
+ * XML sitemap. Slugs without a trailing date are never treated as expired.
+ */
+export function isExpiredDealSlug(slug: string, now: Date = new Date()): boolean {
+  const m = slug.match(/(\d{4}-\d{2}-\d{2})$/);
+  if (!m) return false;
+  const tripDate = new Date(`${m[1]}T23:59:59Z`);
+  return !Number.isNaN(tripDate.getTime()) && tripDate < now;
+}
+
+export const activeDealSlugs = (now: Date = new Date()) =>
+  dealSlugs.filter((slug) => !isExpiredDealSlug(slug, now));

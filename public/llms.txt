@@ -34,7 +34,7 @@
 - [Web check-in](/web-check-in): Direct airline check-in links.
 - [Customer support](/support): 24/7 support, contact options, and help articles.
 - [Travel blog](/blog): Guides, tips, and destination stories.
-- [Customer reviews](/reviews): Real traveler reviews of Tripile.
+- [Customer reviews](/reviews): Customer reviews of Tripile.
 - [About Tripile](/about): Company overview and mission.
 - [Careers](/careers): Open roles at Trivoya Ventures LLC.
 - [Site map](/sitemap): HTML index of all public pages.
