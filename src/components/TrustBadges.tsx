@@ -85,7 +85,7 @@ const TrustBadges = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto mb-20">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto mb-20">
           {stats.map((stat) => {
             const Icon = stat.icon;
 
