@@ -45,7 +45,6 @@ import {
   Clock,
   Headphones,
   CreditCard,
-  Star,
   Users,
   Plane,
   ChevronRight,
@@ -341,7 +340,7 @@ const Index = () => {
       {/* Trust stats bar */}
       <section aria-label="Tripile trust metrics" className="bg-white dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800">
         <div className="container mx-auto px-4 py-5">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-3 gap-4 md:gap-8 max-w-4xl mx-auto">
             {[
               { icon: Users, value: "2,500+", label: "US Travelers", color: "text-primary", href: "/reviews" },
               { icon: Plane, value: "500+", label: "Airlines Compared", color: "text-indigo-600", href: "/flights" },
