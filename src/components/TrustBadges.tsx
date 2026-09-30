@@ -1,4 +1,4 @@
-import { Award, Shield, ThumbsUp, Users, Star } from "lucide-react";
+import { Award, Shield, Users, Star } from "lucide-react";
 
 const TrustBadges = () => {
   const stats = [
@@ -11,16 +11,6 @@ const TrustBadges = () => {
       border: "border border-blue-100 dark:border-blue-500/20",
       glow: "hover:shadow-blue-500/10",
       subtleBg: "from-blue-50/50 to-transparent dark:from-blue-900/10",
-    },
-    {
-      icon: ThumbsUp,
-      value: "4.5/5",
-      label: "Average Rating",
-      color: "text-emerald-600 dark:text-emerald-400",
-      bg: "bg-emerald-50 dark:bg-emerald-500/10",
-      border: "border border-emerald-100 dark:border-emerald-500/20",
-      glow: "hover:shadow-emerald-500/10",
-      subtleBg: "from-emerald-50/50 to-transparent dark:from-emerald-900/10",
     },
     {
       icon: Shield,
@@ -95,7 +85,7 @@ const TrustBadges = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 max-w-6xl mx-auto mb-20">
+        <div className="grid grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto mb-20">
           {stats.map((stat) => {
             const Icon = stat.icon;
 
