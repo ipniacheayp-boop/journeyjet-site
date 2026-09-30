@@ -475,21 +475,9 @@ const Index = () => {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-muted-foreground"
           >
-            <div className="flex items-center gap-1.5">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
-              ))}
-              <span className="font-semibold text-foreground ml-1">4.5</span>
-              <span>/ 5 average rating</span>
-            </div>
-            <span className="hidden sm:block w-px h-4 bg-border" />
-            <span>
-              Based on <strong className="text-foreground">56,000+</strong> verified reviews
-            </span>
-            <span className="hidden sm:block w-px h-4 bg-border" />
             <Link
               to="/reviews"
-              title="Read verified Tripile customer reviews"
+              title="Read Tripile customer reviews"
               className="text-primary font-semibold hover:underline flex items-center gap-1"
             >
               Read reviews <ArrowRight className="w-3.5 h-3.5" />
