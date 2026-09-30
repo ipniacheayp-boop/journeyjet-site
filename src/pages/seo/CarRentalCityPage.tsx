@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import BreadcrumbSchema from '@/components/seo/BreadcrumbSchema';
 import FAQSchema from '@/components/seo/FAQSchema';
-import ReviewSchema from '@/components/seo/ReviewSchema';
 import { resolveCarRentalCity } from '@/data/seoRoutes';
 
 const CarRentalCityPage = () => {
@@ -84,7 +83,6 @@ const CarRentalCityPage = () => {
 
       <BreadcrumbSchema items={breadcrumbs} />
       <FAQSchema faqs={faqs} />
-      <ReviewSchema ratingValue={4.4} reviewCount={892} />
 
       <main className="min-h-screen bg-background pt-20">
         {/* Breadcrumb Navigation */}

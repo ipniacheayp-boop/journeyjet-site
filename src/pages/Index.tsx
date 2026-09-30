@@ -346,7 +346,6 @@ const Index = () => {
               { icon: Users, value: "2,500+", label: "US Travelers", color: "text-primary", href: "/reviews" },
               { icon: Plane, value: "500+", label: "Airlines Compared", color: "text-indigo-600", href: "/flights" },
               { icon: Hotel, value: "$79", label: "Hotels From", color: "text-indigo-600", href: "/hotels" },
-              { icon: Star, value: "4.5★", label: "Average Rating", color: "text-amber-500", href: "/reviews" },
             ].map(({ icon: Icon, value, label, color, href }) => (
               <Link
                 key={label}

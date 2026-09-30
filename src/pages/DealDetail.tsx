@@ -171,13 +171,6 @@ const DealDetail = () => {
       "priceValidUntil": deal.returnDate,
       "seller": { "@type": "Organization", "name": "Tripile.com" },
     },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.5",
-      "reviewCount": "2847",
-      "bestRating": "5",
-      "worstRating": "1",
-    },
   };
 
   return (

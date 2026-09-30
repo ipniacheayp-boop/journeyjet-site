@@ -22,7 +22,6 @@ import { Badge } from "@/components/ui/badge";
 import AirportSchema from "@/components/seo/AirportSchema";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import FAQSchema from "@/components/seo/FAQSchema";
-import ReviewSchema from "@/components/seo/ReviewSchema";
 import { findAirportBySlug, airportLandingPages } from "@/data/airportLandingData";
 
 const AirportLandingPage = () => {
@@ -106,7 +105,6 @@ const AirportLandingPage = () => {
       />
       <BreadcrumbSchema items={breadcrumbs} />
       <FAQSchema faqs={airport.faqs} />
-      <ReviewSchema ratingValue={4.5} reviewCount={1847} />
 
       <main className="pt-16">
         {/* Breadcrumb Navigation */}

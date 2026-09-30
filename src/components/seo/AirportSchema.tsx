@@ -66,13 +66,6 @@ const AirportSchema = ({
         "@type": "Organization",
         "name": "Tripile.com"
       }
-    },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.5",
-      "reviewCount": "1847",
-      "bestRating": "5",
-      "worstRating": "1"
     }
   };
 

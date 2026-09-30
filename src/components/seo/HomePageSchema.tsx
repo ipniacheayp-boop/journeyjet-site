@@ -19,15 +19,6 @@ const HomePageSchema = () => {
         },
       },
       {
-        "@type": "WebSite",
-        "@id": "https://tripile.com/#website",
-        url: "https://tripile.com/",
-        name: "Tripile",
-        alternateName: "Tripile.com",
-        publisher: { "@id": "https://tripile.com/#organization" },
-        inLanguage: "en-US"
-      },
-      {
         "@type": "Organization",
         "@id": "https://tripile.com/#organization",
         name: "Tripile",
