@@ -17,16 +17,23 @@ const HeroBackground = () => {
     <div ref={ref} className="absolute inset-0 overflow-hidden" aria-hidden="true">
       {/* Parallax image layer */}
       <motion.div className="absolute inset-0" style={{ y: imageY, scale: imageScale }}>
-        <img
-          src={HERO_IMAGE}
-          alt=""
-          width={1920}
-          height={1080}
-          fetchPriority="high"
-          loading="eager"
-          decoding="async"
-          className="absolute inset-0 h-[115%] w-full object-cover object-center hero-bg-ken-burns"
-        />
+        <picture>
+          <source
+            type="image/webp"
+            srcSet="/images/hero-flights-hotels-768.webp 768w, /images/hero-flights-hotels-1280.webp 1280w, /images/hero-flights-hotels-1920.webp 1920w"
+            sizes="100vw"
+          />
+          <img
+            src={HERO_IMAGE}
+            alt=""
+            width={1920}
+            height={1080}
+            fetchPriority="high"
+            loading="eager"
+            decoding="async"
+            className="absolute inset-0 h-[115%] w-full object-cover object-center hero-bg-ken-burns"
+          />
+        </picture>
       </motion.div>
 
       {/* Animated color wash */}
