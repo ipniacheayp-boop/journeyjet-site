@@ -1344,7 +1344,7 @@ function renderArticle(page: Page): string {
     .map((l) => `<li><a href="${esc(l.href)}">${esc(l.label)}</a></li>`)
     .join("");
   return (
-    `<article id="seo-static-content" style="max-width: 900px; display:none; margin: 0 auto; padding: 20px; font-family: Inter, Arial, sans-serif; line-height: 1.6;">` +
+    `<article id="seo-static-content" style="max-width: 900px; margin: 0 auto; padding: 20px; font-family: Inter, Arial, sans-serif; line-height: 1.6;">` +
     `<h1>${esc(page.h1)}</h1>` +
     blocksHtml +
     `<h2>Explore More on Tripile</h2><ul>${linksHtml}</ul>` +
@@ -1371,6 +1371,13 @@ function buildHtml(page: Page): string {
   let html = template;
   // Unique <title>
   html = html.replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(page.title)}</title>`);
+  // Remove the template's generic description/canonical/social tags so each
+  // prerendered page ships exactly ONE of each (the per-route tags below).
+  html = html
+    .replace(/\s*<meta\b[^>]*name="description"[^>]*\/>/, "")
+    .replace(/\s*<link\b[^>]*rel="canonical"[^>]*\/>/, "")
+    .replace(/\s*<meta\b[^>]*property="og:(title|description|url)"[^>]*\/>/g, "")
+    .replace(/\s*<meta\b[^>]*name="twitter:(title|description)"[^>]*\/>/g, "");
   // Inject per-route head meta right before </head>
   html = html.replace(/<\/head>/, `    ${renderHeadMeta(page)}\n  </head>`);
   // Replace the shared static article with route-specific content
