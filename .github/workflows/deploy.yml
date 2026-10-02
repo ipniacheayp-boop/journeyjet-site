@@ -48,8 +48,31 @@ jobs:
         env:
           S3_BUCKET: ${{ secrets.S3_BUCKET }}
 
+      - name: Verify prerendered pages exist
+        run: |
+          for p in flights last-minute-flight-deals cheap-flights-india-to-usa travel-collections cheap-hotels-in/paris flights-to/dubai; do
+            test -f "dist/$p/index.html" || { echo "missing dist/$p/index.html"; exit 1; }
+          done
+
+      - name: Serve clean URLs from prerendered index.html (CloudFront Function)
+        env:
+          CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+        run: bash scripts/cloudfront/ensure-clean-urls.sh
+
       - name: Invalidate CloudFront
         run: |
           aws cloudfront create-invalidation \
             --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
             --paths "/*"
+
+      - name: Verify live clean URLs
+        run: |
+          sleep 60
+          fail=0
+          for p in flights last-minute-flight-deals cheap-flights-india-to-usa travel-collections cheap-hotels-in/paris flights-to/dubai; do
+            html=$(curl -s "https://tripile.com/$p")
+            canon=$(echo "$html" | grep -o 'rel="canonical" href="[^"]*' | head -1 | sed 's/.*href="//')
+            echo "/$p -> $canon"
+            [ "$canon" = "https://tripile.com/$p" ] || fail=1
+          done
+          [ $fail = 0 ] || echo "::warning::Some clean URLs not serving their own page yet (CloudFront may still be propagating)"
