@@ -48,7 +48,7 @@ const FlightIntentGuidePage = ({ page }: { page: keyof typeof PAGES }) => {
         ]}
       />
       <Header />
-      <main className="flex-1">
+      <main className="flex-1 pt-16 md:pt-[104px]">
         <div className="container mx-auto px-4 pt-8 max-w-4xl">
           <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground mb-3">
             <Link to="/" className="hover:underline">Home</Link> /{" "}
