@@ -1,3 +1,5 @@
+import IntentGuideSection from "@/components/seo/IntentGuideSection";
+import { dealsGuide } from "@/data/flightIntentGuides";
 import { useCallback, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
 import Header from "@/components/Header";
@@ -450,6 +452,7 @@ const Deals = () => {
             )}
           </>
         )}
+        <IntentGuideSection guide={dealsGuide} />
       </main>
 
       <Footer />

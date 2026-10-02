@@ -1,3 +1,5 @@
+import IntentGuideSection from "@/components/seo/IntentGuideSection";
+import { flightsHubGuide } from "@/data/flightIntentGuides";
 import { Helmet } from "react-helmet";
 import { Link, useLocation } from "react-router-dom";
 import Header from "@/components/Header";
@@ -393,6 +395,7 @@ const SearchHubPage = () => {
             </Link>
           </nav>
         </div>
+        {hubPath === "/flights" && <IntentGuideSection guide={flightsHubGuide} />}
       </main>
 
       <Footer />
