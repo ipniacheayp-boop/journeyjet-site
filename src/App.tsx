@@ -77,6 +77,7 @@ const RefundPolicy = lazy(() => import("./pages/RefundPolicy"));
 const PriceMatch = lazy(() => import("./pages/PriceMatch"));
 const TripPlanner = lazy(() => import("./pages/TripPlanner"));
 const Explore = lazy(() => import("./pages/Explore"));
+const FlightIntentGuidePage = lazy(() => import("./pages/seo/FlightIntentGuidePage"));
 const SearchHubPage = lazy(() => import("./pages/SearchHubPage"));
 const FlightSearchLive = lazy(() => import("./pages/FlightSearchLive"));
 const TravelGuidesHub = lazy(() => import("./pages/guides/TravelGuidesHub"));
@@ -137,6 +138,8 @@ const App = () => (
                   <Route path="/car-rentals" element={<SearchHubPage />} />
                   <Route path="/deals" element={<Deals />} />
                   <Route path="/coupons" element={<Coupons />} />
+                  <Route path="/last-minute-flight-deals" element={<FlightIntentGuidePage page="last-minute" />} />
+                  <Route path="/cheap-flights-india-to-usa" element={<FlightIntentGuidePage page="india-usa" />} />
                   {/* Clean-URL aliases → consolidate on /deals canonical */}
                   <Route path="/flight-deals" element={<Navigate to="/deals" replace />} />
                   <Route path="/hotel-deals" element={<Navigate to="/deals" replace />} />

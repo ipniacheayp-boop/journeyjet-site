@@ -46,6 +46,7 @@ import {
 import { travelCollections, buildTravelCollection } from "../src/data/travelCollections";
 import { getCountrySeasons } from "../src/data/countrySeasons";
 import { dealSlugs } from "../src/data/dealSlugs";
+import { lastMinuteGuide, indiaUsaGuide, type IntentGuide } from "../src/data/flightIntentGuides";
 
 const SITE_ORIGIN = "https://tripile.com";
 const DIST = resolve("dist");
@@ -612,6 +613,31 @@ const corePages: Page[] = [
 // ---------------------------------------------------------------------------
 // 2) Programmatic pages generated from data sources
 // ---------------------------------------------------------------------------
+
+const guideBlocks = (g: IntentGuide): Block[] => [
+  { paragraphs: [g.answer] },
+  ...g.sections.map((x) => ({ heading: x.heading, paragraphs: [...x.paragraphs, ...(x.bullets ?? [])] })),
+  ...(g.faqs ?? []).map((f) => ({ heading: f.question, paragraphs: [f.answer] })),
+];
+corePages.push(
+  {
+    path: "/last-minute-flight-deals",
+    title: "Last-Minute Flight Deals — How to Find Cheaper Late Fares | Tripile",
+    description: "How to find last-minute flight deals: compare live fares with flexible dates and nearby airports, check baggage and change terms, and book before seats sell out.",
+    h1: lastMinuteGuide.heading,
+    blocks: guideBlocks(lastMinuteGuide),
+    links: lastMinuteGuide.links,
+  },
+  {
+    path: "/cheap-flights-india-to-usa",
+    title: "Cheap Flights from India to USA — Airports, Routes & Tips | Tripile",
+    description: "Guide to cheap flights from India to the USA: main airports, nonstop vs one-stop routes, what affects fares, visa and passport notes, and live fare comparison.",
+    h1: indiaUsaGuide.heading,
+    blocks: guideBlocks(indiaUsaGuide),
+    links: indiaUsaGuide.links,
+  },
+);
+
 const programmaticPages: Page[] = [];
 
 // Cruise destinations

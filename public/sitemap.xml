@@ -31,6 +31,16 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://tripile.com/last-minute-flight-deals</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tripile.com/cheap-flights-india-to-usa</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://tripile.com/cruise-deals</loc>
     <changefreq>weekly</changefreq>
     <priority>0.75</priority>

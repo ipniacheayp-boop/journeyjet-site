@@ -1,3 +1,5 @@
+import IntentGuideSection from "@/components/seo/IntentGuideSection";
+import { homeGuide } from "@/data/flightIntentGuides";
 import { useState, useMemo, useEffect, lazy, Suspense } from "react";
 import { Helmet } from "react-helmet";
 import { motion } from "framer-motion";
@@ -757,6 +759,7 @@ const Index = () => {
         </div>
       </section>
 
+      <IntentGuideSection guide={homeGuide} hideFaqs />
       </main>
 
       <Footer />
