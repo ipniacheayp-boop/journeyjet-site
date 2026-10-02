@@ -48,6 +48,17 @@ jobs:
         env:
           S3_BUCKET: ${{ secrets.S3_BUCKET }}
 
+      - name: Verify prerendered pages exist
+        run: |
+          for p in flights last-minute-flight-deals cheap-flights-india-to-usa travel-collections cheap-hotels-in/paris flights-to/dubai; do
+            test -f "dist/$p/index.html" || { echo "missing dist/$p/index.html"; exit 1; }
+          done
+
+      - name: Serve clean URLs from prerendered index.html (CloudFront Function)
+        env:
+          CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+        run: bash scripts/cloudfront/ensure-clean-urls.sh
+
       - name: Invalidate CloudFront
         run: |
           aws cloudfront create-invalidation \
