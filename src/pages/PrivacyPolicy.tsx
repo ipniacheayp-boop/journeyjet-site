@@ -445,6 +445,40 @@ const sections: Section[] = [
     ),
   },
   {
+    id: "your-responsibilities",
+    title: "Information about other travellers",
+    body: (
+      <>
+        <P>
+          When you book for other people, you give us their names, dates of birth and, for international flights,
+          passport details. By doing so you confirm that you are allowed to share this information and that you have
+          told them how it will be used under this policy.
+        </P>
+        <UL>
+          <li>We use it only to make and manage that booking and to meet airline and government rules.</li>
+          <li>The airline or supplier receives the details it needs to issue the ticket or reservation.</li>
+          <li>Each traveller can contact us to see, correct or ask about their own information.</li>
+        </UL>
+      </>
+    ),
+  },
+  {
+    id: "support-records",
+    title: "Customer support records",
+    body: (
+      <>
+        <P>
+          When you email or call us, we keep a record of the conversation, your booking reference and what we did to
+          help. We use these records to resolve your request, handle refunds and complaints, and train our team.
+        </P>
+        <UL>
+          <li>Calls may be noted in writing so we can follow up accurately.</li>
+          <li>We keep support records for as long as needed to handle the booking and any related claims.</li>
+        </UL>
+      </>
+    ),
+  },
+  {
     id: "changes",
     title: "Changes to this policy",
     body: (

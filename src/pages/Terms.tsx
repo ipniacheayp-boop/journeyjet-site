@@ -417,6 +417,45 @@ const sections: Section[] = [
     ),
   },
   {
+    id: "pricing-errors",
+    title: "Prices, availability and errors",
+    body: (
+      <>
+        <P>
+          Prices come live from airlines and suppliers and can change until you pay. Before payment we check the price
+          again; if it changed, we show you the new price and you decide whether to continue.
+        </P>
+        <UL>
+          <li>Seats and rooms are not held until the booking is confirmed.</li>
+          <li>Prices are shown with no decimals and rounded up to the nearest whole dollar where needed.</li>
+          <li>
+            If a booking is made at an obvious pricing error, we may cancel it and refund everything you paid, or offer
+            the correct price.
+          </li>
+        </UL>
+      </>
+    ),
+  },
+  {
+    id: "user-obligations",
+    title: "Your responsibilities",
+    body: (
+      <>
+        <P>By using Tripile you confirm that:</P>
+        <UL>
+          <li>You are 18 years of age or older.</li>
+          <li>You have the legal authority to make a binding booking for yourself and anyone you book for.</li>
+          <li>All information you give us is true, accurate and complete, including names exactly as on passports.</li>
+          <li>You will check your booking confirmation and tell us straight away about any mistake.</li>
+          <li>
+            We may ask for documents to verify a payment. If they are not provided, the booking may be cancelled under
+            the refund rules that apply.
+          </li>
+        </UL>
+      </>
+    ),
+  },
+  {
     id: "changes",
     title: "Changes to these Terms",
     body: (

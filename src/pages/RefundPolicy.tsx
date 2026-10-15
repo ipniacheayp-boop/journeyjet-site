@@ -305,6 +305,40 @@ const sections: Section[] = [
     ),
   },
   {
+    id: "partial",
+    title: "Partial cancellations and multiple travellers",
+    body: (
+      <>
+        <P>
+          If you booked for several travellers or several flights, you can ask to cancel only part of the booking where
+          the airline or supplier allows it.
+        </P>
+        <UL>
+          <li>Some airlines only allow cancelling the whole booking, not single travellers.</li>
+          <li>Removing one traveller may change the price for the others; we will tell you before acting.</li>
+          <li>For round trips, cancelling the outbound flight usually cancels the return too.</li>
+        </UL>
+      </>
+    ),
+  },
+  {
+    id: "chargebacks",
+    title: "Card disputes and chargebacks",
+    body: (
+      <>
+        <P>
+          Please contact us before disputing a charge with your bank. Most issues are resolved faster by us working
+          directly with the airline or supplier.
+        </P>
+        <UL>
+          <li>If you open a dispute, we will share your booking and payment records with your bank to explain the charge.</li>
+          <li>A dispute does not cancel your booking. Cancel through us first if you no longer want to travel.</li>
+          <li>If a refund was already sent, we will give you the details so you can show your bank.</li>
+        </UL>
+      </>
+    ),
+  },
+  {
     id: "contact",
     title: "Changes and contact",
     body: (
