@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/hooks/useLanguage";
+import { initGoogleAnalytics } from "@/lib/initGoogleAnalytics";
 
 // Versioned keys so the banner can be re-shown after UX/policy changes.
 const CONSENT_STORAGE_KEY = "tripile_cookie_consent_accepted_v2";
@@ -62,6 +63,7 @@ export default function CookieConsentBanner() {
       setAccepted(true);
       localStorage.setItem(CONSENT_STORAGE_KEY, "1");
       writeCookie(CONSENT_COOKIE_NAME, "1", 60 * 60 * 24 * 365);
+      initGoogleAnalytics();
     }, 180);
   };
 
