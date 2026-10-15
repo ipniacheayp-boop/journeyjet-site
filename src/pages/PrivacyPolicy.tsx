@@ -24,6 +24,9 @@ const A: React.FC<{ href: string; children: React.ReactNode }> = ({ href, childr
     {children}
   </a>
 );
+const B: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <strong className="text-foreground">{children}</strong>
+);
 const Mail = () => (
   <a href="mailto:Support@Tripile.com" className="text-primary underline underline-offset-4">
     Support@Tripile.com
@@ -353,6 +356,92 @@ const sections: Section[] = [
         Our site links to airline websites (for example for web check-in), hotel and payment services, and other
         external sites. Those services have their own privacy policies, and we are not responsible for their
         practices. Please review their policies before giving them your information.
+      </P>
+    ),
+  },
+  {
+    id: "sources",
+    title: "Sources of personal information",
+    body: (
+      <>
+        <P>We collect personal information from the following sources:</P>
+        <UL>
+          <li><B>You directly</B> — when you register, search, book, or contact us.</li>
+          <li><B>Your device</B> — automatically, through your browser when you use the site (IP address, browser type, pages viewed).</li>
+          <li><B>Sign-in providers</B> — Google, if you choose to sign in with your Google account.</li>
+          <li><B>Travel partners</B> — Duffel and airlines, hotel and car data providers, which send booking references, order status, schedule changes and cancellations.</li>
+          <li><B>Payment providers</B> — Duffel and Stripe, which tell us whether a payment succeeded, failed, was refunded or disputed.</li>
+        </UL>
+      </>
+    ),
+  },
+  {
+    id: "legal-bases",
+    title: "Legal bases for processing",
+    body: (
+      <>
+        <P>Where laws such as the GDPR require a legal basis, we rely on:</P>
+        <UL>
+          <li><B>Performance of a contract</B> — to search, book, pay for and service your trip.</li>
+          <li><B>Legal obligation</B> — to keep tax and accounting records, apply sanctions rules, and respond to lawful requests.</li>
+          <li><B>Legitimate interests</B> — to secure the site, prevent fraud, fix errors and improve our services, balanced against your rights.</li>
+          <li><B>Consent</B> — for marketing messages and any optional cookies. You can withdraw consent at any time without affecting earlier processing.</li>
+        </UL>
+      </>
+    ),
+  },
+  {
+    id: "sensitive",
+    title: "Sensitive information",
+    body: (
+      <>
+        <P>
+          Passport numbers and dates of birth are treated as sensitive. We collect them only when the airline
+          requires them, use them only to complete and service your booking, and restrict who can access them.
+        </P>
+        <P>
+          We do not ask for health, religious, biometric or similar special-category data. If you choose to share it
+          (for example, a meal or accessibility request in a support message), we use it only to handle that request
+          and pass it to the relevant supplier.
+        </P>
+      </>
+    ),
+  },
+  {
+    id: "automated",
+    title: "Automated decisions and AI assistant",
+    body: (
+      <>
+        <P>
+          We use automated checks to block fraudulent or restricted bookings — for example, non-US billing addresses
+          or sanctioned destinations. If you believe a booking was blocked in error, contact us and a person will
+          review it.
+        </P>
+        <P>
+          Our travel assistant uses an AI service to answer questions. Do not share passport, payment or other
+          sensitive details with the assistant. Its answers are general guidance and may not always be accurate.
+        </P>
+      </>
+    ),
+  },
+  {
+    id: "dnt",
+    title: "Do Not Track and Global Privacy Control",
+    body: (
+      <P>
+        Because Tripile does not currently use advertising or cross-site tracking, there is no tracking for Do Not
+        Track or Global Privacy Control signals to switch off. If we introduce such technologies, we will honor
+        Global Privacy Control signals as an opt-out where the law requires it and update this policy.
+      </P>
+    ),
+  },
+  {
+    id: "breach",
+    title: "Security incidents",
+    body: (
+      <P>
+        If we learn of a security incident that affects your personal information, we will investigate, take steps
+        to contain it, and notify you and the relevant authorities where the law requires us to do so.
       </P>
     ),
   },

@@ -54,6 +54,19 @@ const sections: Section[] = [
     ),
   },
   {
+    id: "definitions",
+    title: "Definitions",
+    body: (
+      <UL>
+        <li><B>"Booking"</B> — a flight, hotel or car rental reservation made through Tripile.</li>
+        <li><B>"Supplier"</B> — the airline, hotel, rental company or other provider that delivers the travel service.</li>
+        <li><B>"Offer"</B> — a price and itinerary returned by a supplier at the time of your search.</li>
+        <li><B>"Traveler"</B> — any person named on a booking, including the person who books.</li>
+        <li><B>"Booking reference"</B> — the code (for flights, a PNR) issued once a supplier confirms a booking.</li>
+      </UL>
+    ),
+  },
+  {
     id: "eligibility",
     title: "Eligibility and your responsibilities",
     body: (
@@ -338,6 +351,70 @@ const sections: Section[] = [
         state or federal courts in Travis County, Texas. If you live outside the US, you keep any mandatory
         protections and rights to bring claims under the law of your country of residence.
       </P>
+    ),
+  },
+  {
+    id: "accounts",
+    title: "Accounts and termination",
+    body: (
+      <>
+        <P>
+          You can browse and book as a guest or create an account. Accounts require a verified email address. You
+          can stop using your account at any time and ask us to close it by emailing <Mail />.
+        </P>
+        <P>
+          We may suspend or close accounts that break these Terms, are used for fraud, or put other users or our
+          systems at risk. Closing an account doesn't cancel bookings already confirmed; those stay subject to the
+          supplier's rules.
+        </P>
+      </>
+    ),
+  },
+  {
+    id: "special-assistance",
+    title: "Special assistance and accessibility",
+    body: (
+      <P>
+        If a traveler needs wheelchair assistance, special meals, or other help, contact us after booking and we'll
+        pass the request to the airline or supplier. Requests are not guaranteed — they depend on the supplier's
+        ability to provide them. Please contact the supplier directly as well where possible.
+      </P>
+    ),
+  },
+  {
+    id: "force-majeure",
+    title: "Events outside our control",
+    body: (
+      <P>
+        We are not responsible for failures or delays caused by events beyond our reasonable control, such as severe
+        weather, natural disasters, strikes, airport or airspace closures, government action, pandemics, or outages
+        at suppliers or payment networks. In these cases, the supplier's rules and applicable passenger-rights laws
+        decide what refund or rebooking you're entitled to, and we'll help you request it.
+      </P>
+    ),
+  },
+  {
+    id: "complaints",
+    title: "Complaints",
+    body: (
+      <P>
+        If something goes wrong, contact <Mail /> or call 1-800-963-4330 with your booking reference. We aim to
+        acknowledge complaints promptly and work with the supplier to resolve them. Complaints about the travel
+        service itself (for example, a delayed flight or a hotel room) may need to be handled by the supplier, and
+        we'll tell you if so.
+      </P>
+    ),
+  },
+  {
+    id: "general",
+    title: "General",
+    body: (
+      <UL>
+        <li>These Terms, together with the policies they reference, are the whole agreement between you and Tripile about using the site.</li>
+        <li>If we don't enforce a right straight away, we can still enforce it later.</li>
+        <li>You may not transfer your rights under these Terms; we may transfer ours to a successor business.</li>
+        <li>These Terms are written in English, which is the version that applies.</li>
+      </UL>
     ),
   },
   {
