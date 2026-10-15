@@ -2,6 +2,9 @@
 export function initGoogleAnalytics(): void {
   const id = import.meta.env.VITE_GA_MEASUREMENT_ID?.trim();
   if (!id) return;
+  // Optional analytics only loads after cookie consent.
+  if (localStorage.getItem("tripile_cookie_consent_accepted_v2") !== "1") return;
+  if (window.gtag) return;
 
   window.dataLayer = window.dataLayer ?? [];
   window.gtag = function gtag(...args: unknown[]) {
