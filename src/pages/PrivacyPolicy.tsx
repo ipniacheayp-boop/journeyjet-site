@@ -79,7 +79,7 @@ const sections: Section[] = [
         <H3>Account and contact information</H3>
         <UL>
           <li>Name, email address, mobile phone number and password (stored as a secure hash by our authentication provider).</li>
-          <li>If you sign in with Google, the name, email address and profile picture Google shares with us.</li>
+          <li>If you sign in with a third-party account, the name, email address and profile picture that account shares with us.</li>
           <li>Email and phone verification status, and whether you opted in to marketing messages.</li>
         </UL>
         <H3>Flight searches and bookings</H3>
@@ -128,7 +128,7 @@ const sections: Section[] = [
       <>
         <P>Most of the information we hold comes directly from you:</P>
         <UL>
-          <li><strong className="text-foreground">Registration:</strong> when you create an account or sign in with Google.</li>
+          <li><strong className="text-foreground">Registration:</strong> when you create an account or sign in with a third-party account.</li>
           <li><strong className="text-foreground">Searches:</strong> the routes, destinations, dates and traveler numbers you enter.</li>
           <li><strong className="text-foreground">Checkout:</strong> traveler, contact and billing details, and acceptance of our Terms.</li>
           <li><strong className="text-foreground">Support:</strong> anything you share when you contact us or use the travel assistant.</li>
@@ -169,9 +169,8 @@ const sections: Section[] = [
     body: (
       <P>
         Tripile does not currently run third-party advertising pixels or behavioral tracking. Our site includes
-        optional support for Google Analytics, which is turned off and, if enabled, will only load after you accept
-        cookies. If that changes, we will update this section and name the provider. Google's privacy policy is
-        available at <A href="https://policies.google.com/privacy">policies.google.com/privacy</A>.
+        optional support for an analytics tool, which is turned off and, if enabled, will only load after you accept
+        cookies. If that changes, we will update this section and name the provider.
       </P>
     ),
   },
@@ -201,9 +200,9 @@ const sections: Section[] = [
         <UL>
           <li><strong className="text-foreground">Airlines and travel suppliers:</strong> the airline, hotel or car rental company that provides your booking receives the traveler details it needs.</li>
           <li><strong className="text-foreground">Duffel:</strong> our flight search and booking provider. Duffel receives your search, passenger and passport details (where required) and passes them to the airline. See <A href="https://duffel.com/privacy-policy">Duffel's privacy policy</A>.</li>
-          <li><strong className="text-foreground">Hotel and car data providers:</strong> Amadeus (hotel search and availability), Google Places (hotel location and listing information), and Booking.com and Uber data services (car rental and ride estimates) receive the search details needed to return results.</li>
-          <li><strong className="text-foreground">Payment providers:</strong> Duffel for flight payments and Stripe for hotel and car payments (see section 9).</li>
-          <li><strong className="text-foreground">Service providers:</strong> cloud hosting, database and authentication, content delivery, email delivery (Resend), sign-in with Google, and an AI service that powers our travel assistant. These providers process data on our behalf.</li>
+          <li><strong className="text-foreground">Hotel and car data providers:</strong> Google Places (hotel location and listing information) receives the search details needed to return results.</li>
+          <li><strong className="text-foreground">Payment providers:</strong> Duffel for flight payments, and our secure payment partner for hotel and car payments (see section 9).</li>
+          <li><strong className="text-foreground">Service providers:</strong> cloud hosting, database and authentication, content delivery, email delivery, account sign-in, and an AI service that powers our travel assistant. These providers process data on our behalf.</li>
           <li><strong className="text-foreground">Legal and safety:</strong> government authorities, courts or others when required by law, or to protect rights, safety and prevent fraud. Airlines may also share passenger data with border and security authorities as required by law.</li>
           <li><strong className="text-foreground">Business transfers:</strong> a buyer or successor if Tripile is involved in a merger, acquisition or sale of assets.</li>
         </UL>
@@ -217,7 +216,7 @@ const sections: Section[] = [
       <>
         <UL>
           <li><strong className="text-foreground">Flights:</strong> card payments are entered into Duffel's secure card form and authenticated with your bank (3D Secure) where required. Your card is charged when the airline confirms the order.</li>
-          <li><strong className="text-foreground">Hotels and car rentals:</strong> card payments are processed by <A href="https://stripe.com/privacy">Stripe</A> in US dollars.</li>
+          <li><strong className="text-foreground">Hotels and car rentals:</strong> card payments are processed by our secure payment partner in US dollars.</li>
         </UL>
         <P>
           Card numbers and security codes go directly to the payment provider and never reach Tripile's servers.
@@ -253,7 +252,7 @@ const sections: Section[] = [
         <li>Manage cookies and site storage through your browser settings.</li>
         <li>Opt out of marketing messages as described above.</li>
         <li>Update your name and contact details from your <Link to="/account" className="text-primary underline underline-offset-4">account</Link>, or ask us to.</li>
-        <li>Choose not to use optional features such as the travel assistant or Google sign-in.</li>
+        <li>Choose not to use optional features such as the travel assistant or third-party sign-in.</li>
       </UL>
     ),
   },
@@ -368,9 +367,9 @@ const sections: Section[] = [
         <UL>
           <li><B>You directly</B> — when you register, search, book, or contact us.</li>
           <li><B>Your device</B> — automatically, through your browser when you use the site (IP address, browser type, pages viewed).</li>
-          <li><B>Sign-in providers</B> — Google, if you choose to sign in with your Google account.</li>
+          <li><B>Sign-in providers</B> — if you choose to sign in with a third-party account.</li>
           <li><B>Travel partners</B> — Duffel and airlines, hotel and car data providers, which send booking references, order status, schedule changes and cancellations.</li>
-          <li><B>Payment providers</B> — Duffel and Stripe, which tell us whether a payment succeeded, failed, was refunded or disputed.</li>
+          <li><B>Payment providers</B> — Duffel and our secure payment partner, which tell us whether a payment succeeded, failed, was refunded or disputed.</li>
         </UL>
       </>
     ),

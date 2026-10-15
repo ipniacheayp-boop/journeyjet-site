@@ -133,7 +133,7 @@ const sections: Section[] = [
       <>
         <P>
           Hotel results show live availability and prices from our data partners. Information such as photos,
-          location details and ratings may come from third parties like Google and can be incomplete. Displaying a
+          location details and ratings may come from third parties like Google Places and can be incomplete. Displaying a
           hotel is not a reservation — a reservation exists only once checkout completes and you receive confirmation.
         </P>
         <P>
@@ -174,7 +174,7 @@ const sections: Section[] = [
       <>
         <UL>
           <li><B>Flights</B> are paid by card through Duffel's secure payment form.</li>
-          <li><B>Hotels and car rentals</B> are paid by card through Stripe.</li>
+          <li><B>Hotels and car rentals</B> are paid by card through our secure payment partner.</li>
         </UL>
         <P>
           Card details go directly to the payment provider and are not stored by Tripile. We confirm payment status
@@ -258,8 +258,7 @@ const sections: Section[] = [
         </P>
         <UL>
           <li>Duffel — flight search, booking and flight payments.</li>
-          <li>Stripe — hotel and car rental payments.</li>
-          <li>Amadeus, Google Places, Booking.com and Uber data services — hotel, car and ride information.</li>
+          <li>Google Places — hotel location and listing information.</li>
         </UL>
         <P>
           Each provider has its own terms. We are not responsible for the services they deliver, but nothing in these
