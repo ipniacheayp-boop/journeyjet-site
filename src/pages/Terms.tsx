@@ -15,7 +15,7 @@ const UL: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <ul className="mb-4 ml-6 list-disc space-y-2 text-muted-foreground">{children}</ul>
 );
 const H3: React.FC<{ children: React.ReactNode; id?: string }> = ({ children, id }) => (
-  <h3 id={id} className="mt-6 mb-2 text-lg font-semibold text-foreground scroll-mt-32">
+  <h3 id={id} className="legal-h3 mt-6 mb-2 text-lg scroll-mt-32">
     {children}
   </h3>
 );
@@ -36,7 +36,7 @@ const Mail = () => (
 const sections: Section[] = [
   {
     id: "acceptance",
-    title: "1. Introduction and acceptance",
+    title: "Introduction and acceptance",
     body: (
       <>
         <P>
@@ -55,7 +55,7 @@ const sections: Section[] = [
   },
   {
     id: "eligibility",
-    title: "2. Eligibility and your responsibilities",
+    title: "Eligibility and your responsibilities",
     body: (
       <UL>
         <li>You must be at least 18 and legally able to enter into a contract to make a booking.</li>
@@ -72,7 +72,7 @@ const sections: Section[] = [
   },
   {
     id: "services",
-    title: "3. Description of services",
+    title: "Description of services",
     body: (
       <>
         <P>It's important to understand the different stages of a booking:</P>
@@ -93,7 +93,7 @@ const sections: Section[] = [
   },
   {
     id: "flights",
-    title: "4. Flight booking terms",
+    title: "Flight booking terms",
     body: (
       <>
         <P>Flights are searched and booked through our flight partner, Duffel, directly with the airline. The process is:</P>
@@ -115,7 +115,7 @@ const sections: Section[] = [
   },
   {
     id: "hotels",
-    title: "5. Hotel and car rental booking terms",
+    title: "Hotel and car rental booking terms",
     body: (
       <>
         <P>
@@ -134,7 +134,7 @@ const sections: Section[] = [
   },
   {
     id: "taxes",
-    title: "6. Pricing, taxes, currency and fees",
+    title: "Pricing, taxes, currency and fees",
     body: (
       <>
         <P>
@@ -156,7 +156,7 @@ const sections: Section[] = [
   },
   {
     id: "payments",
-    title: "7. Payments and transactions",
+    title: "Payments and transactions",
     body: (
       <>
         <UL>
@@ -182,7 +182,7 @@ const sections: Section[] = [
   },
   {
     id: "post-ticketing",
-    title: "8. Cancellations, changes and refunds",
+    title: "Cancellations, changes and refunds",
     body: (
       <>
         <P>
@@ -201,7 +201,7 @@ const sections: Section[] = [
   },
   {
     id: "documents",
-    title: "9. Passenger details and travel documents",
+    title: "Passenger details and travel documents",
     body: (
       <>
         <P>
@@ -218,7 +218,7 @@ const sections: Section[] = [
   },
   {
     id: "promotions",
-    title: "10. Promotional offers and discount codes",
+    title: "Promotional offers and discount codes",
     body: (
       <>
         <P>
@@ -236,7 +236,7 @@ const sections: Section[] = [
   },
   {
     id: "third-parties",
-    title: "11. Third-party providers",
+    title: "Third-party providers",
     body: (
       <>
         <P>
@@ -257,7 +257,7 @@ const sections: Section[] = [
   },
   {
     id: "prohibited-use",
-    title: "12. Website availability and prohibited use",
+    title: "Website availability and prohibited use",
     body: (
       <>
         <P>You must not:</P>
@@ -277,7 +277,7 @@ const sections: Section[] = [
   },
   {
     id: "ip",
-    title: "13. Intellectual property",
+    title: "Intellectual property",
     body: (
       <P>
         The Tripile name, logo, design, content and software belong to Trivoya Ventures LLC or its licensors. You may
@@ -288,7 +288,7 @@ const sections: Section[] = [
   },
   {
     id: "accuracy",
-    title: "14. Accuracy and availability",
+    title: "Accuracy and availability",
     body: (
       <P>
         Prices, availability, schedules and supplier information change frequently and come largely from third
@@ -300,7 +300,7 @@ const sections: Section[] = [
   },
   {
     id: "liability",
-    title: "15. Limitation of liability and indemnification",
+    title: "Limitation of liability and indemnification",
     body: (
       <>
         <P>
@@ -319,7 +319,7 @@ const sections: Section[] = [
   },
   {
     id: "communications",
-    title: "16. Privacy and communications",
+    title: "Privacy and communications",
     body: (
       <P>
         We handle your information as described in our <L to="/privacy">Privacy Policy</L>. We'll send you
@@ -330,7 +330,7 @@ const sections: Section[] = [
   },
   {
     id: "law",
-    title: "17. Governing law and disputes",
+    title: "Governing law and disputes",
     body: (
       <P>
         These Terms are governed by the laws of the State of Texas, USA, without regard to conflict-of-law rules.
@@ -342,7 +342,7 @@ const sections: Section[] = [
   },
   {
     id: "changes",
-    title: "18. Changes to these Terms",
+    title: "Changes to these Terms",
     body: (
       <P>
         We may update these Terms. Changes are published on this page with a new "Last updated" date and apply from
@@ -353,7 +353,7 @@ const sections: Section[] = [
   },
   {
     id: "contact",
-    title: "19. Contact",
+    title: "Contact",
     body: (
       <address className="not-italic mb-4 text-muted-foreground leading-relaxed">
         Tripile (operated by Trivoya Ventures LLC)
@@ -378,7 +378,7 @@ export default function Terms() {
       />
       <Header />
       <main className="flex-1 pt-20 md:pt-28 pb-16">
-        <article className="container mx-auto max-w-4xl px-4">
+        <article className="legal-doc container mx-auto max-w-4xl px-4">
           <header className="mb-8">
             <h1 className="text-3xl md:text-4xl font-bold text-foreground">Terms &amp; Conditions</h1>
             <p className="mt-2 text-sm text-muted-foreground">Last updated: {LAST_UPDATED}</p>
@@ -387,20 +387,20 @@ export default function Terms() {
           <nav aria-label="Contents" className="mb-10 rounded-2xl border border-border bg-card p-6">
             <h2 className="mb-3 text-base font-semibold text-foreground">Contents</h2>
             <ol className="grid gap-2 sm:grid-cols-2 text-sm">
-              {sections.map((s) => (
+              {sections.map((s, i) => (
                 <li key={s.id}>
                   <a href={`#${s.id}`} className="text-primary hover:underline underline-offset-4">
-                    {s.title}
+                    {i + 1}. {s.title}
                   </a>
                 </li>
               ))}
             </ol>
           </nav>
 
-          {sections.map((s) => (
+          {sections.map((s, i) => (
             <section key={s.id} id={s.id} aria-labelledby={`${s.id}-h`} className="mb-10 scroll-mt-32">
-              <h2 id={`${s.id}-h`} className="mb-4 text-2xl font-semibold text-foreground">
-                {s.title}
+              <h2 id={`${s.id}-h`} className="legal-h2 mb-5 text-2xl">
+                {i + 1}. {s.title}
               </h2>
               {s.body}
             </section>

@@ -15,7 +15,7 @@ const UL: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <ul className="mb-4 ml-6 list-disc space-y-2 text-muted-foreground">{children}</ul>
 );
 const H3: React.FC<{ children: React.ReactNode; id?: string }> = ({ children, id }) => (
-  <h3 id={id} className="mt-6 mb-2 text-lg font-semibold text-foreground scroll-mt-32">
+  <h3 id={id} className="legal-h3 mt-6 mb-2 text-lg scroll-mt-32">
     {children}
   </h3>
 );
@@ -33,7 +33,7 @@ const Mail = () => (
 const sections: Section[] = [
   {
     id: "introduction",
-    title: "1. Introduction and scope",
+    title: "Introduction and scope",
     body: (
       <>
         <P>
@@ -51,7 +51,7 @@ const sections: Section[] = [
   },
   {
     id: "children",
-    title: "2. Children's privacy",
+    title: "Children's privacy",
     body: (
       <>
         <P>
@@ -70,7 +70,7 @@ const sections: Section[] = [
   },
   {
     id: "information-we-collect",
-    title: "3. Information we collect",
+    title: "Information we collect",
     body: (
       <>
         <H3>Account and contact information</H3>
@@ -120,7 +120,7 @@ const sections: Section[] = [
   },
   {
     id: "information-you-provide",
-    title: "4. Information you provide",
+    title: "Information you provide",
     body: (
       <>
         <P>Most of the information we hold comes directly from you:</P>
@@ -140,7 +140,7 @@ const sections: Section[] = [
   },
   {
     id: "cookies",
-    title: "5. Cookies and similar technologies",
+    title: "Cookies and similar technologies",
     body: (
       <>
         <P>We use a small number of cookies and browser storage technologies:</P>
@@ -162,7 +162,7 @@ const sections: Section[] = [
   },
   {
     id: "analytics",
-    title: "6. Third-party tracking and analytics",
+    title: "Third-party tracking and analytics",
     body: (
       <P>
         Tripile does not currently run third-party advertising pixels or behavioral tracking. Our site includes
@@ -174,7 +174,7 @@ const sections: Section[] = [
   },
   {
     id: "how-we-use",
-    title: "7. How we use information",
+    title: "How we use information",
     body: (
       <UL>
         <li>Running flight, hotel and car rental searches and showing live prices.</li>
@@ -191,7 +191,7 @@ const sections: Section[] = [
   },
   {
     id: "sharing",
-    title: "8. How we share information",
+    title: "How we share information",
     body: (
       <>
         <P>We share personal information only as needed for the purposes above. We do not sell your personal information.</P>
@@ -209,7 +209,7 @@ const sections: Section[] = [
   },
   {
     id: "payments",
-    title: "9. Payments and transactions",
+    title: "Payments and transactions",
     body: (
       <>
         <UL>
@@ -226,7 +226,7 @@ const sections: Section[] = [
   },
   {
     id: "communications",
-    title: "10. Email, SMS and marketing communications",
+    title: "Email, SMS and marketing communications",
     body: (
       <>
         <P>
@@ -244,7 +244,7 @@ const sections: Section[] = [
   },
   {
     id: "choices",
-    title: "11. Your privacy choices",
+    title: "Your privacy choices",
     body: (
       <UL>
         <li>Manage cookies and site storage through your browser settings.</li>
@@ -256,7 +256,7 @@ const sections: Section[] = [
   },
   {
     id: "access-deletion",
-    title: "12. Access, correction and deletion",
+    title: "Access, correction and deletion",
     body: (
       <>
         <P>
@@ -273,7 +273,7 @@ const sections: Section[] = [
   },
   {
     id: "security",
-    title: "13. Data security",
+    title: "Data security",
     body: (
       <P>
         We use reasonable technical and organizational safeguards, including encrypted HTTPS connections, access
@@ -285,7 +285,7 @@ const sections: Section[] = [
   },
   {
     id: "retention",
-    title: "14. Data retention",
+    title: "Data retention",
     body: (
       <P>
         We keep personal information only as long as reasonably needed: account information while your account is
@@ -297,7 +297,7 @@ const sections: Section[] = [
   },
   {
     id: "international",
-    title: "15. International data transfers",
+    title: "International data transfers",
     body: (
       <P>
         Tripile is based in the United States, and our service providers may process data in the United States and
@@ -309,7 +309,7 @@ const sections: Section[] = [
   },
   {
     id: "rights",
-    title: "16. Privacy rights by jurisdiction",
+    title: "Privacy rights by jurisdiction",
     body: (
       <>
         <P>Depending on where you live, you may have some of the rights below. Not every law applies to every user.</P>
@@ -347,7 +347,7 @@ const sections: Section[] = [
   },
   {
     id: "third-parties",
-    title: "17. Third-party websites and services",
+    title: "Third-party websites and services",
     body: (
       <P>
         Our site links to airline websites (for example for web check-in), hotel and payment services, and other
@@ -358,7 +358,7 @@ const sections: Section[] = [
   },
   {
     id: "changes",
-    title: "18. Changes to this policy",
+    title: "Changes to this policy",
     body: (
       <P>
         We may update this policy when our services or legal obligations change. We will publish the updated version
@@ -369,7 +369,7 @@ const sections: Section[] = [
   },
   {
     id: "contact",
-    title: "19. Contact us",
+    title: "Contact us",
     body: (
       <>
         <P>For privacy questions or requests, contact:</P>
@@ -397,7 +397,7 @@ export default function PrivacyPolicy() {
       />
       <Header />
       <main className="flex-1 pt-20 md:pt-28 pb-16">
-        <article className="container mx-auto max-w-4xl px-4">
+        <article className="legal-doc container mx-auto max-w-4xl px-4">
           <header className="mb-8">
             <h1 className="text-3xl md:text-4xl font-bold text-foreground">Privacy Policy</h1>
             <p className="mt-2 text-sm text-muted-foreground">Last updated: {LAST_UPDATED}</p>
@@ -406,20 +406,20 @@ export default function PrivacyPolicy() {
           <nav aria-label="Contents" className="mb-10 rounded-2xl border border-border bg-card p-6">
             <h2 className="mb-3 text-base font-semibold text-foreground">Contents</h2>
             <ol className="grid gap-2 sm:grid-cols-2 text-sm">
-              {sections.map((s) => (
+              {sections.map((s, i) => (
                 <li key={s.id}>
                   <a href={`#${s.id}`} className="text-primary hover:underline underline-offset-4">
-                    {s.title}
+                    {i + 1}. {s.title}
                   </a>
                 </li>
               ))}
             </ol>
           </nav>
 
-          {sections.map((s) => (
+          {sections.map((s, i) => (
             <section key={s.id} id={s.id} aria-labelledby={`${s.id}-h`} className="mb-10 scroll-mt-32">
-              <h2 id={`${s.id}-h`} className="mb-4 text-2xl font-semibold text-foreground">
-                {s.title}
+              <h2 id={`${s.id}-h`} className="legal-h2 mb-5 text-2xl">
+                {i + 1}. {s.title}
               </h2>
               {s.body}
             </section>
