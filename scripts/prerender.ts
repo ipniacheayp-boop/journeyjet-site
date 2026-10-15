@@ -1381,10 +1381,12 @@ function buildHtml(page: Page): string {
   // Inject per-route head meta right before </head>
   html = html.replace(/<\/head>/, `    ${renderHeadMeta(page)}\n  </head>`);
   // Replace the shared static article with route-specific content
-  html = html.replace(
-    /<article[^>]*id="seo-static-content"[\s\S]*?<\/article>/,
-    renderArticle(page)
-  );
+  // The article goes INSIDE #root: crawlers read it as normal page content,
+  // and React replaces it on first render, so visitors never see a bare-text
+  // page sitting above the app while scripts load.
+  html = html
+    .replace(/\s*<article[^>]*id="seo-static-content"[\s\S]*?<\/article>/, "")
+    .replace(/<div id="root"><\/div>/, `<div id="root">${renderArticle(page)}</div>`);
   return html;
 }
 
