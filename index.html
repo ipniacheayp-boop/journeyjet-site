@@ -150,6 +150,23 @@
         "url": "https://tripile.com/"
       }
     </script>
+    <script>
+      // Self-heal: if a cached page points at an app file from an older deploy, reload once.
+      (function () {
+        function heal() {
+          try {
+            if (sessionStorage.getItem("tripile-stale-reload")) return;
+            sessionStorage.setItem("tripile-stale-reload", "1");
+          } catch (e) {}
+          location.reload();
+        }
+        window.addEventListener("error", function (e) {
+          var t = e.target;
+          if (t && t.tagName === "SCRIPT" && /\/assets\//.test(t.src || "")) heal();
+        }, true);
+        window.addEventListener("vite:preloadError", heal);
+      })();
+    </script>
   </head>
   <body>
     <article
