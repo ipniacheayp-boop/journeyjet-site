@@ -69,6 +69,7 @@ jobs:
       - name: Serve clean URLs from prerendered index.html (CloudFront Function)
         env:
           CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+        continue-on-error: true
         run: bash scripts/cloudfront/ensure-clean-urls.sh
 
       - name: Invalidate CloudFront
