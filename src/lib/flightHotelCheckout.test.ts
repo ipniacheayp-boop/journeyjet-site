@@ -17,7 +17,14 @@ describe("flight and hotel checkout", () => {
   });
   it("expires hotel continuation details after the passenger privacy window", () => {
     const values = new Map<string, string>([["flightHotel:off_1", JSON.stringify({ savedAt: 1000, hotelUpsellData: { selectedHotel: {} }, passengers: [], contact: { email: "guest@example.com", phone: "+14155550123" } })]]);
-    const storage = { getItem: (k: string) => values.get(k) ?? null, removeItem: (k: string) => values.delete(k) } as Storage;
+    const storage: Storage = {
+      get length() { return values.size; },
+      getItem: k => values.get(k) ?? null,
+      removeItem: k => { values.delete(k); },
+      setItem: (k, v) => { values.set(k, v); },
+      clear: () => { values.clear(); },
+      key: i => [...values.keys()][i] ?? null,
+    };
     expect(readHotelContinuation(storage, "off_1", 1000 + CHECKOUT_DRAFT_TTL)).toBeNull();
     expect(values.has("flightHotel:off_1")).toBe(false);
   });

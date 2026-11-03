@@ -527,6 +527,7 @@ const Booking = ({ embeddedHotel }: BookingProps = {}) => {
       sessionStorage.setItem("pendingBooking", JSON.stringify(parsed));
     }
     sessionStorage.removeItem(draftKey);
+    if (embeddedHotel) sessionStorage.removeItem(`flightHotel:${embeddedHotel.checkoutId}`);
     sessionStorage.removeItem("selectedOffer");
     try { localStorage.removeItem("selectedOffer"); } catch { /* non-fatal */ }
     navigate(`/payment-success?booking_id=${bookingId}&payment_intent=${encodeURIComponent(paymentIntentId)}`);
