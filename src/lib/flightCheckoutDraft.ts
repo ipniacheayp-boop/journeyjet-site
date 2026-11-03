@@ -1,4 +1,5 @@
 import type { CheckoutContact, CheckoutPassenger } from "@/components/duffel/DuffelPassengerForm";
+import type { HotelUpsellData } from "@/components/booking/HotelUpsellStep";
 
 export const CHECKOUT_DRAFT_TTL = 30 * 60 * 1000;
 export interface FlightCheckoutDraft {
@@ -11,6 +12,8 @@ export interface FlightCheckoutDraft {
   pendingBookingId: string | null;
   paymentStarted: boolean;
   savedAt: number;
+  hotelStepComplete?: boolean;
+  hotelUpsellData?: HotelUpsellData | null;
 }
 export const checkoutDraftKey = (offerId: string) => `duffelCheckoutDraft:${offerId}`;
 

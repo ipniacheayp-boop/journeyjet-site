@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,6 +35,8 @@ interface HotelUpsellStepProps {
   onComplete: (data: HotelUpsellData) => void;
   onSkip: () => void;
   disabled?: boolean;
+  initialData?: HotelUpsellData | null;
+  onDraftChange?: (data: HotelUpsellData) => void;
 }
 
 const PREFERENCES = [
@@ -47,26 +49,30 @@ const PREFERENCES = [
 
 type Phase = "prompt" | "search" | "results" | "selected";
 
-const HotelUpsellStep = ({ destinationCode, arrivalDate, departureDate, onComplete, onSkip, disabled }: HotelUpsellStepProps) => {
-  const [phase, setPhase] = useState<Phase>("prompt");
-  const [checkInDate, setCheckInDate] = useState(arrivalDate || "");
-  const [checkOutDate, setCheckOutDate] = useState(departureDate || "");
-  const [adults, setAdults] = useState(1);
-  const [children, setChildren] = useState(0);
-  const [rooms, setRooms] = useState(1);
-  const [budgetRange, setBudgetRange] = useState("");
-  const [preferences, setPreferences] = useState<string[]>([]);
+const HotelUpsellStep = ({ destinationCode, arrivalDate, departureDate, onComplete, onSkip, disabled, initialData, onDraftChange }: HotelUpsellStepProps) => {
+  const [phase, setPhase] = useState<Phase>(initialData?.selectedHotel ? "selected" : initialData ? "search" : "prompt");
+  const [checkInDate, setCheckInDate] = useState(initialData?.checkInDate || arrivalDate || "");
+  const [checkOutDate, setCheckOutDate] = useState(initialData?.checkOutDate || departureDate || "");
+  const [adults, setAdults] = useState(initialData?.adults ?? 1);
+  const [children, setChildren] = useState(initialData?.children ?? 0);
+  const [rooms, setRooms] = useState(initialData?.rooms ?? 1);
+  const [budgetRange, setBudgetRange] = useState(initialData?.budgetRange ?? "");
+  const [preferences, setPreferences] = useState<string[]>(initialData?.preferences ?? []);
   const [searching, setSearching] = useState(false);
   const [hotels, setHotels] = useState<any[]>([]);
-  const [selectedHotel, setSelectedHotel] = useState<any>(null);
+  const [selectedHotel, setSelectedHotel] = useState<any>(initialData?.selectedHotel ?? null);
+
+  useEffect(() => {
+    onDraftChange?.({ wantsHotel: phase !== "prompt", destination: destinationCode, checkInDate, checkOutDate, adults, children, rooms, budgetRange, preferences, selectedHotel });
+  }, [phase, destinationCode, checkInDate, checkOutDate, adults, children, rooms, budgetRange, preferences, selectedHotel, onDraftChange]);
 
   const togglePreference = (id: string) => {
     setPreferences((prev) => prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id]);
   };
 
   const handleSearch = async () => {
-    if (!checkOutDate) {
-      toast.error("Please select a check-out date");
+    if (!checkInDate || !checkOutDate || checkOutDate <= checkInDate) {
+      toast.error("Choose a check-out date after check-in.");
       return;
     }
     setSearching(true);
@@ -86,7 +92,7 @@ const HotelUpsellStep = ({ destinationCode, arrivalDate, departureDate, onComple
         toast.info("No hotels found for these dates. Try different dates.");
       }
     } catch (err: any) {
-      toast.error("Failed to search hotels: " + (err.message || "Unknown error"));
+      toast.error("We couldn't load hotels right now. Try again or continue without a hotel.");
       setHotels([]);
     } finally {
       setSearching(false);
@@ -94,6 +100,10 @@ const HotelUpsellStep = ({ destinationCode, arrivalDate, departureDate, onComple
   };
 
   const handleSelect = (hotel: any) => {
+    const price = Number(hotel?.offers?.[0]?.price?.total);
+    if (!Number.isFinite(price) || price <= 0) {
+      toast.error("This hotel has no available booking price. Please choose another hotel."); return;
+    }
     setSelectedHotel(hotel);
     setPhase("selected");
   };
@@ -133,11 +143,11 @@ const HotelUpsellStep = ({ destinationCode, arrivalDate, departureDate, onComple
               Would you like to book a hotel for your stay at your destination? We'll find the best deals for you.
             </p>
           </div>
-          <div className="flex justify-center gap-4">
-            <Button onClick={() => setPhase("search")} size="lg" className="gap-2 min-w-[140px]">
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Button disabled={disabled} onClick={() => setPhase("search")} size="lg" className="gap-2 min-w-[140px]">
               <Star className="w-4 h-4" /> Yes, Find Hotels
             </Button>
-            <Button variant="outline" onClick={onSkip} size="lg" className="min-w-[140px]">
+            <Button disabled={disabled} variant="outline" onClick={onSkip} size="lg" className="min-w-[140px]">
               No, Skip
             </Button>
           </div>
@@ -410,7 +420,7 @@ const HotelUpsellStep = ({ destinationCode, arrivalDate, departureDate, onComple
             <Button variant="outline" onClick={() => setPhase("results")} className="gap-1">
               Change Hotel
             </Button>
-            <Button onClick={handleConfirm} size="lg" className="gap-2">
+            <Button disabled={disabled} onClick={handleConfirm} size="lg" className="gap-2">
               Continue with Hotel <ArrowRight className="w-4 h-4" />
             </Button>
           </div>
