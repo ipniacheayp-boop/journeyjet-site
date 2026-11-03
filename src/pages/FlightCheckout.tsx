@@ -226,13 +226,14 @@ const FlightCheckout = () => {
   }, [hotelContinuation, hotelUpsellData]);
   const hotelAmount = Number(hotelSelected?.offers?.[0]?.price?.total ?? 0);
   const hotelCurrency = hotelSelected?.offers?.[0]?.price?.currency ?? "USD";
-  const hotelCheckout = useMemo(() => hotelSelected ? {
+  const hotelIsEstimate = Boolean(hotelSelected?.googlePlace);
+  const hotelCheckout = useMemo(() => hotelSelected && !hotelIsEstimate ? {
     offer: hotelSelected,
     passengers: hotelContinuation?.passengers ?? hotelGuestsFromFlight(passengers),
     contact,
     agentId,
     checkoutId: offerId,
-  } : undefined, [hotelSelected, hotelContinuation, passengers, contact, agentId, offerId]);
+  } : undefined, [hotelSelected, hotelIsEstimate, hotelContinuation, passengers, contact, agentId, offerId]);
   const preserveHotelCheckout = useCallback(() => {
     if (!hotelUpsellData?.selectedHotel) return;
     try {
@@ -529,10 +530,10 @@ const FlightCheckout = () => {
           <span>{money(offer.total_amount, offer.total_currency)}</span>
         </div>
         {hotelSelected && <>
-          <div className="flex justify-between gap-3"><span>Hotel charges</span><span>{money(hotelAmount, hotelCurrency)}</span></div>
+          <div className="flex justify-between gap-3"><span>Hotel charges{hotelIsEstimate ? " (estimate)" : ""}</span><span>{money(hotelAmount, hotelCurrency)}</span></div>
           <Separator />
-          {combinedCheckoutTotal(payableAmount, offer.total_currency ?? "", hotelAmount, hotelCurrency) !== null && <div className="flex justify-between gap-3 font-semibold"><span>Combined total</span><span>{money(combinedCheckoutTotal(payableAmount, offer.total_currency ?? "", hotelAmount, hotelCurrency), hotelCurrency)}</span></div>}
-          <p className="text-xs text-muted-foreground">Two separate payments: flight first, then hotel charges in this checkout. Hotel price and availability are checked before payment.</p>
+          {combinedCheckoutTotal(payableAmount, offer.total_currency ?? "", hotelAmount, hotelCurrency) !== null && <div className="flex justify-between gap-3 font-semibold"><span>{hotelIsEstimate ? "Combined estimate" : "Combined total"}</span><span>{money(combinedCheckoutTotal(payableAmount, offer.total_currency ?? "", hotelAmount, hotelCurrency), hotelCurrency)}</span></div>}
+          <p className="text-xs text-muted-foreground">{hotelIsEstimate ? "Only flight charges are payable by card. Google Places does not provide a confirmed hotel rate or reservation; the hotel estimate is not charged." : "Two separate payments: flight first, then hotel charges in this checkout. Hotel price and availability are checked before payment."}</p>
         </>}
         {offer.expires_at && (
           <p className="flex items-center gap-1.5 text-xs text-muted-foreground pt-1">
@@ -687,7 +688,7 @@ const FlightCheckout = () => {
                   {hotelSelected && <Card><CardHeader><CardTitle className="text-lg">Selected hotel</CardTitle></CardHeader><CardContent className="space-y-2 text-sm">
                     <p className="font-medium">{hotelSelected.hotel?.name}</p>
                     <p>{hotelUpsellData?.checkInDate} → {hotelUpsellData?.checkOutDate} · {hotelUpsellData?.rooms} room(s)</p>
-                    <p>Hotel charges: {money(hotelAmount, hotelCurrency)} · Paid in the next checkout stage after flight confirmation</p>
+                    <p>Hotel charges{hotelIsEstimate ? " (estimate)" : ""}: {money(hotelAmount, hotelCurrency)} · {hotelIsEstimate ? "Not included in the card payment" : "Paid in the next checkout stage after flight confirmation"}</p>
                     <Button variant="outline" onClick={() => { setStep(0); setHotelStepComplete(false); }}>Change hotel</Button>
                   </CardContent></Card>}
                   <div className="flex flex-col sm:flex-row gap-3">
@@ -822,6 +823,7 @@ const FlightCheckout = () => {
               <p className="text-sm text-muted-foreground">Your flight is confirmed. Complete the separate hotel payment below. The hotel is not booked or charged yet; supplier confirmation is separate.</p>
               <Suspense fallback={<Skeleton className="h-72 w-full" />}><HotelBookingPayment embeddedHotel={hotelCheckout} /></Suspense>
             </section>}
+            {hotelSelected && hotelIsEstimate && <Alert><AlertTitle>Hotel reservation not confirmed</AlertTitle><AlertDescription>{hotelSelected.hotel?.name}: the Google Places price is an estimate, not a bookable rate. No hotel payment was taken.</AlertDescription></Alert>}
 
             <div className="flex flex-col sm:flex-row gap-3">
               <Button variant="outline" className="flex-1" onClick={() => window.print()}>
