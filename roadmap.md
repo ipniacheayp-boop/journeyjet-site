@@ -1,2 +1,3 @@
 - [ ] Include selected hotel payment within flight checkout with separate hotel charges.
 - [ ] Verify itemization, existing hotel payment controls, and checkout recovery.
+- [ ] Resolve one combined card charge for flight and hotel; blocked by the current separate payment providers.
