@@ -313,6 +313,7 @@ const Booking = ({ embeddedHotel }: BookingProps = {}) => {
   const goBack = () => {
     const prev = Math.max(currentStep - 1, 0);
     const target = !isFlightBooking && prev === 1 ? 0 : prev;
+    if (embeddedHotel) { setCurrentStep(target); return; }
     if (typeof window.history.state?.bookingStep === "number" && currentStep > 0) {
       window.history.back();
     } else {
@@ -556,6 +557,7 @@ const Booking = ({ embeddedHotel }: BookingProps = {}) => {
   };
 
   if (!offer) {
+    if (embeddedHotel) return <p role="status" className="text-muted-foreground">Loading hotel payment…</p>;
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
@@ -575,13 +577,13 @@ const Booking = ({ embeddedHotel }: BookingProps = {}) => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <SEOHead
+    <div className={embeddedHotel ? "flex flex-col" : "min-h-screen flex flex-col"}>
+      {!embeddedHotel && <SEOHead
         title="Secure Booking | Tripile.com"
         description="Complete your Tripile booking securely."
         canonicalUrl={`https://tripile.com/booking/${bookingType ?? "flight"}`}
         noIndex
-      />
+      />}
       {!embeddedHotel && <Header />}
 
       {priceChangeData && (
