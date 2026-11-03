@@ -480,9 +480,9 @@ serve(async (req) => {
     // ── 6. Confirmation email (best effort, confirmed orders only) ──
     if (state.confirmed) {
       try {
-        void supabase.functions.invoke("send-booking-confirmation", {
+        await supabase.functions.invoke("send-booking-confirmation", {
           body: { bookingId, email: contactEmail, bookingReference: order.booking_reference, orderId: order.id },
-        }).catch(() => console.error("confirmation email delivery unavailable"));
+        });
       } catch (mailErr) {
         console.error("confirmation email failed", mailErr instanceof Error ? mailErr.message : mailErr);
       }

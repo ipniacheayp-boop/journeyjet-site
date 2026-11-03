@@ -5,7 +5,8 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 // @ts-expect-error TS2307 — Deno remote import.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
-import { getDuffelBookingState } from "../_shared/duffelBookingState.ts";
+import { amountsMatch, getDuffelBookingState } from "../_shared/duffelBookingState.ts";
+import { duffelFetch } from "../_shared/duffel.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -106,8 +107,11 @@ serve(async (req) => {
         payload: event,
         processed: false,
       });
-      if (insertError?.code === "23505") return json({ received: true, duplicate: true });
-      if (insertError) throw insertError;
+      if (insertError?.code === "23505") {
+        const { data: raced, error: raceError } = await supabase.from("webhook_events").select("processed").eq("event_id", eventId).maybeSingle();
+        if (raceError) throw raceError;
+        if (raced?.processed) return json({ received: true, duplicate: true });
+      } else if (insertError) throw insertError;
     }
 
     const orderId = String(order?.id ?? "");
@@ -131,21 +135,34 @@ serve(async (req) => {
       }
 
       if (Object.keys(patch).length > 0) {
-        const { data: booking } = await supabase.from("bookings").select("id,status").eq("duffel_order_id", orderId).maybeSingle();
-        if (!booking && order?.metadata?.booking_id) {
-          await supabase.from("bookings").update({ ...patch, duffel_order_id: orderId, transaction_id: orderId })
-            .eq("id", String(order.metadata.booking_id)).eq("booking_type", "flight");
-        } else if (booking && !(["cancelled", "refunded"].includes(booking.status) && patch.status === "confirmed")) {
+        // Events can be partial or out of order: always read the current authoritative order.
+        const fresh = await duffelFetch<Any>(`/air/orders/${encodeURIComponent(orderId)}`);
+        if (!fresh.ok || !fresh.data) throw new Error("Airline order unavailable for webhook synchronization");
+        const current = fresh.data;
+        const state = getDuffelBookingState(current);
+        Object.assign(patch, { status: state.bookingStatus, payment_status: state.paymentStatus,
+          duffel_booking_reference: current.booking_reference ?? null, amadeus_pnr: current.booking_reference ?? null,
+          duffel_order_id: orderId, transaction_id: orderId });
+        let lookup = supabase.from("bookings").select("id,status,amount,currency").eq("booking_type", "flight");
+        lookup = current?.metadata?.booking_id ? lookup.eq("id", String(current.metadata.booking_id)) : lookup.eq("duffel_order_id", orderId);
+        const { data: booking, error: lookupError } = await lookup.maybeSingle();
+        if (lookupError) throw lookupError;
+        if (!booking) throw new Error("Booking is not ready for webhook synchronization");
+        if (!amountsMatch(current, booking.amount, booking.currency)) {
+          Object.assign(patch, { status: booking.status, payment_status: "amount_mismatch", confirmed_at: null });
+        }
+        if (!(["cancelled", "refunded"].includes(booking.status) && patch.status === "confirmed")) {
           const { error } = await supabase.from("bookings").update(patch).eq("id", booking.id);
-          if (error) console.error("[Internal Error] webhook booking update failed", error.message);
+          if (error) throw error;
         }
       }
     }
 
-    await supabase
+    const { error: processedError } = await supabase
       .from("webhook_events")
       .update({ processed: true, processed_at: new Date().toISOString() })
       .eq("event_id", eventId);
+    if (processedError) throw processedError;
 
     return json({ received: true });
   } catch (err) {
