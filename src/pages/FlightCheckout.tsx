@@ -503,7 +503,7 @@ const FlightCheckout = () => {
       />
       <Header />
 
-      <main className="container mx-auto px-4 py-8 max-w-5xl">
+      <main className="container mx-auto px-4 pb-8 pt-24 md:pt-36 max-w-5xl">
         <Button variant="ghost" size="sm" className="mb-4" disabled={submitting || paymentStarted} onClick={() => step > 0 && step < 3 ? setStep(step - 1) : navigate("/flights")}>
           <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" />
           {step > 0 && step < 3 ? "Back to previous step" : "Back to flight search"}
