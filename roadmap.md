@@ -1,9 +1,6 @@
-# Roadmap
-
-- [x] Restore optional hotel selection in Duffel checkout with live hotel search and selection persistence; hotel checkout remains separate after flight confirmation. Live selection/skip/back/refresh and 21 focused tests passed.
-
-- [x] Fix audited flight persistence, loading, offer validation, and Duffel recovery gaps; 36 focused tests and real guest search-to-payment checks passed.
-- [ ] Verify real paid booking, bank 3DS interruption, signed webhook delivery, and concurrent live bookings — blocked on approved payment-testing arrangements; no live charge performed.
-
-- [ ] Complete prior API-backed SEO integration — deferred pending the separate SEO request; outside this flight-only audit.
-- [x] Add a Tripile coupons page inspired by the supplied reference, using existing valid coupon rules and booking flow.
+- [x] Itemize flight and hotel charges with a currency-safe combined amount; label Google Places rates as estimates.
+- [x] Add an embedded hotel payment stage for bookable hotel offers using the existing payment controls; block estimated Google Places offers.
+- [x] Verify live hotel selection, itemization, and focused checkout tests.
+- [ ] Enable real hotel payment: blocked on a hotel reservation service with authoritative rates and fulfillment.
+- [ ] Enable one combined card charge: blocked on a compatible unified payment arrangement that preserves Duffel flight booking.
+- [ ] Verify paid flight-to-hotel continuation and payment recovery: blocked on approved live payment testing and a bookable hotel offer.

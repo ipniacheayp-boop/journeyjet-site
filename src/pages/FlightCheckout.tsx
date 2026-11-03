@@ -38,10 +38,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import type { DuffelOffer } from "@/types/duffel";
 import { getItineraryScope } from "@/lib/itineraryScope";
 import { formatDateShort, formatTime } from "@/lib/duffelUtils";
+import { combinedCheckoutTotal, hotelGuestsFromFlight, isEstimatedHotel, readHotelContinuation } from "@/lib/flightHotelCheckout";
 
 const STEPS = ["Hotel", "Travellers", "Review", "Payment", "Confirmed"];
 const HotelUpsellStep = lazy(() => import("@/components/booking/HotelUpsellStep"));
 const DuffelPaymentStep = lazy(() => import("@/components/duffel/DuffelPaymentStep"));
+const HotelBookingPayment = lazy(() => import("@/pages/Booking"));
 
 const money = (amount: string | number | null | undefined, currency: string | null | undefined) => {
   const value = Number(amount ?? 0);
@@ -104,6 +106,7 @@ const FlightCheckout = () => {
   const offerId = searchParams.get("offer") || stored?.offerId || stored?.offer?.id || "";
   const draftKey = offerId ? `duffelCheckoutDraft:${offerId}` : "";
   const initialDraft = useMemo(() => readCheckoutDraft(sessionStorage, offerId), [offerId]);
+  const hotelContinuation = useMemo(() => readHotelContinuation(sessionStorage, offerId), [offerId]);
   const recovery = useMemo(() => {
     try { return JSON.parse(sessionStorage.getItem(`duffelRecovery:${offerId}`) || "null") as { attemptId: string; bookingId?: string } | null; }
     catch { return null; }
@@ -214,14 +217,33 @@ const FlightCheckout = () => {
   const hotelDepartureDate = offer?.slices[1]?.segments[0]?.departing_at?.split("T")[0];
   const showingHotel = step === 0 && !hotelStepComplete && !paymentStarted;
   const hotelSelected = hotelUpsellData?.selectedHotel;
-  const bookSelectedHotel = () => {
-    if (!hotelSelected) return;
+  useEffect(() => {
+    if (hotelContinuation && !hotelUpsellData) {
+      setHotelUpsellData(hotelContinuation.hotelUpsellData);
+      setContact(hotelContinuation.contact);
+      setHotelStepComplete(true);
+    }
+  }, [hotelContinuation, hotelUpsellData]);
+  const hotelAmount = Number(hotelSelected?.offers?.[0]?.price?.total ?? 0);
+  const hotelCurrency = hotelSelected?.offers?.[0]?.price?.currency ?? "USD";
+  const hotelIsEstimate = isEstimatedHotel(hotelSelected);
+  const hotelCheckout = useMemo(() => hotelSelected && !hotelIsEstimate ? {
+    offer: hotelSelected,
+    passengers: hotelContinuation?.passengers ?? hotelGuestsFromFlight(passengers),
+    contact,
+    agentId,
+    checkoutId: offerId,
+  } : undefined, [hotelSelected, hotelIsEstimate, hotelContinuation, passengers, contact, agentId, offerId]);
+  const preserveHotelCheckout = useCallback(() => {
+    if (!hotelUpsellData?.selectedHotel) return;
     try {
-      sessionStorage.setItem("selectedOffer", JSON.stringify({ type: "hotels", offer: hotelSelected, agentId }));
-      sessionStorage.removeItem("bookingDraft:hotels");
-      navigate("/booking/hotels");
-    } catch { toast.error("Your browser couldn't open hotel checkout. Please allow session storage and try again."); }
-  };
+      sessionStorage.setItem(`flightHotel:${offerId}`, JSON.stringify({
+        hotelUpsellData, passengers: hotelContinuation?.passengers ?? hotelGuestsFromFlight(passengers),
+        contact, savedAt: Date.now(),
+      }));
+      sessionStorage.setItem(`duffelRecovery:${offerId}`, JSON.stringify({ attemptId }));
+    } catch { setStorageWarning(true); }
+  }, [hotelUpsellData, offerId, hotelContinuation, passengers, contact, attemptId]);
 
   // Duffel's revalidated total is the only price we are ever allowed to charge.
   const payableAmount = (() => {
@@ -352,6 +374,7 @@ const FlightCheckout = () => {
 
     sessionStorage.removeItem("selectedOffer");
     sessionStorage.removeItem(`duffelRecovery:${offerId}`);
+    preserveHotelCheckout();
     if (draftKey) sessionStorage.removeItem(draftKey);
     try {
       localStorage.removeItem("selectedOffer");
@@ -377,6 +400,7 @@ const FlightCheckout = () => {
       if (result.confirmed) {
         sessionStorage.removeItem("selectedOffer");
         sessionStorage.removeItem(`duffelRecovery:${offerId}`);
+        preserveHotelCheckout();
         if (draftKey) sessionStorage.removeItem(draftKey);
         try { localStorage.removeItem("selectedOffer"); } catch { /* non-fatal */ }
         setOrder(result.order ?? null);
@@ -392,7 +416,7 @@ const FlightCheckout = () => {
       verifyingRef.current = false;
       setVerifying(false);
     }
-  }, [attemptId, draftKey, offerId, paymentStarted, pendingBookingId]);
+  }, [attemptId, draftKey, offerId, paymentStarted, pendingBookingId, preserveHotelCheckout]);
 
   useEffect(() => {
     if (!pendingBookingId && !paymentStarted) return;
@@ -502,9 +526,15 @@ const FlightCheckout = () => {
         </div>
         <Separator className="my-2" />
         <div className="flex justify-between text-base font-semibold">
-          <span>Total due today</span>
+          <span>Flight charges</span>
           <span>{money(offer.total_amount, offer.total_currency)}</span>
         </div>
+        {hotelSelected && <>
+          <div className="flex justify-between gap-3"><span>Hotel charges{hotelIsEstimate ? " (estimate)" : ""}</span><span>{money(hotelAmount, hotelCurrency)}</span></div>
+          <Separator />
+          {combinedCheckoutTotal(payableAmount, offer.total_currency ?? "", hotelAmount, hotelCurrency) !== null && <div className="flex justify-between gap-3 font-semibold"><span>{hotelIsEstimate ? "Combined estimate" : "Combined total"}</span><span>{money(combinedCheckoutTotal(payableAmount, offer.total_currency ?? "", hotelAmount, hotelCurrency), hotelCurrency)}</span></div>}
+          <p className="text-xs text-muted-foreground">{hotelIsEstimate ? "Only flight charges are payable by card. Google Places does not provide a confirmed hotel rate or reservation; the hotel estimate is not charged." : "Two separate payments: flight first, then hotel charges in this checkout. Hotel price and availability are checked before payment."}</p>
+        </>}
         {offer.expires_at && (
           <p className="flex items-center gap-1.5 text-xs text-muted-foreground pt-1">
             <Clock className="w-3.5 h-3.5" aria-hidden="true" />
@@ -542,7 +572,7 @@ const FlightCheckout = () => {
           {step === 3 ? "Your flight is confirmed" : "Complete your flight booking"}
         </h1>
 
-        <BookingStepper currentStep={showingHotel ? 0 : step + 1} steps={STEPS} />
+        <BookingStepper currentStep={showingHotel ? 0 : step + 1} steps={hotelSelected ? ["Hotel", "Travellers", "Review", "Flight payment", "Hotel payment"] : STEPS} />
 
         {loading && (
           <div className="space-y-4 py-8" role="status">
@@ -658,7 +688,7 @@ const FlightCheckout = () => {
                   {hotelSelected && <Card><CardHeader><CardTitle className="text-lg">Selected hotel</CardTitle></CardHeader><CardContent className="space-y-2 text-sm">
                     <p className="font-medium">{hotelSelected.hotel?.name}</p>
                     <p>{hotelUpsellData?.checkInDate} → {hotelUpsellData?.checkOutDate} · {hotelUpsellData?.rooms} room(s)</p>
-                    <p>{money(hotelSelected.offers?.[0]?.price?.total, hotelSelected.offers?.[0]?.price?.currency)} · Hotel payable separately after flight confirmation</p>
+                    <p>Hotel charges{hotelIsEstimate ? " (estimate)" : ""}: {money(hotelAmount, hotelCurrency)} · {hotelIsEstimate ? "Not included in the card payment" : "Paid in the next checkout stage after flight confirmation"}</p>
                     <Button variant="outline" onClick={() => { setStep(0); setHotelStepComplete(false); }}>Change hotel</Button>
                   </CardContent></Card>}
                   <div className="flex flex-col sm:flex-row gap-3">
@@ -783,17 +813,17 @@ const FlightCheckout = () => {
                   ))}
                   <Separator />
                   <div className="flex justify-between font-semibold">
-                    <span>Total paid</span>
+                    <span>Flight charges paid</span>
                     <span>{money(order.total_amount, order.total_currency)}</span>
                   </div>
                 </CardContent>
               </Card>
             )}
-            {hotelSelected && <Card><CardHeader><CardTitle className="text-lg">Complete your hotel booking</CardTitle></CardHeader><CardContent className="space-y-3">
-              <p className="font-medium">{hotelSelected.hotel?.name}</p>
-              <p className="text-sm text-muted-foreground">{hotelUpsellData?.checkInDate} → {hotelUpsellData?.checkOutDate}. Your hotel is not booked or charged yet.</p>
-              <Button onClick={bookSelectedHotel}>Continue to hotel checkout</Button>
-            </CardContent></Card>}
+            {hotelCheckout && <section className="space-y-4" aria-label="Hotel payment">
+              <p className="text-sm text-muted-foreground">Your flight is confirmed. Complete the separate hotel payment below. The hotel is not booked or charged yet; supplier confirmation is separate.</p>
+              <Suspense fallback={<Skeleton className="h-72 w-full" />}><HotelBookingPayment embeddedHotel={hotelCheckout} /></Suspense>
+            </section>}
+            {hotelSelected && hotelIsEstimate && <Alert><AlertTitle>Hotel reservation not confirmed</AlertTitle><AlertDescription>{hotelSelected.hotel?.name}: the Google Places price is an estimate, not a bookable rate. No hotel payment was taken.</AlertDescription></Alert>}
 
             <div className="flex flex-col sm:flex-row gap-3">
               <Button variant="outline" className="flex-1" onClick={() => window.print()}>

@@ -42,8 +42,19 @@ const emptyPassenger: Passenger = {
   seatPreference: "", mealPreference: "",
 };
 
-const Booking = () => {
-  const { id: bookingType } = useParams();
+interface BookingProps {
+  embeddedHotel?: {
+    offer: any;
+    passengers: Passenger[];
+    contact: ContactDetails;
+    agentId?: string | null;
+    checkoutId: string;
+  };
+}
+
+const Booking = ({ embeddedHotel }: BookingProps = {}) => {
+  const { id } = useParams();
+  const bookingType = embeddedHotel ? "hotels" : id;
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -80,7 +91,7 @@ const Booking = () => {
   const [validatedCurrency, setValidatedCurrency] = useState<string>("USD");
   const [showPriceChangeModal, setShowPriceChangeModal] = useState(false);
   const [pendingPriceChangeOffer, setPendingPriceChangeOffer] = useState<any>(null);
-  const draftKey = `bookingDraft:${bookingType ?? "unknown"}`;
+  const draftKey = embeddedHotel ? `bookingDraft:flightHotel:${embeddedHotel.checkoutId}` : `bookingDraft:${bookingType ?? "unknown"}`;
   const draftRestoredRef = useRef(false);
   const historyReadyRef = useRef(false);
 
@@ -90,8 +101,9 @@ const Booking = () => {
   } = useBookingFlow();
 
   useEffect(() => {
-    const storedData =
-      sessionStorage.getItem("selectedOffer") || localStorage.getItem("selectedOffer");
+    const storedData = embeddedHotel
+      ? JSON.stringify({ offer: embeddedHotel.offer, agentId: embeddedHotel.agentId })
+      : sessionStorage.getItem("selectedOffer") || localStorage.getItem("selectedOffer");
     if (storedData) {
       try {
         const parsed = JSON.parse(storedData);
@@ -114,6 +126,11 @@ const Booking = () => {
 
         setOffer(candidate);
         setAgentId(parsed.agentId);
+        if (embeddedHotel) {
+          setPassengers(embeddedHotel.passengers.length ? embeddedHotel.passengers : [{ ...emptyPassenger }]);
+          setContact(embeddedHotel.contact);
+          setCurrentStep(4);
+        }
         try {
           const draftRaw = sessionStorage.getItem(draftKey);
           if (draftRaw) {
@@ -144,7 +161,7 @@ const Booking = () => {
     }
     clientRequestIdRef.current = generateClientRequestId();
     draftRestoredRef.current = true;
-  }, [draftKey, generateClientRequestId, navigate]);
+  }, [draftKey, generateClientRequestId, navigate, embeddedHotel]);
 
   useEffect(() => {
     if (!draftRestoredRef.current || !offer) return;
@@ -296,6 +313,7 @@ const Booking = () => {
   const goBack = () => {
     const prev = Math.max(currentStep - 1, 0);
     const target = !isFlightBooking && prev === 1 ? 0 : prev;
+    if (embeddedHotel) { setCurrentStep(target); return; }
     if (typeof window.history.state?.bookingStep === "number" && currentStep > 0) {
       window.history.back();
     } else {
@@ -306,6 +324,7 @@ const Booking = () => {
   };
 
   useEffect(() => {
+    if (embeddedHotel) return;
     if (!historyReadyRef.current) {
       window.history.replaceState({ ...window.history.state, bookingStep: currentStep }, "");
       historyReadyRef.current = true;
@@ -317,10 +336,10 @@ const Booking = () => {
     };
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
-  }, []);
+  }, [embeddedHotel]);
 
   const moveToStep = (next: number) => {
-    window.history.pushState({ ...window.history.state, bookingStep: next }, "");
+    if (!embeddedHotel) window.history.pushState({ ...window.history.state, bookingStep: next }, "");
     setCurrentStep(next);
   };
 
@@ -336,6 +355,7 @@ const Booking = () => {
   };
 
   const handleSubmit = async () => {
+    if (!validateStep(2)) return;
     if (!acceptedTerms) {
       toast.error("You must accept the Terms & Conditions to continue");
       return;
@@ -507,6 +527,7 @@ const Booking = () => {
       sessionStorage.setItem("pendingBooking", JSON.stringify(parsed));
     }
     sessionStorage.removeItem(draftKey);
+    if (embeddedHotel) sessionStorage.removeItem(`flightHotel:${embeddedHotel.checkoutId}`);
     sessionStorage.removeItem("selectedOffer");
     try { localStorage.removeItem("selectedOffer"); } catch { /* non-fatal */ }
     navigate(`/payment-success?booking_id=${bookingId}&payment_intent=${encodeURIComponent(paymentIntentId)}`);
@@ -537,6 +558,7 @@ const Booking = () => {
   };
 
   if (!offer) {
+    if (embeddedHotel) return <p role="status" className="text-muted-foreground">Loading hotel payment…</p>;
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
@@ -556,14 +578,14 @@ const Booking = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <SEOHead
+    <div className={embeddedHotel ? "flex flex-col" : "min-h-screen flex flex-col"}>
+      {!embeddedHotel && <SEOHead
         title="Secure Booking | Tripile.com"
         description="Complete your Tripile booking securely."
         canonicalUrl={`https://tripile.com/booking/${bookingType ?? "flight"}`}
         noIndex
-      />
-      <Header />
+      />}
+      {!embeddedHotel && <Header />}
 
       {priceChangeData && (
         <PriceChangeModal
@@ -576,12 +598,12 @@ const Booking = () => {
         />
       )}
 
-      <main className="flex-1 pt-24 pb-16 bg-background">
+      <main className={embeddedHotel ? "bg-background" : "flex-1 pt-24 pb-16 bg-background"}>
         <div className="container mx-auto px-4 max-w-5xl">
-          <h1 className="font-display text-3xl font-bold mb-6 text-foreground mt-4">Complete Your Booking</h1>
+          {embeddedHotel ? <h2 className="text-xl font-semibold mb-6">Hotel charges</h2> : <h1 className="font-display text-3xl font-bold mb-6 text-foreground mt-4">Complete Your Booking</h1>}
 
           {/* Stepper */}
-          <BookingStepper currentStep={displayStep} steps={stepLabels} />
+          {!embeddedHotel && <BookingStepper currentStep={displayStep} steps={stepLabels} />}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main content */}
@@ -912,7 +934,7 @@ const Booking = () => {
                         </div>
                       )}
                       <div className="flex justify-between items-center">
-                        <Button variant="outline" onClick={goBack} className="gap-2">
+                        <Button variant="outline" onClick={() => embeddedHotel ? moveToStep(2) : goBack()} className="gap-2">
                           <ArrowLeft className="w-4 h-4" /> Back
                         </Button>
                         <Button
@@ -927,7 +949,7 @@ const Booking = () => {
                               {validating ? "Validating Price..." : "Creating Booking..."}
                             </>
                           ) : (
-                            "Proceed to Payment"
+                            embeddedHotel ? "Proceed to hotel payment" : "Proceed to Payment"
                           )}
                         </Button>
                       </div>
@@ -935,7 +957,7 @@ const Booking = () => {
                   )}
 
 
-                  {paymentReady && (
+                  {paymentReady && !embeddedHotel && (
                     <Button variant="ghost" onClick={goBack} className="gap-2 text-muted-foreground">
                       <ArrowLeft className="w-4 h-4" /> Back to Review
                     </Button>
@@ -962,7 +984,7 @@ const Booking = () => {
           </div>
         </div>
       </main>
-      <Footer />
+      {!embeddedHotel && <Footer />}
     </div>
   );
 };
