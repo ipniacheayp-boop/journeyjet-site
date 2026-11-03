@@ -154,7 +154,8 @@ const FlightCheckout = () => {
       /* non-fatal */
     }
     const freshPassengers = fresh.passengers.map((p, i) => emptyPassenger(String(p.id ?? `pas_${i}`), p.type ?? "adult"));
-    setPassengers(existing => bindCheckoutPassengers(hydratedRef.current ? existing : initialDraft?.passengers ?? [], freshPassengers));
+    const alreadyHydrated = hydratedRef.current;
+    setPassengers(existing => bindCheckoutPassengers(alreadyHydrated ? existing : initialDraft?.passengers ?? [], freshPassengers));
     if (!hydratedRef.current && initialDraft) {
       setContact(initialDraft.contact);
       setAcceptedTerms(initialDraft.acceptedTerms === true);
