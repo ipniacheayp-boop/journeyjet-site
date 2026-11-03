@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -9,7 +9,8 @@ import DuffelPassengerForm, {
   CheckoutPassenger,
   emptyPassenger,
 } from "@/components/duffel/DuffelPassengerForm";
-import DuffelPaymentStep from "@/components/duffel/DuffelPaymentStep";
+import { Skeleton } from "@/components/ui/skeleton";
+import { bindCheckoutPassengers, CHECKOUT_DRAFT_TTL, clearCheckoutDraft, readCheckoutDraft, saveCheckoutDraft } from "@/lib/flightCheckoutDraft";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -38,6 +39,7 @@ import { getItineraryScope } from "@/lib/itineraryScope";
 import { formatDateShort, formatTime } from "@/lib/duffelUtils";
 
 const STEPS = ["Travellers", "Review", "Payment", "Confirmed"];
+const DuffelPaymentStep = lazy(() => import("@/components/duffel/DuffelPaymentStep"));
 
 const money = (amount: string | number | null | undefined, currency: string | null | undefined) => {
   const value = Number(amount ?? 0);
@@ -78,6 +80,12 @@ const FlightCheckout = () => {
   const [bookingRef, setBookingRef] = useState<string | null>(null);
   const [pendingBookingId, setPendingBookingId] = useState<string | null>(null);
   const [verifying, setVerifying] = useState(false);
+  const [checkingPrice, setCheckingPrice] = useState(false);
+  const [paymentStarted, setPaymentStarted] = useState(false);
+  const [storageWarning, setStorageWarning] = useState(false);
+  const submittingRef = useRef(false);
+  const verifyingRef = useRef(false);
+  const hydratedRef = useRef(false);
 
   const stored = useMemo(() => {
     try {
@@ -91,10 +99,15 @@ const FlightCheckout = () => {
 
   const offerId = searchParams.get("offer") || stored?.offerId || stored?.offer?.id || "";
   const draftKey = offerId ? `duffelCheckoutDraft:${offerId}` : "";
+  const initialDraft = useMemo(() => readCheckoutDraft(sessionStorage, offerId), [offerId]);
+  const recovery = useMemo(() => {
+    try { return JSON.parse(sessionStorage.getItem(`duffelRecovery:${offerId}`) || "null") as { attemptId: string; bookingId?: string } | null; }
+    catch { return null; }
+  }, [offerId]);
   const agentId = stored?.agentId ?? null;
   const attemptId = useMemo(
-    () => stored?.attemptId && /^[0-9a-f-]{36}$/i.test(stored.attemptId) ? stored.attemptId : crypto.randomUUID(),
-    [stored],
+    () => recovery?.attemptId || initialDraft?.attemptId || (stored?.attemptId && /^[0-9a-f-]{36}$/i.test(stored.attemptId) ? stored.attemptId : crypto.randomUUID()),
+    [stored, initialDraft, recovery],
   );
 
   // ── Revalidate the offer against the live Duffel API before showing any price ──
@@ -117,6 +130,7 @@ const FlightCheckout = () => {
       return;
     }
 
+    setExpired(false);
     const previous = stored?.offer?.total_amount ? Number(stored.offer.total_amount) : null;
     const current = Number(fresh.total_amount ?? 0);
     if (previous !== null && Number.isFinite(previous) && Math.abs(previous - current) >= 0.01) {
@@ -139,35 +153,38 @@ const FlightCheckout = () => {
     } catch {
       /* non-fatal */
     }
-    setPassengers((existing) =>
-      existing.length === fresh.passengers.length
-        ? existing
-        : fresh.passengers.map((p, i) => emptyPassenger(String(p.id ?? `pas_${i}`), p.type ?? "adult")),
-    );
-    if (draftKey) {
-      try {
-        const draftRaw = sessionStorage.getItem(draftKey);
-        const draft = draftRaw ? JSON.parse(draftRaw) : null;
-        if (draft?.offerId === fresh.id) {
-          if (Array.isArray(draft.passengers) && draft.passengers.length === fresh.passengers.length) setPassengers(draft.passengers);
-          if (draft.contact) setContact(draft.contact);
-          setAcceptedTerms(draft.acceptedTerms === true);
-          setStep(Number.isInteger(draft.step) ? Math.max(0, Math.min(2, draft.step)) : 0);
-          setPendingBookingId(draft.pendingBookingId ?? null);
-        }
-      } catch { sessionStorage.removeItem(draftKey); }
+    const freshPassengers = fresh.passengers.map((p, i) => emptyPassenger(String(p.id ?? `pas_${i}`), p.type ?? "adult"));
+    setPassengers(existing => bindCheckoutPassengers(hydratedRef.current ? existing : initialDraft?.passengers ?? [], freshPassengers));
+    if (!hydratedRef.current && initialDraft) {
+      setContact(initialDraft.contact);
+      setAcceptedTerms(initialDraft.acceptedTerms === true);
+      setStep(Number.isInteger(initialDraft.step) ? Math.max(0, Math.min(2, initialDraft.step)) : 0);
+      setPendingBookingId(initialDraft.pendingBookingId);
+      setPaymentStarted(initialDraft.paymentStarted === true);
     }
+    if (recovery) { setPaymentStarted(true); setPendingBookingId(recovery.bookingId ?? null); setStep(2); }
+    hydratedRef.current = true;
     setLoading(false);
 
-  }, [attemptId, draftKey, offerId, stored]);
+  }, [attemptId, initialDraft, offerId, recovery, stored]);
 
   useEffect(() => {
     if (!draftKey || !offer || step === 3) return;
-    const timer = window.setTimeout(() => {
-      sessionStorage.setItem(draftKey, JSON.stringify({ offerId: offer.id, step, passengers, contact, acceptedTerms, pendingBookingId }));
-    }, 100);
-    return () => window.clearTimeout(timer);
-  }, [acceptedTerms, contact, draftKey, offer, passengers, pendingBookingId, step]);
+    const saved = saveCheckoutDraft(sessionStorage, { offerId: offer.id, attemptId, step, passengers, contact, acceptedTerms, pendingBookingId, paymentStarted, savedAt: Date.now() });
+    if (!saved) setStorageWarning(true);
+    const expire = window.setTimeout(() => {
+      clearCheckoutDraft(sessionStorage, offer.id);
+      setPassengers(offer.passengers.map((p, i) => emptyPassenger(String(p.id ?? `pas_${i}`), p.type ?? "adult")));
+      setContact({ email: "", phone: "" }); setAcceptedTerms(false);
+      if (!paymentStarted) setStep(0);
+    }, CHECKOUT_DRAFT_TTL);
+    return () => window.clearTimeout(expire);
+  }, [acceptedTerms, attemptId, contact, draftKey, offer, passengers, paymentStarted, pendingBookingId, step]);
+
+  useEffect(() => {
+    if (!recovery) return;
+    setPaymentStarted(true); setPendingBookingId(recovery.bookingId ?? null); setStep(2);
+  }, [recovery]);
 
   useEffect(() => {
     loadOffer();
@@ -250,7 +267,12 @@ const FlightCheckout = () => {
     }));
 
   const handleAuthorised = async (auth: { threeDSecureSessionId?: string; cardId?: string }) => {
-    if (!offer) return;
+    if (!offer || submittingRef.current || paymentStarted) return;
+    const problem = validateTravellers();
+    if (problem) { setFormError(problem); setStep(0); return; }
+    submittingRef.current = true;
+    setPaymentStarted(true);
+    try { sessionStorage.setItem(`duffelRecovery:${offerId}`, JSON.stringify({ attemptId })); } catch { setStorageWarning(true); }
 
     setSubmitting(true);
     setOrderError(null);
@@ -262,31 +284,37 @@ const FlightCheckout = () => {
       paymentType: "card",
       threeDSecureSessionId: auth.threeDSecureSessionId,
       cardId: auth.cardId,
-      expectedAmount: offer.total_amount ?? undefined,
-      acceptedTerms: true,
+      expectedAmount: offer.total_amount ?? "",
+      expectedCurrency: offer.total_currency ?? "",
+      acceptedTerms,
       agentId,
       attemptId,
     });
 
     setSubmitting(false);
+    submittingRef.current = false;
 
     if (!result.ok) {
       if (result.pending && result.bookingId) {
         setPendingBookingId(result.bookingId);
+        try { sessionStorage.setItem(`duffelRecovery:${offerId}`, JSON.stringify({ attemptId, bookingId: result.bookingId })); } catch { /* recover by attempt */ }
         setOrderError(null);
         setVerifying(false);
         toast.info("Your payment is being verified with the airline. Please don't submit it again.");
         return;
       }
       if (result.code === "NETWORK") {
-        setOrderError("The result is uncertain because the network connection was interrupted. Your checkout attempt is protected against duplicates; retry once with the same details or contact support if a charge appears.");
-        toast.warning("Connection interrupted. The same checkout attempt can be retried safely.");
+        setOrderError("The connection was interrupted. Check booking status before attempting another payment, or contact support if a charge appears.");
+        toast.warning("Connection interrupted. We will check your existing booking attempt.");
         return;
       }
+      setPaymentStarted(false);
+      try { sessionStorage.removeItem(`duffelRecovery:${offerId}`); } catch { /* non-fatal */ }
       if (result.code === "PRICE_CHANGED" && result.newPrice) {
         setPriceChange({ from: result.originalPrice ?? Number(offer.total_amount ?? 0), to: result.newPrice });
         setStep(1);
         await loadOffer();
+        setStep(1);
         toast.error(result.message ?? "The price changed. Please review it.");
         return;
       }
@@ -301,6 +329,7 @@ const FlightCheckout = () => {
     }
 
     sessionStorage.removeItem("selectedOffer");
+    sessionStorage.removeItem(`duffelRecovery:${offerId}`);
     if (draftKey) sessionStorage.removeItem(draftKey);
     try {
       localStorage.removeItem("selectedOffer");
@@ -316,33 +345,56 @@ const FlightCheckout = () => {
   };
 
   const verifyPendingBooking = useCallback(async () => {
-    if (!pendingBookingId || verifying) return;
+    if ((!pendingBookingId && !paymentStarted) || verifyingRef.current) return;
+    verifyingRef.current = true;
     setVerifying(true);
     try {
-      const result = await reconcileDuffelBooking({ bookingId: pendingBookingId, attemptId });
+      const result = await reconcileDuffelBooking({ bookingId: pendingBookingId ?? undefined, attemptId });
+      if (result.bookingId) setPendingBookingId(result.bookingId);
+      if (result.message || result.error) setOrderError(result.message ?? result.error ?? null);
       if (result.confirmed) {
         sessionStorage.removeItem("selectedOffer");
+        sessionStorage.removeItem(`duffelRecovery:${offerId}`);
         if (draftKey) sessionStorage.removeItem(draftKey);
         try { localStorage.removeItem("selectedOffer"); } catch { /* non-fatal */ }
         setOrder(result.order ?? null);
         setBookingRef(result.bookingReference ?? null);
         setPendingBookingId(null);
+        setPaymentStarted(false);
         setStep(3);
         toast.success(`Booking confirmed — PNR ${result.bookingReference ?? ""}`.trim());
       } else if (result.state === "failed" || result.state === "cancelled") {
-        setPendingBookingId(null);
-        setOrderError(result.message ?? "The airline did not complete this payment.");
+        setOrderError(result.message ?? "The airline did not complete this booking. Search again to begin a new checkout attempt.");
       }
     } finally {
+      verifyingRef.current = false;
       setVerifying(false);
     }
-  }, [attemptId, draftKey, pendingBookingId, verifying]);
+  }, [attemptId, draftKey, offerId, paymentStarted, pendingBookingId]);
 
   useEffect(() => {
-    if (!pendingBookingId) return;
+    if (!pendingBookingId && !paymentStarted) return;
+    void verifyPendingBooking();
     const timer = window.setInterval(() => void verifyPendingBooking(), 8_000);
     return () => window.clearInterval(timer);
-  }, [pendingBookingId, verifyPendingBooking]);
+  }, [paymentStarted, pendingBookingId, verifyPendingBooking]);
+
+  const preparePayment = async () => {
+    if (!offer || checkingPrice) return;
+    setCheckingPrice(true);
+    const result = await getDuffelOffer(offer.id);
+    setCheckingPrice(false);
+    if (!result.offer) {
+      setExpired(Boolean(result.expired)); setLoadError(result.error ?? "We couldn't recheck this fare. Please retry."); return;
+    }
+    const fresh = result.offer;
+    setOffer(fresh);
+    setPassengers(existing => bindCheckoutPassengers(existing, fresh.passengers.map((p, i) => emptyPassenger(String(p.id ?? `pas_${i}`), p.type ?? "adult"))));
+    if (fresh.total_amount !== offer.total_amount || fresh.total_currency !== offer.total_currency) {
+      setPriceChange({ from: Number(offer.total_amount), to: Number(fresh.total_amount) }); setStep(1); return;
+    }
+    setPriceChange(null); setStep(2); window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const itinerary = offer && (
     <div className="space-y-4">
@@ -452,10 +504,17 @@ const FlightCheckout = () => {
       <Header />
 
       <main className="container mx-auto px-4 py-8 max-w-5xl">
-        <Button variant="ghost" size="sm" className="mb-4" onClick={() => navigate(-1)}>
+        <Button variant="ghost" size="sm" className="mb-4" disabled={submitting || paymentStarted} onClick={() => step > 0 && step < 3 ? setStep(step - 1) : navigate("/flights")}>
           <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" />
-          Back to results
+          {step > 0 && step < 3 ? "Back to previous step" : "Back to flight search"}
         </Button>
+        {step < 3 && !paymentStarted && <Button variant="ghost" size="sm" onClick={() => {
+          if (!window.confirm("Cancel this checkout and clear your traveller details?")) return;
+          clearCheckoutDraft(sessionStorage, offerId);
+          try { sessionStorage.removeItem("selectedOffer"); localStorage.removeItem("selectedOffer"); } catch { /* non-fatal */ }
+          navigate("/flights");
+        }}>Cancel checkout</Button>}
+        {storageWarning && <Alert className="mb-4"><AlertDescription>Your browser cannot save checkout details. Keep this tab open until your booking is complete.</AlertDescription></Alert>}
 
         <h1 className="text-2xl md:text-3xl font-bold mb-6">
           {step === 3 ? "Your flight is confirmed" : "Complete your flight booking"}
@@ -464,13 +523,16 @@ const FlightCheckout = () => {
         <BookingStepper currentStep={step} steps={STEPS} />
 
         {loading && (
-          <div className="flex items-center justify-center gap-2 py-20 text-muted-foreground">
+          <div className="space-y-4 py-8" role="status">
+            <Skeleton className="h-24 w-full" /><Skeleton className="h-48 w-full" />
+            <p className="flex items-center gap-2 text-muted-foreground">
             <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
             Checking live availability and price…
+            </p>
           </div>
         )}
 
-        {!loading && loadError && !order && (
+        {!loading && loadError && !order && !paymentStarted && (
           <Alert variant="destructive" className="mb-6">
             <AlertTriangle className="h-4 w-4" aria-hidden="true" />
             <AlertTitle>{expired ? "Fare expired" : "Flight unavailable"}</AlertTitle>
@@ -484,7 +546,8 @@ const FlightCheckout = () => {
           </Alert>
         )}
 
-        {!loading && offer && !loadError && step < 3 && (
+        {paymentStarted && (loadError || !offer) && step < 3 && <Alert className="mb-6"><AlertTitle>Checking your booking</AlertTitle><AlertDescription>{orderError || "Your payment result is being verified. Do not pay again."}<Button className="mt-3" variant="outline" disabled={verifying} onClick={() => void verifyPendingBooking()}>Check booking status</Button></AlertDescription></Alert>}
+        {!loading && offer && (!loadError || paymentStarted) && step < 3 && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
               {priceChange && (
@@ -565,10 +628,10 @@ const FlightCheckout = () => {
                     <Button
                       size="lg"
                       className="flex-1"
-                      disabled={!payableAmount}
-                      onClick={() => { setStep(2); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                      disabled={!payableAmount || checkingPrice}
+                      onClick={() => void preparePayment()}
                     >
-                      Continue to payment
+                      {checkingPrice ? "Checking current fare…" : "Continue to payment"}
                     </Button>
                   </div>
                   {!payableAmount && (
@@ -580,7 +643,7 @@ const FlightCheckout = () => {
               )}
 
               {step === 2 && (
-                pendingBookingId ? (
+                pendingBookingId || paymentStarted ? (
                   <Card className="border-primary/30">
                     <CardContent className="p-6 space-y-4 text-center">
                       <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" aria-hidden="true" />
@@ -590,19 +653,28 @@ const FlightCheckout = () => {
                           Duffel may take longer to return the final order status. Do not submit payment again.
                         </p>
                       </div>
+                      {orderError && <p className="text-sm text-muted-foreground">{orderError}</p>}
                       <Button type="button" variant="outline" disabled={verifying} onClick={() => void verifyPendingBooking()}>
                         {verifying ? "Checking…" : "Check booking status"}
                       </Button>
                     </CardContent>
                   </Card>
                 ) : payableAmount ? (
-                  <DuffelPaymentStep
+                  <Suspense fallback={<Skeleton className="h-72 w-full" />}><DuffelPaymentStep
                     offerId={offer.id}
                     amountLabel={money(offer.total_amount, offer.total_currency)}
                     onAuthorised={handleAuthorised}
                     submitting={submitting}
                     externalError={orderError}
-                  />
+                    beforeAuthorise={async () => {
+                      const result = await getDuffelOffer(offer.id);
+                      if (!result.offer) { setLoadError(result.error ?? "Please recheck this fare."); return false; }
+                      if (result.offer.total_amount !== offer.total_amount || result.offer.total_currency !== offer.total_currency) {
+                        setPriceChange({ from: Number(offer.total_amount), to: Number(result.offer.total_amount) }); setOffer(result.offer); setStep(1); return false;
+                      }
+                      return true;
+                    }}
+                  /></Suspense>
                 ) : (
                   <Card className="border-destructive/40">
                     <CardContent className="p-6 text-sm text-destructive">
@@ -633,9 +705,9 @@ const FlightCheckout = () => {
             <Card className="border-primary/30">
               <CardContent className="pt-6 text-center space-y-3">
                 <CheckCircle2 className="w-12 h-12 text-primary mx-auto" aria-hidden="true" />
-                <h2 className="text-xl font-semibold">Booking confirmed and ticketed</h2>
+                <h2 className="text-xl font-semibold">Booking confirmed{order?.documents.some(d => d.type === "electronic_ticket") ? " and ticketed" : ""}</h2>
                 <p className="text-muted-foreground">
-                  We&apos;ve emailed your ticket and receipt to {contact.email}.
+                  Booking contact: {contact.email || "See your booking details"}. Contact support if your confirmation email has not arrived.
                 </p>
                 <div className="inline-flex flex-col items-center rounded-2xl bg-muted px-6 py-4">
                   <span className="text-xs uppercase tracking-wide text-muted-foreground">Airline booking reference (PNR)</span>
