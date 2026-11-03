@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import BookingStepper from "@/components/booking/BookingStepper";
+import type { HotelUpsellData } from "@/components/booking/HotelUpsellStep";
 import DuffelPassengerForm, {
   CheckoutContact,
   CheckoutPassenger,
@@ -38,7 +39,8 @@ import type { DuffelOffer } from "@/types/duffel";
 import { getItineraryScope } from "@/lib/itineraryScope";
 import { formatDateShort, formatTime } from "@/lib/duffelUtils";
 
-const STEPS = ["Travellers", "Review", "Payment", "Confirmed"];
+const STEPS = ["Hotel", "Travellers", "Review", "Payment", "Confirmed"];
+const HotelUpsellStep = lazy(() => import("@/components/booking/HotelUpsellStep"));
 const DuffelPaymentStep = lazy(() => import("@/components/duffel/DuffelPaymentStep"));
 
 const money = (amount: string | number | null | undefined, currency: string | null | undefined) => {
@@ -83,6 +85,8 @@ const FlightCheckout = () => {
   const [checkingPrice, setCheckingPrice] = useState(false);
   const [paymentStarted, setPaymentStarted] = useState(false);
   const [storageWarning, setStorageWarning] = useState(false);
+  const [hotelStepComplete, setHotelStepComplete] = useState(false);
+  const [hotelUpsellData, setHotelUpsellData] = useState<HotelUpsellData | null>(null);
   const submittingRef = useRef(false);
   const verifyingRef = useRef(false);
   const hydratedRef = useRef(false);
@@ -162,6 +166,8 @@ const FlightCheckout = () => {
       setStep(Number.isInteger(initialDraft.step) ? Math.max(0, Math.min(2, initialDraft.step)) : 0);
       setPendingBookingId(initialDraft.pendingBookingId);
       setPaymentStarted(initialDraft.paymentStarted === true);
+      setHotelStepComplete(initialDraft.hotelStepComplete ?? initialDraft.step > 0);
+      setHotelUpsellData(initialDraft.hotelUpsellData ?? null);
     }
     if (recovery) { setPaymentStarted(true); setPendingBookingId(recovery.bookingId ?? null); setStep(2); }
     hydratedRef.current = true;
@@ -171,16 +177,17 @@ const FlightCheckout = () => {
 
   useEffect(() => {
     if (!draftKey || !offer || step === 3) return;
-    const saved = saveCheckoutDraft(sessionStorage, { offerId: offer.id, attemptId, step, passengers, contact, acceptedTerms, pendingBookingId, paymentStarted, savedAt: Date.now() });
+    const saved = saveCheckoutDraft(sessionStorage, { offerId: offer.id, attemptId, step, passengers, contact, acceptedTerms, pendingBookingId, paymentStarted, hotelStepComplete, hotelUpsellData, savedAt: Date.now() });
     if (!saved) setStorageWarning(true);
     const expire = window.setTimeout(() => {
       clearCheckoutDraft(sessionStorage, offer.id);
       setPassengers(offer.passengers.map((p, i) => emptyPassenger(String(p.id ?? `pas_${i}`), p.type ?? "adult")));
       setContact({ email: "", phone: "" }); setAcceptedTerms(false);
+      setHotelUpsellData(null); setHotelStepComplete(false);
       if (!paymentStarted) setStep(0);
     }, CHECKOUT_DRAFT_TTL);
     return () => window.clearTimeout(expire);
-  }, [acceptedTerms, attemptId, contact, draftKey, offer, passengers, paymentStarted, pendingBookingId, step]);
+  }, [acceptedTerms, attemptId, contact, draftKey, offer, passengers, paymentStarted, pendingBookingId, step, hotelStepComplete, hotelUpsellData]);
 
   useEffect(() => {
     if (!recovery) return;
@@ -201,6 +208,20 @@ const FlightCheckout = () => {
   // mandatory for every traveller — regardless of the offer's document hint.
   const { isDomestic } = useMemo(() => getItineraryScope(offer), [offer]);
   const requireDocuments = !isDomestic && !!offer;
+  const hotelDestination = offer?.slices[0]?.destination;
+  const outboundSegments = offer?.slices[0]?.segments ?? [];
+  const hotelArrivalDate = outboundSegments[outboundSegments.length - 1]?.arriving_at?.split("T")[0] ?? "";
+  const hotelDepartureDate = offer?.slices[1]?.segments[0]?.departing_at?.split("T")[0];
+  const showingHotel = step === 0 && !hotelStepComplete && !paymentStarted;
+  const hotelSelected = hotelUpsellData?.selectedHotel;
+  const bookSelectedHotel = () => {
+    if (!hotelSelected) return;
+    try {
+      sessionStorage.setItem("selectedOffer", JSON.stringify({ type: "hotels", offer: hotelSelected, agentId }));
+      sessionStorage.removeItem("bookingDraft:hotels");
+      navigate("/booking/hotels");
+    } catch { toast.error("Your browser couldn't open hotel checkout. Please allow session storage and try again."); }
+  };
 
   // Duffel's revalidated total is the only price we are ever allowed to charge.
   const payableAmount = (() => {
@@ -505,9 +526,9 @@ const FlightCheckout = () => {
       <Header />
 
       <main className="container mx-auto px-4 pb-8 pt-24 md:pt-36 max-w-5xl">
-        <Button variant="ghost" size="sm" className="mb-4" disabled={submitting || paymentStarted} onClick={() => step > 0 && step < 3 ? setStep(step - 1) : navigate("/flights")}>
+        <Button variant="ghost" size="sm" className="mb-4" disabled={submitting || paymentStarted} onClick={() => step > 0 && step < 3 ? setStep(step - 1) : step === 0 && hotelStepComplete ? setHotelStepComplete(false) : navigate("/flights")}>
           <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" />
-          {step > 0 && step < 3 ? "Back to previous step" : "Back to flight search"}
+          {(step > 0 && step < 3) || (step === 0 && hotelStepComplete) ? "Back to previous step" : "Back to flight search"}
         </Button>
         {step < 3 && !paymentStarted && <Button variant="ghost" size="sm" onClick={() => {
           if (!window.confirm("Cancel this checkout and clear your traveller details?")) return;
@@ -521,7 +542,7 @@ const FlightCheckout = () => {
           {step === 3 ? "Your flight is confirmed" : "Complete your flight booking"}
         </h1>
 
-        <BookingStepper currentStep={step} steps={STEPS} />
+        <BookingStepper currentStep={showingHotel ? 0 : step + 1} steps={STEPS} />
 
         {loading && (
           <div className="space-y-4 py-8" role="status">
@@ -562,7 +583,19 @@ const FlightCheckout = () => {
                 </Alert>
               )}
 
-              {step === 0 && (
+              {showingHotel && <Suspense fallback={<Skeleton className="h-72 w-full" />}>
+                <HotelUpsellStep
+                  destinationCode={hotelDestination?.city_name || hotelDestination?.name || hotelDestination?.iata_code || ""}
+                  arrivalDate={hotelArrivalDate}
+                  departureDate={hotelDepartureDate}
+                  initialData={hotelUpsellData}
+                  onDraftChange={setHotelUpsellData}
+                  onComplete={data => { setHotelUpsellData(data); setHotelStepComplete(true); }}
+                  onSkip={() => { setHotelUpsellData(null); setHotelStepComplete(true); }}
+                  disabled={submitting}
+                />
+              </Suspense>}
+              {step === 0 && !showingHotel && (
                 <>
                   {formError && (
                     <Alert variant="destructive">
@@ -622,6 +655,12 @@ const FlightCheckout = () => {
                     </CardContent>
                   </Card>
 
+                  {hotelSelected && <Card><CardHeader><CardTitle className="text-lg">Selected hotel</CardTitle></CardHeader><CardContent className="space-y-2 text-sm">
+                    <p className="font-medium">{hotelSelected.hotel?.name}</p>
+                    <p>{hotelUpsellData?.checkInDate} → {hotelUpsellData?.checkOutDate} · {hotelUpsellData?.rooms} room(s)</p>
+                    <p>{money(hotelSelected.offers?.[0]?.price?.total, hotelSelected.offers?.[0]?.price?.currency)} · Hotel payable separately after flight confirmation</p>
+                    <Button variant="outline" onClick={() => { setStep(0); setHotelStepComplete(false); }}>Change hotel</Button>
+                  </CardContent></Card>}
                   <div className="flex flex-col sm:flex-row gap-3">
                     <Button variant="outline" className="sm:w-auto" onClick={() => setStep(0)}>
                       Edit traveller details
@@ -750,6 +789,11 @@ const FlightCheckout = () => {
                 </CardContent>
               </Card>
             )}
+            {hotelSelected && <Card><CardHeader><CardTitle className="text-lg">Complete your hotel booking</CardTitle></CardHeader><CardContent className="space-y-3">
+              <p className="font-medium">{hotelSelected.hotel?.name}</p>
+              <p className="text-sm text-muted-foreground">{hotelUpsellData?.checkInDate} → {hotelUpsellData?.checkOutDate}. Your hotel is not booked or charged yet.</p>
+              <Button onClick={bookSelectedHotel}>Continue to hotel checkout</Button>
+            </CardContent></Card>}
 
             <div className="flex flex-col sm:flex-row gap-3">
               <Button variant="outline" className="flex-1" onClick={() => window.print()}>
