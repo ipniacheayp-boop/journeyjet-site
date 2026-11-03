@@ -37,6 +37,7 @@ export interface DuffelResult<T> {
   status: number;
   data: T | null;
   errors: Array<{ type?: string; title?: string; message?: string; code?: string }>;
+  meta?: { after?: string | null; before?: string | null };
 }
 
 export async function duffelFetch<T = Record<string, unknown>>(
@@ -78,6 +79,7 @@ export async function duffelFetch<T = Record<string, unknown>>(
       status: res.status,
       data: (payload?.data ?? null) as T | null,
       errors: Array.isArray(payload?.errors) ? payload.errors : [],
+      meta: payload?.meta,
     };
   } finally {
     clearTimeout(timeout);
@@ -91,7 +93,7 @@ export async function duffelFetch<T = Record<string, unknown>>(
  */
 export function travellerFacingError(
   errors: DuffelResult<unknown>["errors"],
-  fallback = "We couldn't complete your booking. No payment was taken — please try again.",
+  fallback = "The airline couldn't complete this booking. Check your booking status or contact support before paying again.",
 ): { message: string; code: string } {
   const first = errors[0];
   const code = String(first?.code ?? "unknown");

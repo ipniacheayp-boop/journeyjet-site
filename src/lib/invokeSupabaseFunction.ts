@@ -74,7 +74,7 @@ export async function invokeSupabaseFunction<T = unknown>(
   /** Plain JSON body (flight/hotel search params, etc.). Use `object` so typed interfaces stay assignable. */
   body: object,
   /** Optional cancellation + hard timeout so the UI never hangs on a stalled request. */
-  options: { signal?: AbortSignal; timeoutMs?: number } = {},
+  options: { signal?: AbortSignal; timeoutMs?: number; noNetworkRetry?: boolean; preserveErrorPayload?: boolean } = {},
 ): Promise<{ data: T | null; error: string | null }> {
   const baseUrl = (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.replace(/\/$/, "");
   const headers = getEdgeFunctionHeaders();
@@ -119,7 +119,7 @@ export async function invokeSupabaseFunction<T = unknown>(
       const errObj = parsed as { error?: string; details?: string } | null;
       const msg = errObj?.error || `Request failed (${res.status})`;
       const details = errObj?.details ? `: ${errObj.details}` : "";
-      return { data: null, error: msg + details };
+      return { data: options.preserveErrorPayload ? parsed as T : null, error: msg + details };
     }
 
     const errObj = parsed as {
@@ -128,7 +128,7 @@ export async function invokeSupabaseFunction<T = unknown>(
       data?: unknown;
     } | null;
     if (errObj && typeof errObj.error === "string" && errObj.data === undefined && !("data" in (errObj as object))) {
-      return { data: null, error: errObj.details ? `${errObj.error}: ${errObj.details}` : errObj.error };
+      return { data: options.preserveErrorPayload ? parsed as T : null, error: errObj.details ? `${errObj.error}: ${errObj.details}` : errObj.error };
     }
 
     return { data: parsed as T, error: null };
@@ -182,6 +182,7 @@ export async function invokeSupabaseFunction<T = unknown>(
         if (timedOut) {
           return { data: null, error: `Request to "${functionName}" timed out.` };
         }
+        if (options.noNetworkRetry) return { data: null, error: "Connection interrupted. Check the existing booking status before retrying." };
         continue;
       }
     }

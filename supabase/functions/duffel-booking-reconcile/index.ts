@@ -47,17 +47,20 @@ serve(async (req) => {
   const body = (await req.json().catch(() => ({}))) as Any;
   const bookingId = String(body.bookingId ?? "");
   const attemptId = String(body.attemptId ?? "");
-  if (!UUID.test(bookingId) || (attemptId && !UUID.test(attemptId))) {
+  if ((bookingId && !UUID.test(bookingId)) || (attemptId && !UUID.test(attemptId)) || (!bookingId && !attemptId)) {
     return json({ ok: false, error: "Invalid reconciliation request" }, 400);
   }
 
   const admin = createClient(Deno.env.get("SUPABASE_URL") ?? "", Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "");
-  const { data: booking } = await admin.from("bookings").select(
+  let query = admin.from("bookings").select(
     "id,user_id,status,payment_status,payment_provider,amount,currency,duffel_attempt_id,duffel_order_id,duffel_offer_id,duffel_booking_reference,booking_details",
-  ).eq("id", bookingId).eq("booking_type", "flight").maybeSingle();
+  ).eq("booking_type", "flight");
+  query = bookingId ? query.eq("id", bookingId) : query.eq("duffel_attempt_id", attemptId);
+  const { data: booking, error: readError } = await query.maybeSingle();
+  if (readError) return json({ ok: false, pending: true, state: "unknown", message: "Booking verification is temporarily unavailable. Please retry." }, 202);
 
   if (!booking || !String(booking.payment_provider ?? "").startsWith("duffel_")) {
-    return json({ ok: false, error: "Booking not found" }, 404);
+    return json({ ok: false, pending: true, state: "unknown", message: "No final booking record is available yet. Please check again or contact support before paying." }, 202);
   }
 
   let authorised = Boolean(attemptId && booking.duffel_attempt_id === attemptId);
@@ -71,30 +74,41 @@ serve(async (req) => {
     }
   }
   if (!authorised) return json({ ok: false, error: "Not authorised" }, 403);
+  const resolvedBookingId = booking.id;
+  if (["failed", "cancelled", "refunded"].includes(booking.payment_status) && !booking.duffel_order_id) {
+    return json({ ok: true, bookingId: resolvedBookingId, state: booking.payment_status, pending: false, confirmed: false, message: "This booking attempt did not complete. Start a new flight search to try again." });
+  }
 
   let order: Any | null = null;
   if (booking.duffel_order_id) {
     const result = await duffelFetch<Any>(`/air/orders/${encodeURIComponent(booking.duffel_order_id)}`, { timeoutMs: 45_000 });
     if (result.ok) order = result.data;
     else if (result.status >= 500 || result.status === 429) {
-      return json({ ok: true, bookingId, state: "unknown", pending: true, message: "We are still verifying the airline booking." }, 202);
+      return json({ ok: true, bookingId: resolvedBookingId, state: "unknown", pending: true, message: "We are still verifying the airline booking." }, 202);
     }
   } else {
     // Recover a lost create-order response by locating the order via metadata.booking_id.
-    const result = await duffelFetch<Any[]>("/air/orders?limit=100", { timeoutMs: 45_000 });
-    const orders = Array.isArray(result.data) ? result.data : [];
-    order = orders.find((item: Any) => String(item?.metadata?.booking_id ?? "") === bookingId) ?? null;
+    const details = (booking.booking_details ?? {}) as Any;
+    let cursor: string | null = details.reconciliation?.next_cursor ?? null;
+    const deadline = Date.now() + 35_000;
+    do {
+      const result = await duffelFetch<Any[]>(`/air/orders?limit=200${cursor ? `&after=${encodeURIComponent(cursor)}` : ""}`, { timeoutMs: Math.max(1000, deadline - Date.now()) });
+      if (!result.ok || !Array.isArray(result.data)) return json({ ok: true, bookingId: resolvedBookingId, state: "unknown", pending: true, message: "The airline status service is temporarily unavailable. Please check again." }, 202);
+      order = result.data.find((item: Any) => String(item?.metadata?.booking_id ?? "") === resolvedBookingId) ?? null;
+      cursor = result.meta?.after ?? null;
+    } while (!order && cursor && Date.now() < deadline);
+    if (!order) await admin.from("bookings").update({ booking_details: { ...details, reconciliation: { next_cursor: cursor, checked_at: new Date().toISOString() } } }).eq("id", resolvedBookingId);
   }
 
   if (!order?.id) {
-    await admin.from("bookings").update({ payment_status: "unknown" }).eq("id", bookingId)
+    await admin.from("bookings").update({ payment_status: "unknown" }).eq("id", resolvedBookingId)
       .in("payment_status", ["processing", "payment_pending", "unknown"]);
-    return json({ ok: true, bookingId, state: "unknown", pending: true, message: "We are still verifying the airline booking." }, 202);
+    return json({ ok: true, bookingId: resolvedBookingId, state: "unknown", pending: true, message: "We are still verifying the airline booking." }, 202);
   }
 
   if (!amountsMatch(order, booking.amount, booking.currency)) {
-    await admin.from("bookings").update({ payment_status: "amount_mismatch" }).eq("id", bookingId);
-    return json({ ok: false, bookingId, state: "amount_mismatch", error: "The airline order amount requires manual review." }, 409);
+    await admin.from("bookings").update({ payment_status: "amount_mismatch" }).eq("id", resolvedBookingId);
+    return json({ ok: false, bookingId: resolvedBookingId, state: "amount_mismatch", pending: true, error: "The airline order amount requires manual review. Please contact support and do not pay again." }, 409);
   }
 
   const state = getDuffelBookingState(order);
@@ -114,13 +128,14 @@ serve(async (req) => {
 
   // Never revive terminal local states without an explicit operations review.
   if (["cancelled", "refunded"].includes(String(booking.status)) && state.confirmed) {
-    return json({ ok: true, bookingId, state: "manual_review", pending: true, message: "This booking requires manual review." }, 202);
+    return json({ ok: true, bookingId: resolvedBookingId, state: "manual_review", pending: true, message: "This booking requires manual review." }, 202);
   }
 
-  await admin.from("bookings").update(patch).eq("id", bookingId);
+  const { error: updateError } = await admin.from("bookings").update(patch).eq("id", resolvedBookingId);
+  if (updateError) return json({ ok: false, bookingId: resolvedBookingId, state: "unknown", pending: true, message: "Your airline order is still being synchronized. Do not pay again." }, 202);
   return json({
     ok: true,
-    bookingId,
+    bookingId: resolvedBookingId,
     state: state.paymentStatus,
     pending: !state.terminal,
     confirmed: state.confirmed,

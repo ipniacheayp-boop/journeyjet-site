@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -34,6 +34,8 @@ const defaultFilters = (maxPrice: number): FlightFilterState => ({
 });
 
 export default function FlightSearchLive() {
+  const navigate = useNavigate();
+  const searchGeneration = useRef(0);
   const [searchParams] = useSearchParams();
   const formRef = useRef<HTMLDivElement>(null);
 
@@ -72,11 +74,13 @@ export default function FlightSearchLive() {
   const currency = offers[0]?.total_currency || "USD";
 
   const runSearch = useCallback(async (payload: DuffelSearchRequest) => {
+    const generation = ++searchGeneration.current;
     setLoading(true);
     setError(null);
     setHasSearched(true);
 
     const { offers: result, error: searchError } = await searchDuffelFlights(payload);
+    if (generation !== searchGeneration.current) return;
 
     setLoading(false);
     setOffers(result);
@@ -175,18 +179,14 @@ export default function FlightSearchLive() {
     // Persist the Duffel offer id — required for offer reconfirmation and order creation.
     try {
       sessionStorage.setItem(
-        "duffel.selectedOffer",
-        JSON.stringify({ offerId: offer.id, offer, selectedAt: new Date().toISOString() }),
+        "selectedOffer",
+        JSON.stringify({ type: "flights", provider: "duffel", offerId: offer.id, offer, attemptId: crypto.randomUUID() }),
       );
     } catch {
       /* storage unavailable — the offer id stays in memory only */
     }
-    toast({
-      title: "Fare selected",
-      description:
-        "Your fare is held. Passenger details and payment are the next step in the booking flow.",
-    });
     setDetailsOpen(false);
+    navigate(`/flight/checkout?offer=${encodeURIComponent(offer.id)}`);
   };
 
   return (

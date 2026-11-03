@@ -95,15 +95,19 @@ export async function createDuffelOrder(payload: {
   paymentType: "card" | "balance";
   cardId?: string;
   threeDSecureSessionId?: string;
-  expectedAmount?: string | number;
+  expectedAmount: string | number;
+  expectedCurrency: string;
   acceptedTerms: boolean;
   agentId?: string | null;
   attemptId: string;
 }): Promise<CreateOrderResult> {
   const { data, error } = await invokeSupabaseFunction<CreateOrderResult>("duffel-order-create", payload, {
     timeoutMs: 125_000,
+    noNetworkRetry: true,
+    preserveErrorPayload: true,
   });
 
+  if (data) return data;
   if (error) {
     return {
       ok: false,
@@ -117,11 +121,12 @@ export async function createDuffelOrder(payload: {
 }
 
 export async function reconcileDuffelBooking(payload: {
-  bookingId: string;
+  bookingId?: string;
   attemptId: string;
 }): Promise<ReconcileBookingResult> {
   const { data, error } = await invokeSupabaseFunction<ReconcileBookingResult>("duffel-booking-reconcile", payload, {
     timeoutMs: 55_000,
+    preserveErrorPayload: true,
   });
   if (data) return data;
   return { ok: false, pending: true, state: "unknown", message: error ?? "We are still verifying the airline booking." };

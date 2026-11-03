@@ -41,7 +41,7 @@ export async function searchDuffelFlights(
     const { data, error } = await invokeSupabaseFunction<DuffelSearchResponse>(
       "duffel-flights-search",
       payload,
-      { signal: options.signal, timeoutMs: SEARCH_TIMEOUT_MS },
+      { timeoutMs: SEARCH_TIMEOUT_MS },
     );
 
     markFlightSearch("response_received");
@@ -70,17 +70,30 @@ export async function searchDuffelFlights(
   return request;
 }
 
-export async function getDuffelOffer(
+const inflightOffers = new Map<string, Promise<{ offer: DuffelOffer | null; error: string | null; expired?: boolean }>>();
+
+export function getDuffelOffer(offerId: string) {
+  const pending = inflightOffers.get(offerId);
+  if (pending) return pending;
+  const request = fetchDuffelOffer(offerId);
+  inflightOffers.set(offerId, request);
+  void request.finally(() => {
+    if (inflightOffers.get(offerId) === request) inflightOffers.delete(offerId);
+  });
+  return request;
+}
+
+async function fetchDuffelOffer(
   offerId: string,
 ): Promise<{ offer: DuffelOffer | null; error: string | null; expired?: boolean }> {
   const { data, error } = await invokeSupabaseFunction<{
     offer?: DuffelOffer;
     error?: string;
     expired?: boolean;
-  }>("duffel-offer-get", { offerId });
+  }>("duffel-offer-get", { offerId }, { timeoutMs: 35_000, preserveErrorPayload: true });
 
-  if (error) return { offer: null, error: "We couldn't load this flight right now. Please try again." };
   if (data?.error) return { offer: null, error: data.error, expired: data.expired };
+  if (error) return { offer: null, error: "We couldn't load this flight right now. Please try again." };
 
   return { offer: data?.offer ?? null, error: null };
 }

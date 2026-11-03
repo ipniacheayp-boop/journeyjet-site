@@ -40,7 +40,10 @@ export function getCachedFlightSearch(key: string): FlightSearchResult | null {
     cache.delete(key);
     return null;
   }
-  return hit.result;
+  const now = Date.now();
+  const offers = hit.result.offers.filter(offer => !offer.expires_at || Date.parse(offer.expires_at) > now + 5_000);
+  if (!offers.length) { cache.delete(key); return null; }
+  return { ...hit.result, offers };
 }
 
 export function setCachedFlightSearch(key: string, result: FlightSearchResult) {
