@@ -9,7 +9,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 // @ts-expect-error TS2307 — Deno remote import.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { corsHeaders, duffelFetch, isLiveMode, json, travellerFacingError } from "../_shared/duffel.ts";
-import { amountsMatch, getDuffelBookingState } from "../_shared/duffelBookingState.ts";
+import { amountsMatch, getDuffelBookingState, validateExpectedFare } from "../_shared/duffelBookingState.ts";
 
 type Any = Record<string, any>;
 
@@ -157,6 +157,7 @@ function summariseOrder(order: Any) {
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method !== "POST") return json({ ok: false, message: "Method not allowed" }, 405);
 
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
@@ -198,6 +199,22 @@ serve(async (req) => {
       return json({ ok: false, code: "PAYMENT_REQUIRED", message: "Please enter your card details to complete the booking." }, 200);
     }
 
+    // Recover an existing attempt BEFORE inspecting a now-expired fare or creating payment.
+    const { data: prior, error: priorError } = await supabase.from("bookings")
+      .select("id,status,payment_status,duffel_offer_id,duffel_order_id,duffel_booking_reference,booking_details")
+      .eq("duffel_attempt_id", attemptId).maybeSingle();
+    if (priorError) return json({ ok: false, code: "UNAVAILABLE", message: "We couldn't check your booking attempt. Please try again shortly." }, 200);
+    if (prior) {
+      if (prior.duffel_offer_id !== offerId) return json({ ok: false, code: "INVALID_ATTEMPT", message: "This checkout attempt belongs to a different flight." }, 200);
+      const confirmed = prior.status === "confirmed" && prior.payment_status === "paid";
+      const failed = ["failed", "cancelled", "refunded"].includes(prior.payment_status);
+      return json({ ok: confirmed, pending: !confirmed && !failed, alreadyBooked: true,
+        code: confirmed ? undefined : failed ? "PAYMENT_FAILED" : "PAYMENT_PENDING",
+        message: confirmed ? undefined : failed ? "This booking attempt did not complete. Search again to start a new checkout." : "Your existing booking is being verified. Do not pay again.",
+        bookingId: prior.id, orderId: prior.duffel_order_id, bookingReference: prior.duffel_booking_reference,
+        order: prior.booking_details?.duffel_order ?? null }, confirmed || failed ? 200 : 202);
+    }
+
     // ── 1. Revalidate the offer straight from Duffel (price, availability, expiry) ──
     const offerRes = await duffelFetch<Any>(`/air/offers/${encodeURIComponent(offerId)}?return_available_services=false`);
 
@@ -226,8 +243,10 @@ serve(async (req) => {
     }
 
     // Price change guard — the traveller must re-confirm before we charge anything.
-    const expected = body?.expectedAmount !== undefined ? String(body.expectedAmount) : null;
-    if (expected && Number(expected) !== Number(amount)) {
+    const expected = body?.expectedAmount;
+    const fareValidation = validateExpectedFare(expected, body?.expectedCurrency, offer);
+    if (fareValidation === "invalid") return json({ ok: false, code: "INVALID_PRICE", message: "Please review the flight total and currency before paying." }, 200);
+    if (fareValidation === "changed") {
       return json(
         {
           ok: false,
@@ -270,7 +289,7 @@ serve(async (req) => {
     }
     const passengers = validated.passengers;
 
-    if (passengers.length !== offerPassengerIds.length ||
+    if (new Set(passengers.map(p => p.id)).size !== passengers.length || passengers.length !== offerPassengerIds.length ||
         passengers.some((p) => !offerPassengerIds.includes(p.id))) {
       return json({ ok: false, code: "INVALID_OFFER", message: "Traveller details don't match this fare. Please search again." }, 200);
     }
@@ -455,14 +474,15 @@ serve(async (req) => {
     if (updateError) {
       // The order exists at the airline — never fail the response over a write error.
       console.error("[Internal Error] booking confirm update failed", updateError.message, "order", order.id);
+      return json({ ok: false, pending: true, code: "PAYMENT_PENDING", bookingId, message: "The airline returned an order, but your booking record is still being synchronized. Do not pay again." }, 202);
     }
 
     // ── 6. Confirmation email (best effort, confirmed orders only) ──
     if (state.confirmed) {
       try {
-        await supabase.functions.invoke("send-booking-confirmation", {
+        void supabase.functions.invoke("send-booking-confirmation", {
           body: { bookingId, email: contactEmail, bookingReference: order.booking_reference, orderId: order.id },
-        });
+        }).catch(() => console.error("confirmation email delivery unavailable"));
       } catch (mailErr) {
         console.error("confirmation email failed", mailErr instanceof Error ? mailErr.message : mailErr);
       }
