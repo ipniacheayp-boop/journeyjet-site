@@ -38,7 +38,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import type { DuffelOffer } from "@/types/duffel";
 import { getItineraryScope } from "@/lib/itineraryScope";
 import { formatDateShort, formatTime } from "@/lib/duffelUtils";
-import { combinedCheckoutTotal, hotelGuestsFromFlight, readHotelContinuation } from "@/lib/flightHotelCheckout";
+import { combinedCheckoutTotal, hotelGuestsFromFlight, isEstimatedHotel, readHotelContinuation } from "@/lib/flightHotelCheckout";
 
 const STEPS = ["Hotel", "Travellers", "Review", "Payment", "Confirmed"];
 const HotelUpsellStep = lazy(() => import("@/components/booking/HotelUpsellStep"));
@@ -226,7 +226,7 @@ const FlightCheckout = () => {
   }, [hotelContinuation, hotelUpsellData]);
   const hotelAmount = Number(hotelSelected?.offers?.[0]?.price?.total ?? 0);
   const hotelCurrency = hotelSelected?.offers?.[0]?.price?.currency ?? "USD";
-  const hotelIsEstimate = Boolean(hotelSelected?.googlePlace);
+  const hotelIsEstimate = isEstimatedHotel(hotelSelected);
   const hotelCheckout = useMemo(() => hotelSelected && !hotelIsEstimate ? {
     offer: hotelSelected,
     passengers: hotelContinuation?.passengers ?? hotelGuestsFromFlight(passengers),

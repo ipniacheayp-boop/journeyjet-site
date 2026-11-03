@@ -17,6 +17,10 @@ export function combinedCheckoutTotal(flight: number, flightCurrency: string, ho
   return Math.round((flight + hotel) * 100) / 100;
 }
 
+export function isEstimatedHotel(offer: { googlePlace?: unknown } | null | undefined): boolean {
+  return Boolean(offer?.googlePlace);
+}
+
 export interface HotelContinuation {
   hotelUpsellData: HotelUpsellData;
   passengers: Passenger[];

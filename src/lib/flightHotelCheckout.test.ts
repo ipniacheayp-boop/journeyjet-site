@@ -1,9 +1,13 @@
 import { describe, it, expect } from "vitest";
-import { combinedCheckoutTotal, hotelGuestsFromFlight, readHotelContinuation } from "./flightHotelCheckout";
+import { combinedCheckoutTotal, hotelGuestsFromFlight, isEstimatedHotel, readHotelContinuation } from "./flightHotelCheckout";
 import { CHECKOUT_DRAFT_TTL } from "./flightCheckoutDraft";
 import { emptyPassenger } from "@/components/duffel/DuffelPassengerForm";
 
 describe("flight and hotel checkout", () => {
+  it("identifies Google Places estimates so they cannot enter the hotel card stage", () => {
+    expect(isEstimatedHotel({ googlePlace: { id: "place_1" } })).toBe(true);
+    expect(isEstimatedHotel({})).toBe(false);
+  });
   it("itemizes hotel totals without multiplying them by flight passengers", () => {
     expect(combinedCheckoutTotal(400, "USD", 125.50, "USD")).toBe(525.50);
   });
