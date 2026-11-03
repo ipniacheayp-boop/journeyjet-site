@@ -90,10 +90,10 @@ async function fetchDuffelOffer(
     offer?: DuffelOffer;
     error?: string;
     expired?: boolean;
-  }>("duffel-offer-get", { offerId }, { timeoutMs: 35_000 });
+  }>("duffel-offer-get", { offerId }, { timeoutMs: 35_000, preserveErrorPayload: true });
 
-  if (error) return { offer: null, error: "We couldn't load this flight right now. Please try again." };
   if (data?.error) return { offer: null, error: data.error, expired: data.expired };
+  if (error) return { offer: null, error: "We couldn't load this flight right now. Please try again." };
 
   return { offer: data?.offer ?? null, error: null };
 }

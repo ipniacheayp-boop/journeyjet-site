@@ -84,7 +84,7 @@ serve(async (req) => {
     const result = await duffelFetch<Any>(`/air/orders/${encodeURIComponent(booking.duffel_order_id)}`, { timeoutMs: 45_000 });
     if (result.ok) order = result.data;
     else if (result.status >= 500 || result.status === 429) {
-      return json({ ok: true, bookingId, state: "unknown", pending: true, message: "We are still verifying the airline booking." }, 202);
+      return json({ ok: true, bookingId: resolvedBookingId, state: "unknown", pending: true, message: "We are still verifying the airline booking." }, 202);
     }
   } else {
     // Recover a lost create-order response by locating the order via metadata.booking_id.
@@ -108,7 +108,7 @@ serve(async (req) => {
 
   if (!amountsMatch(order, booking.amount, booking.currency)) {
     await admin.from("bookings").update({ payment_status: "amount_mismatch" }).eq("id", resolvedBookingId);
-    return json({ ok: false, bookingId, state: "amount_mismatch", error: "The airline order amount requires manual review." }, 409);
+    return json({ ok: false, bookingId: resolvedBookingId, state: "amount_mismatch", pending: true, error: "The airline order amount requires manual review. Please contact support and do not pay again." }, 409);
   }
 
   const state = getDuffelBookingState(order);
@@ -128,7 +128,7 @@ serve(async (req) => {
 
   // Never revive terminal local states without an explicit operations review.
   if (["cancelled", "refunded"].includes(String(booking.status)) && state.confirmed) {
-    return json({ ok: true, bookingId, state: "manual_review", pending: true, message: "This booking requires manual review." }, 202);
+    return json({ ok: true, bookingId: resolvedBookingId, state: "manual_review", pending: true, message: "This booking requires manual review." }, 202);
   }
 
   const { error: updateError } = await admin.from("bookings").update(patch).eq("id", resolvedBookingId);
