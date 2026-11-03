@@ -389,7 +389,7 @@ const HotelUpsellStep = ({ destinationCode, arrivalDate, departureDate, onComple
         </div>
         <CardContent className="p-6 space-y-4">
           <div className="p-4 bg-muted/30 rounded-lg space-y-2">
-            <div className="flex items-start justify-between">
+            <div className="flex flex-col sm:flex-row items-start justify-between gap-2">
               <div>
                 <h4 className="font-bold text-foreground">{hotelName}</h4>
                 {rating && (
@@ -416,7 +416,7 @@ const HotelUpsellStep = ({ destinationCode, arrivalDate, departureDate, onComple
             )}
           </div>
 
-          <div className="flex justify-between">
+          <div className="flex flex-col sm:flex-row justify-between gap-3">
             <Button variant="outline" onClick={() => setPhase("results")} className="gap-1">
               Change Hotel
             </Button>
