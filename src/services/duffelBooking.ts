@@ -95,7 +95,8 @@ export async function createDuffelOrder(payload: {
   paymentType: "card" | "balance";
   cardId?: string;
   threeDSecureSessionId?: string;
-  expectedAmount?: string | number;
+  expectedAmount: string | number;
+  expectedCurrency: string;
   acceptedTerms: boolean;
   agentId?: string | null;
   attemptId: string;
@@ -117,7 +118,7 @@ export async function createDuffelOrder(payload: {
 }
 
 export async function reconcileDuffelBooking(payload: {
-  bookingId: string;
+  bookingId?: string;
   attemptId: string;
 }): Promise<ReconcileBookingResult> {
   const { data, error } = await invokeSupabaseFunction<ReconcileBookingResult>("duffel-booking-reconcile", payload, {

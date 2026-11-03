@@ -287,8 +287,10 @@ const SearchResults = () => {
       setDuffelOffers([]);
     } finally {
       // Loading is always reset — success, error and cancellation alike.
-      setLoading(false);
-      setLoadingMore(false);
+      if (!aborted()) {
+        setLoading(false);
+        setLoadingMore(false);
+      }
     }
   };
 
@@ -317,6 +319,7 @@ const SearchResults = () => {
         type: "flights",
         provider: "duffel",
         offerId: offer.id,
+        attemptId: crypto.randomUUID(),
         offer,
         agentId,
         // Pricing snapshot kept verbatim from Duffel so it survives navigation & refresh.
