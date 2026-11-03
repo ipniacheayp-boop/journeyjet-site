@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DuffelCardForm, useDuffelCardFormActions, createThreeDSecureSession } from "@duffel/components";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,22 +10,26 @@ interface Props {
   offerId: string;
   amountLabel: string;
   /** Called with the authenticated 3DS session id (preferred) or the temporary card id. */
-  onAuthorised: (result: { threeDSecureSessionId?: string; cardId?: string }) => void;
+  onAuthorised: (result: { threeDSecureSessionId?: string; cardId?: string }) => Promise<void>;
+  beforeAuthorise: () => Promise<boolean>;
   submitting: boolean;
   externalError?: string | null;
 }
 
 type Phase = "loading" | "ready" | "tokenising" | "authenticating" | "error";
 
-const DuffelPaymentStep = ({ offerId, amountLabel, onAuthorised, submitting, externalError }: Props) => {
+const DuffelPaymentStep = ({ offerId, amountLabel, onAuthorised, beforeAuthorise, submitting, externalError }: Props) => {
   const [clientKey, setClientKey] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>("loading");
   const [error, setError] = useState<string | null>(null);
   const [cardValid, setCardValid] = useState(false);
+  const [keyAttempt, setKeyAttempt] = useState(0);
+  const submitLock = useRef(false);
 
   const { ref, createCardForTemporaryUse } = useDuffelCardFormActions();
 
   useEffect(() => {
+    setPhase("loading"); setError(null); setClientKey(null); setCardValid(false);
     let active = true;
     (async () => {
       const { clientKey: key, error: keyError } = await getDuffelClientKey();
@@ -41,12 +45,19 @@ const DuffelPaymentStep = ({ offerId, amountLabel, onAuthorised, submitting, ext
     return () => {
       active = false;
     };
-  }, []);
+  }, [keyAttempt]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (submitLock.current || submitting || phase !== "ready" || !cardValid) return;
+    submitLock.current = true;
     setError(null);
     setPhase("tokenising");
-    createCardForTemporaryUse();
+    try {
+      if (!(await beforeAuthorise())) { submitLock.current = false; setPhase("ready"); return; }
+      createCardForTemporaryUse();
+    } catch {
+      submitLock.current = false; setPhase("ready"); setError("We couldn't prepare this payment. Please retry.");
+    }
   };
 
   const busy = submitting || phase === "tokenising" || phase === "authenticating";
@@ -93,7 +104,7 @@ const DuffelPaymentStep = ({ offerId, amountLabel, onAuthorised, submitting, ext
                   const session = await createThreeDSecureSession(clientKey, card.id, offerId, [], true);
 
                   if (session.status === "ready_for_payment") {
-                    onAuthorised({ threeDSecureSessionId: session.id });
+                    await onAuthorised({ threeDSecureSessionId: session.id });
                     return;
                   }
 
@@ -106,9 +117,13 @@ const DuffelPaymentStep = ({ offerId, amountLabel, onAuthorised, submitting, ext
                 } catch {
                   setPhase("ready");
                   setError("We couldn't verify your card with your bank. Please try again or use a different card.");
+                } finally {
+                  submitLock.current = false;
+                  setPhase("ready");
                 }
               }}
               onCreateCardForTemporaryUseFailure={() => {
+                submitLock.current = false;
                 setPhase("ready");
                 setError("We couldn't read those card details. Please check them and try again.");
               }}
@@ -119,6 +134,7 @@ const DuffelPaymentStep = ({ offerId, amountLabel, onAuthorised, submitting, ext
             />
           </div>
         )}
+        {phase === "error" && <Button variant="outline" onClick={() => setKeyAttempt(value => value + 1)}>Retry secure payment form</Button>}
 
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <ShieldCheck className="w-4 h-4 text-primary" aria-hidden="true" />
