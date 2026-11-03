@@ -7,6 +7,15 @@ function storage(): Storage {
 }
 const draft: FlightCheckoutDraft = { offerId: "off_test", attemptId: "e0e98cba-5f03-4b7c-bb57-947157721afd", step: 1, savedAt: 1000, acceptedTerms: true, pendingBookingId: null, paymentStarted: false, contact: { email: "traveller@example.test", phone: "+919876543210" }, passengers: [{ id: "pas_old", type: "adult", title: "mr", givenName: "Test", familyName: "Traveller", bornOn: "1990-01-02", gender: "m", passportNumber: "A1234567", passportExpiry: "2030-01-01", issuingCountry: "IN", nationality: "IN" }] };
 describe("temporary checkout data", () => {
+  it("retains the optional hotel selection and skip status across checkout steps", () => {
+    const store = storage();
+    const hotelUpsellData = { wantsHotel: true, destination: "Los Angeles", checkInDate: "2026-12-03", checkOutDate: "2026-12-05", adults: 1, children: 0, rooms: 1, budgetRange: "", preferences: [], selectedHotel: { hotel: { name: "Selected API hotel" }, offers: [{ id: "hotel_offer", price: { total: "200.00", currency: "USD" } }] } };
+    saveCheckoutDraft(store, { ...draft, hotelStepComplete: true, hotelUpsellData });
+    expect(readCheckoutDraft(store, draft.offerId, 1001)?.hotelUpsellData).toEqual(hotelUpsellData);
+    saveCheckoutDraft(store, { ...draft, hotelStepComplete: true, hotelUpsellData: null });
+    expect(readCheckoutDraft(store, draft.offerId, 1001)?.hotelStepComplete).toBe(true);
+    expect(readCheckoutDraft(store, draft.offerId, 1001)?.hotelUpsellData).toBeNull();
+  });
   it("preserves all passenger and contact fields across reload and steps", () => {
     const store = storage(); saveCheckoutDraft(store, draft);
     expect(readCheckoutDraft(store, draft.offerId, 1001)).toEqual(draft);

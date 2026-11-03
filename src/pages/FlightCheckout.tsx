@@ -585,7 +585,7 @@ const FlightCheckout = () => {
 
               {showingHotel && <Suspense fallback={<Skeleton className="h-72 w-full" />}>
                 <HotelUpsellStep
-                  destinationCode={hotelDestination?.iata_code ?? ""}
+                  destinationCode={hotelDestination?.city_name || hotelDestination?.name || hotelDestination?.iata_code || ""}
                   arrivalDate={hotelArrivalDate}
                   departureDate={hotelDepartureDate}
                   initialData={hotelUpsellData}
