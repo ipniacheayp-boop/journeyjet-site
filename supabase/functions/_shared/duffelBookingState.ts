@@ -30,7 +30,7 @@ export function getDuffelBookingState(order: Any | null | undefined): DuffelBook
   const cancelled = Boolean(order.cancelled_at) || CANCELLED.has(String(order.status ?? "").toLowerCase()) || states.some((state) => CANCELLED.has(state));
   const refunded = states.some((state) => REFUNDED.has(state));
   const failed = states.some((state) => FAILED.has(state));
-  const pending = states.some((state) => PENDING.has(state));
+  const pending = PENDING.has(String(order.status ?? "").toLowerCase()) || states.some((state) => PENDING.has(state));
   const paid = states.some((state) => PAID.has(state));
 
   if (refunded) return { bookingStatus: "refunded", paymentStatus: "refunded", terminal: true, confirmed: false };
