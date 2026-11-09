@@ -545,6 +545,11 @@ const Booking = ({ embeddedHotel }: BookingProps = {}) => {
       setValidatedOffer(pendingPriceChangeOffer);
       setValidatedPrice(priceChangeData.newPrice);
       setValidatedCurrency("USD");
+      if (bookingType === "hotels" || bookingType === "hotel") {
+        // Hotel confirmations are signed for this request id — keep it, and apply the same discount.
+        await createBookingAndPay(pendingPriceChangeOffer, Math.max(0, priceChangeData.newPrice - discount), "USD");
+        return;
+      }
       clientRequestIdRef.current = generateClientRequestId();
       await createBookingAndPay(pendingPriceChangeOffer, priceChangeData.newPrice, "USD");
     }
