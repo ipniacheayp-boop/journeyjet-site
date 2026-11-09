@@ -45,6 +45,7 @@ const getAmadeusToken = async (): Promise<string> => {
   });
 
   if (!response.ok) {
+    logStep('Amadeus auth failed', { status: response.status, env: useProd ? 'prod' : 'test', body: (await response.text()).slice(0, 200) });
     throw new Error('Failed to authenticate with Amadeus API');
   }
 
