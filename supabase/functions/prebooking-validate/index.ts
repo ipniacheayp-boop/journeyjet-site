@@ -165,7 +165,8 @@ serve(async (req) => {
 
       // 2) Confirm a bookable rate with Amadeus — the only price we will charge.
       let token: string;
-      try { token = await getAmadeusToken(); } catch {
+      try { token = await getAmadeusToken(); } catch (e) {
+        logStep('Amadeus unavailable', { error: e instanceof Error ? e.message : String(e) });
         return json({ ok: false, code: 'RATE_CHECK_UNAVAILABLE', message: "We couldn't confirm this hotel's rate right now. You have not been charged — please try again shortly." });
       }
       const auth = { Authorization: `Bearer ${token}` };
