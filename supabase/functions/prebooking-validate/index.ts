@@ -1,5 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { fetchSerpHotelRates } from "../_shared/serpHotelsClient.ts";
+import { buildEstimatedPrice, hmacHex, matchScore, nightsBetween, rateTokenPayload } from "../_shared/hotelRates.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -132,25 +134,82 @@ serve(async (req) => {
       );
 
     } else if (productType === 'hotel') {
-      // For hotels, we validate the offer is still available
-      // Amadeus doesn't have a direct price validation for hotels like flights
-      // We return the offer as-is with validation timestamp
-      
-      const price = parseFloat(offer.offers?.[0]?.price?.total || offer.price?.total || '0');
-      const currency = offer.offers?.[0]?.price?.currency || offer.price?.currency || 'USD';
+      const json = (body: unknown, status = 200) =>
+        new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      const hotelOffer = offer.offers?.[0] || {};
+      const displayedPrice = Number(hotelOffer.price?.total ?? offer.price?.total ?? 0);
+      const name: string = offer.hotel?.name || offer.name || '';
+      const lat = Number(offer.hotel?.location?.lat ?? offer.googlePlace?.location?.latitude);
+      const lng = Number(offer.hotel?.location?.lng ?? offer.googlePlace?.location?.longitude);
+      const meta = offer.searchMeta || {};
+      const checkInDate: string = hotelOffer.checkInDate || meta.checkInDate;
+      const checkOutDate: string = hotelOffer.checkOutDate || meta.checkOutDate;
+      const adults = Math.max(1, Number(meta.adults || hotelOffer.guests?.adults || 1));
+      const rooms = Math.max(1, Number(meta.roomQuantity || hotelOffer.roomQuantity || 1));
+      const nights = checkInDate && checkOutDate ? nightsBetween(checkInDate, checkOutDate) : null;
 
-      logStep('Hotel offer validated', { price, currency });
+      if (!name || !Number.isFinite(lat) || !Number.isFinite(lng) || !nights) {
+        return json({ ok: false, code: 'INVALID_REQUEST', message: 'Hotel, location and stay dates are required to confirm the rate.' }, 400);
+      }
 
-      return new Response(
-        JSON.stringify({
-          ok: true,
-          price,
-          currency,
-          validatedOffer: offer,
-          expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString(), // 30 min hold for hotels
-        }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      // 1) Refresh the estimated display price (bypass cache) so the guest sees the latest rate.
+      const serp = await fetchSerpHotelRates({
+        q: `${name} ${meta.cityQuery || ''}`.trim(), checkInDate, checkOutDate, adults,
+        children: Number(meta.children || 0), childrenAges: meta.childrenAges, currency: 'USD',
+      }, { fresh: true });
+      const freshRate = serp.rates
+        .map((r) => ({ r, s: matchScore({ name, lat, lng }, { name: r.name, lat: r.lat, lng: r.lng }) }))
+        .filter((x) => x.s > 0).sort((a, b) => b.s - a.s)[0]?.r;
+      const refreshedEstimate = freshRate ? buildEstimatedPrice(freshRate, nights, rooms) : null;
+
+      // 2) Confirm a bookable rate with Amadeus — the only price we will charge.
+      let token: string;
+      try { token = await getAmadeusToken(); } catch {
+        return json({ ok: false, code: 'RATE_CHECK_UNAVAILABLE', message: "We couldn't confirm this hotel's rate right now. You have not been charged — please try again shortly." });
+      }
+      const auth = { Authorization: `Bearer ${token}` };
+      const geoRes = await fetch(`${baseUrl}/v1/reference-data/locations/hotels/by-geocode?latitude=${lat}&longitude=${lng}&radius=1&radiusUnit=KM`, { headers: auth });
+      const geo = geoRes.ok ? await geoRes.json() : { data: [] };
+      const candidates = (Array.isArray(geo.data) ? geo.data : [])
+        .map((h: any) => ({ h, s: matchScore({ name, lat, lng }, { name: h.name, lat: h.geoCode?.latitude, lng: h.geoCode?.longitude }) }))
+        .filter((x: any) => x.s > 0).sort((a: any, b: any) => b.s - a.s);
+      const amadeusHotelId: string | undefined = candidates[0]?.h?.hotelId;
+      if (!amadeusHotelId) {
+        logStep('Hotel not found in Amadeus', { name });
+        return json({ ok: false, code: 'NOT_BOOKABLE', message: 'This hotel can’t be booked online for these dates. Please choose another hotel. You have not been charged.' });
+      }
+      const qs = new URLSearchParams({ hotelIds: amadeusHotelId, adults: String(adults), checkInDate, checkOutDate, roomQuantity: String(rooms), currency: 'USD', bestRateOnly: 'true' });
+      const offRes = await fetch(`${baseUrl}/v3/shopping/hotel-offers?${qs}`, { headers: auth });
+      const offJson = offRes.ok ? await offRes.json() : { data: [] };
+      const amOffer = offJson.data?.[0]?.available !== false ? offJson.data?.[0]?.offers?.[0] : undefined;
+      const confirmedTotal = Math.ceil(Number(amOffer?.price?.total));
+      const confirmedCurrency = String(amOffer?.price?.currency || '').toUpperCase();
+      if (!amOffer?.id || !Number.isFinite(confirmedTotal) || confirmedTotal <= 0) {
+        return json({ ok: false, code: 'NOT_BOOKABLE', message: 'No rooms are available to book at this hotel for your dates. You have not been charged.' });
+      }
+      if (confirmedCurrency !== 'USD') {
+        return json({ ok: false, code: 'NOT_BOOKABLE', message: 'This hotel can only be booked in USD and no USD rate is available. You have not been charged.' });
+      }
+
+      const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+      const secret = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+      const priceConfirmation = {
+        source: 'amadeus', amadeusOfferId: String(amOffer.id), amadeusHotelId,
+        total: confirmedTotal, currency: 'USD', expiresAt,
+        token: await hmacHex(secret, rateTokenPayload({ clientRequestId, total: confirmedTotal, currency: 'USD', amadeusOfferId: String(amOffer.id), expiresAt })),
+      };
+      const validatedOffer = {
+        ...offer,
+        priceStatus: 'confirmed',
+        offers: [{ ...hotelOffer, price: { ...(hotelOffer.price || {}), currency: 'USD', total: String(confirmedTotal), priceType: 'confirmed', priceSource: 'amadeus' }, estimatedPrice: refreshedEstimate || hotelOffer.price || null }],
+        priceConfirmation,
+      };
+      logStep('Hotel rate confirmed', { amadeusHotelId, confirmedTotal, displayedPrice, refreshed: refreshedEstimate?.total });
+
+      if (!Number.isFinite(displayedPrice) || Math.abs(confirmedTotal - displayedPrice) >= 1) {
+        return json({ ok: false, code: 'PRICE_CHANGED', message: 'The bookable price differs from the estimated price.', originalPrice: displayedPrice, newPrice: confirmedTotal, currency: 'USD', validatedOffer, expiresAt });
+      }
+      return json({ ok: true, price: confirmedTotal, currency: 'USD', validatedOffer, expiresAt });
 
     } else if (productType === 'car') {
       // For cars, validate the offer is still available
