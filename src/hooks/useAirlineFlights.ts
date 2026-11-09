@@ -60,7 +60,7 @@ export function useAirlineFlights(airlineCode: string, destinationCode = "LAX", 
             continue;
           }
 
-          const normalized = normalizeFlights(offers, airlineCode, airlineCode);
+          const normalized = normalizeFlights(offers, airlineCode);
 
           if (normalized.length > 0 && !cancelled) {
             setFlights(normalized.slice(0, 8));
