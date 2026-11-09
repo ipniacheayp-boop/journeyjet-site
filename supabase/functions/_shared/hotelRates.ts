@@ -100,8 +100,8 @@ export function parseSerpHotels(json: unknown, currency: string): SerpHotelRate[
     if (nightly === null && total === null) continue; // no real rate → skip, never invent
     out.push({
       name: String(p.name ?? ""),
-      lat: num(gps.latitude) ?? (typeof gps.latitude === "number" ? gps.latitude : null),
-      lng: typeof gps.longitude === "number" ? gps.longitude : null,
+      lat: typeof gps.latitude === "number" && Number.isFinite(gps.latitude) ? gps.latitude : null,
+      lng: typeof gps.longitude === "number" && Number.isFinite(gps.longitude) ? gps.longitude : null,
       propertyToken: typeof p.property_token === "string" ? p.property_token : null,
       currency,
       nightly,
