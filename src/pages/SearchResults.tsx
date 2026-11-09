@@ -212,24 +212,10 @@ const SearchResults = () => {
           return;
         }
 
+        // Duffel is the only flight search and price provider.
         setDuffelOffers([]);
-
-        // 2) No live offers — query the legacy fallback provider.
-        setLoadingMore(true);
-        const data = await searchFlights({
-          originLocationCode,
-          destinationLocationCode,
-          departureDate,
-          returnDate: returnDate || undefined,
-          adults,
-          travelClass,
-          currencyCode: "USD",
-        });
-
-        if (aborted()) return;
+        setResults([]);
         markFlightSearch("results_processed");
-
-        setResults(data?.data || []);
       } else if (type === "hotels") {
         const cityCode = searchParams.get("cityCode") || "";
         const checkInDate = searchParams.get("checkInDate") || "";

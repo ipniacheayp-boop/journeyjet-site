@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { searchDuffelFlights } from "@/services/duffelFlights";
+import { duffelOffersToNormalized } from "@/lib/duffelNormalize";
 import { NormalizedFlight } from "@/components/flights/FlightCardSimple";
 
 function formatDate(date: Date): string {
@@ -12,31 +13,13 @@ function addDays(date: Date, days: number): Date {
   return d;
 }
 
-function normalizeFlights(data: any): NormalizedFlight[] {
-  if (!data?.data || !Array.isArray(data.data)) return [];
-
-  return data.data.map((offer: any, i: number) => {
-    const seg = offer.itineraries?.[0]?.segments?.[0];
-    const lastSeg = offer.itineraries?.[0]?.segments?.slice(-1)[0];
-    const stops = (offer.itineraries?.[0]?.segments?.length || 1) - 1;
-
-    return {
-      id: offer.id || `flight-${i}`,
-      airline: seg?.carrierCode || "Unknown",
-      airlineCode: seg?.carrierCode || "",
-      flightNumber: `${seg?.carrierCode || ""}${seg?.number || ""}`,
-      from: seg?.departure?.iataCode || "",
-      to: lastSeg?.arrival?.iataCode || "",
-      departureDate: seg?.departure?.at?.split("T")[0] || "",
-      departureTime: seg?.departure?.at?.split("T")[1]?.slice(0, 5) || "",
-      arrivalTime: lastSeg?.arrival?.at?.split("T")[1]?.slice(0, 5) || "",
-      duration: offer.itineraries?.[0]?.duration || "",
-      price: parseFloat(offer.price?.total || offer.price?.grandTotal || "0"),
-      currency: offer.price?.currency || "USD",
-      cabin: offer.travelerPricings?.[0]?.fareDetailsBySegment?.[0]?.cabin || "ECONOMY",
-      stops,
-    };
-  });
+function normalizeFlights(offers: any[], airlineCode?: string): NormalizedFlight[] {
+  let flights = duffelOffersToNormalized(offers);
+  if (airlineCode) {
+    const filtered = flights.filter((f) => f.airlineCode?.toUpperCase() === airlineCode.toUpperCase());
+    if (filtered.length > 0) flights = filtered;
+  }
+  return flights;
 }
 
 export function useDestinationFlights(destinationCode: string, originCode = "JFK") {
@@ -63,21 +46,22 @@ export function useDestinationFlights(destinationCode: string, originCode = "JFK
         console.log(`✈️ Searching flights to ${destinationCode} on ${date} (attempt ${dayOffset + 1}/3)`);
 
         try {
-          const { data, error: fnError } = await supabase.functions.invoke("flights-search", {
-            body: {
-              originLocationCode: originCode,
-              destinationLocationCode: destinationCode,
-              departureDate: date,
-              adults: 1,
-            },
+          const { offers, error: fnError } = await searchDuffelFlights({
+            origin: originCode,
+            destination: destinationCode,
+            departureDate: date,
+            returnDate: null,
+            adults: 1,
+            children: 0,
+            infants: 0,
+            cabinClass: "economy",
           });
 
           if (fnError) {
-            console.warn(`⚠️ Error on ${date}:`, fnError);
             continue;
           }
 
-          const normalized = normalizeFlights(data);
+          const normalized = normalizeFlights(offers);
 
           if (normalized.length > 0) {
             if (!cancelled) {
