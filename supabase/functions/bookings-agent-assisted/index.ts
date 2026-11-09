@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { verifyPriceConfirmation } from "../_shared/hotelRates.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -89,6 +90,20 @@ serve(async (req) => {
         JSON.stringify({ ok: false, code: 'INVALID_REQUEST', message: 'Missing required fields' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
+    }
+
+    // Hotels: only charge an Amadeus-confirmed rate signed by prebooking-validate.
+    if (productType === 'hotel' || productType === 'hotels') {
+      const conf = (validatedOffer || {}).priceConfirmation;
+      const confErr = await verifyPriceConfirmation(Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '', String(clientRequestId), conf);
+      const discountAmt = Math.max(0, Number(userDetails?.discount ?? 0) || 0);
+      const charged = Number(price);
+      if (confErr || !Number.isFinite(charged) || discountAmt > Number(conf?.total) || Math.abs(charged + discountAmt - Number(conf?.total)) >= 1) {
+        return new Response(
+          JSON.stringify({ ok: false, code: confErr || 'PRICE_MISMATCH', message: 'The hotel rate must be confirmed again before payment. You have not been charged.' }),
+          { status: 409, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
     }
 
     // ⚠️ STRIPE SANCTIONS COMPLIANCE — reject restricted destinations with 403

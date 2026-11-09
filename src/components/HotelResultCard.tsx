@@ -157,12 +157,27 @@ export function HotelResultCard({ hotel, onBook }: HotelResultCardProps) {
             {price > 0 ? (
               <>
                 <div className="flex items-center gap-2 justify-end mb-1">
-                  <Badge variant="default" className="bg-green-600 hover:bg-green-700 text-white">
-                    Lowest Price
+                  <Badge variant="secondary">
+                    {offer.price?.priceType === "confirmed" ? "Confirmed price" : "Estimated price"}
                   </Badge>
                 </div>
                 <div className="text-2xl font-bold text-primary">{formatCurrency(price, currency)}</div>
-                <p className="text-sm text-muted-foreground">{currency}</p>
+                <p className="text-sm text-muted-foreground">
+                  {currency} total{stayNights ? ` · ${stayNights} night${stayNights > 1 ? "s" : ""}` : ""}
+                </p>
+                {offer.price?.variations?.average?.total && (
+                  <p className="text-xs text-muted-foreground">
+                    ~{formatCurrency(Number(offer.price.variations.average.total), currency)} / night
+                  </p>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  {offer.price?.taxesIncluded ? "Incl. taxes & fees" : "Taxes may not be included"}
+                </p>
+                {offer.price?.priceType !== "confirmed" && (
+                  <p className="text-xs text-muted-foreground max-w-[11rem] ml-auto">
+                    Final bookable price is confirmed before payment.
+                  </p>
+                )}
               </>
             ) : null}
           </div>
