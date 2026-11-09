@@ -392,6 +392,22 @@ Deno.serve(async (req) => {
       })),
       serp.rates,
     );
+    // Targeted lookups for unmatched hotels (cached 15 min) — still only real returned rates.
+    const unmatched = places.filter((p) => !rateByPlace.has(placeDedupeKey(p)) && p.displayName?.text).slice(0, 12);
+    await Promise.all(
+      unmatched.map(async (p) => {
+        const r = await fetchSerpHotelRates({
+          q: `${p.displayName!.text} ${cityCode}`,
+          checkInDate, checkOutDate, adults, children, childrenAges, currency,
+        });
+        const m = matchRatesToPlaces(
+          [{ key: placeDedupeKey(p), name: p.displayName?.text, lat: p.location?.latitude, lng: p.location?.longitude }],
+          r.rates,
+        );
+        const hit = m.get(placeDedupeKey(p));
+        if (hit) rateByPlace.set(placeDedupeKey(p), hit);
+      }),
+    );
     console.log("💲 SerpApi rates:", serp.rates.length, "matched:", rateByPlace.size, serp.cached ? "(cached)" : "", serp.error || "");
 
     const normalizedHotels = places.map((place) => {
