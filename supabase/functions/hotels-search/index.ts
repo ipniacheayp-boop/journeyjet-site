@@ -8,6 +8,8 @@
  * Deploy from repo: `supabase login && supabase functions deploy hotels-search --project-ref <YOUR_PROJECT_REF>`
  */
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { fetchSerpHotelRates } from "../_shared/serpHotelsClient.ts";
+import { buildEstimatedPrice, matchRatesToPlaces, nightsBetween as nightsBetweenDates } from "../_shared/hotelRates.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -236,6 +238,12 @@ Deno.serve(async (req) => {
     const adults = Number(body.adults ?? 0);
     const rq = Number(body.roomQuantity);
     const roomQuantity = Number.isFinite(rq) && rq > 0 ? rq : 1;
+    const childrenRaw = Number(body.children ?? 0);
+    const children = Number.isFinite(childrenRaw) && childrenRaw > 0 ? Math.floor(childrenRaw) : 0;
+    const childrenAges = Array.isArray(body.childrenAges)
+      ? (body.childrenAges as unknown[]).map(Number).filter((n) => Number.isFinite(n) && n >= 0 && n <= 17)
+      : [];
+    const currency = /^[A-Za-z]{3}$/.test(String(body.currency ?? "")) ? String(body.currency).toUpperCase() : "USD";
 
     console.log('📥 Hotel search request:', { cityCode, checkInDate, checkOutDate, adults, roomQuantity });
 
@@ -306,6 +314,17 @@ Deno.serve(async (req) => {
         body,
       });
 
+    // Real hotel rates (SerpApi google_hotels) fetched in parallel with Places.
+    const serpPromise = fetchSerpHotelRates({
+      q: `hotels in ${cityCode}`,
+      checkInDate,
+      checkOutDate,
+      adults,
+      children,
+      childrenAges,
+      currency,
+    });
+
     const byKey = new Map<string, GooglePlace>();
     let sawSuccessfulPlacesCall = false;
     let lastGoogleError = "";
@@ -362,41 +381,18 @@ Deno.serve(async (req) => {
 
     console.log("✅ Google Places hotels found:", places.length);
 
-    // Nights between dates (min 1) — used to compute total stay price.
-    const nightsBetween = (() => {
-      const a = new Date(`${checkInDate}T12:00:00Z`).getTime();
-      const b = new Date(`${checkOutDate}T12:00:00Z`).getTime();
-      const n = Math.round((b - a) / 86_400_000);
-      return Number.isFinite(n) && n > 0 ? n : 1;
-    })();
-
-    // Base nightly rate (USD) per Google priceLevel — used because Places API
-    // does not expose actual nightly prices.
-    const NIGHTLY_BY_LEVEL: Record<string, number> = {
-      PRICE_LEVEL_FREE: 49,
-      PRICE_LEVEL_INEXPENSIVE: 79,
-      PRICE_LEVEL_MODERATE: 149,
-      PRICE_LEVEL_EXPENSIVE: 269,
-      PRICE_LEVEL_VERY_EXPENSIVE: 459,
-    };
-
-    // Stable per-place "variance" so the same hotel always shows the same price.
-    const stableHash = (s: string): number => {
-      let h = 0;
-      for (let i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
-      return Math.abs(h);
-    };
-
-    const computeNightly = (place: GooglePlace, key: string): number => {
-      const levelBase = (place.priceLevel && NIGHTLY_BY_LEVEL[place.priceLevel]) || null;
-      const ratingBase = typeof place.rating === "number"
-        ? Math.round(60 + (place.rating - 3) * 70) // 3.0★ → ~$60, 4.5★ → ~$165, 5★ → ~$200
-        : 120;
-      const base = levelBase ?? Math.max(70, ratingBase);
-      // ±15% deterministic jitter so listings don't look identical.
-      const jitter = ((stableHash(key) % 31) - 15) / 100;
-      return Math.max(35, Math.ceil(base * (1 + jitter)));
-    };
+    const nights = nightsBetweenDates(checkInDate, checkOutDate) ?? 1;
+    const serp = await serpPromise;
+    const rateByPlace = matchRatesToPlaces(
+      places.map((p) => ({
+        key: placeDedupeKey(p),
+        name: p.displayName?.text,
+        lat: p.location?.latitude,
+        lng: p.location?.longitude,
+      })),
+      serp.rates,
+    );
+    console.log("💲 SerpApi rates:", serp.rates.length, "matched:", rateByPlace.size, serp.cached ? "(cached)" : "", serp.error || "");
 
     const normalizedHotels = places.map((place) => {
       const enriched = enrichPlaceWithPhotoUrls(place as GooglePlace, googleApiKey);
@@ -413,10 +409,8 @@ Deno.serve(async (req) => {
         enriched.adrFormatAddress?.replace(/<[^>]+>/g, " ")?.trim() ||
         "";
       const placeId = placeDedupeKey(enriched) || enriched.id || "";
-      const nightlyRate = computeNightly(enriched, placeId || display);
-      const totalStay = Math.ceil(nightlyRate * nightsBetween * (roomQuantity || 1));
-      const taxes = Math.ceil(totalStay * 0.12);
-      const base = totalStay - taxes;
+      const rate = placeId ? rateByPlace.get(placeId) : undefined;
+      const estimated = rate ? buildEstimatedPrice(rate, nights, roomQuantity || 1) : null;
 
       return {
         provider: "google-places",
@@ -439,33 +433,27 @@ Deno.serve(async (req) => {
         })),
         googleMapsUri: enriched.googleMapsUri || "",
         websiteUri: enriched.websiteUri || "",
-        offers: [
-          {
-            id: `${placeId || "hotel"}-offer-1`,
-            checkInDate,
-            checkOutDate,
-            roomQuantity: roomQuantity || 1,
-            guests: { adults },
-            room: {
-              type: "STANDARD",
-              typeEstimated: { category: "STANDARD_ROOM", beds: 1, bedType: "QUEEN" },
-              description: { text: `${nightsBetween} night${nightsBetween > 1 ? "s" : ""} • ${roomQuantity || 1} room${(roomQuantity || 1) > 1 ? "s" : ""}` },
-            },
-            price: {
-              currency: "USD",
-              total: String(totalStay),
-              base: String(base),
-              taxes: [{ code: "TAX", amount: String(taxes), currency: "USD", included: true }],
-              variations: {
-                average: { base: String(Math.ceil(base / nightsBetween)) },
+        // Only real SerpApi rates are attached. No match → no offer → "Price unavailable".
+        offers: estimated
+          ? [
+              {
+                id: `${placeId || "hotel"}-serp-1`,
+                checkInDate,
+                checkOutDate,
+                roomQuantity: roomQuantity || 1,
+                guests: { adults, children },
+                room: {
+                  type: "STANDARD",
+                  description: { text: `${nights} night${nights > 1 ? "s" : ""} • ${roomQuantity || 1} room${(roomQuantity || 1) > 1 ? "s" : ""}` },
+                },
+                price: estimated,
+                priceFetchedAt: serp.fetchedAt,
+                rateProvider: rate?.source || null,
+                self: rate?.link || enriched.websiteUri || enriched.googleMapsUri || "",
               },
-            },
-            policies: {
-              cancellation: { type: "FULL_STAY", description: { text: "Free cancellation up to 24 hours before check-in." } },
-            },
-            self: enriched.websiteUri || enriched.googleMapsUri || "",
-          },
-        ],
+            ]
+          : [],
+        priceStatus: estimated ? "estimated" : "unavailable",
         priceLevel: enriched.priceLevel || null,
         searchMeta: {
           cityQuery: cityCode,
@@ -473,7 +461,10 @@ Deno.serve(async (req) => {
           checkOutDate,
           adults,
           roomQuantity: roomQuantity || 1,
-          nights: nightsBetween,
+          nights,
+          children,
+          childrenAges,
+          currency,
         },
         googlePlace: enriched,
       };
