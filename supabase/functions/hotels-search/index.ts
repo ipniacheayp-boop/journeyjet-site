@@ -393,7 +393,7 @@ Deno.serve(async (req) => {
       serp.rates,
     );
     // Targeted lookups for unmatched hotels (cached 15 min) — still only real returned rates.
-    const unmatched = places.filter((p) => !rateByPlace.has(placeDedupeKey(p)) && p.displayName?.text).slice(0, 12);
+    const unmatched = places.filter((p) => !rateByPlace.has(placeDedupeKey(p)) && p.displayName?.text).slice(0, 20);
     await Promise.all(
       unmatched.map(async (p) => {
         const r = await fetchSerpHotelRates({
