@@ -1,5 +1,7 @@
 # Architecture rules
 
+- Keep Auth state listeners synchronous and defer server validation/profile hydration until after the auth lock is released; protected redirects wait for hydration, and registration profile metadata is persisted by the existing creation trigger.
+
 - Vercel must serve existing static files and prerendered pages before falling back to the Vite entry document, so direct authentication links work without replacing SEO assets.
 
 - Keep flight bookings on the existing Duffel card/3DS pipeline; hotel/car payment architecture is separate to prevent cross-provider regressions.

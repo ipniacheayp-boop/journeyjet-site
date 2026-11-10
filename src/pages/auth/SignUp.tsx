@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -19,6 +19,8 @@ import SEOHead from "@/components/SEOHead";
 import AuthLayout from "@/components/auth/AuthLayout";
 import GoogleButton from "@/components/auth/GoogleButton";
 import { useAuth } from "@/contexts/AuthContext";
+import PasswordInput from "@/components/auth/PasswordInput";
+import { safeAuthNext } from "@/lib/authSession";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -40,7 +42,9 @@ const SignUp = () => {
   const [searchParams] = useSearchParams();
   const { user, loading: authLoading, signUp, signInWithGoogle } = useAuth();
 
-  const next = searchParams.get("next") || "/account";
+  const next = safeAuthNext(searchParams.get("next"));
+  const requestPending = useRef(false);
+  const [confirmationSent, setConfirmationSent] = useState(false);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneIso, setPhoneIso] = useState(DEFAULT_PHONE_COUNTRY.iso);
@@ -55,16 +59,16 @@ const SignUp = () => {
   const [errors, setErrors] = useState<{ fullName?: string; email?: string; phone?: string; password?: string; confirmPassword?: string }>({});
 
   useEffect(() => {
-    if (!authLoading && user) {
+    if (!authLoading && user && !submitting) {
       navigate(next, { replace: true });
     }
-  }, [authLoading, user, next, navigate]);
+  }, [authLoading, user, next, navigate, submitting]);
 
   const validate = () => {
     const nextErrors: typeof errors = {};
     if (!fullName.trim()) nextErrors.fullName = "Please enter your name.";
     if (!email) nextErrors.email = "Email is required.";
-    else if (!EMAIL_REGEX.test(email)) nextErrors.email = "Please enter a valid email.";
+    else if (!EMAIL_REGEX.test(email.trim())) nextErrors.email = "Please enter a valid email.";
     if (!phoneNumber.trim()) nextErrors.phone = "Mobile number is required.";
     else if (!isValidNationalNumber(selectedPhoneCountry, phoneNumber))
       nextErrors.phone = `Enter a valid ${selectedPhoneCountry.name} mobile number (${selectedPhoneCountry.min}${
@@ -80,7 +84,8 @@ const SignUp = () => {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!validate()) return;
+    if (requestPending.current || googleLoading || !validate()) return;
+    requestPending.current = true;
     setSubmitting(true);
     try {
       const { requiresEmailConfirmation } = await signUp({
@@ -92,8 +97,8 @@ const SignUp = () => {
         marketingSmsOptIn,
       });
       if (requiresEmailConfirmation) {
-        toast.success("Account created! Check your email to sign in.");
-        navigate(`/auth/signin?next=${encodeURIComponent(next)}`, { replace: true });
+        setConfirmationSent(true);
+        toast.success("Check your email to confirm your account before signing in.");
       } else {
         toast.success("Account created! Verify your email to continue.");
         navigate(`/auth/verify-email?next=${encodeURIComponent(next)}`, { replace: true });
@@ -101,11 +106,13 @@ const SignUp = () => {
     } catch (error: any) {
       toast.error(friendlyError(error?.message));
     } finally {
+      requestPending.current = false;
       setSubmitting(false);
     }
   };
 
   const handleGoogle = async () => {
+    if (requestPending.current || googleLoading) return;
     setGoogleLoading(true);
     try {
       await signInWithGoogle(`/auth/callback?next=${encodeURIComponent(next)}`);
@@ -138,7 +145,12 @@ const SignUp = () => {
           </>
         }
       >
-        <div className="space-y-5">
+        {confirmationSent ? (
+          <div className="space-y-4 text-center">
+            <p className="text-sm text-muted-foreground">Check your inbox for your confirmation link. Confirm your email before signing in. If you already have an account, sign in or reset your password.</p>
+            <Button asChild className="w-full"><Link to={`/auth/signin?next=${encodeURIComponent(next)}`}>Back to sign in</Link></Button>
+          </div>
+        ) : <div className="space-y-5">
           <GoogleButton onClick={handleGoogle} loading={googleLoading} disabled={submitting} label="Sign up with Google" />
 
           <div className="relative">
@@ -223,7 +235,7 @@ const SignUp = () => {
 
             <div className="space-y-1.5">
               <Label htmlFor="signup-password">Password</Label>
-              <Input
+              <PasswordInput
                 id="signup-password"
                 type="password"
                 autoComplete="new-password"
@@ -253,7 +265,7 @@ const SignUp = () => {
 
             <div className="space-y-1.5">
               <Label htmlFor="signup-confirm">Confirm password</Label>
-              <Input
+              <PasswordInput
                 id="signup-confirm"
                 type="password"
                 autoComplete="new-password"
@@ -285,7 +297,7 @@ const SignUp = () => {
               </Label>
             </div>
 
-            <Button type="submit" className="w-full" disabled={submitting}>
+            <Button type="submit" className="w-full" disabled={submitting || googleLoading || authLoading}>
               {submitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
               Create account
             </Button>
@@ -296,7 +308,7 @@ const SignUp = () => {
               <Link to="/privacy" className="underline hover:text-primary">Privacy Policy</Link>.
             </p>
           </form>
-        </div>
+        </div>}
       </AuthLayout>
     </>
   );

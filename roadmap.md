@@ -4,5 +4,7 @@
 - [ ] Enable real hotel payment: blocked on a hotel reservation service with authoritative rates and fulfillment.
 - [x] Add Vercel direct-page fallback and verify routing configuration with three passing tests.
 - [ ] Verify sign-in links on tripile.com: blocked on redeploying the updated project to Vercel.
+- [ ] Repair authentication session initialization, registration data, redirects, and form safeguards only.
+- [ ] Run authentication regression tests and browser scenarios; document unverified email-delivery scenarios.
 - [ ] Enable one combined card charge: blocked on a compatible unified payment arrangement that preserves Duffel flight booking.
 - [ ] Verify paid flight-to-hotel continuation and payment recovery: blocked on approved live payment testing and a bookable hotel offer.

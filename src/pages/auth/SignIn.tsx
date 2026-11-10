@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -11,6 +11,8 @@ import SEOHead from "@/components/SEOHead";
 import AuthLayout from "@/components/auth/AuthLayout";
 import GoogleButton from "@/components/auth/GoogleButton";
 import { useAuth } from "@/contexts/AuthContext";
+import PasswordInput from "@/components/auth/PasswordInput";
+import { safeAuthNext } from "@/lib/authSession";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -27,7 +29,8 @@ const SignIn = () => {
   const [searchParams] = useSearchParams();
   const { user, loading: authLoading, signIn, signInWithGoogle } = useAuth();
 
-  const next = searchParams.get("next") || "/account";
+  const next = safeAuthNext(searchParams.get("next"));
+  const requestPending = useRef(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
@@ -44,7 +47,7 @@ const SignIn = () => {
   const validate = () => {
     const nextErrors: typeof errors = {};
     if (!email) nextErrors.email = "Email is required.";
-    else if (!EMAIL_REGEX.test(email)) nextErrors.email = "Please enter a valid email.";
+    else if (!EMAIL_REGEX.test(email.trim())) nextErrors.email = "Please enter a valid email.";
     if (!password) nextErrors.password = "Password is required.";
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
@@ -52,20 +55,22 @@ const SignIn = () => {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!validate()) return;
+    if (requestPending.current || googleLoading || !validate()) return;
+    requestPending.current = true;
     setSubmitting(true);
     try {
       await signIn({ email, password, rememberMe: remember });
       toast.success("Welcome back!");
-      navigate(next, { replace: true });
     } catch (error: any) {
       toast.error(friendlyError(error?.message));
     } finally {
+      requestPending.current = false;
       setSubmitting(false);
     }
   };
 
   const handleGoogle = async () => {
+    if (requestPending.current || googleLoading) return;
     setGoogleLoading(true);
     try {
       await signInWithGoogle(`/auth/callback?next=${encodeURIComponent(next)}`);
@@ -133,7 +138,7 @@ const SignIn = () => {
                   Forgot password?
                 </Link>
               </div>
-              <Input
+              <PasswordInput
                 id="signin-password"
                 type="password"
                 autoComplete="current-password"
@@ -153,7 +158,7 @@ const SignIn = () => {
               Remember me on this device
             </label>
 
-            <Button type="submit" className="w-full" disabled={submitting}>
+            <Button type="submit" className="w-full" disabled={submitting || googleLoading || authLoading}>
               {submitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
               Sign in
             </Button>

@@ -1,7 +1,8 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { isDuplicateRegistration, isEmailVerified, validateStoredSession } from "@/lib/authSession";
 
 type AppRole = "user" | "admin" | "agent";
 
@@ -90,6 +91,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [emailVerified, setEmailVerified] = useState(false);
   const [phoneVerified, setPhoneVerified] = useState(false);
   const navigate = useNavigate();
+  const authRevision = useRef(0);
 
   const refreshProfile = useCallback(async () => {
     try {
@@ -105,7 +107,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .select("is_email_verified, is_phone_verified")
         .eq("id", uid)
         .maybeSingle();
-      setEmailVerified(Boolean(data?.is_email_verified));
+      setEmailVerified(isEmailVerified(userData.user, Boolean(data?.is_email_verified)));
       setPhoneVerified(Boolean(data?.is_phone_verified));
     } catch {
       setEmailVerified(false);
@@ -126,50 +128,47 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, nextSession) => {
+    let active = true;
+    const applySession = (nextSession: Session | null) => {
       setSession(nextSession);
       setUser(nextSession?.user ?? null);
-
-      if (nextSession?.user) {
-        setUserRole(readStoredRole() ?? "user");
-        await upsertProfile(nextSession.user);
-        setTimeout(() => {
-          void refreshAdminStatus();
-          void refreshProfile();
-        }, 0);
-      } else {
-        setIsAdmin(false);
-        setUserRole(null);
-        setEmailVerified(false);
-        setPhoneVerified(false);
-        localStorage.removeItem(ROLE_STORAGE_KEY);
+      setEmailVerified(isEmailVerified(nextSession?.user ?? null));
+      setPhoneVerified(false);
+      setIsAdmin(false);
+      setUserRole(nextSession ? "user" : null);
+      if (!nextSession) localStorage.removeItem(ROLE_STORAGE_KEY);
+    };
+    const hydrate = async (revision: number) => {
+      try {
+        const nextSession = await validateStoredSession(supabase.auth);
+        if (!active || revision !== authRevision.current) return;
+        applySession(nextSession);
+        if (nextSession?.user) {
+          // Never perform Auth/REST calls inside onAuthStateChange's lock.
+          await upsertProfile(nextSession.user);
+          if (!active || revision !== authRevision.current) return;
+          await Promise.all([refreshAdminStatus(), refreshProfile()]);
+        }
+      } catch {
+        if (active && revision === authRevision.current) applySession(null);
+      } finally {
+        if (active && revision === authRevision.current) setLoading(false);
       }
-    });
-
-    supabase.auth
-      .getSession()
-      .then(async ({ data }) => {
-        setSession(data.session);
-        setUser(data.session?.user ?? null);
-        if (data.session?.user) {
-          setUserRole(readStoredRole() ?? "user");
-          await upsertProfile(data.session.user);
-          await refreshAdminStatus();
-          await refreshProfile();
-        }
-      })
-      .catch((error) => {
-        if (import.meta.env.DEV) {
-          console.warn("[AuthContext] getSession failed", error);
-        }
-      })
-      .finally(() => {
+    };
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      const revision = ++authRevision.current;
+      if (!nextSession) {
+        applySession(null);
         setLoading(false);
-      });
-
-    return () => subscription.unsubscribe();
+        return;
+      }
+      setLoading(true);
+      setTimeout(() => { if (active) void hydrate(revision); }, 0);
+    });
+    void hydrate(++authRevision.current);
+    return () => { active = false; ++authRevision.current; subscription.unsubscribe(); };
   }, [refreshAdminStatus, refreshProfile]);
 
   const signUp = useCallback<AuthContextType["signUp"]>(async ({ email, password, fullName, phoneNumber, countryCode, marketingSmsOptIn }) => {
@@ -187,9 +186,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       },
     });
     if (error) throw error;
+    if (isDuplicateRegistration(data.user, data.session)) {
+      throw new Error("This email is already registered. Try signing in or resetting your password.");
+    }
 
     // Persist phone details + marketing consent to profile once session exists.
-    if (data.user && (phoneNumber || countryCode || typeof marketingSmsOptIn === "boolean")) {
+    if (data.session && data.user && (phoneNumber || countryCode || typeof marketingSmsOptIn === "boolean")) {
       try {
         await supabase
           .from("profiles")
@@ -218,8 +220,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } else {
       localStorage.removeItem(REMEMBER_KEY);
     }
-    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
     if (error) throw error;
+    if (!data.session || !data.user) throw new Error("Sign-in could not be completed. Please try again.");
     localStorage.setItem(ROLE_STORAGE_KEY, "user");
     setUserRole("user");
   }, []);
@@ -252,12 +255,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signOut = useCallback<AuthContextType["signOut"]>(async () => {
     try {
-      await supabase.auth.signOut();
+      const { error } = await supabase.auth.signOut();
+      if (error) await supabase.auth.signOut({ scope: "local" });
     } finally {
+      ++authRevision.current;
       setUser(null);
       setSession(null);
       setIsAdmin(false);
       setUserRole(null);
+      setEmailVerified(false);
+      setPhoneVerified(false);
+      setLoading(false);
       localStorage.removeItem(ROLE_STORAGE_KEY);
       localStorage.removeItem(REMEMBER_KEY);
       navigate("/", { replace: true });
