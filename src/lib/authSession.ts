@@ -23,8 +23,10 @@ export function safeAuthNext(value: string | null | undefined): string {
   return value;
 }
 
-export function isEmailVerified(user: Pick<User, "email_confirmed_at"> | null, profileVerified = false): boolean {
-  return Boolean(user?.email_confirmed_at || profileVerified);
+/** Email accounts require Tripile's own OTP verification; instant provider confirmation is not sufficient. */
+export function isEmailVerified(user: Pick<User, "app_metadata"> | null, profileVerified = false): boolean {
+  const provider = user?.app_metadata?.provider;
+  return Boolean(profileVerified || (provider && provider !== "email"));
 }
 
 export function isDuplicateRegistration(user: { identities?: unknown[] } | null, session: unknown): boolean {

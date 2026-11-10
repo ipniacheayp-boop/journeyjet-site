@@ -31,9 +31,10 @@ describe("authentication session rules", () => {
     expect(await validateStoredSession(auth)).toBeNull();
     expect(auth.getUser).not.toHaveBeenCalled();
   });
-  it("recognizes Auth-confirmed email even when the profile flag is stale", () => {
-    expect(isEmailVerified(user, false)).toBe(true);
-    expect(isEmailVerified({ email_confirmed_at: undefined }, false)).toBe(false);
+  it("requires Tripile email-code verification for email-password accounts", () => {
+    expect(isEmailVerified({ app_metadata: { provider: "email" } }, false)).toBe(false);
+    expect(isEmailVerified({ app_metadata: { provider: "email" } }, true)).toBe(true);
+    expect(isEmailVerified({ app_metadata: { provider: "google" } }, false)).toBe(true);
   });
   it("handles the provider's duplicate signup response without creating a signed-in account", () => {
     expect(isDuplicateRegistration({ identities: [] }, null)).toBe(true);
