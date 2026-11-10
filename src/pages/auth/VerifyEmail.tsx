@@ -9,6 +9,7 @@ import SEOHead from "@/components/SEOHead";
 import AuthLayout from "@/components/auth/AuthLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { safeAuthNext } from "@/lib/authSession";
 
 const RESEND_COOLDOWN = 30;
 
@@ -58,7 +59,7 @@ const handleSendFailure = (
 const VerifyEmail = () => {
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const next = params.get("next") || "/account";
+  const next = safeAuthNext(params.get("next"));
   const { user, loading, emailVerified, refreshProfile, signOut } = useAuth();
 
   const [code, setCode] = useState("");
@@ -109,10 +110,10 @@ const VerifyEmail = () => {
   }, []);
 
   useEffect(() => {
-    if (!user || autoSent.current || emailVerified) return;
+    if (loading || !user || autoSent.current || emailVerified) return;
     autoSent.current = true;
     void sendCode();
-  }, [user, emailVerified, sendCode]);
+  }, [loading, user, emailVerified, sendCode]);
 
   const handleVerify = async () => {
     if (code.length !== 6) {

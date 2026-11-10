@@ -4,6 +4,8 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import SEOHead from "@/components/SEOHead";
 import { supabase, getPkceVerifierStorageKey } from "@/integrations/supabase/client";
+import { safeAuthNext, validateStoredSession } from "@/lib/authSession";
+import { Button } from "@/components/ui/button";
 
 /** Same merge rule as GoTrue `parseParametersFromURL`: query overrides hash. */
 function parseAuthParamsFromLocation(): Record<string, string> {
@@ -66,7 +68,7 @@ const AuthCallback = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const next = searchParams.get("next") || "/account";
+    const next = safeAuthNext(searchParams.get("next"));
 
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
     let unsubscribe: (() => void) | undefined;
@@ -98,10 +100,9 @@ const AuthCallback = () => {
         const { error: initError } = await supabase.auth.initialize();
 
         const tryFinishIfSession = async (): Promise<boolean> => {
-          const { data, error: sessionError } = await supabase.auth.getSession();
-          if (sessionError) throw sessionError;
-          if (data.session) {
-            finishWithSession(next);
+          const session = await validateStoredSession(supabase.auth);
+          if (session) {
+            finishWithSession(params.type === "recovery" ? "/auth/reset-password" : next);
             return true;
           }
           return false;
@@ -143,7 +144,7 @@ const AuthCallback = () => {
           if (cancelled) return;
           unsubscribe?.();
           setError(
-            "We couldn't complete sign in. Add your site URL and `/auth/callback` under Supabase Authentication → URL Configuration, then try again or request a new confirmation email.",
+            "We couldn't complete sign in. Please try again or request a new confirmation email.",
           );
         }, 9000);
       } catch (err: unknown) {
@@ -174,13 +175,13 @@ const AuthCallback = () => {
         {error ? (
           <>
             <p className="max-w-md text-destructive">{error}</p>
-            <button
+            <Button
               type="button"
               className="rounded-md border border-border px-4 py-2 text-sm font-medium hover:bg-muted"
               onClick={() => navigate("/auth/signin", { replace: true })}
             >
               Back to sign in
-            </button>
+            </Button>
           </>
         ) : (
           <>
