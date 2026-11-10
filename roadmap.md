@@ -2,5 +2,6 @@
 - [x] Add an embedded hotel payment stage for bookable hotel offers using the existing payment controls; block estimated Google Places offers.
 - [x] Verify live hotel selection, itemization, and focused checkout tests.
 - [ ] Enable real hotel payment: blocked on a hotel reservation service with authoritative rates and fulfillment.
+- [ ] Add and verify Vercel direct-page fallback; live verification requires a Vercel redeployment.
 - [ ] Enable one combined card charge: blocked on a compatible unified payment arrangement that preserves Duffel flight booking.
 - [ ] Verify paid flight-to-hotel continuation and payment recovery: blocked on approved live payment testing and a bookable hotel offer.
