@@ -44,12 +44,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const ROLE_STORAGE_KEY = "userRole";
 const REMEMBER_KEY = "tripile.rememberMe";
 
-const readStoredRole = (): AppRole | null => {
-  const stored = localStorage.getItem(ROLE_STORAGE_KEY);
-  if (stored === "admin" || stored === "agent" || stored === "user") return stored;
-  return null;
-};
-
 const PROFILE_UPSERT_TIMEOUT_MS = 4000;
 
 const upsertProfile = async (user: User) => {
@@ -116,9 +110,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const refreshAdminStatus = useCallback(async () => {
+    const revision = authRevision.current;
     try {
       const { data } = await supabase.rpc("is_admin");
+      const { data: roles } = await supabase.from("user_roles").select("role");
+      if (revision !== authRevision.current) return;
       setIsAdmin(Boolean(data));
+      setUserRole(data ? "admin" : roles?.some((row) => row.role === "agent") ? "agent" : "user");
     } catch (error) {
       if (import.meta.env.DEV) {
         console.warn("[AuthContext] is_admin check failed", error);
