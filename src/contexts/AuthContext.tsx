@@ -88,8 +88,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const authRevision = useRef(0);
 
   const refreshProfile = useCallback(async () => {
+    const revision = authRevision.current;
     try {
       const { data: userData } = await supabase.auth.getUser();
+      if (revision !== authRevision.current) return;
       const uid = userData.user?.id;
       if (!uid) {
         setEmailVerified(false);
@@ -101,9 +103,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .select("is_email_verified, is_phone_verified")
         .eq("id", uid)
         .maybeSingle();
+      if (revision !== authRevision.current) return;
       setEmailVerified(isEmailVerified(userData.user, Boolean(data?.is_email_verified)));
       setPhoneVerified(Boolean(data?.is_phone_verified));
     } catch {
+      if (revision !== authRevision.current) return;
       setEmailVerified(false);
       setPhoneVerified(false);
     }
@@ -118,6 +122,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsAdmin(Boolean(data));
       setUserRole(data ? "admin" : roles?.some((row) => row.role === "agent") ? "agent" : "user");
     } catch (error) {
+      if (revision !== authRevision.current) return;
       if (import.meta.env.DEV) {
         console.warn("[AuthContext] is_admin check failed", error);
       }
