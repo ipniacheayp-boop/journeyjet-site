@@ -1394,7 +1394,7 @@ function buildHtml(page: Page): string {
   // page sitting above the app while scripts load.
   html = html
     .replace(/\s*<article[^>]*id="seo-static-content"[\s\S]*?<\/article>/, "")
-    .replace(/<div id="root"><\/div>/, `<div id="root">${renderArticle(page)}</div>`);
+    .replace(/<div id="root">\s*<\/div>/, `<div id="root">${renderArticle(page)}</div>`);
   return html;
 }
 
