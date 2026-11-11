@@ -274,7 +274,7 @@ const Index = () => {
               Flights &amp; Hotels — All 50 States
             </p>
             <h1 className="font-sans text-balance text-3xl sm:text-4xl md:text-5xl font-bold text-white leading-snug tracking-normal mb-4 drop-shadow-md max-w-4xl mx-auto">
-              Search Cheap Flights &amp; Hotels in the USA
+              {HOME_H1}
             </h1>
           </motion.div>
 
