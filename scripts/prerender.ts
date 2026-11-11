@@ -47,6 +47,7 @@ import { travelCollections, buildTravelCollection } from "../src/data/travelColl
 import { getCountrySeasons } from "../src/data/countrySeasons";
 import { dealSlugs } from "../src/data/dealSlugs";
 import { lastMinuteGuide, indiaUsaGuide, type IntentGuide } from "../src/data/flightIntentGuides";
+import { HOME_DESCRIPTION, HOME_H1, HOME_INTRO, HOME_TITLE } from "../src/data/homepageSeo";
 
 const SITE_ORIGIN = "https://tripile.com";
 const DIST = resolve("dist");

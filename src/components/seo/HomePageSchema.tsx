@@ -1,3 +1,5 @@
+import { HOME_CANONICAL, HOME_DESCRIPTION, HOME_TITLE } from "@/data/homepageSeo";
+
 /** JSON-LD for homepage — WebPage, WebSite and Organization */
 const HomePageSchema = () => {
   const schema = {

@@ -1,5 +1,6 @@
 import IntentGuideSection from "@/components/seo/IntentGuideSection";
 import { homeGuide } from "@/data/flightIntentGuides";
+import { HOME_CANONICAL, HOME_DESCRIPTION, HOME_H1, HOME_TITLE } from "@/data/homepageSeo";
 import { useState, useMemo, useEffect, lazy, Suspense } from "react";
 import { Helmet } from "react-helmet";
 import { motion } from "framer-motion";
