@@ -8,3 +8,4 @@
 - [x] Run authentication regression tests and browser scenarios; email-code delivery remains unverified without inbox access.
 - [ ] Enable one combined card charge: blocked on a compatible unified payment arrangement that preserves Duffel flight booking.
 - [ ] Verify paid flight-to-hotel continuation and payment recovery: blocked on approved live payment testing and a bookable hotel offer.
+- [ ] Make tripile.com the primary address and redirect www.tripile.com to it: blocked on changing the existing opposite redirect in Vercel Project Settings → Domains.
