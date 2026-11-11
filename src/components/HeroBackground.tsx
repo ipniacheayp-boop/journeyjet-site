@@ -28,7 +28,7 @@ const HeroBackground = () => {
             alt=""
             width={1920}
             height={1080}
-            fetchpriority="high"
+            {...{ fetchpriority: "high" }}
             loading="eager"
             decoding="async"
             className="absolute inset-0 h-[115%] w-full object-cover object-center hero-bg-ken-burns"
