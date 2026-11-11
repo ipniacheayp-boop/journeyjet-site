@@ -238,30 +238,21 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>Cheap Flights, Hotels & Car Rentals USA | Tripile.com</title>
-        <meta
-          name="description"
-          content="Book cheap flights, hotels & car rentals across the USA. Compare 500+ airlines, rent cars from $26/day in top cities, Price Match Guarantee & 24/7 US support."
-        />
+        <title>{HOME_TITLE}</title>
+        <meta name="description" content={HOME_DESCRIPTION} />
         <meta
           name="keywords"
           content="cheap flights USA, car rentals USA, cheap car rental, rent a car USA, flight deals, cheap hotels USA, airport car rental, US travel deals, Enterprise Hertz Avis"
         />
-        <link rel="canonical" href="https://tripile.com/" />
-        <link rel="alternate" hrefLang="en-us" href="https://tripile.com/" />
-        <link rel="alternate" hrefLang="x-default" href="https://tripile.com/" />
-        <meta property="og:url" content="https://tripile.com/" />
-        <meta property="og:title" content="Cheap Flights, Hotels & Car Rentals USA | Tripile.com" />
-        <meta
-          property="og:description"
-          content="Book cheap flights, hotels & car rentals across the USA. Compare 500+ airlines, Price Match Guarantee, no hidden fees & 24/7 US support."
-        />
+        <link rel="canonical" href={HOME_CANONICAL} />
+        <link rel="alternate" hrefLang="en-us" href={HOME_CANONICAL} />
+        <link rel="alternate" hrefLang="x-default" href={HOME_CANONICAL} />
+        <meta property="og:url" content={HOME_CANONICAL} />
+        <meta property="og:title" content={HOME_TITLE} />
+        <meta property="og:description" content={HOME_DESCRIPTION} />
         <meta property="og:locale" content="en_US" />
-        <meta name="twitter:title" content="Cheap Flights, Hotels & Car Rentals USA | Tripile.com" />
-        <meta
-          name="twitter:description"
-          content="Book cheap flights, hotels & car rentals across the USA. Compare 500+ airlines, Price Match Guarantee, no hidden fees & 24/7 US support."
-        />
+        <meta name="twitter:title" content={HOME_TITLE} />
+        <meta name="twitter:description" content={HOME_DESCRIPTION} />
       </Helmet>
       <HomePageSchema />
       <Header />
