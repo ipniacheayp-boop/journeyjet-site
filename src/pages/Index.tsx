@@ -1,5 +1,6 @@
 import IntentGuideSection from "@/components/seo/IntentGuideSection";
 import { homeGuide } from "@/data/flightIntentGuides";
+import { HOME_CANONICAL, HOME_DESCRIPTION, HOME_H1, HOME_TITLE } from "@/data/homepageSeo";
 import { useState, useMemo, useEffect, lazy, Suspense } from "react";
 import { Helmet } from "react-helmet";
 import { motion } from "framer-motion";
@@ -237,30 +238,21 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>Cheap Flights, Hotels & Car Rentals USA | Tripile.com</title>
-        <meta
-          name="description"
-          content="Book cheap flights, hotels & car rentals across the USA. Compare 500+ airlines, rent cars from $26/day in top cities, Price Match Guarantee & 24/7 US support."
-        />
+        <title>{HOME_TITLE}</title>
+        <meta name="description" content={HOME_DESCRIPTION} />
         <meta
           name="keywords"
           content="cheap flights USA, car rentals USA, cheap car rental, rent a car USA, flight deals, cheap hotels USA, airport car rental, US travel deals, Enterprise Hertz Avis"
         />
-        <link rel="canonical" href="https://tripile.com/" />
-        <link rel="alternate" hrefLang="en-us" href="https://tripile.com/" />
-        <link rel="alternate" hrefLang="x-default" href="https://tripile.com/" />
-        <meta property="og:url" content="https://tripile.com/" />
-        <meta property="og:title" content="Cheap Flights, Hotels & Car Rentals USA | Tripile.com" />
-        <meta
-          property="og:description"
-          content="Book cheap flights, hotels & car rentals across the USA. Compare 500+ airlines, Price Match Guarantee, no hidden fees & 24/7 US support."
-        />
+        <link rel="canonical" href={HOME_CANONICAL} />
+        <link rel="alternate" hrefLang="en-us" href={HOME_CANONICAL} />
+        <link rel="alternate" hrefLang="x-default" href={HOME_CANONICAL} />
+        <meta property="og:url" content={HOME_CANONICAL} />
+        <meta property="og:title" content={HOME_TITLE} />
+        <meta property="og:description" content={HOME_DESCRIPTION} />
         <meta property="og:locale" content="en_US" />
-        <meta name="twitter:title" content="Cheap Flights, Hotels & Car Rentals USA | Tripile.com" />
-        <meta
-          name="twitter:description"
-          content="Book cheap flights, hotels & car rentals across the USA. Compare 500+ airlines, Price Match Guarantee, no hidden fees & 24/7 US support."
-        />
+        <meta name="twitter:title" content={HOME_TITLE} />
+        <meta name="twitter:description" content={HOME_DESCRIPTION} />
       </Helmet>
       <HomePageSchema />
       <Header />
@@ -282,7 +274,7 @@ const Index = () => {
               Flights &amp; Hotels — All 50 States
             </p>
             <h1 className="font-sans text-balance text-3xl sm:text-4xl md:text-5xl font-bold text-white leading-snug tracking-normal mb-4 drop-shadow-md max-w-4xl mx-auto">
-              Search Cheap Flights &amp; Hotels in the USA
+              {HOME_H1}
             </h1>
           </motion.div>
 

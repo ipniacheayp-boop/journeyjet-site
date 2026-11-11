@@ -47,6 +47,7 @@ import { travelCollections, buildTravelCollection } from "../src/data/travelColl
 import { getCountrySeasons } from "../src/data/countrySeasons";
 import { dealSlugs } from "../src/data/dealSlugs";
 import { lastMinuteGuide, indiaUsaGuide, type IntentGuide } from "../src/data/flightIntentGuides";
+import { HOME_DESCRIPTION, HOME_H1, HOME_INTRO, HOME_TITLE } from "../src/data/homepageSeo";
 
 const SITE_ORIGIN = "https://tripile.com";
 const DIST = resolve("dist");
@@ -98,26 +99,33 @@ const BASE_LINKS: LinkItem[] = [
 const corePages: Page[] = [
   {
     path: "/",
-    title: "Tripile.com – Buy Cheap Flights, Hotels & Car Rentals | Best US Travel Deals",
-    description:
-      "Buy cheap flights, hotels & car rentals across the USA on Tripile.com. Compare 500+ airlines, get Price Match Guarantee, and save up to 46%. Trusted by 2,500+ travelers.",
-    h1: "Cheap Flights, Hotels & Car Rentals USA | Tripile",
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
+    h1: HOME_H1,
     blocks: [
+      { paragraphs: [HOME_INTRO] },
       {
+        heading: "Why Travelers Choose Tripile",
         paragraphs: [
-          "Tripile helps travelers compare cheap flights, hotels, and rental cars in one place. Instead of switching between multiple booking websites, you can review schedules, prices, and policies together — saving time and booking with more confidence, whether it's a business trip, family vacation, weekend break, or last-minute getaway.",
+          "Compare travel options with clear prices, practical filters, and access to customer support. Flight results include schedules, stops, baggage details, and fare rules, while hotel and rental-car searches help you review the options that fit your trip.",
         ],
       },
       {
-        heading: "Why Choose Tripile",
+        heading: "Featured Deals",
         paragraphs: [
-          "Our platform focuses on price clarity, practical filters, and real support. Find strong flight deals across 500+ airlines, then sort by timing, layovers, baggage, and fare rules. Compare cheap hotels near airports, business districts, and tourist neighborhoods, and add car rentals with clear pickup locations and cancellation terms before checkout.",
+          "Browse available travel offers, review each deal's route, dates, and terms, and continue to checkout for the current price and availability.",
         ],
       },
       {
-        heading: "Travel Deals and Booking Benefits",
+        heading: "Tailored Travel Deals",
         paragraphs: [
-          "Tripile is built for value-focused travelers who want quality and control. Start with flights, add hotels, then include a rental car to build a full itinerary in minutes. Our deals hub features seasonal offers and limited-time promotions, with transparent totals, no hidden fees, and 24/7 assistance from search to confirmation.",
+          "Explore offers for last-minute trips, weekend escapes, premium cabins, and other travel needs, then search live options for your own itinerary.",
+        ],
+      },
+      {
+        heading: "Frequently Asked Questions",
+        paragraphs: [
+          "Get answers about searching for flights and hotels, price transparency, changes, cancellations, and support before you book.",
         ],
       },
     ],
@@ -1386,7 +1394,7 @@ function buildHtml(page: Page): string {
   // page sitting above the app while scripts load.
   html = html
     .replace(/\s*<article[^>]*id="seo-static-content"[\s\S]*?<\/article>/, "")
-    .replace(/<div id="root"><\/div>/, `<div id="root">${renderArticle(page)}</div>`);
+    .replace(/<div id="root">\s*<\/div>/, `<div id="root">${renderArticle(page)}</div>`);
   return html;
 }
 
