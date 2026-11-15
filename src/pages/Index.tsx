@@ -34,6 +34,7 @@ const CustomerReviewsDark = lazy(() => import("@/components/CustomerReviewsDark"
 const HandpickedFlightDeals = lazy(() => import("@/components/HandpickedFlightDeals"));
 import { SavingsRevealButton } from "@/components/SavingsRevealDialog";
 import { mockDeals, type Deal } from "@/data/mockDeals";
+import { activeDeals } from "@/lib/dealExpiry";
 import dealLastMinute from "@/assets/deal-last-minute.jpg";
 import dealBudget from "@/assets/deal-budget.jpg";
 import dealSeniors from "@/assets/deal-seniors.jpg";
@@ -111,8 +112,10 @@ const Index = () => {
   }, [navigate]);
 
 
-  const pinnedDeals = useMemo(() => mockDeals.filter((deal) => deal.isPinned).slice(0, 2), []);
-  const unpinnedDeals = useMemo(() => mockDeals.filter((deal) => !deal.isPinned), []);
+  // Only deals whose travel period (or offer expiry) has not passed, re-checked on every refresh.
+  const validDeals = useMemo(() => activeDeals(mockDeals), [refreshKey]);
+  const pinnedDeals = useMemo(() => validDeals.filter((deal) => deal.isPinned).slice(0, 2), [validDeals]);
+  const unpinnedDeals = useMemo(() => validDeals.filter((deal) => !deal.isPinned), [validDeals]);
 
   const featuredDeals = useMemo(() => {
     const needed = 6 - pinnedDeals.length;
@@ -511,6 +514,17 @@ const Index = () => {
             variants={staggerContainer}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
           >
+            {featuredDeals.length === 0 && (
+              <div className="col-span-full rounded-2xl border border-dashed border-border bg-card p-10 text-center">
+                <p className="text-lg font-semibold text-foreground">New travel deals are coming soon.</p>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  In the meantime, search live flight prices or browse current offers.
+                </p>
+                <Link to="/deals" className="mt-4 inline-block text-sm font-semibold text-primary hover:underline">
+                  See current deals
+                </Link>
+              </div>
+            )}
             {featuredDeals.map((deal, index) => (
               <motion.div
                 key={`${deal.id}-${refreshKey}`}

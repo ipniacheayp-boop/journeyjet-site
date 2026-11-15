@@ -15,6 +15,13 @@
       "when": 1794706633284,
       "tag": "0001_tighten_permissive_select_policies",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794707299981,
+      "tag": "0002_block_publishing_expired_deals",
+      "breakpoints": true
     }
   ]
 }

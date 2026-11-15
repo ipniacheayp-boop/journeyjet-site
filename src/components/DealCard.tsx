@@ -1,7 +1,7 @@
 import { ArrowRight, Calendar, Plane, Flame, TrendingUp, Star, Zap, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { format } from "date-fns";
+import { formatDealRange } from "@/lib/dealExpiry";
 import type { Deal } from "@/data/mockDeals";
 import { motion } from "framer-motion";
 import { useFxSmartSave } from "@/hooks/useFxSmartSave";
@@ -141,7 +141,7 @@ const DealCard = ({ deal, onClick }: DealCardProps) => {
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <Calendar className="w-3.5 h-3.5 text-slate-400" />
           <span>
-            {format(new Date(deal.departDate), "MMM d")} → {format(new Date(deal.returnDate), "MMM d, yyyy")}
+            {formatDealRange(deal.departDate, deal.returnDate)}
           </span>
         </div>
 

@@ -81,7 +81,9 @@ Deno.serve(async (req) => {
       featured: url.searchParams.get('featured') === 'true' ? true : undefined,
     };
 
-    const cacheKey = getCacheKey(params);
+    // UTC calendar date: deals stay listed through the last day of travel.
+    const todayUtc = new Date().toISOString().slice(0, 10);
+    const cacheKey = `${todayUtc}|${getCacheKey(params)}`;
     const skipCache = url.searchParams.get('refresh') === 'true';
 
     // Check cache first (instant response)
@@ -90,7 +92,12 @@ Deno.serve(async (req) => {
       if (cachedData) {
         console.log(`[deals-get] Cache hit, returning in ${Date.now() - startTime}ms`);
         return new Response(
-          JSON.stringify({ ...cachedData, fromCache: true }),
+          JSON.stringify({
+            ...cachedData,
+            // Re-check eligibility so a cached list never serves a deal that just expired.
+            deals: (cachedData.deals || []).filter((d: { date_to?: string }) => !d.date_to || d.date_to >= todayUtc),
+            fromCache: true,
+          }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
@@ -120,7 +127,8 @@ Deno.serve(async (req) => {
         featured,
         short_description
       `, { count: 'exact' })
-      .eq('published', true);
+      .eq('published', true)
+      .gte('date_to', todayUtc);
 
     // Apply filters
     if (params.origin) {
