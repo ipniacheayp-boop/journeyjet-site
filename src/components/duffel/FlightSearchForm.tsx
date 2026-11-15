@@ -166,9 +166,6 @@ export default function FlightSearchForm({ loading, initial, onSearch }: Props) 
                       id={`from-${index}`}
                       required
                       listLabel="Departure airport suggestions"
-                      id={`to-${index}`}
-                      required
-                      listLabel="Destination airport suggestions"
                       placeholder="City or airport"
                     />
                   </div>
@@ -181,6 +178,9 @@ export default function FlightSearchForm({ loading, initial, onSearch }: Props) 
                       onChange={(label, iata) =>
                         updateLeg(index, { destinationLabel: label, destination: iata || "" })
                       }
+                      id={`to-${index}`}
+                      required
+                      listLabel="Destination airport suggestions"
                       placeholder="City or airport"
                     />
                   </div>
