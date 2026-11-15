@@ -91,7 +91,7 @@ const OFFERS_PER_ROUTE = 3;
 
 // Cached payload is reused across invocations of the same isolate.
 const FRESH_MS = 10 * 60 * 1000; // serve without refetching
-const STALE_MS = 45 * 60 * 1000; // serve stale while revalidating
+const STALE_MS = 6 * 60 * 60 * 1000; // serve stale (still-unexpired offers) while refreshing in background
 // Never hand out an offer that is about to expire — checkout revalidates it.
 const MIN_OFFER_TTL_MS = 10 * 60 * 1000;
 
