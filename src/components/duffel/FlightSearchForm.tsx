@@ -196,6 +196,7 @@ export default function FlightSearchForm({ loading, initial, onSearch }: Props) 
                     min={todayISO()}
                     value={leg.departureDate}
                     onChange={(e) => updateLeg(index, { departureDate: e.target.value })}
+                    aria-required="true"
                     className="bg-background"
                   />
                 </div>
@@ -208,6 +209,7 @@ export default function FlightSearchForm({ loading, initial, onSearch }: Props) 
                       min={leg.departureDate || todayISO()}
                       value={returnDate}
                       onChange={(e) => setReturnDate(e.target.value)}
+                      aria-required="true"
                       className="bg-background"
                     />
                   </div>
