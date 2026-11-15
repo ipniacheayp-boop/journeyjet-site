@@ -57,7 +57,11 @@ serve(async (req) => {
     }
 
     // Find an available agent
-    const { data: availableAgents } = await supabaseClient
+    const { data: availableAgents } = await createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      { auth: { persistSession: false } }
+    )
       .from('agent_availability')
       .select(`
         agent_id,
