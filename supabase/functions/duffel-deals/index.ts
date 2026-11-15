@@ -1,6 +1,40 @@
 /// <reference path="../flights-search/deno-shim.d.ts" />
 // @ts-expect-error TS2307 — Supabase Edge Functions run on Deno, not Vite.
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "npm:@supabase/supabase-js@2";
+
+// Shared display snapshot so a fresh server instance doesn't re-shop every
+// route with Duffel (≈18s). Checkout always revalidates the chosen offer.
+const SNAPSHOT_ID = "default";
+const admin = () =>
+  createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, {
+    auth: { persistSession: false },
+  });
+async function readSnapshot(): Promise<CacheEntry | null> {
+  try {
+    const { data } = await admin()
+      .from("duffel_deals_snapshot")
+      .select("deals, routes_with_offers, fetched_at")
+      .eq("id", SNAPSHOT_ID)
+      .maybeSingle();
+    if (!data || !Array.isArray(data.deals)) return null;
+    return { deals: data.deals as Deal[], fetchedAt: Date.parse(data.fetched_at), routesWithOffers: data.routes_with_offers };
+  } catch {
+    return null;
+  }
+}
+async function writeSnapshot(entry: CacheEntry) {
+  try {
+    await admin().from("duffel_deals_snapshot").upsert({
+      id: SNAPSHOT_ID,
+      deals: entry.deals,
+      routes_with_offers: entry.routesWithOffers,
+      fetched_at: new Date(entry.fetchedAt).toISOString(),
+    });
+  } catch (err) {
+    console.log("duffel-deals: snapshot write failed", err instanceof Error ? err.message : err);
+  }
+}
 
 /**
  * Live flight deals, sourced exclusively from Duffel.
@@ -57,7 +91,7 @@ const OFFERS_PER_ROUTE = 3;
 
 // Cached payload is reused across invocations of the same isolate.
 const FRESH_MS = 10 * 60 * 1000; // serve without refetching
-const STALE_MS = 45 * 60 * 1000; // serve stale while revalidating
+const STALE_MS = 6 * 60 * 60 * 1000; // serve stale (still-unexpired offers) while refreshing in background
 // Never hand out an offer that is about to expire — checkout revalidates it.
 const MIN_OFFER_TTL_MS = 10 * 60 * 1000;
 
@@ -137,6 +171,12 @@ async function duffelFetch(path: string, init: RequestInit & { body?: string } =
  * never hits its memory limit.
  */
 async function duffelOfferRequest(route: Route, departureDate: string, returnDate: string) {
+  return duffelOfferRequestInner(route, departureDate, returnDate, true);
+}
+function duffelOfferRequestOnce(route: Route, departureDate: string, returnDate: string) {
+  return duffelOfferRequestInner(route, departureDate, returnDate, false);
+}
+async function duffelOfferRequestInner(route: Route, departureDate: string, returnDate: string, mayRetry: boolean) {
   try {
     const created = await duffelFetch("/air/offer_requests?return_offers=false&supplier_timeout=15000", {
       method: "POST",
@@ -152,6 +192,11 @@ async function duffelOfferRequest(route: Route, departureDate: string, returnDat
       }),
     });
 
+    if (created.status === 429 && mayRetry) {
+      await created.text();
+      await new Promise((res) => setTimeout(res, 1500));
+      return duffelOfferRequestOnce(route, departureDate, returnDate);
+    }
     if (!created.ok) {
       console.log(`duffel-deals: ${route.origin}-${route.destination} → HTTP ${created.status}`);
       return [] as Record<string, any>[];
@@ -314,7 +359,7 @@ function refresh(): Promise<CacheEntry> {
     refreshing = loadDeals()
       .then((entry) => {
         if (entry.deals.length > 0) cache = entry;
-        return entry;
+        return entry.deals.length > 0 ? writeSnapshot(entry).then(() => entry) : entry;
       })
       .finally(() => {
         refreshing = null;
@@ -351,6 +396,11 @@ serve(async (req) => {
       }
     }
     const force = url.searchParams.get("refresh") === "true" || bodyRefresh;
+    // New server instance: hydrate from the shared snapshot instead of re-shopping.
+    if (!force && !cache) {
+      const snap = await readSnapshot();
+      if (snap) cache = snap;
+    }
     const age = cache ? Date.now() - cache.fetchedAt : Infinity;
 
     if (!force && cache) {
@@ -361,9 +411,11 @@ serve(async (req) => {
         return json({ deals: valid, total: valid.length, fromCache: true, fetchedAt: cache.fetchedAt });
       }
       if (age < STALE_MS && enoughLeft) {
-        // Serve the cached payload as-is. Detached background refreshes are
-        // killed once the response returns ("Fetch is aborted"), so the next
-        // request past STALE_MS refreshes synchronously instead.
+        // Serve stale instantly and refresh in the background; waitUntil keeps
+        // the refresh alive after the response is sent.
+        const bg = refresh().catch(() => undefined);
+        // deno-lint-ignore no-explicit-any
+        (globalThis as any).EdgeRuntime?.waitUntil?.(bg);
         return json({ deals: valid, total: valid.length, fromCache: true, fetchedAt: cache.fetchedAt });
       }
 
