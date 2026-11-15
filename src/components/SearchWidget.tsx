@@ -78,38 +78,72 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // Field order for focusing the first invalid field after submit.
+  const fieldIds: Record<string, string> = {
+    origin: "flight-origin",
+    destination: "flight-destination",
+    departDate: "depart-date",
+    returnDate: "return-date",
+    cityCode: "city-code",
+    checkInDate: "check-in",
+    checkOutDate: "check-out",
+  };
+  const focusFirstInvalid = (errs: Record<string, string>) => {
+    const first = Object.keys(fieldIds).find((k) => errs[k]);
+    if (first) requestAnimationFrame(() => document.getElementById(fieldIds[first])?.focus());
+  };
+  const clearError = (key: string) =>
+    setErrors((prev) => {
+      if (!prev[key]) return prev;
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+  const errorProps = (key: string) => ({
+    "aria-invalid": !!errors[key] || undefined,
+    "aria-describedby": errors[key] ? `${fieldIds[key]}-error` : undefined,
+  });
+  const renderError = (field: string) =>
+    errors[field] ? (
+      <p id={`${fieldIds[field]}-error`} className="text-xs text-destructive">
+        {errors[field]}
+      </p>
+    ) : null;
+
   const validateFlightForm = () => {
     const newErrors: Record<string, string> = {};
-    if (!flightOrigin.trim()) newErrors.origin = "Origin is required";
-    if (!flightDestination.trim()) newErrors.destination = "Destination is required";
+    if (!flightOrigin.trim()) newErrors.origin = "Please enter a departure city or airport.";
+    if (!flightDestination.trim()) newErrors.destination = "Please enter a destination city or airport.";
     // Origin and destination must differ
     const originKey = (flightOriginCode || flightOrigin).trim().toUpperCase();
     const destinationKey = (flightDestinationCode || flightDestination).trim().toUpperCase();
     if (originKey && destinationKey && originKey === destinationKey) {
       newErrors.destination = "You cannot enter the same city or airport for both From and To";
     }
-    if (!departDate) newErrors.departDate = "Departure date is required";
+    if (!departDate) newErrors.departDate = "Please select a departure date.";
     // Prevent past dates
     if (departDate && departDate < today) newErrors.departDate = "Departure date cannot be in the past";
-    if (tripType === "round-trip" && !returnDate) newErrors.returnDate = "Return date is required";
+    if (tripType === "round-trip" && !returnDate) newErrors.returnDate = "Please select a return date.";
     if (tripType === "round-trip" && departDate && returnDate && new Date(returnDate) < new Date(departDate)) {
-      newErrors.returnDate = "Return date must be after departure date";
+      newErrors.returnDate = "Departure date cannot be later than return date.";
     }
     setErrors(newErrors);
+    focusFirstInvalid(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
 
   const validateHotelForm = () => {
     const newErrors: Record<string, string> = {};
-    if (!cityCode.trim()) newErrors.cityCode = "City is required";
-    if (!checkInDate) newErrors.checkInDate = "Check-in date is required";
-    if (!checkOutDate) newErrors.checkOutDate = "Check-out date is required";
+    if (!cityCode.trim()) newErrors.cityCode = "Please select a hotel destination.";
+    if (!checkInDate) newErrors.checkInDate = "Please select a check-in date.";
+    if (!checkOutDate) newErrors.checkOutDate = "Please select a check-out date.";
     if (checkInDate && checkInDate < today) newErrors.checkInDate = "Check-in date cannot be in the past";
     if (checkInDate && checkOutDate && new Date(checkOutDate) <= new Date(checkInDate)) {
-      newErrors.checkOutDate = "Check-out must be after check-in";
+      newErrors.checkOutDate = "Check-out date must be after check-in date.";
     }
     setErrors(newErrors);
+    focusFirstInvalid(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
@@ -127,17 +161,6 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
 
   const handleFlightSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // Auto-set departure date to today if empty (prevents "required" error from confusing users)
-    if (!departDate) {
-      const autoDate = today;
-      setDepartDate(autoDate);
-      // Re-validate with auto-set date
-      if (!flightOrigin.trim() || !flightDestination.trim()) {
-        validateFlightForm();
-        toast.error("Please fix the errors in the form");
-        return;
-      }
-    }
     if (validateFlightForm()) {
       toast.success("Searching for flights...");
       const origin = (flightOriginCode || flightOrigin).trim().toUpperCase();
@@ -298,7 +321,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
             </div>
           </RadioGroup>
 
-          <form onSubmit={handleFlightSearch} className="space-y-3">
+          <form onSubmit={handleFlightSearch} noValidate aria-label="Flight search" className="space-y-3">
             {/* Row 1: Origin / Destination / Dates */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
               <div className="space-y-1.5">
@@ -313,11 +336,16 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                   onChange={(value, iataCode) => {
                     setFlightOrigin(value);
                     setFlightOriginCode(iataCode);
+                    clearError("origin");
                   }}
-                  placeholder="City or Airport"
+                  id="flight-origin"
+                  required
+                  listLabel="Departure airport suggestions"
+                  {...errorProps("origin")}
+                  placeholder="City or airport"
                   className={`pl-10 px-2 py-1 rounded-lg border border-input bg-background text-foreground h-11 ${errors.origin ? "border-destructive" : ""}`}
                 />
-                {errors.origin && <p className="text-xs text-destructive">{errors.origin}</p>}
+                {renderError("origin")}
               </div>
 
               <div className="space-y-1.5">
@@ -332,11 +360,16 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                   onChange={(value, iataCode) => {
                     setFlightDestination(value);
                     setFlightDestinationCode(iataCode);
+                    clearError("destination");
                   }}
-                  placeholder="City or Airport"
+                  id="flight-destination"
+                  required
+                  listLabel="Destination airport suggestions"
+                  {...errorProps("destination")}
+                  placeholder="City or airport"
                   className={`pl-10 px-2 py-1 rounded-lg border border-input bg-background text-foreground h-11 ${errors.destination ? "border-destructive" : ""}`}
                 />
-                {errors.destination && <p className="text-xs text-destructive">{errors.destination}</p>}
+                {renderError("destination")}
               </div>
 
               <div className="space-y-1.5">
@@ -352,12 +385,18 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     id="depart-date"
                     type="date"
                     value={departDate}
-                    onChange={(e) => setDepartDate(e.target.value)}
+                    onChange={(e) => {
+                      setDepartDate(e.target.value);
+                      clearError("departDate");
+                      clearError("returnDate");
+                    }}
+                    required
+                    {...errorProps("departDate")}
                     className={`pl-10 h-11 rounded-lg ${errors.departDate ? "border-destructive" : ""}`}
                     min={new Date().toISOString().split("T")[0]}
                   />
                 </div>
-                {errors.departDate && <p className="text-xs text-destructive">{errors.departDate}</p>}
+                {renderError("departDate")}
               </div>
 
               {tripType === "round-trip" ? (
@@ -374,12 +413,17 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                       id="return-date"
                       type="date"
                       value={returnDate}
-                      onChange={(e) => setReturnDate(e.target.value)}
+                      onChange={(e) => {
+                        setReturnDate(e.target.value);
+                        clearError("returnDate");
+                      }}
+                      required
+                      {...errorProps("returnDate")}
                       className={`pl-10 h-11 rounded-lg ${errors.returnDate ? "border-destructive" : ""}`}
                       min={departDate || new Date().toISOString().split("T")[0]}
                     />
                   </div>
-                  {errors.returnDate && <p className="text-xs text-destructive">{errors.returnDate}</p>}
+                  {renderError("returnDate")}
                 </div>
               ) : (
                 <div />
@@ -493,7 +537,7 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
 
         {/* ── HOTELS TAB ── */}
         <TabsContent value="hotels" className="space-y-4">
-          <form onSubmit={handleHotelSearch} className="space-y-3">
+          <form onSubmit={handleHotelSearch} noValidate aria-label="Hotel search" className="space-y-3">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
               <div className="space-y-1.5">
                 <Label
@@ -505,12 +549,17 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                 <PlacesLocationInput
                   id="city-code"
                   value={cityCode}
-                  onChange={setCityCode}
+                  onChange={(v) => {
+                    setCityCode(v);
+                    clearError("cityCode");
+                  }}
+                  required
+                  aria-describedby={errors.cityCode ? "city-code-error" : undefined}
                   placeholder="City, region, or country"
                   className={`w-full pl-10 pr-3 bg-background text-foreground rounded-lg border border-input h-11 text-sm ${errors.cityCode ? "border-destructive" : ""}`}
                   aria-invalid={!!errors.cityCode}
                 />
-                {errors.cityCode && <p className="text-xs text-destructive">{errors.cityCode}</p>}
+                {renderError("cityCode")}
               </div>
               <div className="space-y-1.5">
                 <Label
@@ -525,12 +574,18 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     id="check-in"
                     type="date"
                     value={checkInDate}
-                    onChange={(e) => setCheckInDate(e.target.value)}
+                    onChange={(e) => {
+                      setCheckInDate(e.target.value);
+                      clearError("checkInDate");
+                      clearError("checkOutDate");
+                    }}
+                    required
+                    {...errorProps("checkInDate")}
                     className={`pl-10 h-11 rounded-lg ${errors.checkInDate ? "border-destructive" : ""}`}
                     min={new Date().toISOString().split("T")[0]}
                   />
                 </div>
-                {errors.checkInDate && <p className="text-xs text-destructive">{errors.checkInDate}</p>}
+                {renderError("checkInDate")}
               </div>
               <div className="space-y-1.5">
                 <Label
@@ -545,12 +600,17 @@ const SearchWidget = ({ defaultTab = "flights", isAgentBooking = false, agentId 
                     id="check-out"
                     type="date"
                     value={checkOutDate}
-                    onChange={(e) => setCheckOutDate(e.target.value)}
+                    onChange={(e) => {
+                      setCheckOutDate(e.target.value);
+                      clearError("checkOutDate");
+                    }}
+                    required
+                    {...errorProps("checkOutDate")}
                     className={`pl-10 h-11 rounded-lg ${errors.checkOutDate ? "border-destructive" : ""}`}
                     min={checkInDate || new Date().toISOString().split("T")[0]}
                   />
                 </div>
-                {errors.checkOutDate && <p className="text-xs text-destructive">{errors.checkOutDate}</p>}
+                {renderError("checkOutDate")}
               </div>
               <div className="space-y-1.5">
                 <Label

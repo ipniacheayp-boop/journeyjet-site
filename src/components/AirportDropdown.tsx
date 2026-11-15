@@ -16,9 +16,20 @@ interface AirportDropdownProps {
   onChange: (value: string, iataCode: string) => void;
   placeholder?: string;
   className?: string;
+  id?: string;
+  required?: boolean;
+  "aria-invalid"?: boolean;
+  "aria-describedby"?: string;
+  /** Spoken name for the suggestion list, e.g. "Departure airport suggestions". */
+  listLabel?: string;
 }
 
-const AirportDropdown = React.memo(({ value, onChange, placeholder, className }: AirportDropdownProps) => {
+const AirportDropdown = React.memo(({ value, onChange, placeholder, className, id, required, "aria-invalid": ariaInvalid, "aria-describedby": ariaDescribedBy, listLabel }: AirportDropdownProps) => {
+  const autoId = React.useId();
+  const inputId = id || `airport-${autoId}`;
+  const listId = `${inputId}-listbox`;
+  const statusId = `${inputId}-status`;
+  const [announcement, setAnnouncement] = useState("");
   const [airports, setAirports] = useState<Airport[]>([]);
   const [inputValue, setInputValue] = useState(value);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -107,6 +118,7 @@ const AirportDropdown = React.memo(({ value, onChange, placeholder, className }:
       onChange(displayValue, airport.iataCode);
       setShowDropdown(false);
       setHighlightedIndex(-1);
+      setAnnouncement(`Selected ${airport.airportName}, ${airport.city} (${airport.iataCode})`);
     },
     [onChange],
   );
@@ -147,6 +159,16 @@ const AirportDropdown = React.memo(({ value, onChange, placeholder, className }:
     }
   };
 
+  // Announce how many suggestions are available
+  useEffect(() => {
+    if (!showDropdown || !debouncedValue || debouncedValue.length < 2) return;
+    setAnnouncement(
+      filteredAirports.length === 0
+        ? "No matching airports"
+        : `${Math.min(filteredAirports.length, 50)}${filteredAirports.length > 50 ? "+" : ""} suggestions available. Use up and down arrows to review, Enter to select.`,
+    );
+  }, [filteredAirports.length, debouncedValue, showDropdown]);
+
   // Scroll highlighted item into view
   useEffect(() => {
     if (highlightedIndex >= 0 && dropdownRef.current) {
@@ -184,10 +206,21 @@ const AirportDropdown = React.memo(({ value, onChange, placeholder, className }:
   return (
     <div className="relative w-full">
       <div className="relative">
-        <Plane className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Plane aria-hidden="true" className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <input
           ref={inputRef}
+          id={inputId}
           type="text"
+          role="combobox"
+          autoComplete="off"
+          aria-autocomplete="list"
+          aria-expanded={showDropdown && filteredAirports.length > 0}
+          aria-controls={listId}
+          aria-activedescendant={showDropdown && highlightedIndex >= 0 ? `${listId}-opt-${highlightedIndex}` : undefined}
+          aria-required={required || undefined}
+          required={required}
+          aria-invalid={ariaInvalid || undefined}
+          aria-describedby={[ariaDescribedBy, statusId].filter(Boolean).join(" ")}
           value={inputValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
@@ -200,15 +233,25 @@ const AirportDropdown = React.memo(({ value, onChange, placeholder, className }:
           className={className}
         />
       </div>
+      <span id={statusId} role="status" aria-live="polite" className="sr-only">
+        {announcement}
+      </span>
 
       {showDropdown && filteredAirports.length > 0 && (
         <div
           ref={dropdownRef}
+          id={listId}
+          role="listbox"
+          aria-label={listLabel || "Airport suggestions"}
           className="absolute z-50 w-full mt-2 bg-background border border-border rounded-xl shadow-lg max-h-60 overflow-y-auto"
         >
           {filteredAirports.map((airport, index) => (
             <div
               key={`${airport.iataCode}-${index}`}
+              id={`${listId}-opt-${index}`}
+              role="option"
+              aria-selected={index === highlightedIndex}
+              onMouseDown={(e) => e.preventDefault()}
               onClick={() => handleSelect(airport)}
               className={`px-4 py-3 cursor-pointer transition-colors border-b border-border last:border-b-0 ${
                 index === highlightedIndex ? "bg-primary/10" : "hover:bg-muted"
