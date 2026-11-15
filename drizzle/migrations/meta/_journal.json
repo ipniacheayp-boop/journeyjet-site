@@ -8,6 +8,13 @@
       "when": 1794340833507,
       "tag": "0000_retain_signup_profile_metadata",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794706633284,
+      "tag": "0001_tighten_permissive_select_policies",
+      "breakpoints": true
     }
   ]
 }
