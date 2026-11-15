@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Plane, Calendar, Mail, Phone, MessageSquare, ExternalLink } from "lucide-react";
-import { format } from "date-fns";
 import { formatDealRange } from "@/lib/dealExpiry";
 import type { Deal } from "@/data/mockDeals";
 import { useState } from "react";
