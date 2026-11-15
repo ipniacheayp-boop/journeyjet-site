@@ -589,6 +589,27 @@ export type Database = {
         }
         Relationships: []
       }
+      duffel_deals_snapshot: {
+        Row: {
+          deals: Json
+          fetched_at: string
+          id: string
+          routes_with_offers: number
+        }
+        Insert: {
+          deals: Json
+          fetched_at?: string
+          id: string
+          routes_with_offers?: number
+        }
+        Update: {
+          deals?: Json
+          fetched_at?: string
+          id?: string
+          routes_with_offers?: number
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
