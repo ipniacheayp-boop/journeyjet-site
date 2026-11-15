@@ -20,10 +20,12 @@ interface PlacesLocationInputProps {
   placeholder?: string;
   className?: string;
   "aria-invalid"?: boolean;
+  "aria-describedby"?: string;
+  required?: boolean;
 }
 
 const PlacesLocationInput = React.memo(
-  ({ id, value, onChange, placeholder, className, "aria-invalid": ariaInvalid }: PlacesLocationInputProps) => {
+  ({ id, value, onChange, placeholder, className, "aria-invalid": ariaInvalid, "aria-describedby": ariaDescribedBy, required }: PlacesLocationInputProps) => {
     const [inputValue, setInputValue] = useState(value);
     const [rows, setRows] = useState<DropdownRow[]>([]);
     const [showDropdown, setShowDropdown] = useState(false);
@@ -252,7 +254,14 @@ const PlacesLocationInput = React.memo(
             spellCheck={false}
             aria-autocomplete="list"
             aria-expanded={showDropdown && selectableRows.length > 0}
-            aria-invalid={ariaInvalid}
+            aria-invalid={ariaInvalid || undefined}
+            aria-describedby={ariaDescribedBy}
+            aria-required={required || undefined}
+            required={required}
+            aria-controls={id ? `${id}-listbox` : undefined}
+            aria-activedescendant={
+              showDropdown && highlightedIndex >= 0 && id ? `${id}-opt-${highlightedIndex}` : undefined
+            }
             className={className}
             role="combobox"
           />
@@ -263,6 +272,8 @@ const PlacesLocationInput = React.memo(
             ref={listRef}
             className="absolute z-50 mt-1 w-full rounded-lg border border-border bg-popover text-popover-foreground shadow-lg max-h-72 overflow-y-auto"
             role="listbox"
+            id={id ? `${id}-listbox` : undefined}
+            aria-label="Hotel destination suggestions"
           >
             {loadingGeo && countries.length === 0 && (
               <div className="px-3 py-2 text-sm text-muted-foreground">Loading locations…</div>
@@ -293,6 +304,8 @@ const PlacesLocationInput = React.memo(
                   key={row.key}
                   type="button"
                   role="option"
+                  id={id ? `${id}-opt-${selIndex}` : undefined}
+                  tabIndex={-1}
                   aria-selected={active}
                   className={`w-full text-left px-3 py-2 text-sm border-b border-border/40 last:border-0 hover:bg-muted/80 ${
                     active ? "bg-muted" : ""
